@@ -30,7 +30,7 @@ interface ModulesApiResponse {
 
 class ProductionPermissionService {
   private readonly API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
   private permissionsCache: Map<string, ModulePermission[]> = new Map();
   private modulesCache: Map<string, ModulesMasterView> = new Map();
 

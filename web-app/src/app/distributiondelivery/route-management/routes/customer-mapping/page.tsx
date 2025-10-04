@@ -224,7 +224,7 @@ export default function CustomerMappingPage() {
       const token = authService.getToken();
       const response = await fetch(
         `${
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+          process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
         }/Route/SelectRouteMasterViewByUID?UID=${routeUID}`,
         {
           headers: {
@@ -703,7 +703,7 @@ export default function CustomerMappingPage() {
       // Update route
       const response = await fetch(
         `${
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+          process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
         }/Route/UpdateRouteMaster`,
         {
           method: "PUT",

@@ -148,7 +148,7 @@ export default function ProductAttributesWithSKU({
 }: ProductAttributesWithSKUProps) {
   const { toast } = useToast();
   const baseURL =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
 
   // Core state - Similar to ProductAttributesMultiDropdown
   const [hierarchyTypes, setHierarchyTypes] = useState<SKUGroupType[]>([]);

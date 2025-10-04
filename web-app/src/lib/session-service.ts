@@ -24,7 +24,7 @@ import { AuditLogLevel } from "@/types/audit.types";
 
 class SessionService {
   private readonly API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
   private readonly SESSION_KEY = "winit_session_key";
   private readonly DEVICE_ID_KEY = "winit_device_id";
   private activityTimer?: NodeJS.Timeout;

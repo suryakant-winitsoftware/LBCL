@@ -1,5 +1,5 @@
 export const API_CONFIG = {
-  BASE_URL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api",
+  BASE_URL: process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api",
   AUDIT_URL:
     process.env.NEXT_PUBLIC_AUDIT_API_URL || "http://localhost:5065/api",
   TIMEOUT: 30000,

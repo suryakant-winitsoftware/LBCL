@@ -7,29 +7,29 @@ echo "Testing GetSelectionMapMasterByLinkedItemUID API"
 echo "=========================================="
 echo ""
 echo "Test 1: Check for Price List 4094-PL (should find existing mapping)"
-echo "URL: http://localhost:8000/api/Mapping/GetSelectionMapMasterByLinkedItemUID?linkedItemUID=4094-PL"
+echo "URL: https://multiplex-promotions-api.winitsoftware.com/api/Mapping/GetSelectionMapMasterByLinkedItemUID?linkedItemUID=4094-PL"
 echo ""
 
-curl -s "http://localhost:8000/api/Mapping/GetSelectionMapMasterByLinkedItemUID?linkedItemUID=4094-PL" \
+curl -s "https://multiplex-promotions-api.winitsoftware.com/api/Mapping/GetSelectionMapMasterByLinkedItemUID?linkedItemUID=4094-PL" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $TOKEN" | python3 -m json.tool
 
 echo ""
 echo "=========================================="
 echo "Test 2: Check for CLASS_GROUP_1757387290583 (should find existing mapping)"
-echo "URL: http://localhost:8000/api/Mapping/GetSelectionMapMasterByLinkedItemUID?linkedItemUID=CLASS_GROUP_1757387290583"
+echo "URL: https://multiplex-promotions-api.winitsoftware.com/api/Mapping/GetSelectionMapMasterByLinkedItemUID?linkedItemUID=CLASS_GROUP_1757387290583"
 echo ""
 
-curl -s "http://localhost:8000/api/Mapping/GetSelectionMapMasterByLinkedItemUID?linkedItemUID=CLASS_GROUP_1757387290583" \
+curl -s "https://multiplex-promotions-api.winitsoftware.com/api/Mapping/GetSelectionMapMasterByLinkedItemUID?linkedItemUID=CLASS_GROUP_1757387290583" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $TOKEN" | python3 -m json.tool
 
 echo ""
 echo "=========================================="
 echo "Test 3: Check for non-existent item (should return 404 or null)"
-echo "URL: http://localhost:8000/api/Mapping/GetSelectionMapMasterByLinkedItemUID?linkedItemUID=NONEXISTENT_12345"
+echo "URL: https://multiplex-promotions-api.winitsoftware.com/api/Mapping/GetSelectionMapMasterByLinkedItemUID?linkedItemUID=NONEXISTENT_12345"
 echo ""
 
-curl -s "http://localhost:8000/api/Mapping/GetSelectionMapMasterByLinkedItemUID?linkedItemUID=NONEXISTENT_12345" \
+curl -s "https://multiplex-promotions-api.winitsoftware.com/api/Mapping/GetSelectionMapMasterByLinkedItemUID?linkedItemUID=NONEXISTENT_12345" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $TOKEN" | python3 -m json.tool

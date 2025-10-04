@@ -57,7 +57,7 @@ namespace Winit.Shared.Models.Common
             //    //ApiBaseUrl = "http://192.168.99.2/WINITAPIPUBLISHED/api/";
             //    //ApiDataBaseUrl = "http://192.168.99.2/WINITAPIPUBLISHED/";
             //    //ApiBaseUrl = "https://localhost:5001/api/";
-            ApiBaseUrl = "http://localhost:8000/api/";
+            ApiBaseUrl = "https://multiplex-promotions-api.winitsoftware.com/api/";
                 ApiDataBaseUrl = "http://localhost:8000/";
             //    AppImagePath = "https :///M:/prem/app/WINITAPI/";
 

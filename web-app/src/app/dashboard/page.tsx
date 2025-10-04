@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from 'next/link';
-import { Building2, Store, Warehouse, Package, Users, ArrowRight } from 'lucide-react';
+import { Building2, Store, Warehouse, Package, Users, ArrowRight, Truck } from 'lucide-react';
 
 const modules = [
   {
@@ -39,6 +39,20 @@ const modules = [
     icon: Users,
     href: '/administration/team-management',
     color: 'bg-indigo-500',
+  },
+  {
+    title: 'Delivery Operations',
+    description: 'Access delivery dashboard and manage delivery operations',
+    icon: Truck,
+    href: '/delivery/delivery-dashboard',
+    color: 'bg-cyan-500',
+  },
+  {
+    title: 'Stock Receiving',
+    description: 'Access manager dashboard and stock receiving operations',
+    icon: Package,
+    href: '/manager/stock-receiving-dashboard',
+    color: 'bg-teal-500',
   },
 ];
 

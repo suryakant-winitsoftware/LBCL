@@ -106,7 +106,7 @@ class PlanogramFileService {
     try {
       // Get base URL from environment or default
       const baseUrl =
-        process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+        process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
 
       // Remove /api suffix to get the static file server base URL
       const staticUrl = baseUrl.replace("/api", "");

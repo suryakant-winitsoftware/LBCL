@@ -471,7 +471,7 @@ export default function SkuSequencingPage() {
       };
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'}/SKU/SelectAllSKUDetailsWebView`,
+        `${process.env.NEXT_PUBLIC_API_URL || 'https://multiplex-promotions-api.winitsoftware.com/api'}/SKU/SelectAllSKUDetailsWebView`,
         {
           method: 'POST',
           headers: {
@@ -805,7 +805,7 @@ export default function SkuSequencingPage() {
         };
 
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'}/SKU/SelectAllSKUDetailsWebView`,
+          `${process.env.NEXT_PUBLIC_API_URL || 'https://multiplex-promotions-api.winitsoftware.com/api'}/SKU/SelectAllSKUDetailsWebView`,
           {
             method: 'POST',
             headers: {

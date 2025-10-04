@@ -59,7 +59,7 @@ export interface ProductMasterData {
 
 class ProductSharedService {
   private baseURL =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
 
   // Get all products
   async getAllProducts(): Promise<SharedProduct[]> {

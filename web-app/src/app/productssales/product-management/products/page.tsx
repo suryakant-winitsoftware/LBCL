@@ -286,7 +286,7 @@ export default function ManageSKUsPage() {
 
         const response = await fetch(
           `${
-            process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+            process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
           }/SKU/SelectAllSKUDetailsWebView`,
           {
             method: "POST",
@@ -628,7 +628,7 @@ export default function ManageSKUsPage() {
       console.log("Fetching ALL SKU images from database...");
       const response = await fetch(
         `${
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+          process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
         }/FileSys/SelectAllFileSysDetails`,
         {
           method: "POST",
@@ -815,7 +815,7 @@ export default function ManageSKUsPage() {
                 const countResponse = await fetch(
                   `${
                     process.env.NEXT_PUBLIC_API_URL ||
-                    "http://localhost:8000/api"
+                    "https://multiplex-promotions-api.winitsoftware.com/api"
                   }/SKU/SelectAllSKUDetailsWebView`,
                   {
                     method: "POST",
@@ -874,7 +874,7 @@ export default function ManageSKUsPage() {
                   const batchResponse = await fetch(
                     `${
                       process.env.NEXT_PUBLIC_API_URL ||
-                      "http://localhost:8000/api"
+                      "https://multiplex-promotions-api.winitsoftware.com/api"
                     }/SKU/SelectAllSKUDetailsWebView`,
                     {
                       method: "POST",

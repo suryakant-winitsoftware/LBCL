@@ -1221,7 +1221,7 @@ export function RouteUserForm({
       // Use the correct API endpoint
       const response = await fetch(
         `${
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+          process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
         }/MaintainUser/SelectMaintainUserDetailsByUID?empUID=${empId}`,
         {
           method: "GET",
@@ -2034,7 +2034,7 @@ export function RouteUserForm({
       // Call the API using the same endpoint as web portal
       const response = await fetch(
         `${
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+          process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
         }/MaintainUser/CUDEmployee`,
         {
           method: "POST",
@@ -2196,7 +2196,7 @@ export function RouteUserForm({
 
           const routeResponse = await fetch(
             `${
-              process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+              process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
             }/RouteUser/CreateRouteUser`,
             {
               method: "POST",

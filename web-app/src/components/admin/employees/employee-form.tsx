@@ -293,7 +293,7 @@ export function EmployeeForm({
       // Call the API using the same endpoint as web portal
       const response = await fetch(
         `${
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+          process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
         }/MaintainUser/CUDEmployee`,
         {
           method: "POST",

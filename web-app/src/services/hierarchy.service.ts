@@ -48,7 +48,7 @@ export interface PagedResponse<T> {
 
 class HierarchyService {
   private baseURL =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
 
   /**
    * Get ALL hierarchy types dynamically from database

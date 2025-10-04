@@ -48,14 +48,14 @@ namespace Winit.Shared.Models.Common
             if (environment == EnvironmentName.Local)
             {
                 //Local
-                ApiBaseUrl = "http://localhost:8000/api/";
+                ApiBaseUrl = "https://multiplex-promotions-api.winitsoftware.com/api/";
                 ApiDataBaseUrl = "http://localhost:8000/";
                 RabbitMqueueBaseUrl = "https://localhost:7164/api/";
             }
             else if (environment == EnvironmentName.Development)
             {
                 //Dev - Updated to use local API
-                ApiBaseUrl = "http://localhost:8000/api/";
+                ApiBaseUrl = "https://multiplex-promotions-api.winitsoftware.com/api/";
                 ApiDataBaseUrl = "http://localhost:8000/";
                 RabbitMqueueBaseUrl = "https://farmely-dev.winitsoftware.com/PostingAPI/api/";
 

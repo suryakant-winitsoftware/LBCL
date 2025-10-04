@@ -137,7 +137,7 @@ export default function SettingsPage() {
       // Use correct production endpoint: /api/Setting/SelectAllSettingDetails
       // This gets all settings as key-value pairs
       const API_BASE_URL =
-        process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+        process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
       const systemResponse = await fetch(
         `${API_BASE_URL}/Setting/SelectAllSettingDetails`,
         {

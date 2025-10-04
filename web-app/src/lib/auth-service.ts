@@ -16,7 +16,7 @@ class AuthService {
   private readonly REFRESH_TOKEN_KEY = "winit_refresh_token";
   private readonly USER_KEY = "user_info"; // Changed to match the working user key
   private readonly API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
 
   // Production Authentication Method
   async login(credentials: LoginCredentials): Promise<LoginResponse> {

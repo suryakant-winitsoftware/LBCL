@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\CollectionModule\Winit.Modules.CollectionModule.BL\Winit.Modules.CollectionModule.BL.csproj" />
+    <ProjectReference Include="..\..\CollectionModule\Winit.Modules.CollectionModule.Model\Winit.Modules.CollectionModule.Model.csproj" />
+    <ProjectReference Include="..\..\ReturnOrder\Winit.Modules.ReturnOrder.BL\Winit.Modules.ReturnOrder.BL.csproj" />
+    <ProjectReference Include="..\..\ReturnOrder\Winit.Modules.ReturnOrder.Model\Winit.Modules.ReturnOrder.Model.csproj" />
+    <ProjectReference Include="..\..\SalesOrder\Winit.Modules.SalesOrder.BL\Winit.Modules.SalesOrder.BL.csproj" />
+    <ProjectReference Include="..\..\SalesOrder\Winit.Modules.SalesOrder.Model\Winit.Modules.SalesOrder.Model.csproj" />
+    <ProjectReference Include="..\Winit.Modules.Printing.Model\Winit.Modules.Printing.Model.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+</Project>

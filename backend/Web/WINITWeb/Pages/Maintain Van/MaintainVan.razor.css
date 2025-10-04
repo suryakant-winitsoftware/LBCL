@@ -1,0 +1,52 @@
+﻿body {
+    
+}
+<style >
+
+
+.storeupper {
+    background-color: #f0f0f0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.control-label {
+    font-weight: bold;
+    color: #003898;
+}
+
+.form-control {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.col-md-4 {
+    float: left;
+    width: 33.33%;
+}
+
+    .col-md-4 label,
+    .col-md-4 input {
+        display: block;
+    }
+
+    .col-md-4 label {
+        margin-top: 10px;
+    }
+
+    .col-md-4 input[type="text"] {
+        padding: 10px;
+    }
+
+    .col-md-4 .MudButton {
+        margin-top: 10px;
+    }
+
+</style >
+

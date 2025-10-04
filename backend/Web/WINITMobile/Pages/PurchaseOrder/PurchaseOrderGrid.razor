@@ -1,0 +1,172 @@
+﻿@using System.ComponentModel.DataAnnotations
+@using System.Linq
+@using Winit.Shared.CommonUtilities.Common
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+<div class="div1 ">
+    <table>
+        <!-- Table header content -->
+        <thead>
+        <tr>
+            @if (IsNewOrder)
+            {
+                <th >
+                    <input type="checkbox" @onchange="HandleRowSelectAll" checked="@IsSelectAll"/>
+                </th>
+            }
+            <th >S.No</th>
+            <th >Item Code</th>
+            <th  style="@(DisplayBilledAndCancelledQty ? "" : "width:37%;")">Model
+                Description / Name
+            </th>
+            @if (IsForApproval)
+            {
+                <th >
+                    Requested Qty
+                </th>
+            }
+            <th >
+                @(IsForApproval ? "Approved" : "Order") Qty
+            </th>
+            <th >Dealer Price</th>
+            <th  >Approved
+                Price (L)
+            </th>
+            <th  >Unit Discount</th>
+            <th  >Billing Price</th>
+            <th >Total Amount</th>
+            @if (DisplayBilledAndCancelledQty)
+            {
+                <th  style="text-align:center;">Billed Qty</th>
+                <th  style="text-align:center;">Cancelled Qty</th>
+            }
+                @if (_appUser.Role.HasP1Access || _appUser.Role.HasP2Access || _appUser.Role.HasP3Access)
+            {
+                <th >
+                    Action
+                </th>
+            }
+        </tr>
+        </thead>
+
+        <!-- Table row template -->
+        <tbody class="cls_td_blue">
+        @if (DisplayedSKUList != null && DisplayedSKUList.Any())
+        {
+            @foreach (var item in DisplayedSKUList)
+            {
+                <tr class="@(IsForApproval && item.MarginUnitValue < 0 ? "cls_tr_red" : "")">
+                    @if (IsNewOrder)
+                    {
+                        <td >
+                            <input type="checkbox" @bind="@item.IsSelected"/>
+                        </td>
+                    }
+                    <td >
+                        @item.LineNumber
+                    </td>
+                    <td >
+                        <label style="margin-bottom:0px; font-size:10px;color:#000; "> @item.SKUCode </label>
+                    </td>
+                    <td 
+                        style="@(DisplayBilledAndCancelledQty ? "" : "width:37%;")">
+                            <label style="margin:0px; font-size:10px;color:#000; ">
+                            <span class="cls_div1_table_span">@item.L2</span><br/>
+                            [@item.ModelCode] @item.SKUName
+                        </label>
+                    </td>
+                    @if (IsForApproval)
+                    {
+                        <td >
+                            @CommonFunctions.RoundForSystem(item.RequestedQty, 0)
+                        </td>
+                    }
+                    <td >
+                        @* <NumberInput *@
+                        @*     @bind-Value="@item.inputQty" *@
+                        @*     Max="@(IsForApproval ? (int)item.RequestedQty : int.MaxValue)" *@
+                        @*     Min="0" *@
+                        @*     class="cls_select2_button" *@
+                        @*     Disabled="@DisableQtyField" *@
+                        @*     AfterQtyChanged="(e) => {SelectedProduct = item; OnQtyChange(e);}"/> *@
+                        <NumberInput
+                            Value="@item.inputQty"
+                            ValueExpression="@(() => item.inputQty)"
+                            Max="@(IsForApproval ? (int)item.RequestedQty : int.MaxValue)"
+                            Min="0"
+                            class="cls_select2_button"
+                            Disabled="@DisableQtyField"
+                            AfterQtyChanged="(e) => {SelectedProduct = item; OnQtyChange(e);}"/>
+
+                    </td>
+                    <td  >
+                        @CommonFunctions.FormatNumberInIndianStyle(item.DpPrice, 0)
+                    </td>
+                    <td   >
+                        @CommonFunctions.FormatNumberInIndianStyle(item.UnitPrice, _appSetting.RoundOffDecimal)
+                    </td>
+                    <td   >
+                        @CommonFunctions.FormatNumberInIndianStyle(item.UnitDiscount, _appSetting.RoundOffDecimal)
+                    </td>
+                    <td   >
+                        @CommonFunctions.FormatNumberInIndianStyle(item.EffectiveUnitPrice, _appSetting.RoundOffDecimal)
+                    </td>
+                    <td   >
+                        @CommonFunctions.FormatNumberInIndianStyle(item.NetAmount, _appSetting.RoundOffDecimal)
+
+                    </td>
+                    @if (DisplayBilledAndCancelledQty)
+                    {
+                        <td   >
+                            @CommonFunctions.RoundForSystemWithoutZero(item.BilledQty, 0)
+                        </td>
+                        <td   >
+                            @CommonFunctions.RoundForSystemWithoutZero(item.CancelledQty, 0)
+                        </td>
+                    }
+                        @if (_appUser.Role.HasP1Access || _appUser.Role.HasP2Access || _appUser.Role.HasP3Access)
+                    {
+                        <td >
+                            <img alt="view" src="Images/view.png"
+                                 @onclick="() => {SelectedProduct = item; ShowProvisioningPopUp = true;}">
+                        </td>
+                    }
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="14" style="text-align: center; font-weight:600;color:red;font-size:12px;">No Records
+                    Found
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+@if (IsDDLOpen)
+{
+    <Winit.UIComponents.Common.CustomControls.DropDown UniqueUID="@SelectedProduct?.UID" DataSource="UOMselectionItems"
+                                                       IsButtonVisible="false" IsSearchable="false"
+                                                       Title=@Localizer["uom"] OnSelect="OnUOMSelection"/>
+}
+@if (IsCloneItemOpen)
+{
+    <Winit.UIComponents.Common.CustomControls.DropDown UniqueUID="@SelectedProduct?.UID"
+                                                       DataSource="UOMCloneselectionItems" IsButtonVisible="false"
+                                                       IsSearchable="false" Title=@Localizer["uom"]
+                                                       OnSelect="SelectedAddUOMType"/>
+}
+@if (ShowProvisioningPopUp)
+{
+    <ProvisioningDetailsPopUp
+        OnCloseClick="() => ShowProvisioningPopUp = false"
+        OnUpdateClick="OnProvisionPopUpUpdateClick"
+        PurchaseOrderLineProvisions="SelectedProduct.PurchaseOrderLineProvisions"
+        Margin="SelectedProduct.MarginUnitValue"
+        EffectiveUnitPrice="SelectedProduct.EffectiveUnitPrice"
+        MinSellingPrice="SelectedProduct.MinSellingPrice"
+        DisableFields="DisableQtyField"
+        Qty="SelectedProduct.FinalQty"/>
+}
+

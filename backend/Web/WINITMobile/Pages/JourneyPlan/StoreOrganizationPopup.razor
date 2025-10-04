@@ -1,0 +1,197 @@
+﻿@page "/StoreOrganizations"
+@using System.Collections.Generic
+@using System.Threading.Tasks
+@inject IJSRuntime JSRuntime
+@implements IDisposable
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+@if (IsOpnedScoreCredit)
+{
+    <div class="modal fade show" tabindex="-1" role="dialog" style="display: block;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@Localizer["sales_organization"]</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="HidePopup">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="padding:0px;">
+                    <div style="width:100%;float:left;" class="cls_sales_org_popup_main">
+                        <div class="cls_sales_org_popup">
+                            <div class="cls_sales_org_popup_top">
+                                <div class="cls_sales_org_popup_top_left"><img style="width:35px;" src="/Images/p1.png"></div>
+                                <div class="cls_sales_org_popup_top_right">
+                                    <h3>@SelectedCustomer.Name - @SelectedCustomer.Code</h3>
+                                    <label>@SelectedCustomer.Code</label><span><img src="/Images/dot1.png"></span>
+                                </div>
+                                <p>@SelectedCustomer.Address</p>
+                            </div>
+                            <div class="cls_sales_org_popup_bottom">
+                                <div class="cls_sales_org_popup_bottom_left"><img style="width:25px;" src="/Images/ic2.png"></div>
+                                <div class="cls_sales_org_popup_bottom_cen">
+                                    <h3>@* @SelectedCustomer.ManagerName *@ @Localizer["managername"]</h3>
+                                    <label>@Localizer["manager"]</label><span><img src="/Images/dot1.png"></span><p>@* @SelectedCustomer.ManagerContact *@ ManagerContact</p>
+                                </div>
+                                <div class="cls_sales_org_popup_bottom_right"><img @onclick="OpenDialPad" src="/Images/ic3.png"></div>
+                            </div>
+                        </div>
+                        <div class="cls_sales_org_popup1">
+                            <h3>@Localizer["select_sales_organization"]</h3>
+                            @foreach (var storeCredit in StoreCreditList)
+                            {
+                                <div @onclick="() => ToggleCustomerSelection(storeCredit)" class="@(IsCustomerSelected(storeCredit) ? "cls_sales_org_popup1_rep cls_sel_customer_popup3_sel" : "cls_sales_org_popup1_rep")">
+                                    <div class="cls_sales_org_popup1_rep_top">
+                                        <h3>@Localizer["sales_org"] @storeCredit.OrgUID</h3>
+                                    </div>
+                                    <div class="cls_sales_org_popup1_rep_bottom">
+                                        <div class="cls_sales_org_popup1_rep_bottom_rep">
+                                            <label>@Localizer["type"]</label>
+                                            <p>@storeCredit.CreditType</p>
+                                        </div>
+                                        <div class="cls_sales_org_popup1_rep_bottom_rep">
+                                            <label>@Localizer["credit_limit"]</label>
+                                            <p>@storeCredit.CreditLimit</p>
+                                        </div>
+                                        <div class="cls_sales_org_popup1_rep_bottom_rep">
+                                            <label>@Localizer["available_limit"]</label>
+                                            <p>@storeCredit.AvailableBalance</p>
+                                        </div>
+                                        <div class="cls_sales_org_popup1_rep_bottom_rep">
+                                            <label>@Localizer["overdue"]</label>
+                                            <p>@storeCredit.OverdueBalance</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div style="width:100%;float:left;">
+                    <button type="button" class="cls_btn_full_width" @onclick="Proceed">@Localizer["proceed"]</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public bool IsOpnedScoreCredit { get; set; }
+
+    [Parameter]
+    public Winit.Modules.Store.Model.Interfaces.IStoreItemView SelectedCustomer { get; set; }
+
+    [Parameter]
+    public List<Winit.Modules.Store.Model.Interfaces.IStoreCredit> StoreCreditList { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> IsVisibleChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<Winit.Modules.Store.Model.Interfaces.IStoreCredit> StoreCreditSelected { get; set; }
+    private Winit.Modules.Store.Model.Interfaces.IStoreCredit SelectedStoreCredit { get; set; }
+
+    private void HidePopup()
+    {
+        IsOpnedScoreCredit = false;
+        IsVisibleChanged.InvokeAsync(IsOpnedScoreCredit);
+    }
+
+    private async void OpenDialPad()
+    {
+        try
+        {
+            // Check and request permissions
+            var status = await Permissions.CheckStatusAsync<Permissions.Phone>();
+            if (status != PermissionStatus.Granted)
+            {
+                status = await Permissions.RequestAsync<Permissions.Phone>();
+            }
+
+            // If permission is granted, open the dial pad
+            if (status == PermissionStatus.Granted)
+            {
+                // Additional check to ensure that the feature is available on the current platform
+                if (PhoneDialer.Default.IsSupported)
+                {
+                    PhoneDialer.Default.Open("9436742566");
+                }
+                else
+                {
+                    await _alertService.ShowErrorAlert("error", "Phone Dialer is not supported on this device.");
+                }
+            }
+            else
+            {
+
+                await _alertService.ShowErrorAlert("error", "Permission not granted to use the phone dialer.");
+            }
+        }
+        catch (FeatureNotSupportedException ex)
+        {
+            await _alertService.ShowErrorAlert("Phone Dialer not supported", ex.Message);
+
+        }
+        catch (PermissionException ex)
+        {
+            await _alertService.ShowErrorAlert("Permission not granted", ex.Message);
+        }
+        catch (Exception ex)
+        {
+            await _alertService.ShowErrorAlert("An error occurred", ex.Message);
+        }
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        _loadingService.ShowLoading("Loading...");
+        try
+        {
+
+
+        }
+        catch (Exception ex)
+        {
+            await  _alertService.ShowErrorAlert("Execption", ex.Message);
+        }
+        finally
+        {
+            _loadingService.HideLoading();
+        }
+        LoadResources(null, _languageService.SelectedCulture);
+    }
+    private void SelectStoreCredit(Winit.Modules.Store.Model.Interfaces.IStoreCredit storeCredit)
+    {
+        StoreCreditSelected.InvokeAsync(storeCredit);
+    }
+
+    private void ToggleCustomerSelection(Winit.Modules.Store.Model.Interfaces.IStoreCredit storeCredit)
+    {
+        if (SelectedStoreCredit == storeCredit)
+        {
+            SelectedStoreCredit = null; 
+        }
+        else
+        {
+            SelectedStoreCredit = storeCredit; 
+        }
+    }
+
+    private bool IsCustomerSelected(Winit.Modules.Store.Model.Interfaces.IStoreCredit storeCredit)
+    {
+        return SelectedStoreCredit == storeCredit;
+    }
+    private void Proceed()
+    {
+        if (SelectedStoreCredit != null)
+        {
+            StoreCreditSelected.InvokeAsync(SelectedStoreCredit);
+            SelectedStoreCredit = null; // Clear selection after proceed
+            HidePopup();
+        }
+    }
+
+    public void Dispose()
+    {
+        // Dispose logic if needed
+    }
+}

@@ -1,0 +1,42 @@
+﻿@page "/printertest"
+@using Microsoft.JSInterop
+@inherits ComponentBase
+@inject IJSRuntime JSRuntime
+@using Winit.Modules.Printing.BL.Classes
+@using Winit.Modules.SalesOrder.BL.Classes;
+@inject Winit.Modules.Printing.Model.Classes.BluetoothDeviceInfo _btinfo;
+
+
+@if (IsInitialized)
+{
+    <p>Printer Brand:  @_storageHelper.GetStringFromPreferences("PrinterTypeOrBrand")</p>
+    <p>Printer Paper Size:  @_storageHelper.GetStringFromPreferences("PrinterPaperSize")</p>
+    <p>Printer Mac Address:  @_storageHelper.GetStringFromPreferences("PrinterMacAddresses")</p>
+    <div style="width:100%;float:left">
+        <div class="cls_log_main66"><button @onclick="() => FindPrinterAvailability()" class="cls_btn_primary">Check Printer</button></div>
+    </div>
+
+
+    @* <div class="cls_print_page">
+        <p>Bluetooth Device name: @selectedBluetoothDeviceName</p>
+        <p>Bluetooth MAC Address: @selectedBluetoothDeviceMacAddress</p>
+        <p>
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="PrintersBrands" Title="Printer Brand" IsButtonVisible=true OnSelect="HandlePrinterTypeSelection" />
+        </p>
+        <p>
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="PrintersSizes" Title="Printer Size" IsButtonVisible=true OnSelect="HandlePrinterSizeSelection" />
+        </p>
+        <p>@Responcestring</p>
+
+
+        <p>  <Winit.UIComponents.Common.CustomControls.DropDown DataSource="devicesListSelectionItems" Title="Device" IsButtonVisible=true OnSelect="DeviceItemClicked" /></p>
+
+        <p> <InputText @bind-Value="inputText"></InputText></p> 
+        <div style="width:100%;float:left">
+            <div class="cls_log_main66"><button @onclick="() => PrintText(inputText)" class="cls_btn_primary">Print check</button></div>
+        </div>
+    
+    </div> *@
+}
+   
+

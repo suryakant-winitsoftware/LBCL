@@ -1,0 +1,43 @@
+﻿@using Microsoft.JSInterop
+@using Winit.UIModels.Common.GraphModels
+@using Newtonsoft.Json
+@inject IJSRuntime jsRunTime
+
+<div class="cls_canvas_outline" >
+    <canvas id="myDoughNutGraph"></canvas>
+</div>
+
+
+
+@code {
+    [Parameter]
+    public List<DoughNutGraphModel> DataSource { get; set; } = new List<DoughNutGraphModel>();
+
+    private string backgroundColor = "#FFFFFF";
+
+    bool isPageRendered { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // await RenderChart();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            isPageRendered = true;
+            await RenderChart();
+            // Call the JavaScript function to render the chart
+        }
+    }
+
+    public async Task RenderChart()
+    {
+        if (isPageRendered)
+        {
+            var jsonData = JsonConvert.SerializeObject(DataSource);
+            await jsRunTime.InvokeVoidAsync("PieGraphRender", "myDoughNutGraph", jsonData, backgroundColor);
+        }
+    }
+}

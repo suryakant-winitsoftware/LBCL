@@ -1,0 +1,26 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+using Winit.Modules.Store.Model.Classes;
+using Winit.Modules.Store.Model.Interfaces;
+using Winit.Shared.Models.Common;
+using Winit.Shared.Models.Constants;
+using Winit.Shared.Models.Enums;
+
+namespace Winit.Modules.Store.BL.Interfaces
+{
+    public interface IStoreCreditBL
+    {
+        Task<PagedResponse<Model.Interfaces.IStoreCredit>> SelectAllStoreCredit(List<SortCriteria> sortCriterias, int pageNumber,
+           int pageSize, List<FilterCriteria> filterCriterias, bool isCountRequired);
+        Task<Model.Interfaces.IStoreCredit> SelectStoreCreditByUID(string UID);
+        Task<int> CreateStoreCredit(Winit.Modules.Store.Model.Interfaces.IStoreCredit storeCredit);
+        Task<int> UpdateStoreCredit(Model.Interfaces.IStoreCredit storeCredit);
+        Task<int> UpdateStoreCreditStatus(List<IStoreCredit> storeCredit);
+        Task<IStoreCredit> SelectStoreCreditByStoreUID(string StoreUID);
+        Task<int> DeleteStoreCredit(string UID);
+        Task<List<IStoreCreditLimit>> GetCurrentLimitByStoreAndDivision(List<string> storeUIDs, string divisionUID);
+        Task<List<IPurchaseOrderCreditLimitBufferRange>> GetPurchaseOrderCreditLimitBufferRanges();
+    }
+}

@@ -1,0 +1,45 @@
+﻿@page "/ManagePresalesOrders"
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize]
+@using Winit.Shared.Models.Common
+@using Winit.UIComponents.Common.CustomControles
+@inject Winit.Modules.SalesOrder.BL.Interfaces.IManageSalesOrdersViewModel _manageSalesOrdersViewModel;
+<PageTitle>Manage Presales Orders</PageTitle>
+@using Winit.UIComponents.Web.Filter
+@using Winit.UIModels.Common.Filter
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+
+<div>
+  @*   <button class="cls_add_new_sec" style="float:right;margin-right:0px" @onclick="ShowFilter">@Localizer["filter"]</button>
+    <Filter @ref="filterRef" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+            OnFilterApplied=@OnFilterApply /> *@
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+                         OnFilterApplied="@OnFilterApply" />
+</div>
+
+<div class="cls_export_main">
+    <button class="cls_add_new_sec dn">@Localizer["export_to_excel"]</button>
+    <button class="cls_add_new_sec dn">@Localizer["export_to_csv"]</button>
+    <button class="cls_add_new_sec dn">@Localizer["export_to_pdf"]</button>
+</div>
+
+<Tabs TabItems="TabSelectionItems" OnTabSelect="OnTabSelect"></Tabs>
+
+<div class="cls_export_main">
+    <button class="cls_add_new_sec" @onclick="CreatePresales">@Localizer["create_pre_sales_order"]</button>
+    <button class="cls_add_new_sec dn">@Localizer["select_all_on_page"]</button>
+    <button class="cls_add_new_sec dn">@Localizer["clear_all_on_page"]</button>
+    <button class="cls_add_new_sec dn">@Localizer["print_selected_order"]</button>
+</div>
+
+@if (IsLoaded)
+{
+    <Winit.UIComponents.Web.Table.TableGridView IsFirstColumnCheckbox="true" AfterCheckBoxSelection="Product_AfterCheckBoxSelection" Columns="DataGridColumns" DataSource="_manageSalesOrdersViewModel.ManageSalesOrderList" OnSort="OnSortApply" />
+    @*     <Winit.UIComponents.Web.Paging.Paging CurrentPage="_deliveredPreSalesViewModel.PageNumber" OnPageChange="_deliveredPreSalesViewModel.PageIndexChanged" PageSize="_deliveredPreSalesViewModel.PageSize" TotalItems="_deliveredPreSalesViewModel.TotalItemsCount" />
+ *@
+}
+
+@code {
+
+}

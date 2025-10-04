@@ -1,0 +1,688 @@
+﻿@page "/SellInSchemeBranchView"
+@using Winit.Modules.SKU.Model.Interfaces
+@using Winit.Modules.Scheme.BL.Classes
+@using Winit.Modules.Scheme.BL.Interfaces
+@using Winit.Modules.Scheme.Model.Constants
+@using Winit.UIComponents.Common.WinitDatepicker
+@inject ISellInSchemeViewModel _viewModel
+@inherits SchemeBaseComponent
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" />
+@if (_viewModel.IsIntialize)
+{
+    <div class="cls_main1">
+        <div class="c10_cls_section">
+            <div class="cls_section_1">
+                <div class="cls_section_1_outline">
+                    @*  <div class="cls_container_div2">
+                <!--!--><label class="cls_section_label">Select Channel Partner</label>
+                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="@_viewModel.ChannelPartner"
+                Title="Channel Partner"
+                IsButtonVisible=true
+                Disabled=@(DisableChannelPartner||_viewModel._SellInSchemeDTO?.SellInSchemeLines?.Count>0)
+                OnSelect="GetSKUsAndPriceList_OnChannelpartnerSelection" />
+                </div> *@
+
+
+                    <div class="cls_container_div2" style="margin-top: 10px;">
+                        <label class="cls_section_div_purchase2_label">Scheme code</label>
+                        <label class="cls_sellin_label2">@_viewModel._SellInSchemeDTO.SellInHeader.Code</label>
+                    </div>
+
+
+                </div>
+            </div>
+
+            <div class="cls_section_2" style="margin-top:22px;width:32%;">
+                <div class="cls_section_2_outline1">
+                    <p><span class="cls_section_div_purchase2_span">*</span> Request Type</p>
+                    <div class="cls_container_div3">
+                        <div class="cls_section2_sub">
+                            <input type="radio" name="RequestType" id="RequestType1" disabled=@(!_viewModel.IsNew)
+                                   checked="@(_viewModel._SellInSchemeDTO!.SellInHeader.MaxDealCount == 1)"
+                                   @onclick=@(() => _viewModel._SellInSchemeDTO.SellInHeader.MaxDealCount = 1)>
+                            <label>One Time</label>
+                        </div>
+                        <div class="cls_section2_sub">
+                            <input type="radio" name="RequestType" id="RequestType2" disabled=@(!_viewModel.IsNew)
+                                   checked="@(_viewModel._SellInSchemeDTO.SellInHeader.MaxDealCount == 9999)"
+                                   @onclick=@(() => _viewModel._SellInSchemeDTO.SellInHeader.MaxDealCount = 9999)>
+                            <label>Multiple Times</label>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+
+            <div class="cls_section_2">
+                <div class="cls_section_2_outline">
+                    <p>Validity</p>
+                    <div class="cls_section2_sub">
+                        <input type="checkbox" name="TillMonthEnd"
+                               checked="@_viewModel._SellInSchemeDTO.SellInHeader.IsTillMonthEnd"
+                               disabled=@(DisableTillMonthEnd) @onclick=@OnTillMonthEndClick />
+                        <label for="TillMonthEnd">Till Month End</label>
+                    </div>
+
+                    <div class="cls_container_div1">
+                        <div class="cls_section2_sub">
+                            <label><span class="cls_section_div_purchase2_span">*</span> Start Date</label>
+
+                            <input type="date" class="cls_date1" disabled=@DisableStartDate
+                                   min="@minStartDate.ToString("yyyy-MM-dd")" max="@maxStartDate.ToString("yyyy-MM-dd")"
+                                   @bind=StartDate>
+                            @*  <WinitCalendar id="1" selectedDate="@_viewModel._SellInSchemeDTO.SellInHeader.ValidFrom?.ToString()"
+                        OnChange="@((e)=>_viewModel._SellInSchemeDTO.SellInHeader.ValidFrom = CommonFunctions.GetDate(e?.SelectedValue))"
+                        MinDate="@DateTime.Now.AddDays(1).ToString()"></WinitCalendar> *@
+                        </div>
+
+                        <div class="cls_section2_sub">
+                            <label><span class="cls_section_div_purchase2_span">*</span> End Date</label>
+                            <input type="date" disabled=@DisableEndDate min="@minEndDate.ToString("yyyy-MM-dd")"
+                                   max="@_maxEndDate?.ToString("yyyy-MM-dd")" class="cls_date1" oninput="return false"
+                                   @bind=_viewModel._SellInSchemeDTO.SellInHeader.EndDate>
+                            @*  <WinitCalendar id="2" selectedDate="@_viewModel._SellInSchemeDTO.SellInHeader.EndDate?.ToString()"
+                        OnChange="@((e)=>_viewModel._SellInSchemeDTO.SellInHeader.EndDate = CommonFunctions.GetDate(e?.SelectedValue))"
+                        MinDate="@DateTime.Now.AddDays(1).ToString()"></WinitCalendar> *@
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+            </div>
+
+            <div class="cls_section_3" style="display:none">
+                <div class="cls_section_3_outline">
+                    <p>Availability Provision Amount</p>
+                    @if (_iAppUser.Role.HasP2Access)
+                    {
+                        <div class="cls_section_3_div">
+                            <label class="cls_section_3_label">p2 :</label><label class="cls_section_3_label1">₹ @CommonFunctions.RoundForSystem(_viewModel._SellInSchemeDTO!.SellInHeader.AvailableProvision2Amount, _appSetting.RoundOffDecimal)</label>
+                        </div>
+                    }
+                    @if (_iAppUser.Role.HasP3Access)
+                    {
+                        <div class="cls_section_3_div">
+                            <label class="cls_section_3_label">p3 :</label><label class="cls_section_3_label1">₹ @CommonFunctions.RoundForSystem(_viewModel._SellInSchemeDTO!.SellInHeader.AvailableProvision3Amount, _appSetting.RoundOffDecimal)</label>
+                        </div>
+                        <div class="cls_section_3_div">
+                            <label class="cls_section_3_label">s :</label><label class="cls_section_3_label1">₹ @CommonFunctions.RoundForSystem(_viewModel._SellInSchemeDTO!.SellInHeader.StandingProvisionAmount, _appSetting.RoundOffDecimal)</label>
+                        </div>
+                    }
+                </div>
+
+            </div>
+
+        </div>
+
+        @*  <ApplicableToCustomers ChannelPartner="@_viewModel.ChannelPartner"
+    OnChannelPartnerSelect="_viewModel.OnChannelpartnerSelectedUI"
+    BranchDDL="@_viewModel.BranchDDL"
+    OnBranchSelect="_viewModel.OnBranchSelected" IsShowAllCustomersneeded="true"
+    BroadClassificationDDL="_viewModel.BroadClassificationDDL"
+    OnShowAllcustomers="_viewModel.AllCustomersByFilters"
+    OnBroadClassificationSelect="_viewModel.OnBroadClassificationSelected">
+    </ApplicableToCustomers> *@
+        <div class="cls_section">
+            <h3 class="cls_container_p_full">Applicable to Customer</h3>
+
+            <div class="cls_section_div_sku">
+                <label class="cls_section_div_purchase2_label">
+                    <span class="cls_section_div_purchase2_span">*</span>
+                    Broad Classification
+                </label>
+                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="@_viewModel.BroadClassificationDDL"
+                                                                   Disabled="@(!_viewModel.IsNew)"
+                                                                   IsButtonVisible=true IsSearchable="true"
+                                                                   Title="Broad Classification"
+                                                                   _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single"
+                                                                   OnSelect="@((e) => OnBroadClassificationSelected(e))" />
+            </div>
+            <div class="cls_section_div_sku">
+                <label class="cls_section_div_purchase2_label">
+                    <span class="cls_section_div_purchase2_span">*</span>
+                    Branch
+                </label>
+                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="@_viewModel.BranchDDL"
+                                                                   _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single"
+                                                                   IsButtonVisible=true Title="Branch" IsSearchable="true"
+                                                                   Disabled="@(!_viewModel.IsNew || _viewModel.IsBranchDisabled)"
+                                                                   OnSelect="@((e) => _viewModel.OnBranchSelected(e))" />
+            </div>
+            <div class="cls_section_div_sku">
+                <label class="cls_section_div_purchase2_label">Channel Partner</label>
+                @if (_viewModel.IsDisplayChannelPartner)
+                {
+
+                    <Winit.UIComponents.Common.CustomControls.DropDown DataSource="@_viewModel.ChannelPartner"
+                                                                       Title="Channel Partner" IsSearchable="true"
+                                                                       _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Multiple"
+                                                                       IsButtonVisible=false
+                                                                       Disabled="@(!_viewModel.IsNew)"
+                                                                       OnSelect="@((e) => OnChannelpartnerSelectedUI(e))" />
+                }
+                else
+                {
+                    <button class="cls_select2" @onclick="@(() => ShowChannelPartner())">
+                        <label class="cls_select2_label1"> @_viewModel.ChannelPartnerName</label>
+
+                        <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+
+                    </button>
+                }
+            </div>
+
+            <div class="cls_section_div_sku">
+                <a @onclick=@OnShowAllClick class="cls_app_cus_label">All Applicable Channel Partners</a>
+            </div>
+
+            @if (_showAllCustomers)
+            {
+                <PopUpStatic OnCloseClick=@(() => _showAllCustomers = false) DisableOkBtn="true" CancelbtnText="Close">
+                    <div class="cls_popupstatic_div">
+                        @if (stores.Any())
+                        {
+                            @foreach (var store in stores)
+                            {
+                                <label class="cls_popupstatic_label">@($"[{store.Code}]{store.Name}")</label>
+                            }
+                        }
+                        else
+                        {
+                            <label class="cls_popupstatic_label">@($"no records")</label>
+                        }
+
+                    </div>
+                </PopUpStatic>
+            }
+        </div>
+
+
+        <div class="cls_sellin_contianer">
+            <div class="cls_search cls_search_margin_right margin_top">
+                <input type="text" placeholder="Search">
+                <img src="./Images/search_icon.png" width="20px" height="20px">
+            </div>
+            <div>
+                <button class="cls_button_blue " disabled=@(DisableAddProduct) @onclick=@OnAddProduct_Click>
+                    Add
+                    Products
+                </button>
+                <button class="cls_button_blue " disabled="@(!_viewModel.IsNew)" @onclick=@(() => EasyFill = !EasyFill)>Easy Fill</button>
+            </div>
+
+            <WinIt.Pages.DialogBoxes.AddProductDialogBoxV1 T="ISKUV1"
+                                                           DataSource="_viewModel.SKUV1s"
+                                                           L1="@(e => e.L1)"
+                                                           L2="@(e => e.L2)"
+                                                           L3="@(e => e.L3)"
+                                                           L4="@(e => e.L4)"
+                                                           L5="@(e => e.L5)"
+                                                           L6="@(e => e.L6)"
+                                                           L7="@(e => e.Code)"
+                                                           L8="@(e => e.Name)"
+                                                           UID="@(e => e.UID)"
+                                                           DropDownDataSource="_viewModel.SKUAttributeData"
+                                                           OnDropdownValueSelectSKUAtrribute="@(async (e) => await _viewModel._addProductPopUpDataHelper.OnSKuAttributeDropdownValueSelect(e.UID))"
+                                                           FilterAction="_viewModel._addProductPopUpDataHelper.FilterAction"
+                                                           OnCancelClick="() => AddProductDialogBox?.OnCloseClick()"
+                                                           OnOkClick="_viewModel.GetSelectedItems"
+                                                           @ref="AddProductDialogBox"></WinIt.Pages.DialogBoxes.AddProductDialogBoxV1>
+
+            <div class="cls_content_right" style="display:none">
+                <div class="cls_credit">
+                    <p>Credit limit</p>
+                    <span>₹ @CommonFunctions.RoundForSystem(_viewModel.CreditLimit, _appSetting.RoundOffDecimal)</span>
+                </div>
+                <div class="cls_available">
+                    <p>Available limit</p>
+                    <span>@CommonFunctions.RoundForSystem(_viewModel.AvailableLimit, _appSetting.RoundOffDecimal)</span>
+                </div>
+                <div class="cls_outstanding">
+                    <p>Current Outstanding</p>
+                    <span>@CommonFunctions.RoundForSystem(_viewModel.CurrentOutStanding, _appSetting.RoundOffDecimal)0</span>
+                </div>
+                <div class="cls_revisions">
+                    <p>No Of Revisions</p>
+                    <span>This Month</span><label>1</label>
+                    <span>This Year</span><label>20</label>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="cls_container_div1">
+            @if (EasyFill)
+            {
+
+
+                <div class="cls_sellin_outline">
+                    <div class="cls_sellin_outline_con">
+                        <div class="cls_section_purchase_div">
+                            <label class="cls_sellin_toggle_label">
+                                Committed Qty By CP<input type="checkbox"
+                                                          checked="@DiscountApplicableToAllItems.CommittedQtySelected"
+                                                          class="cls_sellin_checkbox"
+                                                          @onclick=@(() => DiscountApplicableToAllItems.CommittedQtySelected = !DiscountApplicableToAllItems.CommittedQtySelected)></input>
+                            </label>
+                            <div class="margin_top">
+                                <Winit.UIComponents.Common.CustomControls.WinitTextBox DebounceInterval="500"
+                                                                                       OnDebounceIntervalElapsed="@((e) => DiscountApplicableToAllItems.CommittedQty = ValidateEnteredIntValue(e))"
+                                                                                       KeyboardType="Winit.Shared.Models.Enums.InputType.Numeric"
+                                                                                       Value="@DiscountApplicableToAllItems.CommittedQty.ToString()"
+                                                                                       IsHideClearButton="true"
+                                                                                       Disabled="@(!DiscountApplicableToAllItems.CommittedQtySelected)"
+                                                                                       Placeholder="Enter here" />
+                            </div>
+                        </div>
+                        <div class="cls_section_purchase_div">
+                            <div class="cls_sellin_toggle_outine">
+                                <label class="cls_sellin_toggle_label">
+                                    Invoice Discount<input type="checkbox"
+                                                           checked="@DiscountApplicableToAllItems.InvoiceDiscountSelected"
+                                                           class="cls_sellin_checkbox"
+                                                           @onclick=@(() => DiscountApplicableToAllItems.InvoiceDiscountSelected = !DiscountApplicableToAllItems.InvoiceDiscountSelected)></input>
+                                </label>
+                                <div class="cls_sellin_cont_toggle">
+                                    <input type="radio" name="@nameof(DiscountApplicableToAllItems)" id="1"
+                                           class="cls_sellin_radio"
+                                           checked="@(DiscountApplicableToAllItems.InvoiceDiscountType == SelleInConstants.Percent)"
+                                           @onclick="@(() => OnDiscountTypeChange_UI(true, SelleInConstants.Percent))" /><label class="cls_sellin_radio_label">
+                                        % /
+                                    </label>
+                                    <input type="radio" name="@nameof(DiscountApplicableToAllItems)" id="2"
+                                           class="cls_sellin_radio"
+                                           checked="@(DiscountApplicableToAllItems.InvoiceDiscountType == SelleInConstants.Value)"
+                                           @onclick="@(() => OnDiscountTypeChange_UI(true, SelleInConstants.Value))" /><label class="cls_sellin_radio_label">₹</label>
+                                </div>
+                            </div>
+                            <div class="margin_top">
+                                <Winit.UIComponents.Common.CustomControls.WinitTextBox DebounceInterval="500"
+                                                                                       OnDebounceIntervalElapsed="@((e) => DiscountApplicableToAllItems.InvoiceDiscount = ValidateEnteredValue(e))"
+                                                                                       KeyboardType="Winit.Shared.Models.Enums.InputType.Numeric"
+                                                                                       Value="@DiscountApplicableToAllItems.InvoiceDiscount.ToString()"
+                                                                                       IsHideClearButton="true"
+                                                                                       Disabled="@(!DiscountApplicableToAllItems.InvoiceDiscountSelected)"
+                                                                                       Placeholder="Enter here" />
+                            </div>
+                        </div>
+                        @if (_iAppUser.Role.HasP1Access)
+                        {
+                            <div class="cls_section_purchase_div">
+                                <div class="cls_sellin_toggle_outine">
+                                    <label class="cls_sellin_toggle_label">
+                                        Credit Note (P1)<input type="checkbox"
+                                                               checked="@DiscountApplicableToAllItems.CreditNoteDiscountSelected"
+                                                               class="cls_sellin_checkbox"
+                                                               @onclick=@(() => DiscountApplicableToAllItems.CreditNoteDiscountSelected = !DiscountApplicableToAllItems.CreditNoteDiscountSelected)></input>
+                                    </label>
+                                    <div class="cls_sellin_cont_toggle">
+                                        <input type="radio" name="DiscountApplicableToAllItems1" id="3"
+                                               class="cls_sellin_radio"
+                                               checked="@(DiscountApplicableToAllItems.CreditNoteDiscountType == SelleInConstants.Percent)"
+                                               @onclick="@(() => OnDiscountTypeChange_UI(false, SelleInConstants.Percent))" /><label class="cls_sellin_radio_label">
+                                            % /
+                                        </label>
+                                        <input type="radio" name="DiscountApplicableToAllItems1" id="4"
+                                               class="cls_sellin_radio"
+                                               checked="@(DiscountApplicableToAllItems.CreditNoteDiscountType == SelleInConstants.Value)"
+                                               @onclick="@(() => OnDiscountTypeChange_UI(false, SelleInConstants.Value))" /><label class="cls_sellin_radio_label">₹</label>
+                                    </div>
+                                </div>
+                                <div class="margin_top">
+                                    <Winit.UIComponents.Common.CustomControls.WinitTextBox DebounceInterval="500"
+                                                                                           OnDebounceIntervalElapsed="@((e) => DiscountApplicableToAllItems.CreditNoteDiscount = ValidateEnteredValue(e))"
+                                                                                           KeyboardType="Winit.Shared.Models.Enums.InputType.Numeric"
+                                                                                           Value="@DiscountApplicableToAllItems.CreditNoteDiscount.ToString()"
+                                                                                           Disabled="@(!DiscountApplicableToAllItems.CreditNoteDiscountSelected)"
+                                                                                           IsHideClearButton="true"
+                                                                                           Placeholder="Enter here" />
+                                </div>
+                            </div>
+                        }
+                        @if (_iAppUser.Role.HasP2Access)
+                        {
+                            <div class="cls_section_purchase_div">
+                                <label class="cls_sellin_toggle_label">
+                                    CN Branch(P2)<input type="checkbox"
+                                                        checked="@DiscountApplicableToAllItems.P2Selected"
+                                                        class="cls_sellin_checkbox"
+                                                        @onclick=@(() => DiscountApplicableToAllItems.P2Selected = !DiscountApplicableToAllItems.P2Selected)></input>
+                                </label>
+                                <div class="margin_top">
+                                    <Winit.UIComponents.Common.CustomControls.WinitTextBox DebounceInterval="500"
+                                                                                           OnDebounceIntervalElapsed="@((e) => DiscountApplicableToAllItems.ProvisionAmount2 = ValidateEnteredValue(e))"
+                                                                                           KeyboardType="Winit.Shared.Models.Enums.InputType.Numeric"
+                                                                                           Value="@DiscountApplicableToAllItems.ProvisionAmount2.ToString()"
+                                                                                           IsHideClearButton="true"
+                                                                                           Disabled="@(!DiscountApplicableToAllItems.P2Selected)"
+                                                                                           Placeholder="Enter here" />
+                                </div>
+                            </div>
+                        }
+                        @if (_iAppUser.Role.HasP3Access)
+                        {
+                            <div class="cls_section_purchase_div">
+                                <label class="cls_sellin_toggle_label">
+                                    CN HO(P3)<input type="checkbox"
+                                                    class="cls_sellin_checkbox"
+                                                    checked="@DiscountApplicableToAllItems.P3Selected"
+                                                    @onclick=@(() => DiscountApplicableToAllItems.P3Selected = !DiscountApplicableToAllItems.P3Selected)></input>
+                                </label>
+
+                                <div class="margin_top">
+                                    <Winit.UIComponents.Common.CustomControls.WinitTextBox DebounceInterval="500"
+                                                                                           OnDebounceIntervalElapsed="@((e) => DiscountApplicableToAllItems.ProvisionAmount3 = ValidateEnteredValue(e))"
+                                                                                           KeyboardType="Winit.Shared.Models.Enums.InputType.Numeric"
+                                                                                           Value="@DiscountApplicableToAllItems.ProvisionAmount3.ToString()"
+                                                                                           IsHideClearButton="true"
+                                                                                           Disabled="@(!DiscountApplicableToAllItems.P3Selected)"
+                                                                                           Placeholder="Enter here" />
+                                </div>
+                            </div>
+                        }
+                        <button class="cls_button_bottom_right" style="height:42px;"
+                                @onclick=@ApplyDiscountToAllLinesOfItems>
+                            Apply
+                        </button>
+                    </div>
+                    @* <div class="cls_sellin_bottom_btn"> *@
+                    @*     <button class="cls_button_bottom_right" @onclick=@ApplyDiscountToAllLinesOfItems>Apply</button> *@
+                    @* </div> *@
+                </div>
+            }
+
+        </div>
+
+        <div class="div1">
+
+            <table style="table-layout:fixed;">
+                <thead>
+                    <tr>
+                        @*  <th style="width:2%;"><input type="checkbox"> </th> *@
+                        @* <th style="width:5%;">Parent Code</th> *@
+                        <th style="width:15%;"> Model Code / Name</th>
+                        @* <th style="width:7%; text-align:center;"> Committed Qty By CP</th> *@
+                        <th style="width:6%; text-align:center;">DP</th>
+                        @if (_iAppUser.Role.HasMSPAccess)
+                        {
+                            <th style="width:6%; text-align:center;">Minimum Selling price</th>
+                        }
+                        <th style="width:6%; text-align:center;">Laddering Price</th>
+                        <th style="width:7%; text-align:center;">Committed Qty By CP</th>
+                        @* <th style="width:6%; word-break:break-all;">Apply Additional Discount</th> *@
+                        <th style="width:7%; text-align:center;">Invoice Discount</th>
+                        @if (_iAppUser.Role.HasP1Access)
+                        {
+                            <th style="width:7%; text-align:center;">Credit Note(P1)</th>
+                        }
+                        @if (_iAppUser.Role.HasP2Access)
+                        {
+                            <th style="width:7%; text-align:center;">CN Branch (P2)</th>
+                        }
+                        @if (_iAppUser.Role.HasP3Access)
+                        {
+                            <th style="width:7%; text-align:center;">CN HO(P3)</th>
+                            @* <th style="width:7%; text-align:center;">CN HO(S)</th>
+                    <th style="width:6%; text-align:center;">CD HO(N)</th> *@
+                        }
+                        @if (_iAppUser.Role.HasMarginAccess)
+                        {
+                            <th style="width:7%; text-align:right;">Margin</th>
+                        }
+                        <th style="width:7%; text-align:right;">Final Dealer Price</th>
+                        @if (!HideDelete)
+                        {
+                            <th style="width:3%; text-align:center;"></th>
+                        }
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (_viewModel._SellInSchemeDTO != null && _viewModel._SellInSchemeDTO?.SellInSchemeLines != null && _viewModel._SellInSchemeDTO?.SellInSchemeLines.Count > 0)
+                    {
+                        @foreach (var item in _viewModel._SellInSchemeDTO.SellInSchemeLines)
+                        {
+                            @if (item.IsDeleted == 0)
+                            {
+
+                                <tr>
+                                    @*   <td><input type="checkbox"></td> *@
+                                    @*  <td></td> *@
+                                    <td style="word-break:break-word;"> @item.SKUName</td>
+                                    @*  <td>
+                    <div class="cls_div1_sellin_input">
+                    <Winit.UIComponents.Common.CustomControls.WinitTextBox DebounceInterval="500" Disabled=@DisableCommittedQTY
+                    OnDebounceIntervalElapsed="@((e)=>item.CommittedQty=ValidateEnteredValue(e))"
+                    KeyboardType="Winit.Shared.Models.Enums.InputType.Numeric"
+                    Value="@item.CommittedQty.ToString()" IsHideClearButton="true" />
+                    </div>
+                    </td> *@
+                                    <td style="text-align:right;word-break:break-all;"> @CommonFunctions.RoundForSystem(item.DPPrice, _appSetting.RoundOffDecimal)</td>
+                                    @if (_iAppUser.Role.HasMSPAccess)
+                                    {
+                                        <td style="text-align:right;word-break:break-all;"> @CommonFunctions.RoundForSystem(item.MinimumSellingPrice, _appSetting.RoundOffDecimal)</td>
+                                    }
+                                    <td data-column="sellin color"
+                                        style="text-align:right;word-break:break-all;">
+                                        @CommonFunctions.RoundForSystem(item.LadderingPrice, _appSetting.RoundOffDecimal)
+                                    </td>
+                                    <td data-column="sellin color1">
+                                        <div class="cls_sellin_table_div cls_div1_sellin_input">
+                                            @*  <span>₹</span> *@
+                                            <div style="float:right;width:100%;">
+                                                <Winit.UIComponents.Common.CustomControls.WinitTextBox DebounceInterval="500"
+                                                                                                       OnDebounceIntervalElapsed="@((e) => item.CommittedQty = ValidateEnteredIntValue(e))"
+                                                                                                       KeyboardType="Winit.Shared.Models.Enums.InputType.Numeric"
+                                                                                                       Value="@item.CommittedQty.ToString()"
+                                                                                                       IsHideClearButton="true" />
+                                                @*      <input type="number" @bind="@item.RequestPrice" /> *@
+                                            </div>
+                                        </div>
+                                    </td>
+                                    @*  <td data-column="sellin color1_1">
+                    <input type="radio" name="@item.SKUUID" id="@(item.SKUUID+1)"
+                    checked="@(item.InvoiceDiscountType==SelleInConstants.Percent)" disabled="@DisableApplyAdditionalDicount"
+                    @onclick="@(()=>OnDiscountTypeChange(item,SelleInConstants.Percent)  )" />%
+                    /
+                    <input type="radio" name="@item.SKUUID" id="@(item.SKUUID+2)" disabled="@DisableApplyAdditionalDicount"
+                    checked="@(item.InvoiceDiscountType==SelleInConstants.Value)"
+                    @onclick="@(()=>OnDiscountTypeChange(item,SelleInConstants.Value) )" />₹
+                    </td> *@
+                                    <td data-column="sellin color1_2" style="word-break:break-all;">
+
+                                        <input type="radio" name="@item.SKUUID" id="@(item.SKUUID + 1)"
+                                               checked="@(item.InvoiceDiscountType == SelleInConstants.Percent)"
+                                               disabled="@DisableInvoiceDicount"
+                                               @onclick="@(() => OnInvoiceDiscountTypeChange(item, SelleInConstants.Percent))" />%
+                                        /
+                                        <input type="radio" name="@item.SKUUID" id="@(item.SKUUID + 2)"
+                                               disabled="@DisableInvoiceDicount"
+                                               checked="@(item.InvoiceDiscountType == SelleInConstants.Value)"
+                                               @onclick="@(() => OnInvoiceDiscountTypeChange(item, SelleInConstants.Value))" />₹
+                                        @* <input type="number" @bind="@item.InvoiceDiscount" /> *@
+                                        <div class="cls_sellin_table_div cls_div1_sellin_input">
+
+                                            @if (item.InvoiceDiscountType == SelleInConstants.Percent)
+                                            {
+                                                @* <span> %</span> *@
+
+                                            }
+                                            else
+                                            {
+                                                @* <span>₹</span> *@
+                                            }
+
+                                            <div style="float:right;width:100%;">
+                                                <Winit.UIComponents.Common.CustomControls.WinitTextBox DebounceInterval="500" Disabled=@DisableInvoiceDicount
+                                                                                                       OnDebounceIntervalElapsed="@((e) => _viewModel.OnInvoiceDiscountEnter(item, e))"
+                                                                                                       KeyboardType="Winit.Shared.Models.Enums.InputType.Numeric"
+                                                                                                       Value="@item.InvoiceDiscount.ToString()"
+                                                                                                       IsHideClearButton="true" />
+                                            </div>
+                                        </div>
+
+                                        @if (item.InvoiceDiscountType == SelleInConstants.Percent)
+                                        {
+
+                                            <div class="cls_container_div1"
+                                                 style="margin:0px;">
+                                                @CommonFunctions.RoundForSystem(item.Temp_InvoiceDiscount, _appSetting.RoundOffDecimal)
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <label class="cls_div1_sellin_input_label">&nbsp;</label>
+                                        }
+                                    </td>
+                                    @if (_iAppUser.Role.HasP1Access)
+                                    {
+
+                                        <td data-column="sellin color1_3" style="word-break:break-all;">
+                                            <input type="radio" name="@item.UID" id="@(item.UID + 1)"
+                                                   checked="@(item.CreditNoteDiscountType == SelleInConstants.Percent)"
+                                                   disabled="@DisableP1"
+                                                   @onclick="@(() => OnCreditNoteDiscountTypeChange(item, SelleInConstants.Percent))" />%
+                                            /
+                                            <input type="radio" name="@item.UID" id="@(item.SKUUID + 1)"
+                                                   disabled="@DisableP1"
+                                                   checked="@(item.CreditNoteDiscountType == SelleInConstants.Value)"
+                                                   @onclick="@(() => OnCreditNoteDiscountTypeChange(item, SelleInConstants.Value))" />₹
+                                            @* <input type="number" @bind="@item.ProvisionAmount2" /> *@
+                                            <div class="cls_sellin_table_div cls_div1_sellin_input">
+                                                @if (item.CreditNoteDiscountType == SelleInConstants.Percent)
+                                                {
+
+                                                    @* <span>%</span> *@
+                                                }
+                                                else
+                                                {
+                                                    @* <span>₹</span> *@
+                                                }
+                                                <div style="float:right;width:100%;">
+                                                    <Winit.UIComponents.Common.CustomControls.WinitTextBox DebounceInterval="500" Disabled=@DisableP1
+                                                                                                           OnDebounceIntervalElapsed="@((e) => _viewModel.OnCreditNoteEnter(item, e))"
+                                                                                                           KeyboardType="Winit.Shared.Models.Enums.InputType.Numeric"
+                                                                                                           Value="@item.CreditNoteDiscount.ToString()"
+                                                                                                           IsHideClearButton="true" />
+                                                </div>
+                                            </div>
+
+                                            @if (item.CreditNoteDiscountType == SelleInConstants.Percent)
+                                            {
+                                                @* <p> ₹ <label>@CommonFunctions.RoundForSystem(item.Temp_CreditNoteDiscount)</label></p> *@
+                                                <div class="cls_container_div1"
+                                                     style="margin:0px;">
+                                                    @CommonFunctions.RoundForSystem(item.Temp_CreditNoteDiscount, _appSetting.RoundOffDecimal)
+                                                </div>
+
+                                            }
+                                            else
+                                            {
+                                                <label class="cls_div1_sellin_input_label">&nbsp;</label>
+                                            }
+                                        </td>
+                                    }
+                                    @if (_iAppUser.Role.HasP2Access)
+                                    {
+                                        <td data-column="sellin color2">
+                                            <div class="cls_sellin_table_div cls_div1_sellin_input">
+                                                @*  <span>₹</span> *@
+                                                <div style="float:right;width:100%;">
+                                                    <Winit.UIComponents.Common.CustomControls.WinitTextBox DebounceInterval="500" Disabled=@DisableP2
+                                                                                                           OnDebounceIntervalElapsed="@((e) => _viewModel.OnProvisionAmount2Enter(item, e))"
+                                                                                                           KeyboardType="Winit.Shared.Models.Enums.InputType.Numeric"
+                                                                                                           Value="@item.ProvisionAmount2.ToString()"
+                                                                                                           IsHideClearButton="true" />
+                                                    @*   <input type="number" @bind="@item.ProvisionAmount2" /> *@
+                                                </div>
+                                            </div>
+                                        </td>
+                                    }
+
+                                    @if (_iAppUser.Role.HasP3Access)
+                                    {
+                                        <td data-column="sellin color3">
+                                            <div class="cls_sellin_table_div cls_div1_sellin_input">
+                                                @* <span>₹</span> *@
+                                                <div style="float:right;width:100%;">
+                                                    <Winit.UIComponents.Common.CustomControls.WinitTextBox DebounceInterval="500" Disabled=@DisableP3
+                                                                                                           OnDebounceIntervalElapsed="@((e) => _viewModel.OnProvisionAmount3Enter(item, e))"
+                                                                                                           KeyboardType="Winit.Shared.Models.Enums.InputType.Numeric"
+                                                                                                           Value="@item.ProvisionAmount3.ToString()"
+                                                                                                           IsHideClearButton="true" />
+                                                </div>
+                                            </div>
+                                            @* <input type="number" @bind="@item.ProvisionAmount3" /> *@
+                                        </td>
+                                        @* <td style="text-align:right;">@CommonFunctions.RoundForSystem(item.StandingProvisionAmount, _appSetting.RoundOffDecimal)</td>
+                    <td style="text-align:right;">@CommonFunctions.RoundForSystem(0.00, _appSetting.RoundOffDecimal)</td> *@
+                                    }
+                                    @if (_iAppUser.Role.HasMarginAccess)
+                                    {
+                                        <td style="text-align:right;word-break:break-all;"> @CommonFunctions.RoundForSystem(item.Margin, _appSetting.RoundOffDecimal)</td>
+                                    }
+                                    <td style="text-align:right;word-break:break-all;">
+                                        @CommonFunctions.RoundForSystem(item.FinalDealerPrice, _appSetting.RoundOffDecimal)
+                                    </td>
+
+                                    @if (!HideDelete && !isRejected)
+
+                                    {
+                                        <td>
+                                            <img src="Images/delete.png" height="20px" width="20px"
+                                                 @onclick=@(() => OnProduct_Delete(item))>
+                                        </td>
+
+                                    }
+
+                                </tr>
+                            }
+                        }
+                    }
+
+                </tbody>
+            </table>
+
+        </div>
+        @if (DisplaySaveButton)
+        {
+            <div class="cls_button_bottom">
+                <button class="cls_button_bottom_left" @onclick=OnCancel>Cancel</button>
+                <button class="cls_button_bottom_right" @onclick=Save>Save</button>
+            </div>
+        }
+        else
+        {
+            <div class="cls_button_bottom">
+                <button class="cls_button_bottom_left" @onclick=@(() => _navigationManager.NavigateTo("ManageScheme"))>
+                    Back
+                </button>
+            </div>
+        }
+
+    </div>
+    @* @if (_viewModel._SellInSchemeDTO.SellInHeader.Status == "pending")
+    { *@
+
+
+
+
+    <WinIt.Pages.ApprovalRoleEngine.ApprovalEngine ShowApprovalEngine="@(true)"
+                                                   RuleId="@_viewModel.RuleId"
+                                                   RequestId="@_viewModel.RequestId.ToString()"
+                                                   ApprovalUsercodes="_viewModel.ApprovalUserCodes"
+                                                   @ref="childComponentRef"
+                                                   IsRejectButtonNeeded="_appSetting.IsRejectNeededInScheme"
+                                                   IsReassignButtonNeeded="_appSetting.IsReassignNeededInScheme"
+                                                   OnApprovalTracker="OnApprovalTracker"
+                                                   HandleApprovalAction="HandleApprovalAction">
+    </WinIt.Pages.ApprovalRoleEngine.ApprovalEngine>
+    @* } *@
+
+
+}
+
+

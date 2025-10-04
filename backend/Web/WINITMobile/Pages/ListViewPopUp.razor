@@ -1,0 +1,132 @@
+﻿@page "/CustomerListPopup"
+@using System.Collections.Generic
+@using Winit.Modules.Route.Model.Classes
+@using System.Threading.Tasks
+@inject Winit.Modules.Base.BL.Helper.Interfaces.IFilterHelper _filter
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+
+<div class="modal fade show" tabindex="-1" role="dialog" style="display: block;">
+    <div class="modal-dialog h-75"  role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@TitleText</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="HidePopup">
+                    <span aria-hidden="true" >&times;</span>
+                </button>
+                
+            </div>
+            <div class="modal-body">
+                <div class="d-flex flex-row">
+                    <div class="form-group w-25">
+                        <label for="Type">@Localizer["select_type"]:</label>
+                        <select class="form-control" id="Type">
+                            <!-- Populate with your data -->
+                            <option value="Type1">@Localizer["type_1"]</option>
+                            <option value="Type2">@Localizer["type_2"]</option>
+                            <!-- Add more options as needed -->
+                        </select>
+                    </div>
+                    <div class="form-group w-25 ml-2">
+                        <label for="SubType">@Localizer["select_sub_type"]:</label>
+                        <select class="form-control" id="SubType">
+                            <!-- Populate with your data -->
+                            <option value="Group1">@Localizer["group_1"]</option>
+                            <option value="Group2">@Localizer["group_2"]</option>
+                            <!-- Add more options as needed -->
+                        </select>
+                    </div>
+                    
+                </div>
+                <input type="text" class="form-control mt-3" placeholder="Search" @bind="searchQuery" />
+            </div>
+            <div class="div1">
+                <!-- Customer list table -->
+                <table class="table">
+
+                    <tbody>
+                        @if (DisplayselectionItems != null && DisplayselectionItems.Any())
+                        {
+                            @foreach (var selectionItem in DisplayselectionItems)
+                            {
+                                <tr>
+                                    <td>[@selectionItem.Code]@selectionItem.Label</td>
+                                    <td>
+                                        <input type="checkbox" @bind="@selectionItem.IsSelected" 
+                                        @onclick="()=> selectionManager.Select(selectionItem)" />
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary ml-2" @onclick="Reset">@Localizer["reset"]</button>
+                <button type="button" class="btn btn-primary" @onclick="AddSelectedItems">@OkBtnText</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@code {
+    public string searchQuery = "";
+    [Parameter]
+    public List<Winit.Shared.Models.Common.ISelectionItem> selectionItems { get; set; }
+    [Parameter]
+    public EventCallback<List<Winit.Shared.Models.Common.ISelectionItem>> OnAddSelectedSelectionItems { get; set; }
+    [Parameter]
+    public EventCallback<bool> OnCancelClick { get; set; }
+    [Parameter]
+    public string TitleText { get; set; }
+    [Parameter]
+    public string OkBtnText { get; set; }
+    public List<Winit.Shared.Models.Common.ISelectionItem> FilteredselectionItems { get; set; }
+    public List<Winit.Shared.Models.Common.ISelectionItem> DisplayselectionItems { get; set; }
+
+    private Winit.Modules.Common.BL.SelectionManager selectionManager { get; set; }
+    private List<string> _propertiesToSearch = new List<string>();
+
+    protected override void OnInitialized()
+    {
+        selectionManager = new Winit.Modules.Common.BL.SelectionManager(selectionItems, Winit.Shared.Models.Enums.SelectionMode.Multiple);
+        FilteredselectionItems = new List<Winit.Shared.Models.Common.ISelectionItem>();
+        DisplayselectionItems = new List<Winit.Shared.Models.Common.ISelectionItem>();
+        FilteredselectionItems.AddRange(selectionItems);
+        DisplayselectionItems.AddRange(selectionItems);
+        _propertiesToSearch.Add("Label");
+        _propertiesToSearch.Add("Code");
+        LoadResources(null, _languageService.SelectedCulture);
+
+    }
+    private void AddSelectedItems()
+    {
+        OnAddSelectedSelectionItems.InvokeAsync(selectionManager.GetSelectedSelectionItems());
+        HidePopup();
+    }
+    private void HidePopup()
+    {
+        OnCancelClick.InvokeAsync(false);
+    }
+    private void Reset()
+    {
+        selectionManager.DeselectAll();
+    }
+    
+    private async Task ApplySearch(string searchString)
+    {
+        DisplayselectionItems = await _filter.ApplySearch<Winit.Shared.Models.Common.ISelectionItem>(
+            FilteredselectionItems, searchString, _propertiesToSearch);
+    }
+    public async Task ApplyFilter(List<Winit.Shared.Models.Enums.FilterCriteria> filterCriterias,Winit.Shared.Models.Enums.FilterMode filterMode)
+    {
+        FilteredselectionItems.Clear();
+        DisplayselectionItems.Clear();
+        List<Winit.Shared.Models.Common.ISelectionItem> filteredItems = await _filter.ApplyFilter<Winit.Shared.Models.Common.ISelectionItem>(
+            selectionItems, filterCriterias, filterMode);
+        FilteredselectionItems.AddRange(filteredItems);
+        DisplayselectionItems.AddRange(filteredItems);
+    }
+}

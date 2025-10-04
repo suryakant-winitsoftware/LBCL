@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Base\Winit.Modules.Base.BL\Winit.Modules.Base.BL.csproj" />
+    <ProjectReference Include="..\..\Common\Winit.Modules.Common.BL\Winit.Modules.Common.BL.csproj" />
+    <ProjectReference Include="..\..\FileSys\Winit.Modules.FileSys.BL\Winit.Modules.FileSys.BL.csproj" />
+    <ProjectReference Include="..\..\FileSys\Winit.Modules.FileSys.Model\Winit.Modules.FileSys.Model.csproj" />
+    <ProjectReference Include="..\..\Settings\Winit.Modules.Settings.BL\Winit.Modules.Setting.BL.csproj" />
+    <ProjectReference Include="..\Winit.Modules.Planogram.DL\Winit.Modules.Planogram.DL.csproj" />
+    <ProjectReference Include="..\Winit.Modules.Planogram.Model\Winit.Modules.Planogram.Model.csproj" />
+  </ItemGroup>
+
+</Project>

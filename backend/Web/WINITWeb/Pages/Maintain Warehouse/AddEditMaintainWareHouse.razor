@@ -1,0 +1,154 @@
+﻿@page "/AddEditWareHouse"
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize]
+@using System.ComponentModel.DataAnnotations
+@using System.Linq
+@using Winit.Modules.Org.Model.Interfaces;
+@inject Winit.UIComponents.Common.IAlertService _AlertMessgae;
+@inject Winit.Modules.Org.BL.Interfaces.IAddEditMaintainWarehouseViewModel _addEditMaintainWarehouseViewModel;
+@using Newtonsoft.Json;
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" />
+
+@if (IsIntialized)
+{
+    <div class="cls_section">
+      
+            <div class="cls_container_div1" >
+               
+                <h3 class="cls_container_p_full" >
+                        @Localizer["warehouse_details"]
+                    </h3>
+                
+            </div>
+            @if (!string.IsNullOrWhiteSpace(validationMessage))
+            {
+                <div class="alert alert-danger w-100">
+                    <div style="color: red;">@validationMessage</div>
+                </div>
+            }
+        <div class="cls_container_div1">
+            <div class="cls_section_div_sku">
+                    
+                    <label class="cls_section_div_purchase2_label">
+                    <span class="cls_section_div_purchase2_span">*</span>@Localizer["type"]
+                        </label>
+                       
+                            <Winit.UIComponents.Common.CustomControls.DropDown Disabled="@IsViewPage" DataSource="_addEditMaintainWarehouseViewModel.WareHouseTypeSelectionItems"
+                                                                               Title=@Localizer["warehouse_type"] IsButtonVisible="true" OnSelect="OnWareHouseSelection" IsSearchable="false" />
+                      
+                    
+                </div>
+               
+                    <div class="cls_section_div_sku">
+                        <label class="cls_section_div_purchase2_label">
+                            <span class="cls_section_div_purchase2_span">*</span>@Localizer["code"]
+                        </label>
+                        <input class="cls_select2_button" placeholder="Enter Here" @bind-value="_addEditMaintainWarehouseViewModel.WareHouseEditItemView.WarehouseCode" disabled="@IsDisabled" type="search">
+                    </div>
+                
+             
+                    <div class="cls_section_div_sku">
+                        <label class="cls_section_div_purchase2_label">
+                            <span class="cls_section_div_purchase2_span">*</span>@Localizer["name"]
+                        </label>
+                        <input class="cls_select2_button" placeholder="Enter Here" @bind-value="_addEditMaintainWarehouseViewModel.WareHouseEditItemView.WarehouseName" disabled="@IsViewPage" type="search">
+                    </div>
+             
+            </div>
+
+            <div class="cls_container_div4">
+            <h3 class="cls_container_p_full">
+                        @Localizer["address_details"]
+                    </h3>
+                
+            </div>
+        <div class="cls_container_div1">
+            <div class="cls_section_div_sku">
+                    
+                        <label class="cls_section_div_purchase2_label">
+                            <span class="cls_section_div_purchase2_span">*</span>@Localizer["address_line_1"]
+                        </label>
+                        <input class="cls_select2_button" placeholder="Enter Here" disabled="@IsViewPage" @bind-value="_addEditMaintainWarehouseViewModel.WareHouseEditItemView.AddressLine1" type="text">
+                    
+                </div>
+               
+                    <div class="cls_section_div_sku">
+                        <label class="cls_section_div_purchase2_label">
+                            @Localizer["address_line_2"]
+                        </label>
+                        <input class="cls_select2_button" placeholder="Enter Here" disabled="@IsViewPage" @bind-value="_addEditMaintainWarehouseViewModel.WareHouseEditItemView.AddressLine2" type="text">
+                    </div>
+                
+               
+                    <div class="cls_section_div_sku">
+                        <label class="cls_section_div_purchase2_label">
+                            @Localizer["address_line_3"]
+                        </label>
+                        <input class="cls_select2_button" placeholder="Enter Here" disabled="@IsViewPage" @bind-value="_addEditMaintainWarehouseViewModel.WareHouseEditItemView.AddressLine3" type="text">
+                    </div>
+                
+                
+                    <div class="cls_section_div_sku">
+                        <label class="cls_section_div_purchase2_label">
+                            @Localizer["city"]
+                        </label>
+                        <input class="cls_select2_button" placeholder="Enter Here" disabled="@IsViewPage" @bind-value="_addEditMaintainWarehouseViewModel.WareHouseEditItemView.City" type="text">
+                    </div>
+                
+            
+                
+                    <div class="cls_section_div_sku">
+                        <label class="cls_section_div_purchase2_label">
+                            @Localizer["landmark"]
+                        </label>
+                        <input class="cls_select2_button" placeholder="Enter Here" type="text">
+                    </div>
+                
+                    <div class="cls_section_div_sku">
+                        <label class="cls_section_div_purchase2_label">
+                            @Localizer["area"]
+                        </label>
+                        <input class="cls_select2_button" placeholder="Enter Here" type="text">
+                    </div>
+                
+                    <div class="cls_section_div_sku">
+                        <label class="cls_section_div_purchase2_label">
+                            @Localizer["region"]
+                        </label>
+                        <input class="cls_select2_button" placeholder="Enter Here" disabled="@IsViewPage" @bind-value="_addEditMaintainWarehouseViewModel.WareHouseEditItemView.RegionCode" type="text">
+                    </div>
+                
+                    <div class="cls_section_div_sku">
+                        <label class="cls_section_div_purchase2_label">
+                             @Localizer["zip_code"] 
+                        </label>
+                        <input class="cls_select2_button" placeholder="Enter Here" disabled="@IsViewPage" @bind-value="_addEditMaintainWarehouseViewModel.WareHouseEditItemView.ZipCode" type="number">
+                    </div>
+               
+                    <div class="cls_section_div_sku">
+                        <label class="cls_section_div_purchase2_label">
+                             @Localizer["country"] 
+                        </label>
+                        <input class="cls_select2_button" placeholder="Enter Here" type="text">
+                    </div>
+                </div>
+            </div>
+
+    <div class="cls_button_bottom_purchase">
+
+        <button class="cls_button_light cls_mar_right_10px" @onclick="(!IsViewPage ? BackBtnClicked : OnOkFromBackBTnPopUpClick)">
+                        @Localizer["back"]
+                    </button>
+                    @if (!IsViewPage)
+                    {
+            <button class="cls_button_blue" @onclick="() => SaveWareHouse()">
+                            @(IsEditPage ? @Localizer["update"] : @Localizer["save"])
+                        </button>
+                    }
+                
+            </div>
+        
+   
+}

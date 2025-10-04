@@ -1,0 +1,439 @@
+﻿@page "/addeditloadrequest"
+@page "/addeditunloadrequest"
+@attribute [Authorize]
+@inject NavigationManager NavManager
+@inject Winit.Modules.WHStock.BL.Interfaces.IAddEditLoadRequest _AddEditLoadRequest
+@using Winit.Shared.Models.Enums
+@using Winit.UIComponents.Common.WinitDatepicker
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" />
+
+@* editloadrequest *@
+@if (uid != null)
+{
+    <div class="storeupper">
+
+        <div class="tab-content">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="cls_new_lab">@Localizer["request_no"]</label>
+                        @if (_AddEditLoadRequest?.WHStockRequestItemview != null)
+                        {
+                            <div>@_AddEditLoadRequest?.WHStockRequestItemview.RequestCode</div>
+                        }
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="cls_new_lab">@Localizer["route"]</label>
+                        @if (_AddEditLoadRequest?.WHStockRequestItemview != null)
+                        {
+                            <div>@_AddEditLoadRequest?.WHStockRequestItemview.RouteName</div>
+                            //Franchisee name not coming
+                        }
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="cls_new_lab">@Localizer["requested_date"]</label>
+                        @if (_AddEditLoadRequest?.WHStockRequestItemview != null)
+                        {
+
+                            <div>@_AddEditLoadRequest?.WHStockRequestItemview.ModifiedTime.ToString("dd MMM, yyyy HH:mm:ss")</div>
+                           @* 
+                                                <div>
+                                @_AddEditLoadRequest?.WHStockRequestItemview.RequiredByDate.ToString("dd MMM, yyyy")
+                            </div> *@
+                        }
+                    </div>
+                </div> 
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="cls_new_lab">@Localizer["requested_from"]</label>
+                        @if (_AddEditLoadRequest?.WHStockRequestItemview != null)
+                        {
+                            @*  <div>@_AddEditLoadRequest.WHStockRequestItemview.SourceName</div> *@
+                            
+                                <div>@($"[{_AddEditLoadRequest?.WHStockRequestItemview.SourceCode}] {_AddEditLoadRequest?.WHStockRequestItemview.SourceName}")</div>
+                            
+
+                    //Request from not present
+                        }
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        @if (_AddEditLoadRequest?.WHStockRequestItemview?.RequestType == RequestType.Load.ToString())
+                        {
+                            <label class="cls_new_lab">@Localizer["required_by_date"]</label>
+                        }
+                        else
+                        {
+                            <label class="cls_new_lab">@Localizer["unload_date"]</label>
+                        }
+                        
+                        @if (_AddEditLoadRequest?.WHStockRequestItemview != null)
+                        {
+@*                             <div>@_AddEditLoadRequest?.WHStockRequestItemview.ModifiedTime.ToString("dd MMM, yyyy HH:mm:ss")</div>
+ *@
+                            <div>@_AddEditLoadRequest.WHStockRequestItemview.RequiredByDate.ToString("dd MMM, yyyy")</div>
+                           @*  <div>
+                                @_AddEditLoadRequest?.WHStockRequestItemview.ModifiedTime
+                            </div> *@
+                        }
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="cls_new_lab">@Localizer["requested_by"]</label>
+                        @if (_AddEditLoadRequest?.WHStockRequestItemview != null)
+                        {
+
+                            <div>@_iAppUser.Emp?.UID</div>
+                        }
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="cls_new_lab">@Localizer["requested_to"]</label>
+                        @if (_AddEditLoadRequest?.WHStockRequestItemview != null)
+                        {
+                           
+                           
+                                <div>@($"[{_AddEditLoadRequest.WHStockRequestItemview.TargetCode}] {_AddEditLoadRequest.WHStockRequestItemview.TargetName}")</div>
+                            
+                            //requested to not present
+                        }
+                    </div>
+            </div>
+        </div>
+
+
+
+
+
+
+    </div>
+    
+</div>
+
+    <hr style="border-top: 2px solid #ccc; margin: 5px 0;">
+
+    
+}
+else
+{
+     <div class="storeupper" style="margin-bottom:3px">
+        <div class="tab-content">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        @if(_AddEditLoadRequest.RequestType == RequestType.Load.ToString())
+                        {
+                            <label class="cls_new_lab" for="requiredByDate">@Localizer["required_by_date"]</label>
+                        }
+                        else
+                        {
+                            <label class="cls_new_lab" for="requiredByDate">@Localizer["unload_date"]</label>
+                        }
+                        <WinitCalendar id="requiredByDate" selectedDate="@selectedDate" MinDate="0" OnChange="OnRequiredByDateChange"></WinitCalendar>
+                   </div>
+                </div>
+
+
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label><span style="color:red;">*</span>@Localizer["route"]</label>
+                        @if (_AddEditLoadRequest.RouteListForSelection != null && _AddEditLoadRequest.RouteListForSelection.Count > 0)
+                        {
+                           @*  <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_AddEditLoadRequest.RouteListForSelection" Title="Route" IsButtonVisible="true" OnSelect="GetSelectedRoute" IsSearchable="true" _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single" /> *@
+                            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_AddEditLoadRequest.RouteListForSelection"
+                                                                               Title="Route"
+                                                                               IsButtonVisible="true"
+                                                                               OnSelect="GetSelectedRoute"
+                                                                               IsSearchable="false" />
+                        
+                        }
+                    </div>
+
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="cls_new_lab">@Localizer["warehouse"]</label>
+
+                        <div>
+                            @(string.IsNullOrEmpty(_AddEditLoadRequest.SelectedRouteUID) ? "Select Warehouse" : _AddEditLoadRequest.OrgsList.Name)
+                        </div>
+
+                    </div>
+                </div>
+                @if (_AddEditLoadRequest.RequestType != RequestType.Load.ToString())
+                {
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="cls_new_lab">@Localizer["stock_type"]</label>
+
+                            <div>
+                                <label>
+                                    <input type="radio" id=@LoadRequestConst.Salable name="_AddEditLoadRequest.StockType" value=@LoadRequestConst.Salable checked @onchange="@(stockType => GetSelectedStockType(stockType))"> @Localizer["saleable"]
+                                </label>
+                                <label>
+                                    <input type="radio" id=@LoadRequestConst.NonSalable name="_AddEditLoadRequest.StockType" value=@LoadRequestConst.NonSalable @onchange="@(stockType => GetSelectedStockType(stockType))">@Localizer["nonsaleable"]
+                                </label>
+                            </div>
+
+                        </div>
+                    </div>
+                }
+
+            </div>
+
+        </div>
+    </div>
+
+  
+     <hr style="border-top: 2px solid #ccc; margin: 10px 0;">
+    <nav class="navbar" style="margin-bottom: 0px;min-height: auto;margin-top:4px;margin-right: 15px;">
+        <input class="form-control ng-pristine ng-valid ng-touched" placeholder="Enter Remark" type="text" @bind="_AddEditLoadRequest.Remark">
+        <span style="position:absolute;top: 7px;right: 10px;"><img alt="" src="assets/Images/ser.png" style="width:19px"></span>
+    </nav>  
+}
+
+@if (_AddEditLoadRequest.WHStockRequestItemview?.Status == StockRequestStatus.Draft || uid == null)
+{
+    if ((_AddEditLoadRequest.RouteListForSelection != null && _AddEditLoadRequest.RouteListForSelection.Any(item => item?.IsSelected == true)) || _AddEditLoadRequest.WHStockRequestItemview?.RouteCode != null)
+    {
+        <div class="cls_export_main">
+            <button class="cls_add_new_sec" @onclick="OpenAddProductDialog">@Localizer["add_product"]</button>
+        </div>
+      
+    }
+
+}
+@if (_AddEditLoadRequest.SkuList != null && _AddEditLoadRequest.SkuList.Count != 0 && IsAddSKUDialogOpen == true)
+{
+
+    <Winit.UIComponents.Web.DialogBox.AddSKU @ref="AddSKURef" SKUAttributesDataSource="_AddEditLoadRequest.SkuAttributesList"
+                                             SKUDataSource="_AddEditLoadRequest.SkuList" GetSelectedSKU="GetSelectedSKUs" />
+}
+<div class="div1">
+<table class="table">
+    <thead>
+
+
+
+        @if (_AddEditLoadRequest.WHStockRequestItemview?.Status == StockRequestStatus.Processed)
+        {
+            <tr>
+                <th rowspan="2" class="tblHeader">@Localizer["sku_code"]</th>
+                <th rowspan="2" class="tblHeader">@Localizer["sku_name"]</th>
+                <th colspan="2" class="tblHeader">@Localizer["cpeapprovedqty"]</th>
+                <th colspan="2" class="tblHeader">@Localizer["approvedqty"]</th>
+                
+
+            </tr>
+            <tr>
+                <th class="tblHeader" contenteditable="false">@Localizer["outer"]</th>
+                <th class="tblHeader" contenteditable="false">@Localizer["each"]</th>
+                <th class="tblHeader" contenteditable="false">@Localizer["outer"]</th>
+                <th class="tblHeader" contenteditable="false">@Localizer["each"]</th>
+             
+            </tr>
+        }
+        else if (_AddEditLoadRequest.WHStockRequestItemview?.Status == StockRequestStatus.Draft || _AddEditLoadRequest.WHStockRequestItemview?.Status == StockRequestStatus.Rejected || uid==null)
+        {
+            <tr>
+                <th rowspan="2" class="tblHeader">@Localizer["sku_code"]</th>
+                <th rowspan="2" class="tblHeader">@Localizer["sku_name"]</th>
+                <th colspan="2" class="tblHeader">@Localizer["requested_qty"]</th>
+
+
+            </tr>
+            <tr>
+                <th class="tblHeader" contenteditable="false">@Localizer["outer"]</th>
+                <th class="tblHeader" contenteditable="false">@Localizer["each"]</th>
+
+
+            </tr>
+        }
+        else if (_AddEditLoadRequest.WHStockRequestItemview?.Status == StockRequestStatus.Requested)
+        {
+            <tr>
+                <th rowspan="2" class="tblHeader">@Localizer["sku_code"]</th>
+                <th rowspan="2" class="tblHeader">@Localizer["sku_name"]</th>
+                <th colspan="2" class="tblHeader">@Localizer["requested"]</th>
+                <th colspan="2" class="tblHeader">@Localizer["approved"]</th>
+
+
+            </tr>
+            <tr>
+                <th class="tblHeader" contenteditable="false">@Localizer["outer"]</th>
+                <th class="tblHeader" contenteditable="false">@Localizer["each"]</th>
+                <th class="tblHeader" contenteditable="false">@Localizer["outer"]</th>
+                <th class="tblHeader" contenteditable="false">@Localizer["each"]</th>
+
+
+            </tr>
+        }
+        else if (_AddEditLoadRequest.WHStockRequestItemview?.Status == StockRequestStatus.Approved)
+        {
+            <tr>
+                <th rowspan="2" class="tblHeader">@Localizer["sku_code"]</th>
+                <th rowspan="2" class="tblHeader">@Localizer["sku_name"]</th>
+                <th colspan="2" class="tblHeader">@Localizer["approved"]</th>
+                <th colspan="2" class="tblHeader">@Localizer["erpapproved"]</th>
+
+
+            </tr>
+            <tr>
+                <th class="tblHeader" contenteditable="false">@Localizer["outer"]</th>
+                <th class="tblHeader" contenteditable="false">@Localizer["each"]</th>
+                <th class="tblHeader" contenteditable="false">@Localizer["outer"]</th>
+                <th class="tblHeader" contenteditable="false">@Localizer["each"]</th>
+
+
+            </tr>
+        }
+
+
+
+    </thead>
+    <tbody>
+        @if (_AddEditLoadRequest.DisplayWHStockRequestLineItemview != null && _AddEditLoadRequest.DisplayWHStockRequestLineItemview.Count != 0)
+        {
+            @foreach (var row in _AddEditLoadRequest.DisplayWHStockRequestLineItemview)
+            {
+
+                <tr>
+                    <td>@row.SKUCode</td>
+                    <td>@row.SKUName</td>
+
+                    @if (_AddEditLoadRequest.WHStockRequestItemview?.Status == StockRequestStatus.Processed)
+                    {
+
+                        <td>@row.CPEApprovedQty2</td>
+                        <td>@row.CPEApprovedQty1</td>
+                        <td>@row.ApprovedQty2</td>
+                        <td>@row.ApprovedQty1</td>
+                      
+                    }
+                    else if (_AddEditLoadRequest.WHStockRequestItemview?.Status == StockRequestStatus.Draft || uid == null)
+                    {
+
+                       
+                        <td>
+                            <input type="number" class="form-control" min="0" @bind="row.RequestedQty2" />
+
+                        </td>
+                        <td>
+                            <input type="number" class="form-control" min="0" @bind="row.RequestedQty1" />
+                        </td>
+
+                        row.RequestedQty = (row.RequestedQty1 * 1 + row.RequestedQty2 * row.UOM2CNF);
+
+
+                    }
+                    else if (_AddEditLoadRequest.WHStockRequestItemview?.Status == StockRequestStatus.Rejected)
+                    {
+                        <td><label class="form-control" style="background-color: #f8f9fa; color: #6c757d;">@row.RequestedQty2</label></td>
+                        <td><label class="form-control" style="background-color: #f8f9fa; color: #6c757d;">@row.RequestedQty1</label></td>
+                    }
+                    else if (_AddEditLoadRequest.WHStockRequestItemview?.Status == StockRequestStatus.Requested)
+                    {
+                        if (count != 0)
+                        {
+                            row.CPEApprovedQty2 = row.RequestedQty2;
+                            row.CPEApprovedQty1 = row.RequestedQty1;
+                            
+                        }
+                       
+
+                        
+
+
+                        <td><label class="form-control" style="background-color: #f8f9fa; color: #6c757d;">@row.RequestedQty2</label></td>
+                        <td><label class="form-control" style="background-color: #f8f9fa; color: #6c757d;">@row.RequestedQty1</label></td>
+
+                        <td>
+                            <input type="number" class="form-control" min="0" @bind="row.CPEApprovedQty2" @oninput="QTYChange" />
+                        </td>
+                        <td>
+                            <input type="number" class="form-control" min="0" @bind="row.CPEApprovedQty1" @oninput="QTYChange" />
+                        </td>
+                        row.CPEApprovedQty = (row.CPEApprovedQty1 * 1 + row.CPEApprovedQty2 * row.UOM2CNF);
+                    }
+                    else if (_AddEditLoadRequest.WHStockRequestItemview?.Status == StockRequestStatus.Approved)
+                    {
+                        if (count != 0)
+                        {
+                            row.ApprovedQty2 = row.CPEApprovedQty2;
+                            row.ApprovedQty1 = row.CPEApprovedQty1;
+                        }
+                       
+                        <td><label class="form-control" style="background-color: #f8f9fa; color: #6c757d;">@row.CPEApprovedQty2</label></td>
+                        <td><label class="form-control" style="background-color: #f8f9fa; color: #6c757d;">@row.CPEApprovedQty1</label></td>
+
+                        <td>
+                            <input type="number" class="form-control" min="0" @bind="row.ApprovedQty2" @oninput="QTYChange" />
+
+                        </td>
+                        <td>
+                            <input type="number" class="form-control" min="0" @bind="row.ApprovedQty1" @oninput="QTYChange" />
+                        </td>
+                        row.ApprovedQty = (row.ApprovedQty1 * 1 + row.ApprovedQty2 * row.UOM2CNF);
+
+                    }
+
+                </tr>
+            }
+        }
+        else
+        {
+            if (_AddEditLoadRequest.WHStockRequestItemview?.Status == StockRequestStatus.Approved || uid==null)
+            {
+                <tr>
+                        <td colspan="4" style="text-align: center;color:red">@Localizer["no_record_found"]</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+</div>
+
+
+
+<div class="cls_export_main d-flex justify-content-center align-items-center">
+    <button class="cls_add_new_sec" @onclick="BackToViewPage">@Localizer["back"]</button>
+    @if (_AddEditLoadRequest.WHStockRequestItemview?.Status == StockRequestStatus.Draft || uid == null)
+    {
+        <button class="cls_add_new_sec" @onclick='() => OnClickUpdateData(StockRequestStatus.Draft)'>@Localizer["save_as_draft"]</button>
+        <button class="cls_add_new_sec" @onclick='() => OnClickUpdateData(StockRequestStatus.Requested)'>@Localizer["confirm"]</button>
+    }
+    else if (_AddEditLoadRequest.WHStockRequestItemview?.Status != StockRequestStatus.Processed && _AddEditLoadRequest.WHStockRequestItemview?.Status != StockRequestStatus.Rejected)
+    {
+
+        <button class="cls_add_new_sec" @onclick='() => OnClickUpdateData(StockRequestStatus.Approved)'>@Localizer["approved"]</button>
+
+        <button class="cls_add_new_sec" @onclick='() => OnClickUpdateData(StockRequestStatus.Rejected)'>@Localizer["rejected"]</button>
+    }
+    
+</div>
+
+    
+                           
+<style>
+    
+    .table-container {
+        margin-top: 20px;
+    }
+
+</style>
+
+

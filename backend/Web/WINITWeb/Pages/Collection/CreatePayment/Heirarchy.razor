@@ -1,0 +1,103 @@
+﻿@using Winit.Modules.SKU.Model.Interfaces;
+@using Winit.Modules.Store.Model.Interfaces;
+@using Winit.Modules.Store.Model.Classes;
+@using Winit.Modules.SKU.Model.Classes;
+@using static Winit.Modules.Base.BL.ApiService;
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+
+
+
+<div class="div1" style="margin-top:15px;">
+<table >
+
+    <thead>
+        <tr>
+            @if (IsFirstColumnCheckbox)
+            {
+                    <th style="width:3%;">
+                    <input type="checkbox" @onclick="() => ToggleAllCheckboxes()" />
+                </th>
+            }
+            @foreach (var column in Columns2)
+            {
+                <th @onclick="() => SortColumn(column)">
+                    @if (column.IsSortable)
+                    {
+                        <span style="text-decoration:underline;cursor:pointer;">@column.Header</span>
+                        @if (currentSortField == column.SortField)
+                        {
+                            <span>@(isAscending ? "▲" : "▼")</span>
+                        }
+                    }
+                    else
+                    {
+                        <span style="cursor:default;">@column.Header</span>
+                    }
+
+                </th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @if (DataSource2.Count != 0)
+        {
+            @foreach (var item2 in DataSource2)
+            {
+                var dueDate = (DateTime)GetPropertyValue(item2, "DueDate");
+                var today = DateTime.Today;
+                var isPastDue = dueDate.Date <= today;
+
+                <tr style="@(isPastDue ? "background-color: mistyrose;" : "")">
+                    @if (IsFirstColumnCheckbox)
+                    {
+                        <td>
+                            <input type="checkbox" @onclick="() => ToggleSelection(item2)" class="@GetCheckboxClass()"
+                                   checked="@(SelectedItems.Count == 0 ? SelectedItemsStatic.Contains(item2)  : SelectedItems.Contains(item2))" disabled="@flag" />
+                        </td>
+                    }
+                    @foreach (var column in Columns2)
+                    {
+                        <td>
+                            @if (column.IsButtonColumn)
+                            {
+                                foreach (var buttonAction in column.ButtonActions)
+                                {
+                                    <button @onclick="() => buttonAction.Action(item2)"
+                                            style="text-decoration:underline;cursor:pointer;margin-right:5px;">
+                                        @buttonAction.Text
+                                    </button>
+                                }
+                            }
+                            @if (column.IsTextBox)
+                            {
+                                @* as i am using Single variable for textbox iam using below condition *@
+                                var textBoxValue = GetPropertyValue(item2, "EnteredAmount");
+
+                                if (textBoxValue != null)
+                                {
+                                    decimal enteredAmount = (decimal)textBoxValue;
+                                    // Use 'enteredAmount' as needed
+                                        <input type="text" class="cls_account_table_box" @bind="@(enteredAmount)" @oninput="e =>SetPropertyValue(item2,Textvalue, e.Value)" disabled="@flag" />
+                                }
+
+                            }
+                            else
+                            {
+                                @column.GetValue(item2)
+                            }
+                        </td>
+                    }
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="12" style="text-align: center; color: red;">@Localizer["no_records_found."]</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+</div>

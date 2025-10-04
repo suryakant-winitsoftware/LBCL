@@ -1,0 +1,204 @@
+﻿@inherits ComponentBase
+@inject Winit.UIComponents.Common.IAlertService AlertService
+
+@if (isAlertVisible)
+{
+    <div class="overlay"></div>
+
+    <div class="alert alert-@(options?.AlertType) alert-dismissible fade show" role="alert">
+        <div class="modal-container">
+            <div class="modal_header">
+                @if (!string.IsNullOrWhiteSpace(options?.Heading))
+                {
+                    <h5 class="modal_title" style="color:@options?.BackgroundColor">@options?.Heading</h5>
+                }
+                <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close" @onclick="CloseAlert">x</button>
+            </div>
+           
+                <div class="cls_content_alert">
+                    <p>@((MarkupString)(options?.Body ?? string.Empty))</p>
+                </div>
+            
+            <div class="cls_fil_footer" >
+                <div class="cls_btn_new">
+
+                        @if (!string.IsNullOrWhiteSpace(options.Button2Text))
+                        {
+                        <button type="button" class="btn @(options.Button2Class) cls_button_light1" @onclick="() => HandleButton(options.Button2Action)">
+                                @options.Button2Text
+                            </button>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(options.Button1Text))
+                        {
+                            @if (string.IsNullOrWhiteSpace(options.Button2Text))
+                            {
+                            <button type="button" class="btn @(options.Button1Class) btn-primary cls_button_blue" @onclick="(param) => HandleButton(options.Button1Action)">@options.Button1Text</button>
+                            }
+                            else
+                            {
+                            <button type="button" class="btn @(options.Button1Class) cls_button_blue" @onclick="(param) => HandleButton(options.Button1Action)">
+                                    @options.Button1Text
+                                    </button>
+                            }
+                        }
+                        @if (!string.IsNullOrWhiteSpace(options.Button3Text))
+                        {
+                            <button type="button" class="btn @(options.Button3Class) cls_btn_new2" @onclick="() => HandleButton(options.Button3Action)">@options.Button3Text</button>
+                        }
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private bool isAlertVisible = false;
+    private AlertOptions? options;
+
+    private void CloseAlert()
+    {
+        isAlertVisible = false;
+    }
+
+    private void HandleButton(Func<object, Task> action)
+    {
+        CloseAlert();
+        if (options != null)
+        {
+            action?.Invoke(options.data);
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        AlertService.OnShowAlert += HandleShowAlert;
+        base.OnInitialized();
+    }
+
+    private async void HandleShowAlert(AlertOptions alertOptions)
+    {
+        options = alertOptions;
+        isAlertVisible = true;
+        await InvokeAsync(StateHasChanged);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@* @inherits ComponentBase
+
+@if (isAlertVisible)
+{
+    <div class="alert alert-@(AlertType) alert-dismissible fade show" role="alert" style="background-color: @BackgroundColor; border-color: #f5c6cb; color: #721c24;">
+        @if (!string.IsNullOrWhiteSpace(Heading))
+        {
+            <h4 class="alert-heading">@Heading</h4>
+        }
+        <p>@Body</p>
+        <hr>
+        <div class="d-flex justify-content-end">
+            @if (!string.IsNullOrWhiteSpace(Button1Text))
+            {
+                <button type="button" class="btn @(Button1Class)" @onclick="HandleButton1">@Button1Text</button>
+            }
+            @if (!string.IsNullOrWhiteSpace(Button2Text))
+            {
+                <button type="button" class="btn @(Button2Class)" @onclick="HandleButton2">@Button2Text</button>
+            }
+            @if (!string.IsNullOrWhiteSpace(Button3Text))
+            {
+                <button type="button" class="btn @(Button3Class)" @onclick="HandleButton3">@Button3Text</button>
+            }
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="CloseAlert"></button>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string Heading { get; set; }
+
+    [Parameter]
+    public string Body { get; set; }
+
+    [Parameter]
+    public string Button1Text { get; set; }
+
+    [Parameter]
+    public string Button1Class { get; set; }
+
+    [Parameter]
+    public EventCallback Button1Action { get; set; }
+
+    [Parameter]
+    public string Button2Text { get; set; }
+
+    [Parameter]
+    public string Button2Class { get; set; }
+
+    [Parameter]
+    public EventCallback Button2Action { get; set; }
+
+    [Parameter]
+    public string Button3Text { get; set; }
+
+    [Parameter]
+    public string Button3Class { get; set; }
+
+    [Parameter]
+    public EventCallback Button3Action { get; set; }
+
+    [Parameter]
+    public string AlertType { get; set; } = "info"; // Default to Bootstrap alert-info, you can change it
+
+    [Parameter]
+    public string BackgroundColor { get; set; } = "transparent"; // Default background color
+
+    private bool isAlertVisible = true;
+
+    private void CloseAlert()
+    {
+        isAlertVisible = false;
+    }
+
+    private async Task HandleButton1()
+    {
+        await Button1Action.InvokeAsync(null);
+    }
+
+    private async Task HandleButton2()
+    {
+        await Button2Action.InvokeAsync(null);
+    }
+
+    private async Task HandleButton3()
+    {
+        await Button3Action.InvokeAsync(null);
+    }
+} *@

@@ -1,0 +1,104 @@
+﻿@page "/returnorderdetails/{ReturnOrderUID}"
+@using Microsoft.Extensions.Localization
+@using Winit.UIComponents.Common.LanguageResources.Mobile
+@inject Winit.Modules.ReturnOrder.BL.Interfaces.IReturnOrderBL _returnOrderBL
+@inject IStringLocalizer<LanguageKeys> Localizer
+
+<div class="">
+    <h3>Return<label>  Order Details</label> </h3>
+</div>
+@if (ReturnOrderInoiceMaster != null && ReturnOrderInoiceMaster.ReturnOrderInvoice != null)
+{
+    <div>
+        <div class="container">
+            <div class="invoice-card">
+
+                <div class="invoice-details">
+                    <div class="font-weight-bold">
+                        Inv No: @(ReturnOrderInoiceMaster.ReturnOrderInvoice.ReturnOrderNumber)
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <div>Date</div>
+                        <div>SKU</div>
+                        <div>Type</div>
+                    </div>
+                    <div class="d-flex justify-content-between font-weight-bold" style="color: #1B478A;">
+                        <div>
+                            @(Winit.Shared.CommonUtilities.Common.CommonFunctions.GetDateTimeInFormat(ReturnOrderInoiceMaster.ReturnOrderInvoice.OrderDate))
+                        </div>
+                        <div>
+                            @(ReturnOrderInoiceMaster.ReturnOrderInvoice.SKUCount)
+                        </div>
+                        <div>
+                            @(ReturnOrderInoiceMaster.ReturnOrderInvoice.OrderType)
+                        </div>
+                    </div>
+                    @if (!string.IsNullOrEmpty(ReturnOrderInoiceMaster.ReturnOrderInvoice.SalesOrderNumber))
+                    {
+                        <div>
+                            <label>Inv No: @ReturnOrderInoiceMaster.ReturnOrderInvoice.SalesOrderNumber</label>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@if (ReturnOrderInoiceMaster != null && ReturnOrderInoiceMaster.ReturnOrderLineInvoices != null && ReturnOrderInoiceMaster.ReturnOrderLineInvoices.Any())
+{
+    <div class="cls_return_order_preview">
+        <Virtualize Items="ReturnOrderInoiceMaster.ReturnOrderLineInvoices" Context="item" OverscanCount="10">
+
+            <div class="cls_item">
+                <div class="cls_item_details1">
+                    <div class="cls_item_details1_left">
+                        <div class="cls_item_details1_left_image">
+                            <img src="@item.SKUImage" height="38px" width="38px">
+
+                        </div>
+                        <div class="cls_item_details1_left_text">
+                            <h5>@item.SKUName</h5>
+                            <label>@item.SKUCode</label>
+                            <div class="cls_item_details_left_text_type">
+                            </div>
+                            <!-- <p>Type : <span class="cls_item_details_left_text_type">salable</span></p> -->
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+                <div class="cls_item_prices">
+                    <div class="cls_item_prices__rep">
+                        <label>UOM</label>
+                        <p>@(item.UOM)</p>
+                    </div>
+                    <div class="cls_item_prices__rep">
+                        <label>QTY</label>
+                        <p>@(item.OrderQty)</p>
+                    </div>
+                    <div class="cls_item_prices__rep">
+                        <label>Type :</label>
+                        <p>@item.ItemType</p>
+                    </div>
+
+
+                </div>
+                <div class="cls_item_desc">
+                    <div class="cls_item_desc_left">
+                        <label>Reason</label>
+                        <p>@item.Reason</p>
+
+                    </div>
+
+                    <div class="cls_item_desc_right">
+                        <label>Images</label><br>
+
+                    </div>
+
+                </div>
+            </div>
+        </Virtualize>
+    </div>
+}

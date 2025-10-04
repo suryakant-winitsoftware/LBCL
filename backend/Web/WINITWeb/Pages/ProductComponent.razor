@@ -1,0 +1,62 @@
+﻿
+@page "/ProductComponent"
+@using MudBlazor
+@using System.Net.Http.Json
+@inject HttpClient httpClient
+@inject NavigationManager NavManager
+@using System;
+@using System.ComponentModel.DataAnnotations;
+
+
+<MudTable Dense="true" Hover="true" @ref="table" Items="OrderDataRepository.OrderDataList">
+    <!-- Table header content -->
+    <HeaderContent>
+        <MudTh class="custom-header">Select</MudTh>
+        <MudTh class="custom-header">OrderNumber</MudTh>
+        <MudTh class="custom-header">Salesman</MudTh>
+        <MudTh class="custom-header">Customer Name</MudTh>
+        <MudTh class="custom-header">Order Date</MudTh>
+        <MudTh class="custom-header">Delivery Date</MudTh>
+        <MudTh class="custom-header">Amount (INR)</MudTh>
+    </HeaderContent>
+    <!-- Table row template -->
+    <RowTemplate>
+        <MudTd>
+            <input type="checkbox" />
+        </MudTd>
+        <MudTd class="custom-row">
+            <button class="btn btn-link" @onclick="() => RedirectToDetailsPage(context.OrderNumber.ToString())">@context.OrderNumber</button>
+        </MudTd>
+        <MudTd>@context.Salesman</MudTd>
+        <MudTd>@context.CustomerName</MudTd>
+        <MudTd>@context.OrderDate.ToShortDateString()</MudTd>
+        <MudTd>@context.DeliveryDate.ToShortDateString()</MudTd>
+        <MudTd>@context.Amount.ToString("₹0.00")</MudTd>
+
+    </RowTemplate>
+    <!-- Optional content for the table footer -->
+    <FooterContent>
+        <!-- ... Your footer content ... -->
+    </FooterContent>
+</MudTable>
+
+@code {
+
+    private async Task RedirectToDetailsPage(string orderNumber)
+    {
+        NavManager.NavigateTo($"/ProductEdit?OrderNumber={orderNumber}", forceLoad: true);
+    }
+    private MudTable<OrderData> table;
+
+}
+
+<style>
+    .custom-header {
+        background-color: #003898;
+        color: white !important;
+    }
+
+    .custom-row {
+        color: #003898 !important;
+    }
+</style>

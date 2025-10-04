@@ -1,0 +1,316 @@
+﻿@inject Winit.UIComponents.Common.Services.IDropDownService _dropdownService
+@using Winit.UIComponents.Common.Services
+@using Winit.Shared.Models.Events;
+@using Microsoft.Extensions.Localization
+@using Winit.UIComponents.Common.LanguageResources.Mobile
+@inject Winit.UIComponents.Common.Language.ILanguageService _languageService
+@inject IStringLocalizer<LanguageKeys> Localizer
+@using System.Globalization;
+@using System.Resources;
+@using Winit.UIComponents.Common.Language;
+@using Winit.UIComponents.Common.LanguageResources.Mobile;
+@if (ShowPopUp)
+{
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show" tabindex="-1" style="display: block;">
+        <div >
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@Title  </h5>
+                    <button type="button" class="close" @onclick="@CloseWithoutUpdating">
+                        <span style="color:black; padding:10px;width:100%">&times;</span>
+                    </button>
+                </div>
+                @* <div class="modal-body">
+            <div class="cls_sel_customer_popup_main">
+            <div class="cls_sel_customer_popup">
+            <div class="cls_sel_customer_popup1">Search Come Here</div>
+            <div class="cls_sel_customer_popup2">
+            <label>Select Route</label>
+            <select>
+            <option>R0031 </option>
+            </select>
+            </div>
+
+            <div class="cls_sel_customer_popup3 cls_sel_customer_popup3_sel">
+            <div class="cls_sel_customer_popup3_top">
+            <div class="cls_sel_customer_popup3_top_left">
+            <img style="width:35px;" src="images/p1.png">
+            </div>
+            <div class="cls_sel_customer_popup3_top_right">
+            <h3>MK Retailer Groceries</h3>
+            <label>RKT0076026</label><span><img src="images/dot1.png"></span><p>Visited Today</p><span><img src="images/ic1.png"></span>
+
+            </div>
+            <p>Nkheelan 19992, India</p>
+            </div>
+            <div class="cls_sel_customer_popup3_bottom">
+            <div class="cls_sel_customer_popup3_bottom_left">
+            <img style="width:25px;" src="images/ic2.png">
+            </div>
+            <div class="cls_sel_customer_popup3_bottom_cen">
+            <h3>Ramana Kumar</h3>
+            <label>Manager</label><span><img src="images/dot1.png"></span><p>9436742566</p>
+            </div>
+            <div class="cls_sel_customer_popup3_bottom_right"><img src="images/ic3.png"></div>
+            </div>
+            </div>
+            <div class="cls_sel_customer_popup3">
+            <div class="cls_sel_customer_popup3_top">
+            <div class="cls_sel_customer_popup3_top_left">
+            <img style="width:35px;" src="images/p1.png">
+            </div>
+            <div class="cls_sel_customer_popup3_top_right">
+            <h3>MK Retailer Groceries</h3>
+            <label>RKT0076026</label><span><img src="images/dot1.png"></span><p>Visited Today</p><span><img src="images/ic1.png"></span>
+
+            </div>
+            <p>Nkheelan 19992, India</p>
+            </div>
+            <div class="cls_sel_customer_popup3_bottom">
+            <div class="cls_sel_customer_popup3_bottom_left">
+            <img style="width:25px;" src="images/ic2.png">
+            </div>
+            <div class="cls_sel_customer_popup3_bottom_cen">
+            <h3>Ramana Kumar</h3>
+            <label>Manager</label><span><img src="images/dot1.png"></span><p>9436742566</p>
+            </div>
+            <div class="cls_sel_customer_popup3_bottom_right"><img src="images/ic3.png"></div>
+            </div>
+            </div>
+            </div>
+            </div>
+
+            </div> *@
+                <div class="modal-body">
+                    @if (_SelectionMode == Winit.Shared.Models.Enums.SelectionMode.Multiple)
+                    {
+                        <a @onclick="@(()=>CheckORUncheckAll(true))">Check All</a> <a @onclick="@(()=>CheckORUncheckAll(false))">Uncheck All</a>
+                    }
+
+                    @if (IsSearchable)
+                    {
+                        <Winit.UIComponents.Common.CustomControles.SearchBox OnSearch="@Search" />
+                    }
+
+
+                    <ul class="list-group ">
+
+                        @foreach (var item in SearchedItems)
+                        {
+
+                            <li class="list-group-item @((@item.IsSelected)?"active":"")" @onclick="()=>OnSelectionChange(item)">@item.Label</li>
+                        }
+                    </ul>
+                </div>
+                @if (_SelectionMode == Winit.Shared.Models.Enums.SelectionMode.Multiple)
+                {
+                    <div class="modal-footer">
+                        <button type="button" class="cls_button_blue" @onclick="GetMultipleSelectedItems">Ok</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+
+@code {
+
+    public List<Winit.Shared.Models.Common.ISelectionItem> DataSource
+    {
+        get
+        {
+            return dataSource;
+        }
+        set
+        {
+            dataSource = value;
+
+        }
+
+    }
+
+    public Winit.Shared.Models.Enums.SelectionMode _SelectionMode { get; set; } = Winit.Shared.Models.Enums.SelectionMode.Single;
+
+    public string Title { get; set; } = "";
+
+    public bool Disabled { get; set; }
+
+    public bool IsSearchable { get; set; } = true;
+
+    public Func<DropDownEvent, Task> OnSelect { get; set; }
+
+    public Func<DropDownEvent, Task> OnSelectAsync => async (eventArgs) =>
+    {
+        await OnSelect(eventArgs);
+    };
+
+    public bool IsButtonVisible { get; set; } = false;
+
+    public string UniqueUID { get; set; }
+    public List<Winit.Shared.Models.Common.ISelectionItem> dataSource { get; set; }
+    private Winit.Modules.Common.BL.SelectionManager selectionManager { get; set; }
+    private List<Winit.Shared.Models.Common.ISelectionItem> SelectedItems { get; set; }
+    private string Label { get; set; } = "Select item";
+    private List<Winit.Shared.Models.Common.ISelectionItem> SearchedItems { get; set; }
+
+    public bool ShowPopUp { get; set; } = false;
+
+    public void GetLoad()
+    {
+        selectionManager = new Winit.Modules.Common.BL.SelectionManager(dataSource, _SelectionMode);
+        Label = "Select " + Title;
+
+        SearchedItems = DataSource;
+        if (_SelectionMode == Shared.Models.Enums.SelectionMode.Single)
+        {
+            SelectedItems = selectionManager.GetSelectedSelectionItems();
+            if (SelectedItems.Count > 0)
+            {
+                Label = SelectedItems[0].Label;
+            }
+        }
+    }
+    protected void SetLabelOnSingleSelection()
+    {
+
+    }
+
+    private void ShowPopup_ButtonClick()
+    {
+        // Create options for the dropdown
+        var options = new DropDownOptions
+            {
+                DataSource = DataSource,
+                SelectionMode = _SelectionMode,
+                Title = Title,
+                Disabled = Disabled,
+                IsSearchable = IsSearchable,
+                OnSelect = OnSelect,
+                IsButtonVisible = IsButtonVisible,
+                UniqueUID = UniqueUID
+            };
+
+        // Trigger the dropdown service to show the dropdown
+        _dropdownService.ShowDropDown(options);
+    }
+
+    protected override void OnInitialized()
+    {
+        // Subscribe to the service event to handle dropdown visibility
+        _dropdownService.OnShowDropDown += HandleShowDropDown;
+        if (dataSource != null) GetLoad();
+        LoadResources(null, _languageService.SelectedCulture);
+    }
+    protected void LoadResources(object sender, string culture)
+    {
+        CultureInfo cultureInfo = new CultureInfo(culture);
+        ResourceManager resourceManager = new ResourceManager("Winit.UIComponents.Common.LanguageResources.Mobile.LanguageKeys", typeof(Winit.UIComponents.Common.LanguageResources.Mobile.LanguageKeys).Assembly);
+        Localizer = new CustomStringLocalizer<LanguageKeys>(resourceManager, cultureInfo);
+    }
+
+    private void HandleShowDropDown(DropDownOptions options)
+    {
+        // Update component properties based on service event
+        DataSource = options.DataSource;
+        _SelectionMode = options.SelectionMode;
+        Title = options.Title;
+        Disabled = options.Disabled;
+        IsSearchable = options.IsSearchable;
+        OnSelect = options.OnSelect;
+        IsButtonVisible = options.IsButtonVisible;
+        UniqueUID = options.UniqueUID;
+
+        // Set selected items from the service options
+        selectionManager = new Winit.Modules.Common.BL.SelectionManager(options.DataSource, options.SelectionMode);
+        SelectedItems = selectionManager.GetSelectedSelectionItems();
+        GetLoad();
+        // Show the popup
+        ShowPopUp = true;
+        StateHasChanged();
+    }
+
+    private void OnSelectionChange(Winit.Shared.Models.Common.ISelectionItem item)
+    {
+
+        selectionManager.Select(item);
+
+        if (_SelectionMode == Winit.Shared.Models.Enums.SelectionMode.Single)
+        {
+            ShowPopUp = false;
+            SelectedItems = selectionManager.GetSelectedSelectionItems();
+            Label = SelectedItems.Count > 0 ? item.Label : @Localizer["Select"] + Title;
+            DropDownEvent dropDownEvent = new DropDownEvent
+                {
+                    UID = UniqueUID,
+                    SelectionMode = _SelectionMode,
+                    SelectionItems = SelectedItems
+                };
+            OnSelect.Invoke(dropDownEvent);
+            // this for disselect all
+            selectionManager.DeselectAll();
+        }
+        else
+        {
+            Label = selectionManager.GetSelectedSelectionItems().Count + @Localizer["items_selected"];
+        }
+    }
+
+    private void Search(string searchTerm)
+    {
+
+        if (!string.IsNullOrEmpty(searchTerm))
+        {
+
+            SearchedItems = DataSource.Where(item => item.Label.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+        else
+        {
+            SearchedItems = DataSource;
+        }
+    }
+
+    private void GetMultipleSelectedItems()
+    {
+        ShowPopUp = false;
+        // SearchedItemsCopy = SelectedItems;
+        SelectedItems = selectionManager.GetSelectedSelectionItems();
+        DropDownEvent dropDownEvent = new DropDownEvent
+            {
+                UID = UniqueUID,
+                SelectionMode = _SelectionMode,
+                SelectionItems = SelectedItems
+            };
+        OnSelect.Invoke(dropDownEvent);
+        // this for disselect all
+        selectionManager.DeselectAll();
+    }
+
+    private void CheckORUncheckAll(bool Check_Uncheck)
+    {
+
+        foreach (var item in SearchedItems)
+        {
+            item.IsSelected = !Check_Uncheck;
+            selectionManager.Select(item);
+        }
+
+
+
+        int selectedCount = selectionManager.GetSelectedSelectionItems().Count;
+        Label = selectedCount > 0 ? selectedCount + @Localizer["items_selected"] : @Localizer["Select"] + Title;
+    }
+
+    private void CloseWithoutUpdating()
+    {
+
+        ShowPopUp = false;
+        OnSelect.Invoke(null);
+    }
+    public void ShowPopup(bool isVisible)
+    {
+        ShowPopUp = isVisible;
+    }
+}
+

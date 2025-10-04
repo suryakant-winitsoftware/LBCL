@@ -1,0 +1,40 @@
+﻿@page "/Store"
+@inject NavigationManager NavigationManager
+@inject Winit.Modules.Store.BL.Interfaces.IStorBaseViewModelForMobile _storeBVM
+
+
+@if (toggle.CustomerInformation)
+{
+    <Winit.UIComponents.Mobile.Store.StoreInformation Status=GetStoreInfoStatusAfterSaved IsNewStore="@isNewStore" />
+}
+
+@if (toggle.ContactDetails)
+{
+    <Winit.UIComponents.Mobile.Store.StoreContacts LinkedItemUID="@UID" Status="GetContactsStatus" IsNewStore="@isNewStore" />
+}
+
+@if (toggle.StoreAddress)
+{
+    <Winit.UIComponents.Mobile.Store.Address  LinkedItemUID="@UID" Type="@Winit.Shared.Models.Constants.ListHeaderType.Store" Status="GetStoreAddressStatus" AddressSameForBilling="@((e)=>billingAddress=e)" AddressSameForShipping="@((e)=>shippingAddress=e)" IsNewStore="@isNewStore" />
+}
+
+@if (toggle.BillToAddress)
+{
+    <Winit.UIComponents.Mobile.Store.Address LinkedItemUID="@UID" Type="@Winit.Shared.Models.Constants.ListHeaderType.Billing" _address="billingAddress" Status="GetBillAddressStatus" AddressSameForShipping="@((e)=>shippingAddress=e)" IsNewStore="@isNewStore" />
+    
+}
+@if (toggle.ShipToAddress)
+{
+    <Winit.UIComponents.Mobile.Store.Address LinkedItemUID="@UID" Type="@Winit.Shared.Models.Constants.ListHeaderType.Shipping" _address="shippingAddress" Status="GetShipAddressStatus" IsNewStore="@isNewStore" />
+    
+}
+
+@if (toggle.PaymentDetails)
+{
+    <Winit.UIComponents.Mobile.Store.PaymentDetails Status="GetPaymentDetailsStatus"  IsNewStore="@isNewStore"/>
+}
+
+@if (toggle.StoreDocuments)
+{
+    <Winit.UIComponents.Mobile.Store.Documents LinkedItemUID="@UID"  Status="GetDocumentsStatus" IsNewStore="@isNewStore" />
+}

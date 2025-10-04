@@ -1,0 +1,240 @@
+﻿@inject Winit.Modules.Store.BL.Interfaces.IStoreBL _storeBL
+@inject Modules.Store.Model.Interfaces.IStore iStore
+@inject Winit.Modules.ListHeader.BL.Interfaces.IListHeaderBL ListHeader
+@inject Winit.Modules.Store.BL.Interfaces.IStoreAdditionalInfoBL WeekDaysBL
+@inject Winit.Modules.Store.Model.Interfaces.IWeekDays weekDays
+@inject IStringLocalizer<LanguageKeys> Localizer
+@using Microsoft.Extensions.Localization
+@using Winit.UIComponents.Common.LanguageResources.Mobile
+@inject Winit.UIComponents.Common.Language.ILanguageService _languageService
+<div class="cls_add_store">
+    <h6>@Localizer["store_information"]</h6>
+
+<div class="cls_main_sign_input_new1">
+        <div>@Localizer["outlet_name"]</div>
+    <div>
+        <input type="text" @bind="iStore.OutletName" />
+    </div>
+</div>
+
+<div class="cls_main_sign_input_new1">
+        <div>@Localizer["arabic_name"]</div>
+    <div>
+        <input type="text" @bind="iStore.ArabicName" />
+    </div>
+</div>
+
+<div class="cls_main_sign_input_new1">
+        <div>@Localizer["legal_name"]</div>
+    <div>
+        <input type="text" @bind="iStore.LegalName" />
+    </div>
+</div>
+
+<div class="cls_main_sign_input_new1">
+        <div>@Localizer["customer_type"]</div>
+    <div>
+        @if (isShowCustomersinPopup)
+        {
+            <button @onclick="@(()=>isShowCustomersinPopup=false)">@CustomerTypeLabel</button>
+        }
+        else
+        {
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_customerType" _SelectionMode="Shared.Models.Enums.SelectionMode.Single"
+                                                                Title="Customer Type" OnSelect="@((e)=>SelectedValueChanged(e,Winit.Shared.Models.Constants.ListHeaderType.CustomerType))" />
+        }
+
+    </div>
+</div>
+
+<div class="cls_main_sign_input_new1">
+        <div>@Localizer["customer_channel"]</div>
+    <div>
+        @if (isShowCustomerChannelinPopup)
+        {
+            <button @onclick="@(()=>isShowCustomerChannelinPopup=false)">@CustomerChannelLabel</button>
+        }
+        else
+        {
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_channel" _SelectionMode="Shared.Models.Enums.SelectionMode.Single"
+                                                                Title="Customer Channel" OnSelect="@((e)=>SelectedValueChanged(e,Winit.Shared.Models.Constants.ListHeaderType.Channel))" ShowPopUp=true />
+        }
+      
+    </div>
+</div>
+
+<div class="cls_main_sign_input_new1">
+        <div>@Localizer["customer_sub_channel"]</div>
+    <div>
+    @if (isShowCustomerSubChannelinPopup)
+    {
+        <button @onclick="@(()=>isShowCustomerSubChannelinPopup=false)">@CustomerSubChannelLabel</button>
+    }
+    else
+    {
+        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_subChannel" _SelectionMode="Shared.Models.Enums.SelectionMode.Single"
+                                                                Title="Customer Sub Channel" OnSelect="@((e)=>SelectedValueChanged(e,Winit.Shared.Models.Constants.ListHeaderType.SubChannel))" ShowPopUp=true />
+    }
+    </div>
+  
+</div>
+
+<div class="cls_main_sign_input_new1">
+        <div>@Localizer["customer_classification"]</div>
+    <div>
+
+        @if (isShowClassificationinPopUp)
+        {
+            <button @onclick="@(()=>isShowClassificationinPopUp=false)">@ClassificationLabel</button>
+        }
+        else
+        {
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_classification" _SelectionMode="Shared.Models.Enums.SelectionMode.Single"
+                                                                Title="Customer Classification" OnSelect="@((e)=>SelectedValueChanged(e,Winit.Shared.Models.Constants.ListHeaderType.Classification))" ShowPopUp=true />
+        }
+      
+    </div>
+</div>
+
+<div class="cls_main_sign_input_new1">
+        <div>@Localizer["customer_chain"]</div>
+    <div>
+
+        @if (isShowChaininPopUp)
+        {
+            <button @onclick="@(()=>isShowChaininPopUp=false)">@ChainLabel</button>
+        }
+        else
+        {
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_chain" _SelectionMode="Shared.Models.Enums.SelectionMode.Single"
+                                                                Title="Customer Chain" OnSelect="@((e)=>SelectedValueChanged(e,Winit.Shared.Models.Constants.ListHeaderType.Chain))" ShowPopUp=true />
+        }
+    </div>
+</div>
+<div class="cls_main_sign_input_new1">
+        <div>@Localizer["customer_group"]</div>
+    <div>
+
+        @if (isShowGroupinPopUp)
+        {
+            <button @onclick="@(()=>isShowGroupinPopUp=false)">@CustomerGroupLabel</button>
+        }
+        else
+        {
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_customerGroup" _SelectionMode="Shared.Models.Enums.SelectionMode.Single"
+                                                                Title="Customer Group" OnSelect="@((e)=>SelectedValueChanged(e,Winit.Shared.Models.Constants.ListHeaderType.Group))" ShowPopUp=true />
+        }
+    </div>
+</div>
+
+<div class="cls_main_sign_input_new1">
+        <div>@Localizer["mode_of_delivery"]</div>
+    <div>
+
+        @if (isShowMODinPopUp)
+        {
+            <button @onclick="@(()=>isShowMODinPopUp=false)">@MODLabel</button>
+        }
+        else
+        {
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_mOD" _SelectionMode="Shared.Models.Enums.SelectionMode.Single"
+                                                                Title="Mode Of Delivery" OnSelect="@((e)=>SelectedValueChanged(e,Winit.Shared.Models.Constants.ListHeaderType.ModeOfDelivery))" ShowPopUp=true />
+        }
+    </div>
+</div>
+
+<div class="cls_main_sign_input_new1">
+        <div>@Localizer["store_size"]</div>
+    <div>
+       
+        @if (isShowStoreSizeinPopUp)
+        {
+            <button @onclick="@(()=>isShowStoreSizeinPopUp=false)">@StoreSizeLabel</button>
+        }
+        else
+        {
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_storeSize" _SelectionMode="Shared.Models.Enums.SelectionMode.Single"
+                                                                Title="Store Size" OnSelect="@((e)=>SelectedValueChanged(e,Winit.Shared.Models.Constants.ListHeaderType.StoreSize))" ShowPopUp=true />
+        }
+    </div>
+</div>
+
+
+<div class="cls_main_sign_input_new1">
+        <div>@Localizer["is_warehouse/school"]</div>
+    <div class="cls_main_check_radio">
+
+        <input type="radio" name="IsWareHouseOrShool" id="IsWareHouseOrShool1" checked="@School" @onclick="@((e)=>iStore.SchoolWarehouse=Winit.Shared.Models.Constants.ListHeaderType.Warehouse)" /><label for="IsWareHouseOrShool1">Ware House</label>
+        <input type="radio" name="IsWareHouseOrShool" id="IsWareHouseOrShool2" checked="@Warehouse" @onclick="@((e)=>iStore.SchoolWarehouse=Winit.Shared.Models.Constants.ListHeaderType.School)" /><label for="IsWareHouseOrShool2">School</label>
+    </div>
+</div>
+
+<div class="cls_main_sign_input_new1">
+        <div>@Localizer["visit_frequency"]</div>
+    <div>
+        @if (isShowVisitFrequencyinPopUp)
+        {
+            <button @onclick="@(()=>isShowVisitFrequencyinPopUp=false)">@VisitFrequencyLabel</button>
+        }
+        else
+        {
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_visitFrequency" _SelectionMode="Shared.Models.Enums.SelectionMode.Single"
+                                                                Title="Visit Frequency" OnSelect="@((e)=>SelectedValueChanged(e,Winit.Shared.Models.Constants.ListHeaderType.VisitFrequency))" ShowPopUp=true />
+        }
+    </div>
+</div>
+
+
+<div class="cls_main_sign_input_new1">
+        <div>@Localizer["weekdays"]</div>
+    <div class="cls_main_check_radio">
+
+        <input type="checkbox" name="weekDays" checked="@weekDays.WeekOffSun" id="weekDays1" @onclick=@(()=>weekDays.WeekOffSun=!weekDays.WeekOffSun) /><label for="weekDays1">Sun</label>
+        <input type="checkbox" name="weekDays" checked="@weekDays.WeekOffMon" id="weekDays2" @onclick=@(()=>weekDays.WeekOffMon=!weekDays.WeekOffMon) /><label for="weekDays2">Mon</label>
+        <input type="checkbox" name="weekDays" checked="@weekDays.WeekOffTue" id="weekDays3" @onclick=@(()=>weekDays.WeekOffTue=!weekDays.WeekOffTue) /><label for="weekDays3">Tue</label>
+        <input type="checkbox" name="weekDays" checked="@weekDays.WeekOffWed" id="weekDays4" @onclick=@(()=>weekDays.WeekOffWed=!weekDays.WeekOffWed) /><label for="weekDays4">Wed</label>
+        <input type="checkbox" name="weekDays" checked="@weekDays.WeekOffThu" id="weekDays5" @onclick=@(()=>weekDays.WeekOffThu=!weekDays.WeekOffThu) /><label for="weekDays5">Thu</label>
+        <input type="checkbox" name="weekDays" checked="@weekDays.WeekOffFri" id="weekDays6" @onclick=@(()=>weekDays.WeekOffFri=!weekDays.WeekOffFri) /><label for="weekDays6">Fri</label>
+        <input type="checkbox" name="weekDays" checked="@weekDays.WeekOffSat" id="weekDays7" @onclick=@(()=>weekDays.WeekOffSat=!weekDays.WeekOffSat) /><label for="weekDays7">Sat</label>
+    </div>
+</div>
+
+<div class="cls_main_sign_input_new1">
+        <div>@Localizer["status"]</div>
+    <div class="cls_main_check_radio">
+        <input type="radio" name="Status" id="Status1" checked="@Active" @onclick="@(()=>iStore.Status= Shared.Models.Constants.CustomerStatus.Active)" /><label for="Status1">Active</label>
+        <input type="radio" name="Status" id="Status2" checked="@InActive" @onclick="@(()=>iStore.Status=Shared.Models.Constants.CustomerStatus.InActive)" /><label for="Status2">Inactive</label>
+        <input type="radio" name="Status" id="Status3" checked="@Blocked" @onclick="@(()=>iStore.Status=Shared.Models.Constants.CustomerStatus.Blocked)" /><label for="Status3">Blocked</label>
+    </div>
+</div>
+
+<div class="cls_main_sign_input_new1">
+        <div>@Localizer["special_day"]</div>
+    <div>
+        <input type="date" @bind="@iStore.SpecialDay"/>
+
+    </div>
+</div>
+
+<div class="cls_main_sign_input_new1">
+        <div>@Localizer["special_day_description"] <sup style="color:red">*</sup></div>
+    <div>
+        <input type="text" @bind="@iStore.DayType" />
+    </div>
+</div>
+
+
+<div class="cls_main_sign_input_new1">
+        <div>@Localizer["store_image"]</div>
+    <div><input type="file" /></div>
+</div>
+    <div style="width:100%;float:left;margin-bottom:10px;">
+        <div class="cls_log_main66">
+
+            <div style="float:left;">
+                <button class="cls_btn_primary" style="margin-right:10px;" @onclick="Save">@SaveOrUpdate</button>
+            </div>
+        </div>
+    </div>
+</div>
+

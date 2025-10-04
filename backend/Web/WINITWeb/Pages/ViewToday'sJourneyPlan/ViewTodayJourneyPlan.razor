@@ -1,0 +1,147 @@
+﻿@page "/ViewTodayJourneyPlan"
+@using Winit.Shared.Models.Common
+@using Winit.UIComponents.Common.CustomControles
+<PageTitle>View Today Journey Plan</PageTitle>
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize]
+@inject Winit.UIComponents.Common.IAlertService _AlertMessgae;
+@inject Winit.Modules.JourneyPlan.BL.Interfaces.IViewTodayJourneyPlanViewModel _viewTodayJourneyPlanViewModel;
+@using Winit.UIComponents.Web.Filter
+@using Winit.UIModels.Common.Filter
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+
+<div>
+   @*  <button class="cls_add_new_sec" style="float:right;margin-right:0px" @onclick="ShowFilter">@Localizer["filter"]</button>
+    <Filter @ref="filterRef" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+            OnFilterApplied=@OnFilterApply /> *@
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+                         OnFilterApplied="@OnFilterApply" />
+</div>
+
+@{
+    DateTime date = DateTime.Today;
+    string dateString = date.ToShortDateString();
+}
+<Tabs TabItems="TabSelectionItems" OnTabSelect="OnTabSelect"></Tabs>
+<span><strong>@Localizer["date"]:</strong><span class="ms-2">@dateString</span></span>
+<div class="cls_export_main">
+    <button class="cls_add_new_sec" @onclick="AddJourneyPlan">
+        @Localizer["add_new"]
+    </button>
+</div>
+@if (IsLoaded)
+{
+    @if (SelectedTab == "Assigned")
+    {
+        <div class="div1">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th @onclick='() => SortByColumn("SalesmanLoginId")'>@Localizer["sales_rep_login_id"]</th>
+                    <th @onclick='() => SortByColumn("SalesmanName")'>@Localizer["sales_rep_name"]</th>
+                    <th @onclick='() => SortByColumn("RouteName")'>@Localizer["route"] </th>
+                    <th @onclick='() => SortByColumn("VehicleName")'>@Localizer["vehicle"] </th>
+                    <th @onclick='() => SortByColumn("ScheduleCall")'>@Localizer["schedule_call"]</th>
+                    <th @onclick='() => SortByColumn("ActualStoreVisits")'>@Localizer["visited"]</th>
+                    <th @onclick='() => SortByColumn("PendingVisits")'>@Localizer["pending"]</th>
+                    <th>@Localizer["actions"]</th>
+                </tr>
+
+            </thead>
+            <tbody>
+                @if (_viewTodayJourneyPlanViewModel.AssignedJourneyPlanList == null || !_viewTodayJourneyPlanViewModel.AssignedJourneyPlanList.Any())
+                {
+                    <tr>
+                        <td colspan="8" class="text-center">@Localizer["no_records_found."]</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var row in _viewTodayJourneyPlanViewModel.AssignedJourneyPlanList)
+                    {
+                        <tr>
+                            <td>@row.SalesmanLoginId</td>
+                            <td>@row.SalesmanName</td>
+                            <td>@row.RouteName</td>
+                            <td>@(string.IsNullOrEmpty(row.VehicleName) ? "N/A" : row.VehicleName)</td>
+                            <td>@row.ScheduleCall</td>
+                            <td>@row.ActualStoreVisits</td>
+                            <td>@row.PendingVisits</td>
+                            <td>
+                                <button class="btn btn-link" style="color: #003898;" title="View" @onclick="() => OnViewClick(row)">
+                                    <img src="Images/view.png" />
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="8">
+                                @if (row.IsChildgridOpen)
+                                {
+                                    <ViewTodayJourneyPlanInnerGridview GridList="row.ChildgridJourneyPlans" />
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        </div>
+
+        @*  <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" DataSource="_viewTodayJourneyPlanViewModel?.AssignedJourneyPlanList" />
+        @if (_viewTodayJourneyPlanViewModel.AssignedJourneyPlanList != null)
+        {
+            @foreach (var item in _viewTodayJourneyPlanViewModel.AssignedJourneyPlanList)
+            {
+                <div>
+
+                    @if (item.IsChildgridOpen)
+                    {
+                        <ViewTodayJourneyPlanInnerGridview GridList="item.ChildgridJourneyPlans" />
+                    }
+                </div>
+            }
+        } *@
+
+    }
+    else
+    {
+        <table class="table table-hover">
+            <thead class="table-dark" style="background-color: #19298B;">
+                <tr>
+                    <th @onclick='() => SortByColumn("SalesmanLoginId")'>@Localizer["sales_rep_login_id"]</th>
+                    <th @onclick='() => SortByColumn("SalesmanName")'>@Localizer["sales_rep_name"]</th>
+                    <th @onclick='() => SortByColumn("RouteName")'>@Localizer["route"]</th>
+                    <th @onclick='() => SortByColumn("VehicleName")'>@Localizer["vehicle"]</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (_viewTodayJourneyPlanViewModel.AssignedJourneyPlanList == null || !_viewTodayJourneyPlanViewModel.AssignedJourneyPlanList.Any())
+                {
+                    <tr>
+                        <td colspan="8" class="text-center">@Localizer["no_records_found."]</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var row in _viewTodayJourneyPlanViewModel.AssignedJourneyPlanList)
+                    {
+                        <tr>
+                            <td>@row.SalesmanLoginId</td>
+                            <td>@row.SalesmanName</td>
+                            <td>@row.RouteName</td>
+                            <td>@(string.IsNullOrEmpty(row.VehicleName) ? "N/A" : row.VehicleName)</td>
+                        </tr>
+                    }
+                }
+                <tr style="background-color: brown !important;">
+                </tr>
+            </tbody>
+        </table>
+        @*         <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns1" DataSource="_viewTodayJourneyPlanViewModel?.AssignedJourneyPlanList" />
+ *@             }
+}
+
+@code {
+
+}

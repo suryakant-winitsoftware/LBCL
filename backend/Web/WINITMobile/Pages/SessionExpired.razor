@@ -1,0 +1,14 @@
+﻿@page "/SessionExpired"
+
+<div class="container mt-5 text-center">
+    <h2 class="text-warning">Welcome Back</h2>
+    <p>Your session has ended or you’re starting fresh. Please log in to continue.</p>
+    <button class="btn btn-primary" @onclick="NavigateToLogin">Log In</button>
+</div>
+
+@code {
+    private void NavigateToLogin()
+    {
+        _navigationManager.NavigateTo("/");
+    }
+}

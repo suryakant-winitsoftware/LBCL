@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\SharedObjects\Winit.Shared.CommonUtilities\Winit.Shared.CommonUtilities.csproj" />
+    <ProjectReference Include="..\..\Base\Winit.Modules.Base.Model\Winit.Modules.Base.Model.csproj" />
+    <ProjectReference Include="..\..\JourneyPlan\Winit.Modules.JourneyPlan.Model\Winit.Modules.JourneyPlan.Model.csproj" />
+    <ProjectReference Include="..\..\SKU\Winit.Modules.SKU.Model\Winit.Modules.SKU.Model.csproj" />
+    <ProjectReference Include="..\..\StockUpdater\Winit.Modules.StockUpdater.Model\Winit.Modules.StockUpdater.Model.csproj" />
+    <ProjectReference Include="..\..\Tax\Winit.Modules.Tax.Model\Winit.Modules.Tax.Model.csproj" />
+  </ItemGroup>
+</Project>

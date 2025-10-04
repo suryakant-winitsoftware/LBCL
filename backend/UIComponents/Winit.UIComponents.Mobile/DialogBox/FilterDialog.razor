@@ -1,0 +1,188 @@
+﻿@page "/SalesOrderFilters"
+@using Winit.Modules.Common.BL
+@using Winit.Shared.Models.Common
+@using Winit.Shared.Models.Enums
+<div class="modal" tabindex="-1" style="display: @((showPopup) ? "block" : "none") ;top:0%; bottom:10%;">
+    <div class="modal-content">
+        <div>
+            <div class="modal-header">
+                <h5 class="modal-title">filter</h5>
+                <button type="button" class="close w-20 h-20" data-dismiss="modal" aria-label="Close" @onclick="CloseFilterDialog" style="margin:15px;">
+                    <span aria-hidden="true" style="color:#000000">&times;</span>
+                </button>
+            </div>
+            @if (showPopup)
+            {
+                <div class="custom-dialog-content cls_main_filter" style="margin-top:0px;">
+                    <div class="cls_main_filter">
+                        <div class="cls_main_filter_left">
+                            <ul>
+                                @foreach (var vtab in TabDataDictionary.Keys)
+                                {
+                                    <li class='@(vtab.IsSelected? "cls_fil_sel":"")' @onclick="() =>PanelIndexChanged(vtab)">
+                                        <a>@vtab.Label</a>
+                                    </li>
+                                }
+                            </ul>
+
+                        </div>
+                        <div class="cls_main_filter_right">
+                            <div class="cls_main_filter_right_top">
+                                @if (SelectedTab.ActionType != FilterActionType.Sort && SelectedTab.Mode != Winit.Shared.Models.Enums.SelectionMode.Single)
+                                {
+                                    <a @onclick="() => HandleSelectAllClick(TabDataDictionary[SelectedTab])">select_all (@(TabDataDictionary[SelectedTab].Where(e => e.IsSelected).Count()))</a>
+                                    <a @onclick="() => HandleUnSelectAllClick(TabDataDictionary[SelectedTab])">clear_selected </a>
+
+                                }
+                            </div>
+                            <div class="cls_main_filter_right_bottom">
+                                @foreach (var tabData in TabDataDictionary[SelectedTab])
+                                {
+                                    <div class="cls_fil_rep">
+                                        @if (SelectedTab.Mode == Winit.Shared.Models.Enums.SelectionMode.Single)
+                                        {
+                                            <input id="@tabData.UID" type="radio" name="@SelectedTab.Code" @onchange="e => HandleRadioChange(tabData, e)"
+                                                   checked="@tabData.IsSelected" />
+                                            <label for="@tabData.UID">@tabData.Label</label>
+                                        }
+                                        else
+                                        {
+                                            <input id="@tabData.UID" type="checkbox" @bind="tabData.IsSelected" /> <label for="@tabData.UID">@tabData.Label</label>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            }
+
+        </div>
+        <div class="custom-dialog-footer cls_fil_footer">
+            <div class="cls_log_main66">
+                <div style="float:left">
+                    <a class="cls_btn_secondary1" @onclick="ClearAllFilters">clear_all</a>
+                    <a class="cls_btn_primary1" @onclick="ApplyFilterDialog">apply</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@code {
+    [Parameter]
+    public Dictionary<Winit.Shared.Models.Common.ISelectionItem, List<Winit.Shared.Models.Common.ISelectionItem>>? TabDataDictionary { get; set; }
+    [Parameter]
+    public EventCallback<(List<FilterCriteria>, List<SortCriteria>)> OnFilterChange { get; set; }
+    List<FilterCriteria> filterCriteriaList = new List<FilterCriteria>();
+    List<SortCriteria> sortCriteriaList = new List<SortCriteria>();
+    private SelectionManager tabSelectionManager;
+    private SelectionManager SortSelectionManager;
+    private SelectionItemFilter SelectedTab
+    {
+        get { return (SelectionItemFilter)tabSelectionManager?.GetSelectedSelectionItems().FirstOrDefault(); }
+    }
+    private bool showPopup = false;
+    private bool show = false;
+    private void OnFilterIconsClick(Winit.Shared.Models.Common.ISelectionItem selectedTab)
+    {
+        if (!selectedTab.IsSelected)
+        {
+            tabSelectionManager.Select(selectedTab);
+        }
+        ShowFilterDialog(false);
+    }
+    public void ShowFilterDialog(bool isFilterButtonClicked = true)
+    {
+        if (isFilterButtonClicked)
+        {
+            if (!TabDataDictionary.Keys.FirstOrDefault().IsSelected)
+            {
+                tabSelectionManager.Select(TabDataDictionary.Keys.FirstOrDefault());
+            }
+        }
+        showPopup = true;
+    }
+    private void ApplyFilterDialog()
+    {
+        showPopup = false;
+        filterCriteriaList.Clear();
+        tabSelectionManager.DeselectAll();
+        foreach (var tabData in TabDataDictionary)
+        {
+            SelectionItemFilter selectionItemTab = (SelectionItemFilter)tabData.Key;
+            if (selectionItemTab.ActionType == FilterActionType.Sort)
+            {
+                var selectedItems = new SelectionManager(tabData.Value, SelectionMode.Single).GetSelectedSelectionItems();
+                AddToSortCriteria(selectedItems, tabData.Key.Code);
+            }
+            else
+            {
+                var selectedItems = new SelectionManager(tabData.Value, SelectionMode.Multiple).GetSelectedSelectionItems();
+                AddToFilterCriteria(selectedItems, tabData.Key.Code, ((SelectionItemFilter)tabData.Key).FilterGroup);
+            }
+        }
+        OnFilterChange.InvokeAsync((filterCriteriaList, sortCriteriaList));
+    }
+    private void AddToFilterCriteria(List<Winit.Shared.Models.Common.ISelectionItem> selectedItems, string FilterName, FilterGroupType filterGroup)
+    {
+        foreach (SelectionItemFilter item in selectedItems)
+        {
+            filterCriteriaList.Add(new FilterCriteria(FilterName, item.Code, FilterType.Equal, item.DataType, filterGroup));
+        }
+    }
+    private void AddToSortCriteria(List<Winit.Shared.Models.Common.ISelectionItem> selectedItems, string direction)
+    {
+        sortCriteriaList.Clear();
+        foreach (SelectionItemFilter item in selectedItems)
+        {
+            sortCriteriaList.Add(new SortCriteria(item.Code, item.Direction));
+        }
+    }
+    private void ClearAllFilters()
+    {
+        showPopup = false;
+        SelectionManager selectionManagertoClear;
+        tabSelectionManager.DeselectAll();
+        foreach (var tab in TabDataDictionary)
+        {
+            selectionManagertoClear = new SelectionManager(tab.Value, SelectionMode.Multiple);
+            selectionManagertoClear.DeselectAll();
+        }
+        filterCriteriaList.Clear();
+        sortCriteriaList.Clear();
+        OnFilterChange.InvokeAsync((filterCriteriaList, sortCriteriaList));
+    }
+    private void CloseFilterDialog()
+    {
+        tabSelectionManager.DeselectAll();
+        showPopup = false;
+    }
+    protected override void OnInitialized()
+    {
+        tabSelectionManager = new SelectionManager(TabDataDictionary?.Keys.ToList(), SelectionMode.Single);
+    }
+    private void PanelIndexChanged(ISelectionItem selectionItem)
+    {
+        if (!selectionItem.IsSelected)
+        {
+            tabSelectionManager.Select(selectionItem);
+            StateHasChanged();
+        }
+    }
+    private Winit.Shared.Models.Common.ISelectionItem selectedRadioItem;
+
+    private void HandleRadioChange(Winit.Shared.Models.Common.ISelectionItem item, ChangeEventArgs e)
+    {
+        SortSelectionManager = new SelectionManager(TabDataDictionary[SelectedTab], SelectionMode.Single);
+        SortSelectionManager.Select(item);
+    }
+    private void HandleSelectAllClick(List<ISelectionItem> selectionItems)
+    {
+        selectionItems.ForEach(e => e.IsSelected = true);
+    }
+    private void HandleUnSelectAllClick(List<ISelectionItem> selectionItems)
+    {
+        selectionItems.ForEach(e => e.IsSelected = false);
+    }
+}

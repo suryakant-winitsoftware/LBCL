@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Base\Winit.Modules.Base.DL\Winit.Modules.Base.DL.csproj" />
+    <ProjectReference Include="..\..\Emp\Winit.Modules.Emp.BL\Winit.Modules.Emp.BL.csproj" />
+    <ProjectReference Include="..\..\RSSMailQueue\Winit.Modules.RSSMailQueue.BL\Winit.Modules.RSSMailQueue.BL.csproj" />
+    <ProjectReference Include="..\..\SKU\Winit.Modules.SKU.Model\Winit.Modules.SKU.Model.csproj" />
+    <ProjectReference Include="..\Winit.Modules.Auth.Model\Winit.Modules.Auth.Model.csproj" />
+  </ItemGroup>
+</Project>

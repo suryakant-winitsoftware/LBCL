@@ -1,0 +1,436 @@
+﻿@page "/QPSScheme/{IsQPS?}"
+@page "/SelloutrealSecondaryScheme"
+
+@using Winit.Modules.SKU.Model.Interfaces
+@using Winit.Modules.Scheme.BL.Interfaces
+@using Winit.Modules.User.Model.Constants
+@layout MainLayout
+@inherits SchemeBaseComponent
+
+<PageTitle>@(_viewModel.IsQPSScheme ? "QPS Scheme" : "")</PageTitle>
+@inject Winit.UIModels.Web.Schema.Interfaces.IAddSelloutSecondaryRealSchemeToggle toggle
+@inject IQPSOrSelloutrealSecondarySchemeViewModel _viewModel
+
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" />
+@if (_viewModel.IsInitialize)
+{
+    <div class="cls_main1">
+        <div class="cls_logo_section1">
+            <div class="cls_logo_left">
+                <div class="cls_logo_left_outline">
+                    <div class="cls_comp" @onclick=@(()=>toggle.Details=true)>
+                        <div class="@(toggle.Details?"cls_comp_box":"cls_comp_box1")">
+                            <label class="@(toggle.Details?"cls_comp_box_label":"cls_comp_box_label1")">Details</label>
+                        </div>
+                        <div class="@(toggle.Details?"cls_comp_box_right":"cls_comp_box_right1")"></div>
+                    </div>
+
+                    <div class="cls_comp1" @onclick=@SchemeProducts_OnClick>
+                        <div class="@(toggle.SchemeProducts?"cls_comp_box_left":"cls_comp_box_left1")"></div>
+                        <div class="@(toggle.SchemeProducts?"cls_comp_box":"cls_comp_box1")">
+                            <label class="@(toggle.SchemeProducts?"cls_comp_box_label":"cls_comp_box_label1")">Scheme Products</label>
+                        </div>
+                        <div class="@(toggle.SchemeProducts?"cls_comp_box_right":"cls_comp_box_right1")"></div>
+                    </div>
+                    <div class="cls_comp1" @onclick=@Mapping_OnClick>
+                        <div class="@(toggle.Slab?"cls_comp_box_left":"cls_comp_box_left1")"></div>
+                        <div class="@(toggle.Slab?"cls_comp_box":"cls_comp_box1")">
+                            <label class="@(toggle.Slab?"cls_comp_box_label":"cls_comp_box_label1")">Mapping</label>
+                        </div>
+                        <div class="@(toggle.Slab?"cls_comp_box_right":"cls_comp_box_right1")"></div>
+                    </div>
+
+
+                </div>
+
+
+            </div>
+            @if (_iAppUser.Role.HasP2Access || _iAppUser.Role.HasP3Access)
+            {
+                <div class="cls_logo_right2" style="display:none">
+                    <p class="cls_div_p1">Source of Funding</p>
+                    @if (_iAppUser.Role.HasP2Access)
+                    {
+                        <div class="cls_sales_section3_sub2">
+                            <span class="cls_sales_section3_sub1_span">Branch Contribution</span>
+                            <input type="number" min="0" max="100" placeholder=""
+                                   @onchange=@((e)=>OnContributionsEnter(e,nameof(_viewModel.PromoMasterView.PromotionView.ContributionLevel1)))
+                                   value="@CommonFunctions.RoundForSystem(_viewModel.PromoMasterView.PromotionView.ContributionLevel1,_appSetting.RoundOffDecimal)"
+                                   class="cls_sales_section3_sub1_input1">
+                            <label class="cls_sales_section3_sub1_label">%</label>
+                        </div>
+                    }
+                    @if (_iAppUser.Role.HasP3Access)
+                    {
+                        <div class="cls_sales_section3_sub2">
+                            <span class="cls_sales_section3_sub1_span">HO(P3) Contribution Type</span>
+                            <input type="number" min="0" max="100" placeholder=""
+                                   @onchange=@((e)=>OnContributionsEnter(e,nameof(_viewModel.PromoMasterView.PromotionView.ContributionLevel2)))
+                                   value="@CommonFunctions.RoundForSystem(_viewModel.PromoMasterView.PromotionView.ContributionLevel2)"
+                                   class="cls_sales_section3_sub1_input1">
+                            <label class="cls_sales_section3_sub1_label">%</label>
+                        </div>
+                        <div class="cls_sales_section3_sub2">
+                            <span class="cls_sales_section3_sub1_span">HO(S) Contribution</span>
+                            <input type="number" min="0" max="100" placeholder="" @onchange=@((e)=>OnContributionsEnter(e,nameof(_viewModel.PromoMasterView.PromotionView.ContributionLevel3)))
+                                   value="@CommonFunctions.RoundForSystem(_viewModel.PromoMasterView.PromotionView.ContributionLevel3)"
+                                   class="cls_sales_section3_sub1_input1">
+                            <label class="cls_sales_section3_sub1_label">%</label>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+
+        <div class="cls_sales_container2">
+
+            <button class="cls_dropdown_button_full" @onclick=@(()=>toggle.Details=true)>
+                <span>DETAILS</span>
+                <span>
+                    @if (toggle.Details)
+                    {
+                        <img src="./Images/arrow_up.png" class="cls_arrow_up">
+                    }
+                    else
+                    {
+                        <img src="./Images/arrow_down.png" class="cls_arrow_down">
+                    }
+                </span>
+            </button>
+
+
+
+            <div class="cls_sales_container_outline" style="display:@(toggle.Details?"block":"none")">
+                <p class="cls_container_p_full">Details</p>
+                <div class="cls_container_div4">
+                    <div class="cls_section_div_purchase4">
+                        <label class="cls_section_div_purchase2_label">Scheme Code<span class="cls_section_div_purchase2_span">*</span></label>
+
+                        @* <input type="text" placeholder="Enter Here" @bind=@_viewModel.PromoMasterView.PromotionView.Code /> *@
+                        <label class="cls_credit_label">@_viewModel.PromoMasterView.PromotionView.Code</label>
+
+
+
+                    </div>
+
+                    <div class="cls_section_div_purchase4">
+                        <label class="cls_section_div_purchase2_label">Scheme Name<span class="cls_section_div_purchase2_span">*</span></label>
+                        <div class="cls_select">
+                            <input type="text" placeholder="Enter Here" disabled="@(!_viewModel.IsNew)" @bind=@_viewModel.PromoMasterView.PromotionView.Name>
+
+                        </div>
+
+                    </div>
+
+                    <div class="cls_section_div_purchase4">
+                        <label class="cls_section_div_purchase2_label">Valid From<span class="cls_section_div_purchase2_span">*</span></label>
+                        <InputDate class="cls_select_date" disabled="@(!_viewModel.IsNew)" min="@DateTime.Now.ToString("yyyy-MM-dd")" @bind-Value=@_viewModel.PromoMasterView.PromotionView.ValidFrom></InputDate>
+                    </div>
+                </div>
+                <div class="cls_container_div4">
+                    @if (!_viewModel.IsNoEndDate)
+                    {
+                        <div class="cls_section_div_purchase4">
+                            <label class="cls_section_div_purchase2_label">Valid Upto<span class="cls_section_div_purchase2_span">*</span></label>
+                            <InputDate class="cls_select_date" disabled="@(!_viewModel.IsNew)" min="@DateTime.Now.ToString("yyyy-MM-dd")" @bind-Value=@_viewModel.PromoMasterView.PromotionView.ValidUpto></InputDate>
+
+                        </div>
+                    }
+                    <div class="cls_section_div_purchase4">
+                        <label class="cls_section_div_purchase2_label" for="IsNoEndDate">No End Date</label>
+                        <input id="IsNoEndDate" type="checkbox" disabled="@(!_viewModel.IsNew)" class="cls_sales_checkbox_input" checked="@_viewModel.IsNoEndDate" @onclick="@(()=>_viewModel.IsNoEndDate=!_viewModel.IsNoEndDate)">
+
+                    </div>
+                </div>
+                <div class="cls_container_div4">
+
+                    <div class="cls_section_textarea">
+                        <span>Remarks</span>
+                        <div class="cls_select_text1">
+                            <textarea style="height:96px;" autocomplete="off" disabled="@(!_viewModel.IsNew)" class="form-control  ng-pristine ng-valid" cols="20" maxlength="495" rows="2"
+                                      @bind=@_viewModel.PromoMasterView.PromotionView.Remarks />
+
+                        </div>
+
+                    </div>
+
+                    @*  <div class="cls_section_attach">
+                <span>Attach Document</span>
+                <div class="cls_select3">
+                <input type="file" placeholder="Choose Files" class="cls_select2_input">
+                </div>
+                <div class="cls_select_right">
+                <button class="cls_btn">upload</button>
+                </div>
+
+                </div>
+                <div class="cls_add_scheme_right">
+                <button class="cls_comman_btn">upload</button>
+                </div> *@
+
+                    <div class="cls_file_upload_qps">
+                        <h3 class="cls_file_upload_label">Attach Document</h3>
+                        <Winit.UIComponents.Common.FileUploader.FileUploader @ref=fileUploader
+                                                                             RelativePath="@FilePath"
+                                                                             FileSysList="_viewModel.FileSysList"
+                                                                             LinkedItemType="store"
+                                                                             LinkedItemUID="@_viewModel.PromoMasterView.PromotionView.UID"
+                                                                             FileExtension=".jpg,.jpeg,.png,.pdf,.doc,.docx" UploadEventCallBack="_viewModel.OnFilesUpload" />
+                    </div>
+
+                </div>
+
+                <div class="cls_qps_button">
+                    <button class="cls_button_blue" @onclick=@SchemeProducts_OnClick>Continue</button>
+                </div>
+
+            </div>
+
+
+            <button class="cls_dropdown_button_full" @onclick=@SchemeProducts_OnClick>
+                <span>SCHEME PRODUCTS</span>
+                <span>
+                    @if (toggle.SchemeProducts)
+                    {
+                        <img src="./Images/arrow_up.png" class="cls_arrow_up">
+                    }
+                    else
+                    {
+                        <img src="./Images/arrow_down.png" class="cls_arrow_down">
+                    }
+                </span>
+            </button>
+            @* <img src="./Images/dashicons_arrow-left-alt2.png" width="24px" height="24px"> *@
+
+            @if (toggle.SchemeProducts)
+            {
+                <div class="cls_main">
+                    <h2 class="cls_container_p_full">Scheme Products</h2>
+                    <div class="cls_container_div4">
+
+                        <div class="cls_section_div">
+                            <span for="orderType">Order Type</span>
+                            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="@_viewModel.OrderTypeDDL" IsSearchable="true"
+                                                                               IsButtonVisible=true OnSelect="_viewModel.OnOrderTypeSelected" />
+                        </div>
+                        @*   <div class="cls_sales_checkbox">
+                <label for="ApplyForExcludedItems">Apply For Excluded Items</label>
+                <input id="ApplyForExcludedItems"
+                type="checkbox"
+                checked="@_viewModel.PromoMasterView.PromotionView.ApplyForExcludedItems"
+                @onclick="@(()=>_viewModel.PromoMasterView.PromotionView.ApplyForExcludedItems=!_viewModel.PromoMasterView.PromotionView.ApplyForExcludedItems)">
+
+                </div> *@
+                    </div>
+                    <div class="cls_container_div4">
+                        <div class="cls_section_div">
+                            <span for="sku">SKU Group Type</span>
+                            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="@_viewModel.SKUGroupTypeDDL" IsSearchable="true"
+                                                                               IsButtonVisible=true OnSelect="_viewModel.OnGroupTypeSelected" />
+                        </div>
+                        <div class="cls_section_div">
+                            <span>Selected Value</span>
+                            @if (_viewModel.IsGroupTypeSKU)
+                            {
+                                <button class="cls_select2" @onclick=@(()=>OnAddProductClick())>
+                                    <label class="cls_select2_label1">@_viewModel.SelectedValueSkuType</label>
+                                    <img src="Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+
+                                </button>
+
+                            }
+                            else
+                            {
+
+                                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="@_viewModel.SKUGroupDDL" IsSearchable="true"
+                                                                                   _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Multiple"
+                                                                                   IsButtonVisible=true
+                                                                                   OnSelect="_viewModel.OnGroupSelected" />
+                            }
+                        </div>
+
+                    </div>
+                    <div class="cls_container_div4">
+                        <button class="cls_add_new_sec" @onclick=@AddSelectedItems>Add Products</button>
+                    </div>
+                    <div class="cls_container_div1">
+                        <TableGridView Columns="SchemeProductsColumns" DataSource="SchemeProducts"></TableGridView>
+                    </div>
+                    @*  <div class="search-container">
+            <button class="cls_add_new_sec">Save</button>
+            <button class="cls_add_new_sec">Cancel</button>
+            </div> *@
+                </div>
+            }
+
+            @*  <p>MAPPING</p>
+        <img src="./Images/dashicons_arrow-left-alt2.png" width="24px" height="24px"> *@
+            <button class="cls_dropdown_button_full" @onclick=@Mapping_OnClick>
+                <span>SLAB MAPPING</span>
+                <span>
+                    @if (toggle.Slab)
+                    {
+                        <img src="./Images/arrow_up.png" class="cls_arrow_up">
+                    }
+                    else
+                    {
+                        <img src="./Images/arrow_down.png" class="cls_arrow_down">
+                    }
+                </span>
+            </button>
+
+
+            @if (toggle.Slab)
+            {
+                <div class="cls_main">
+                    <h2 class="cls_container_p_full">Slab Mapping</h2>
+                    <div class="cls_container_div4">
+                        <div class="cls_section_div">
+                            <span>Minimum</span>
+                            <div class="cls_select">
+                                <input type="number" @bind=@_viewModel.SchemeSlab.Minimum />
+                            </div>
+
+                        </div>
+                        <div class="cls_section_div">
+                            <span>Maximum</span>
+                            <div class="cls_select">
+                                <input type="number" @bind=@_viewModel.SchemeSlab.Maximum />
+                            </div>
+
+                        </div>
+                        <div class="cls_section_div">
+                            <span for="customerClassification">Offer Type</span>
+
+                            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_viewModel.OfferTypeDDL" IsSearchable="true"
+                                                                               _SelectionMode=Winit.Shared.Models.Enums.SelectionMode.Single
+                                                                               IsButtonVisible=true
+                                                                               OnSelect="@_viewModel.OnOfferTypeSelected" />
+                        </div>
+                        <div class="cls_section_div">
+                            <span for="distributorList">Offer Value</span>
+                            <div class="cls_select">
+                                <input type="number" @bind=@_viewModel.SchemeSlab.OfferValue />
+                            </div>
+
+                        </div>
+                        @if (_viewModel.SchemeSlab.IsFOCType)
+                        {
+
+                            <div class="cls_section_div">
+                                <span for="distributorList">Free SKU</span>
+                                <button class="cls_select2" @onclick=@(()=>OnAddProductClick(true))>
+                                    <label class="cls_select2_label1">@_viewModel.FreeSKULabel</label>
+                                    <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+
+                                </button>
+                            </div>
+
+                        }
+                    </div>
+                    <div class="cls_button_bottom_purchase">
+                        <button class="cls_button_blue" @onclick=@AddSchemeSlab>Add</button>
+                    </div>
+
+                    <div class="cls_container_div4">
+                        <TableGridView Columns="SchemeSlabsColumns" DataSource="SchemeSlabs"></TableGridView>
+
+
+                    </div>
+
+
+                    @* <TableGridView Columns="SchemeSlabsColumns" DataSource="_viewModel.SchemeSlabs"></TableGridView>*@
+
+
+
+
+                </div>
+            }
+            <button class="cls_dropdown_button_full" @onclick=@(()=>toggle.Customer=true)>
+                <span>CUSTOMER MAPPING</span>
+                <span>
+                    @if (toggle.Customer)
+                    {
+                        <img src="./Images/arrow_up.png" class="cls_arrow_up">
+                    }
+                    else
+                    {
+                        <img src="./Images/arrow_down.png" class="cls_arrow_down">
+                    }
+                </span>
+            </button>
+            @if (toggle.Customer)
+            {
+                <div class="cls_applic_to_cus_out">
+
+                    <ApplicableToCustomers ChannelPartner="@_viewModel.ChannelPartner"
+                                           OnChannelPartnerSelect="_viewModel.OnChannelpartnerSelectedUI"
+                                           BranchDDL="@_viewModel.BranchDDL"
+                                           OnBranchSelect="_viewModel.OnBranchSelected"
+                                           BroadClassificationDDL="_viewModel.BroadClassificationDDL"
+                                           IsShowAllCustomersneeded="true" OnShowAllcustomers="_viewModel.AllCustomersByFilters"
+                                           OnBroadClassificationSelect="_viewModel.OnBroadClassificationSelected">
+                    </ApplicableToCustomers>
+                </div>
+            }
+            <div class="cls_button_bottom_purchase">
+                @if (_viewModel.IsNew)
+                {
+                    <button class="cls_button_blue" @onclick="@Save">Save </button>
+                }
+                else
+                {
+                    <button class="cls_button_blue" @onclick="@(()=>_navigationManager.NavigateTo("ManageScheme"))">Back  </button>
+                }
+
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+    <WinIt.Pages.ApprovalRoleEngine.ApprovalEngine ShowApprovalEngine="@(true)"
+                                                   RuleId="@_viewModel.RuleId"
+                                                   RequestId="@_viewModel.RequestId.ToString()"
+                                                   ApprovalUsercodes="_viewModel.ApprovalUserCodes"
+                                                   @ref="childComponentRef"
+                                                   IsRejectButtonNeeded="_appSetting.IsRejectNeededInScheme"
+                                                   IsReassignButtonNeeded="_appSetting.IsReassignNeededInScheme"
+                                                   OnApprovalTracker="OnApprovalTracker"
+                                                   HandleApprovalAction="HandleApprovalAction">
+    </WinIt.Pages.ApprovalRoleEngine.ApprovalEngine>
+
+
+
+
+
+
+
+
+
+
+    <WinIt.Pages.DialogBoxes.AddProductDialogBoxV1 T="ISKUV1"
+                                                   DataSource="_viewModel.SKUV1s"
+                                                   L1="@(e => e.L1 )"
+                                                   L2="@(e => e.L2 )"
+                                                   L3="@(e => e.L3 )"
+                                                   L4="@(e => e.L4 )"
+                                                   L5="@(e => e.L5 )"
+                                                   L6="@(e => e.L6 )"
+                                                   L7="@(e => e.Code)"
+                                                   L8="@(e => e.Name)"
+                                                   UID="@(e => e.UID)"
+                                                   DropDownDataSource="_viewModel.SKUAttributeData"
+                                                   OnDropdownValueSelectSKUAtrribute="@(async(e)=>await _viewModel._addProductPopUpDataHelper.OnSKuAttributeDropdownValueSelect(e.UID))"
+                                                   FilterAction="_viewModel._addProductPopUpDataHelper.FilterAction"
+                                                   OnCancelClick="() => AddProductDialogBox?.OnCloseClick()"
+                                                   OnOkClick="_viewModel.GetSelectedItems"
+                                                   SelectedItems="_viewModel.SelectedSKUs"
+                                                   OnSelect="OnItemSelect"
+                                                   @ref="AddProductDialogBox">
+    </WinIt.Pages.DialogBoxes.AddProductDialogBoxV1>
+}

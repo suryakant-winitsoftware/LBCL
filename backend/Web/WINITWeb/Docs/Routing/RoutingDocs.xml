@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<routerInfo>
+  <!--Sales Order-->
+  <router path="" pageName="" pageTitle="" />
+  <router path="" pageName="" pageTitle="" />
+  <router path="" pageName="" pageTitle="" />
+  <router path="" pageName="" pageTitle="" />
+  <!--Return Order-->
+  <router path="" pageName="" pageTitle="" />
+  <router path="" pageName="" pageTitle="" />
+  <router path="" pageName="" pageTitle="" />
+	
+	<!--Hierarchy-->
+	<router path="LocationHierarchyBasePage" pageName="LocationHierarchy" pageTitle="Location Hierarchy" />
+	<router path="LocationTypeHierarchyBasePage" pageName="LocationTypeHierarchy" pageTitle="LocationType Hierarchy" />
+	<router path="SKUGroupTypeHierarchyBasePage" pageName="SKUGroupTypeHierarchy" pageTitle="SKUGroupType Hierarchy" />
+	<router path="SKUGroupTypeHierarchyBasePage" pageName="SKUGroupTypeHierarchy" pageTitle="SKUGroupType Hierarchy" />
+	<router path="SKUGroupTypeHierarchyBasePage" pageName="SKUGroupTypeHierarchy" pageTitle="SKUGroupType Hierarchy" />
+
+	<!--Promotion-->
+  <router path="MaintainPromotions" pageName="MaintainPromotions.razor" pageTitle="Maintain Promotions" />
+</routerInfo>

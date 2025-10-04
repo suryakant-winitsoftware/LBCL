@@ -1,0 +1,66 @@
+﻿@page "/customer"
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+@inject Winit.Modules.CollectionModule.BL.Interfaces.ICollectionModuleViewModel _collectionModuleViewModel
+
+<style>
+    .card-content-copy {
+        font-size: 11px;
+        color: white;
+    }
+
+    .card-copy {
+        border: 1px solid #ddd;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+        height: 40px;
+    }
+
+    .card-content {
+        font-size: 16px;
+        color: #555;
+    }
+
+    .card {
+        border: 1px solid #ddd;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+        height: 50px;
+    }
+
+    .container:active .card {
+        background-color: lightblue;
+    }
+
+    .card {
+        cursor: pointer;
+    }
+</style>
+
+
+<div class="container" style="display:none">
+    <div class="row">
+        <div class="card-copy d-flex flex-row" style="background-color:blue;">
+            <div class="card-content-copy col-12 d-flex flex-column" style="padding: 10px;">
+                @Localizer["customers"]
+            </div>
+        </div>
+    </div>
+</div>
+
+@foreach (var list in _storelist)
+{
+    <div style="margin-bottom: 3px;"></div>
+    <div class="container" style="margin-top:20px;">
+        <div class="cls_collection">
+            <div class="cls_collection_rep" @onclick="() => DivClicked(list)">
+            
+                    <div class="cls_collection_rep1">
+                        <h3>@list.Name</h3>
+                    <p>@Localizer["inv_date"]: @InvDate</p>
+                    <p>@Localizer["due_date"]: @DueDate </p>
+                    </div>
+
+            </div>
+        </div>
+    </div>
+}

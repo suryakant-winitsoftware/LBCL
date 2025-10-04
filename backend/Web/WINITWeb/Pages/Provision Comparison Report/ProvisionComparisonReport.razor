@@ -1,0 +1,27 @@
+﻿@page "/ProvisionComparisonReport"
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.ProvisionComparisonReport.BL.Interfaces.IProvisionComparisonReportsView _viewModel
+@attribute [Authorize]
+@inject IJSRuntime JSRuntime
+
+
+
+
+<div>
+@if(ColumnsForFilter != null && ColumnsForFilter.Count>0)
+{
+   <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+                     OnFilterApplied="@OnFilterApply" /> 
+}
+</div>
+<div class="cls_header_right">
+    <Winit.UIComponents.Web.ExportToExcel.ExportToExcel ColumnHeaders="@DataGridColumns" ButtonName="Export to Excel" OnExportButtonClick="OnExcelDownloadClick"
+                                                         @ref="@ExportExcelRefrence" />
+</div>
+@if(!IsPageLoading)
+{
+    <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" DataSource="_viewModel.ProvisionsComparisonReportView" OnSort="OnSortApply" PageNumber="_viewModel.PageNumber" PageSize="_viewModel.PageSize" TotalItemsCount="_viewModel.TotalProvisionComparisonReportRecord" ShowRecordsCount="true" />
+     <Winit.UIComponents.Web.Paging.Paging CurrentPage="_viewModel.PageNumber" OnPageChange="_viewModel.PageIndexChanged" PageSize="_viewModel.PageSize" TotalItems="_viewModel.TotalProvisionComparisonReportRecord" />
+ }
+
+

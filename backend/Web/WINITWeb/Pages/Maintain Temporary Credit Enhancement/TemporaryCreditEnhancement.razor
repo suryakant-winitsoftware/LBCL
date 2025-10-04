@@ -1,0 +1,25 @@
+﻿@page "/TemporaryCreditEnhancement"
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.CreditLimit.BL.Interfaces.IMaintainTemporaryCreditEnhancementViewModel _viewModel;
+
+@if (IsInitialised)
+{
+
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService"
+                         ColumnsForFilter="FilterColumns" IsSearchCriteriaNeeded="true"
+                         IsShowFilter="true" OnFilterApplied="OnFilterClick"/>
+    <div class="cls_export_main">
+        <button class="cls_add_new_sec" @onclick="AddNewTemporaryCreditEnhancementDetails">Add New</button>
+    </div>
+    <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns"
+                                                DataSource="_viewModel.TemporaryCreditEnhancementList"
+                                                OnSort="OnSortClick" PageNumber="_viewModel.PageNo"
+                                                PageSize="_viewModel.PageSize" TotalItemsCount="_viewModel.TotalCount"
+                                                ShowRecordsCount="true"
+                                                IsPaginationRequired="true"
+                                                OnPageChange="_viewModel.OnPageIndexChanged"/>
+    @* <Winit.UIComponents.Web.Paging.Paging CurrentPage="_viewModel.PageNo" *@
+    @*                                       OnPageChange="_viewModel.OnPageIndexChanged" *@
+    @*                                       PageSize="_viewModel.PageSize" *@
+    @*                                       TotalItems="_viewModel.TotalCount"/> *@
+}

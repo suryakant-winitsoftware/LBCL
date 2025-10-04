@@ -1,0 +1,38 @@
+﻿@page "/ViewBankDetails"
+@inherits WinIt.Pages.Base.BaseComponentBase;
+@using Microsoft.AspNetCore.Authorization;
+@using Winit.UIComponents.Web.Filter
+@using Winit.UIModels.Common.Filter
+@attribute [Authorize]
+@using Winit.Shared.Models.Common
+@using Winit.UIComponents.Common.CustomControles
+@inject Winit.Modules.Bank.BL.Interfaces.IViewBankDetailsViewModel _ViewBankDetailsViewModel;
+
+@* <PageTitle>View Bank Details</PageTitle>
+@inject Winit.Modules.Bank.BL.Interfaces.IViewBankDetailsViewModel _viewBankDetailsViewModel; *@
+<div class="cls_container_div4">
+    <PageTitle>View Bank Details</PageTitle>
+    <button class="cls_add_new_sec" style="float:right;margin-right:0px" @onclick="() => FilterRef?.ToggleFilter()">@Localizer["filter"]</button>
+    <Filter @ref="FilterRef" ColumnsForFilter="@FilterColumns" IsSearchCriteriaNeeded="true"
+            OnFilterApplied="@OnFilterApply" />
+</div>
+
+
+@if (IsLoaded)
+{
+    
+        <button class="cls_add_new_sec" @onclick="AddNewBankDetails">@Localizer["add_new"]</button>
+        
+    
+    <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" DataSource="_ViewBankDetailsViewModel.BankDetailsList" />
+    @if (IsDeleteBtnPopUp)
+    {
+        <PopUp Title=@Localizer["delete"] OnCloseClick="() => IsDeleteBtnPopUp = false" OkbtnText=@Localizer["delete"] CancelbtnText=@Localizer["cancel"] OnOkClick="OnOkFromDeleteBTnPopUpClick">
+            <label>
+                @Localizer["are_you_sure_you_want_to_delete?"]
+            </label>
+        </PopUp>
+
+    }
+@*     <Winit.UIComponents.Web.Paging.Paging CurrentPage="_viewBankDetailsViewModel.PageNumber" OnPageChange="_viewBankDetailsViewModel.PageIndexChanged" PageSize="_viewBankDetailsViewModel.PageSize" TotalItems="_viewBankDetailsViewModel.TotalSKUItemsCount" />
+ *@}

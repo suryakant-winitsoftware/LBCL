@@ -1,0 +1,192 @@
+﻿@page "/EditMaintainBranch"
+@inject Winit.Modules.Location.BL.Interfaces.IMaintainBranchMappingViewModel maintainBranchMappingViewModel;
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+@if (IsInitialised)
+{
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService"  />
+    <div class="cls_logo_section3">
+
+        <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label">
+                <span class="cls_section_div_purchase2_span">*</span>Code
+            </label>
+            <div class="cls_select">
+                <input placeholder="Enter Code" type="text" @bind-value="maintainBranchMappingViewModel.ViewBranchDetails.Code" disabled="@IsEdit" />
+            </div>
+        </div>
+        <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label">
+                <span class="cls_section_div_purchase2_span">*</span>Name
+            </label>
+            <div class="cls_select">
+                <input placeholder="Enter Name" type="text" @bind-value="maintainBranchMappingViewModel.ViewBranchDetails.Name" />
+            </div>
+        </div>
+
+
+        <div class="cls_section_div_purchase2 cls_broad_section_width">
+            <label class="cls_section_div_purchase2_label">
+                Active
+            </label>
+            <input class="cls_section_div_purchase2_input" type="checkbox" @bind="maintainBranchMappingViewModel.ViewBranchDetails.IsActive" />
+        </div>
+
+        
+    </div>
+    <div>
+        <div class="cls_container_div4">
+            <label class="cls_container_p_full">Mapping</label>
+
+            <div class="cls_sales_container2">
+                    <button class="cls_dropdown_button_full"
+                                @onclick="@(() =>OnStatesInfoClick())">
+                        <span>State</span>
+                        <span>
+                            @if (render.IsStatesInformationRendered)
+                                {
+                                    <img src="./Images/arrow_up.png" class="cls_arrow_up">
+                                }
+                                else
+                                {
+                                    <img src="./Images/arrow_down.png" class="cls_arrow_down">
+                                }
+                        </span>
+                 </button>
+
+                @if (render.IsStatesInformationRendered)
+                {
+                    <div class="cls_state_section">
+                        <div class="cls_container_div1">
+                            <div class="cls_sales_section3_sub1">
+                                <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder="Search by State Name"
+                                                                                       MaxLength="200" DebounceInterval="500"
+                                                                                       KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+                                                                                       IsForSearch="true"
+                                                                                       OnDebounceIntervalElapsed="SearchStateItemInList" />
+                            </div>
+                        </div>
+                        <div class="cls_state_section_container">
+                            @foreach (var state in FilteredStateSelectionItems)
+                            {
+                                <div class="cls_state_section_div" @key="state.UID">
+                                    <div class="cls_btn_y_n">
+                                        <input class="cls_btn_radio_input" type="checkbox" checked="@state.IsSelected"
+                                               @onclick="(e) => OnItemCheckedChanged(state)" id="@state.UID" />
+                                        <label class="cls_btn_radio_label" for="@state.UID">@state.Code</label>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                    </div>
+                }
+
+                
+                    <button class="cls_dropdown_button_full"
+                 @onclick="@(() =>OnCitiesInfoClick())">
+
+                    <span>City</span>
+                        <span>
+                        @if (render.IsCitiesInformationRendered)
+                    {
+                    <img src="./Images/arrow_up.png" class="cls_arrow_up">
+                    }
+                    else
+                    {
+                    <img src="./Images/arrow_down.png" class="cls_arrow_down">
+                    }
+                    </span>
+
+                 </button>
+
+                @if (render.IsCitiesInformationRendered)
+                {
+                    <div class="cls_state_section">
+                        <div class="cls_container_div1">
+                            <div class="cls_sales_section3_sub1">
+                                <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder="Search by City Name"
+                                                                                       MaxLength="200" DebounceInterval="500"
+                                                                                       KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+                                                                                       IsForSearch="true"
+                                                                                       OnDebounceIntervalElapsed="SearchCityItemInList" />
+                            </div>
+                        </div>
+                        <div class="cls_state_section_container">
+                            @foreach (var city in FilteredCitySelectionItems)
+                            {
+                                <div class="cls_state_section_div">
+                                    <div class="cls_btn_y_n">
+                                        <input class="cls_btn_radio_input" type="checkbox" checked="@city.IsSelected"
+                                               @onchange="(e) => OnItemCheckedChanged(city)" id="@city.UID" />
+                                        <label class="cls_btn_radio_label" for="@city.UID">@city.Code</label>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+                    <button class="cls_dropdown_button_full"@onclick="@(() =>OnLocalitiesInfoClick())">
+
+                    <span>Localities</span>
+                        <span>
+                        @if (render.IsLocalitiesInformationRendered)
+                    {
+                    <img src="./Images/arrow_up.png" class="cls_arrow_up">
+                    }
+                    else
+                    {
+                    <img src="./Images/arrow_down.png" class="cls_arrow_down">
+                    }
+                    </span>
+
+                 </button>
+
+                @if (render.IsLocalitiesInformationRendered)
+                {
+                    <div class="cls_state_section">
+                        <div class="cls_container_div1">
+                            <div class="cls_sales_section3_sub1">
+                                <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder="Search by Locality Name"
+                                                                                       MaxLength="200" DebounceInterval="500"
+                                                                                       KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+                                                                                       IsForSearch="true"
+                                                                                       OnDebounceIntervalElapsed="SearchLocalityItemInList" />
+                            </div>
+                        </div>
+                        <div class="cls_state_section_container">
+                            @foreach (var locality in FilteredLocalitySelectionItems)
+                            {
+                                <div class="cls_state_section_div">
+                                    <div class="cls_btn_y_n">
+                                        <input class="cls_btn_radio_input" type="checkbox" checked="@locality.IsSelected"
+                                               @onchange="(e) => OnItemCheckedChanged(locality)" id="@locality.UID" />
+                                        <label class="cls_btn_radio_label" for="@locality.UID">@locality.Code</label>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+
+            </div>
+           
+        </div>
+
+        <div class="cls_button_bottom_purchase">
+            <button class="cls_button_light " @onclick="BackBtnClicked">Back</button>
+
+            <button type="button" class="cls_button_blue " @onclick="SaveBranchDetails"> @(((IsEdit ? "Save" : "Update")))</button>
+        </div>
+    </div>
+
+    @if (IsErrorPopUp)
+    {
+        <PopUp Title=Error OnCloseClick="() => IsErrorPopUp = false" OkbtnText=OK CancelbtnText=Back OnOkClick="OnOkBTnPopUpClick">
+            <label>
+                @ValidationError
+            </label>
+        </PopUp>
+
+    }
+}

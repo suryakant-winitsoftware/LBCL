@@ -1,0 +1,65 @@
+﻿@using System.Diagnostics.CodeAnalysis
+@using System.Globalization
+@inherits InputNumber<int?>
+
+<input type="number" disabled="@Disabled" class="@this.CssClass" @attributes=this.AdditionalAttributes
+       value=@this.CurrentValueAsString @oninput=OnValueChanged/>
+
+@code {
+    [Parameter] public int Min { get; set; } = int.MinValue;
+    [Parameter] public int Max { get; set; } = int.MaxValue;
+    [Parameter] public bool Disabled { get; set; }
+    [Parameter] public EventCallback<decimal> AfterQtyChanged { get; set; }
+
+    private async Task OnValueChanged(ChangeEventArgs e)
+    {
+        // capture the current state
+        var currentValue = this.CurrentValue;
+        var resetToCurrent = false;
+
+        // Check if we need to reset the display value
+        if (BindConverter.TryConvertTo<int?>(e.Value?.ToString(), CultureInfo.InvariantCulture, out int? value))
+            resetToCurrent = value < this.Min || value > this.Max;
+
+        // Sets off the internal InputBase update process        
+        this.CurrentValueAsString = e.Value?.ToString();
+
+        // Bit of a hoop jumping exercise to get the display value back to what it was.
+        // Currently the actual UI Dom has it at the new (invalid) value
+        // whilst the Render DOM has it at it's last value.
+        // If we set it to it's old value the Renderer thinks it hasn't changed and doesn't do anything!
+        if (resetToCurrent)
+        {
+            this.CurrentValue = value;
+            StateHasChanged();
+            // Called to yield and let the Renderer update the component before we reset it to the old value
+            await Task.Delay(1);
+            this.CurrentValue = currentValue;
+            StateHasChanged();
+        }
+        else
+        {
+            await InvokeAsync(() => AfterQtyChanged.InvokeAsync(this.CurrentValue.GetValueOrDefault()));
+        }
+    }
+
+    // Normal override to covert the string value to it's correct type and add validation message if we need to.
+    protected override bool TryParseValueFromString(string? value, [MaybeNullWhen(false)] out int? result, [NotNullWhen(false)] out string? validationErrorMessage)
+    {
+        validationErrorMessage = null;
+
+        if (BindConverter.TryConvertTo<int?>(value, CultureInfo.InvariantCulture, out result))
+        {
+            if (result < this.Min)
+                validationErrorMessage = $"{DisplayName ?? FieldIdentifier.FieldName} must be greater than {this.Min}";
+
+            if (result > this.Max)
+                validationErrorMessage = $"{DisplayName ?? FieldIdentifier.FieldName} must be less than {this.Max}";
+        }
+
+        if (validationErrorMessage is not null)
+            result = CurrentValue;
+
+        return validationErrorMessage is null;
+    }
+}

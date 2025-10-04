@@ -1,0 +1,150 @@
+﻿@using Microsoft.Extensions.Localization
+@using Winit.UIComponents.Common.LanguageResources.Mobile
+@inject IStringLocalizer<LanguageKeys> Localizer
+@inject Winit.UIComponents.Common.Language.ILanguageService _languageService
+<button class="cls_select2" @onclick="ShowTable">
+    <label class="cls_select2_label1">@buttonText </label>
+    <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+    
+    </button>
+<div id="showDropDown" style="display:@(shn.showing==true?"block":"none");">
+<div class="modal-backdrop fade show" ></div>
+<div id="showDropDown" class="modal fade show" style="display:@(shn.showing==true?"block":"none");overflow:auto;">
+    
+    <div class="modal-dialog cls_pop_up_style1">
+        <div class="modal-content">
+            <div class="modal-header">
+                    <span class="close" onclick="closeDropDown()">×</span>
+            </div>
+            <div class="modal-body">
+                <div class="cls_container_div1">
+                        <input type="text" @oninput="searchClicked" placeholder="Search" class="cls_search2">
+                </div>
+                <div class="div1">
+                    <table>
+                       <thead>
+                           <tr>
+                               <th>
+                                    <input type="checkbox" id="selectAllCheckbox" @onchange="ToggleSelectAll">
+                               </th>
+                               <th>
+                                    <label for="selectAllCheckbox" >@Localizer["select_all"]</label>
+                               </th>
+                           </tr>
+                       </thead>
+                       <tbody>
+
+
+                            @foreach (var item in @data)
+                            {
+                                <tr>
+                                    <td>
+                                    <input type="checkbox" class="itemCheckbox" id="checkbox" @onclick="()=>HandleCheckboxChange(item)" checked="@item.IsSelected" />
+                                    </td>
+                                    <td>
+                                    <label >@item.Label</label>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+</table>
+
+                </div>
+            </div>
+                <div class="modal-footer">
+                    <div style="float:left">
+                        <button type="button" class="cls_comman_btn" onclick="closeDropDown()"> Done</button>
+                    </div>
+                </div>
+                @* <div style="display: flex; align-items: center;margin-left:10px;">
+                    <input type="text" @oninput="searchClicked" placeholder="Search" style="overflow:visible;padding:10px;border: 1px solid #b4b4b4;border-radius: 4px;height: 25px;width: 100%;">
+                </div>
+                <div style="margin-bottom: 10px;"></div>
+                <div style="border-bottom: 1px solid #e5e5e5; width: 100%; margin-bottom: 10px;"></div>
+
+                <div style="display: flex; align-items: center;margin-left:10px;width:210px;" class="checkbox-row">
+                <input type="checkbox" id="selectAllCheckbox" @onchange="ToggleSelectAll">
+                <label for="selectAllCheckbox" style="margin-top: 5px; margin-bottom: 5px;margin-left:5px;width:210px;">@Localizer["select_all"]</label>
+                </div>
+                <div style="margin-bottom: 10px;"></div>
+                <div style="border-bottom: 1px solid #e5e5e5; width: 100%; margin-bottom: 10px;"></div>
+            @foreach (var item in @data)
+                {
+                    <div style="display: flex; align-items: center; margin-left:10px;width:210px;" class="checkbox-row">
+                    <input type="checkbox" class="itemCheckbox" id="checkbox" @onclick="()=>HandleCheckboxChange(item)" checked="@item.IsSelected" />
+                        <label style="margin-top: 5px; margin-bottom: 5px;margin-left:5px;width:210px;">@item.Label</label>
+                    </div>
+                } *@
+            </div>
+        </div>
+    </div>
+    </div>
+
+<style>
+    .card {
+        width: 230px;
+        height: 255px;
+        perspective: 1000px;
+    }
+
+    .card-inner {
+        width: 100%;
+        height: 100%;
+    }
+
+    .checkbox-row:hover {
+        background-color: #f5f5f5;
+        /* / Change background color on hover / */
+    }
+        .divider {
+            height: 1px;
+            margin: 9px 0;
+            overflow: hidden;
+            background-color: #e5e5e5;
+        }
+
+        .card-front {
+            width: 100%;
+            height: 100%;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column; / Set the flex direction to column /
+            align-items: flex-start;
+        }
+
+        .btn-form {
+            display: block;
+            width: 100%;
+            padding: 0.375rem 0.75rem;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #3d5167;
+            background: #fff;
+            border: 1px solid #b4b4b4;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        /* .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: transparent;
+        } */
+    .card-front {
+        background-color: white;
+    }
+
+    .card-inner.opened {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+    }
+</style>
+
+<script>
+    function closeDropDown() {
+        document.getElementById('showDropDown').style.display = 'none';
+        // Optionally, you can also set shn.showing to false in your C# code if needed
+        // This may require a server call to update the state
+    }
+</script>

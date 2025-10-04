@@ -1,0 +1,64 @@
+﻿/* Table */
+.table {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #ccc;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+/* Headers */
+.headers {
+    display: flex;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #19298B;
+    color: white;
+}
+
+.header {
+    flex: 1;
+    padding: 8px;
+    cursor: pointer;
+}
+
+/* Rows */
+.rows {
+    display: flex;
+    flex-direction: column;
+}
+
+.row {
+    display: flex;
+    border-bottom: 1px solid #ccc;
+}
+
+    .row:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    .row:hover {
+        background-color: #ddd;
+    }
+
+.column {
+    flex: 1;
+    padding: 8px;
+}
+
+/* Button Styles */
+button {
+    background-color: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    font-size: inherit;
+}
+
+    /* Optional: Button hover effect */
+    button:hover {
+        text-decoration: underline;
+    }

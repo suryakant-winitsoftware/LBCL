@@ -1,0 +1,84 @@
+﻿
+  .inputfild
+{
+    width: 25%;
+    float: left;
+    border-bottom: 0 solid #f1f2f3;
+    padding: 8px 0
+}
+
+
+
+.cls_head_cust {
+    width: 99%;
+    float: left;
+    color: #013799;
+    font-size: 17px;
+    margin-bottom: 5px;
+    margin-top: 4px;
+    font-weight: 700
+}
+
+.input_tile {
+    width: 100%;
+    float: left;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 3px;
+    color: #000
+}
+
+.input_details {
+    width: 100% !important;
+    float: left;
+    font-size: 15px;
+    color: #000;
+    font-weight: 400
+}
+
+.storeupper {
+    width: 100%;
+    float: left;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    webkit-box-shadow: 0 1px #fff inset,0 1px 5px rgba(34,25,25,.4);
+    -webkit-box-shadow: 0 1px #fff inset,0 1px 5px rgba(34,25,25,.4);
+    box-shadow: 0 1px #fff inset,0 1px 5px rgba(34,25,25,.4);
+    padding: 10px;
+    border-bottom: 3px solid #2298c4 !important;
+    border-top: 1px solid #ccc !important
+}
+
+.cls_new_grid_style {
+    width: 100%
+}
+
+    .cls_new_grid_style tr {
+        background: #fff;
+        border: 1px solid #ccc !important;
+        padding: 6px 0;
+        margin: 6px 0 0;
+        width: 100%;
+        font-weight: 700;
+        color: #333;
+        line-height: 18px
+    }
+
+        .cls_new_grid_style tr:nth-child(even) {
+            background: #ededed
+        }
+
+.table-container {
+    margin-top: 20px;
+}
+
+.tblHeader {
+    background-color: #333c40 !important;color: white !important;
+}
+
+
+
+
+
+
+

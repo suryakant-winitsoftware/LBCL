@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\SharedObjects\Winit.Shared.CommonUtilities\Winit.Shared.CommonUtilities.csproj" />
+    <ProjectReference Include="..\..\..\WINITSharedObjects\WINITSharedObjects.csproj" />
+    <ProjectReference Include="..\..\..\WINITSyncManager\SyncManagerDL\SyncManagerDL\SyncManagerDL.csproj" />
+    <ProjectReference Include="..\..\..\WINITSyncManager\SyncManagerModel\SyncManagerModel\SyncManagerModel.csproj" />
+    <ProjectReference Include="..\Wint.Modules.Int_CommonMethods.Model\Winit.Modules.Int_CommonMethods.Model.csproj" />
+  </ItemGroup>
+
+</Project>

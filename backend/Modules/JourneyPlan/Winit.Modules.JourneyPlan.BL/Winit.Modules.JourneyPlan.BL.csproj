@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Address\Winit.Modules.Address.Model\Winit.Modules.Address.Model.csproj" />
+    <ProjectReference Include="..\..\FileSys\Winit.Modules.FileSys.BL\Winit.Modules.FileSys.BL.csproj" />
+    <ProjectReference Include="..\..\Org\Winit.Modules.Org.Model\Winit.Modules.Org.Model.csproj" />
+    <ProjectReference Include="..\..\Route\Winit.Modules.Route.BL\Winit.Modules.Route.BL.csproj" />
+    <ProjectReference Include="..\..\Route\Winit.Modules.Route.DL\Winit.Modules.Route.DL.csproj" />
+    <ProjectReference Include="..\..\Route\Winit.Modules.Route.Model\Winit.Modules.Route.Model.csproj" />
+    <ProjectReference Include="..\..\Store\Winit.Modules.Store.BL\Winit.Modules.Store.BL.csproj" />
+    <ProjectReference Include="..\..\Store\Winit.Modules.Store.DL\Winit.Modules.Store.DL.csproj" />
+    <ProjectReference Include="..\..\Store\Winit.Modules.Store.Model\Winit.Modules.Store.Model.csproj" />
+    <ProjectReference Include="..\Winit.Modules.JourneyPlan.DL\Winit.Modules.JourneyPlan.DL.csproj" />
+    <ProjectReference Include="..\Winit.Modules.JourneyPlan.Model\Winit.Modules.JourneyPlan.Model.csproj" />
+  </ItemGroup>
+</Project>

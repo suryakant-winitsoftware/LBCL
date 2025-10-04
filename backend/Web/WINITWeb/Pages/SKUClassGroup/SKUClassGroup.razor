@@ -1,0 +1,33 @@
+﻿@page "/AllowedSKU"
+@inherits WinIt.Pages.Base.BaseComponentBase;
+@inject Winit.Modules.SKUClass.BL.UIInterfaces.ISKUClassGroupViewModel _SKUClassGroupViewModel
+
+
+<PageTitle>SKUClass Group</PageTitle>
+@* <button class="btn btn-primary" @onclick="() => showFilter = !showFilter">Filter</button> *@
+@if (IsInitialized)
+{
+    <PageHeaderAndFilter ColumnsForFilter="@FilterColumns" IDataBreadcrumbService="dataService"
+                         IsSearchCriteriaNeeded="true" IsShowFilter=true
+                         OnFilterApplied="@OnFilterApply" />
+    <div class="cls_export_main">
+        <button class="cls_add_new_sec" @onclick='() => _navigationManager.NavigateTo("SkuClassificationItemsMap") '>@Localizer["add_new"]</button>
+    </div>
+    <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns"
+                                                DataSource="_SKUClassGroupViewModel.SKUClassGroupsList"
+                                                IsPaginationRequired=true
+                                                ShowRecordsCount=true
+                                                PageNumber="_SKUClassGroupViewModel.PageNumber"
+                                                OnPageChange="_SKUClassGroupViewModel.PageIndexChanged"
+                                                PageSize="_SKUClassGroupViewModel.PageSize"
+                                                TotalItemsCount="_SKUClassGroupViewModel.TotalSKUClassGroupItemsCount" />
+
+
+}
+@if (IsMappingComponentOpen)
+{
+    <MappingComponent OnSaveMapping="OnMappingSaveClick"
+                      LinkedItemType="AllowedSKU" LinkedItemUID="@AllowedSKUUID" 
+                      OnCloseClick="() => IsMappingComponentOpen = false" />
+}
+

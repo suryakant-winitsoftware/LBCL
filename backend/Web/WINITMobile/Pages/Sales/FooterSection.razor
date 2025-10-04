@@ -1,0 +1,206 @@
+﻿@inherits WINITMobile.Pages.Base.BaseComponentBase
+@* @using WINITMobile.State
+@inject ICountStateService _countStateService *@
+@inject IJSRuntime JSRuntime
+
+<div class="cls_footer_main">
+    <div class="cls_footer_inner">
+        <div class="cls_footer_inner1 dn">
+            <span>@Localizer["available_credit_limit"]: <b>@CurrencyLabel@AvailableCreditLimit</b> </span>
+
+        </div>
+        <div class="cls_footer_inner2">
+            <div class="cls_footer_inner2_left">
+                <div class="cls_footer_inner2_left_top">
+                    <div class="cls_footer_inner2_left_top_left">
+                        <p @onclick="DistrubutorButtonCallback">@SelectedDistributor</p>
+                        <p>Total Secondary Sales Value</p>
+                        <label>@CurrencyLabel</label>
+                        <h3>@FinalOrderValue</h3>
+                    </div>
+                    <div class="cls_footer_inner2_left_top_right dn">
+                        <div class="cls_arrow_@(ShowDetail?"up":"down")" @onclick="ToggleDetail">
+                        </div>
+                    </div>
+                </div>
+                <div class="cls_footer_inner2_left_bottom">
+                    <div class="cls_footer_inner2_left_bottom_rep" style="margin-right:20px;"><p>Products: </p><label>@LineCount</label></div>  <div class="cls_footer_inner2_left_bottom_rep"><p>@Localizer["qty"]: </p><label>@QtyCount</label></div>
+                </div>
+            </div>
+
+            <div class="cls_footer_inner2_right">
+                @if (@TextForBackButton != null)
+                {
+                    <button class="cls_btn_secondary" @onclick="HandleBackbutton"> @TextForBackButton</button>
+                }
+
+                @if (!string.IsNullOrWhiteSpace(PreviewBtnText))
+                {
+                    <button class="cls_btn_secondary" @onclick="PreviewButtonCallback">@PreviewBtnText</button>
+                }
+
+                @if (!string.IsNullOrWhiteSpace(PlaceOrderBtnText))
+                {
+
+                    @* <button class="cls_btn_primary" style=" margin-left:5px" @onclick="PlaceOrderButtonCallback">@PlaceOrderBtnText</button> *@
+                    <button class="cls_btn_primary" style=" margin-left:5px" @onclick="PlaceOrderButtonCallback">Continue</button>
+                }
+            </div>
+        </div>
+    </div>
+    @if (ShowDetail)
+    {
+        <div class="cls_footer_order_details">
+            <div class="cls_footer_order_details_top" style="display:none ">
+
+                <div class="cls_footer_order_details_top_rep">
+                    @if (!string.IsNullOrEmpty(MCLStatus))
+                    {
+                        <p>@Localizer["mcl_status"]:</p> <h3>@MCLStatus</h3>
+                    }
+                </div>
+                <div class="cls_footer_order_details_top_rep">
+                    @if (LoyaltyReddemed != 0)
+                    {
+                        <p>@Localizer["loyalty_redeemed"]:</p> <h3>@LoyaltyReddemed</h3>
+                    }
+                </div>
+                <div class="cls_footer_order_details_top_rep">
+                    @if (TotalNumberOfSKUsReplaced != 0)
+                    {
+                        <p>@Localizer["total_number_of_skus_replaced"]:</p> <h3>@TotalNumberOfSKUsReplaced</h3>
+                    }
+
+                </div>
+                <div class="cls_footer_order_details_top_rep">
+                    @if (TotalExciseDuty != 0)
+                    {
+                        <p>@Localizer["total_exicise_duty_amount"]:</p> <h3>@CurrencyLabel@TotalExciseDuty</h3>
+                    }
+
+                </div>
+                <div class="cls_footer_order_details_top_rep">
+                    @if (TotalTax != 0)
+                    {
+                        <p>@Localizer["tax_value[tax_+_invoice_vat]"]:</p> <h3>@CurrencyLabel@TotalTax</h3>
+                    }
+
+                </div>
+            </div>
+
+            <div class="cls_footer_order_details_bottom">
+                <div class="cls_footer_order_details_bottom11">
+                    <div class="cls_footer_order_details_bottom_rep">
+                        <div class="cls_footer_order_details_bottom_rep1">
+                            <p>@Localizer["order"]<br>@Localizer["value"] <span>@CurrencyLabel</span></p>
+                        </div>
+                        <div class="cls_footer_order_details_bottom_rep2">
+                            <h3>@OrderValue</h3>
+                        </div>
+
+                    </div>
+                    <div class="cls_footer_order_details_bottom_rep">
+                        <div class="cls_footer_order_details_bottom_rep1">
+                            <p>@Localizer["discount"]<br>@Localizer["value"] <span>@CurrencyLabel</span></p>
+                        </div>
+                        <div class="cls_footer_order_details_bottom_rep2">
+                            <h3>@DiscountValue</h3>
+                        </div>
+
+                    </div>
+
+                    <div class="cls_footer_order_details_bottom_rep">
+                        <div class="cls_footer_order_details_bottom_rep1">
+                            <p>@Localizer["cash"]<br>@Localizer["discount"] <span>@CurrencyLabel</span></p>
+                        </div>
+                        <div class="cls_footer_order_details_bottom_rep2">
+                            <h3>@TotalCashDiscount</h3>
+                        </div>
+
+                    </div>
+
+                    <div class="cls_footer_order_details_bottom_rep">
+
+                        @if (WastageValue != 0)
+                        {
+                            <div class="cls_footer_order_details_bottom_rep1">
+                                <p>@Localizer["wastage"]<br> @Localizer["value"] <span>@CurrencyLabel</span></p>
+                            </div>
+                            <div class="cls_footer_order_details_bottom_rep2">
+                                <h3>@WastageValue</h3>
+                            </div>
+
+                        }
+
+                    </div>
+
+                    <div class="cls_footer_order_details_bottom_rep">
+                        <div class="cls_footer_order_details_bottom_rep1">
+                            <p>@Localizer["tax"]<br>@Localizer["value"]  <span>@CurrencyLabel</span></p>
+                        </div>
+                        <div class="cls_footer_order_details_bottom_rep2">
+                            <h3>@TotalTax</h3>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+</div>
+
+@code {
+    [Parameter]
+    public string SelectedDistributor { get; set; }
+
+    [Parameter]
+    public string TextForBackButton { get; set; }
+    [Parameter]
+    public decimal QtyCount { get; set; } = 0;
+    [Parameter]
+    public decimal LineCount { get; set; } = 0;
+    [Parameter]
+    public decimal FinalOrderValue { get; set; } = 0;
+    [Parameter]
+    public decimal AvailableCreditLimit { get; set; } = 0;
+    [Parameter]
+    public string PreviewBtnText { get; set; }
+    [Parameter]
+    public string PlaceOrderBtnText { get; set; }
+    [Parameter]
+    public decimal TotalNumberOfSKUSold { get; set; } = 0;
+    [Parameter]
+    public string MCLStatus { get; set; }
+    [Parameter]
+    public decimal TotalQuantitySold { get; set; } //QtyCount
+    [Parameter]
+    public decimal LoyaltyReddemed { get; set; } = 0;
+    [Parameter]
+    public decimal TotalNumberOfSKUsReplaced { get; set; } = 0;
+    [Parameter]
+    public decimal TotalExciseDuty { get; set; } = 0;
+    [Parameter]
+    public decimal TotalTax { get; set; } = 0;
+    [Parameter]
+    public decimal TotalCashDiscount { get; set; } = 0;
+    [Parameter]
+    public decimal WastageValue { get; set; } = 0; //this value will be zero
+    [Parameter]
+    public decimal TaxValue { get; set; } //total tax
+    [Parameter]
+    public decimal OrderValue { get; set; } = 0;
+    [Parameter]
+    public decimal DiscountValue { get; set; } = 0;
+    [Parameter]
+    public string CurrencyLabel { get; set; }
+    [Parameter]
+    public EventCallback OnPreviewButtonClicked { get; set; }
+    [Parameter]
+    public EventCallback OnPlaceOrderButtonClicked { get; set; }
+
+    [Parameter]
+    public EventCallback OnDistributorClicked { get; set; }
+
+}
+

@@ -1,0 +1,11 @@
+﻿<div class="cls_Dash_customer_preview_rep33_main">
+<div class="cls_Dash_customer_preview_rep33">
+    @foreach (var tab in TabItems)
+    {
+            <div class="cls_Dash_customer_preview_rep33_rep @(tab.IsSelected? "cls_customer_preview_active" : "")"
+             @onclick="() => OnTabSelect.InvokeAsync(tab)">
+            <span><img style="width:14px;" src="@(((Winit.Shared.Models.Common.SelectionItemFilter)tab).ImgPath)"></span> <p>@tab.Label</p>
+        </div>
+    }
+    </div>
+</div>

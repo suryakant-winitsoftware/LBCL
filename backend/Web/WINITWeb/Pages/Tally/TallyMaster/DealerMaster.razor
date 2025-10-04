@@ -1,0 +1,156 @@
+﻿@page "/DealerMaster"
+@using Winit.UIComponents.Web.Table
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.Tally.BL.Interfaces.ITallyMasterViewModel tallyMasterViewModel;
+@inject IJSRuntime JSRuntime
+
+@if (IsInitialised)
+{
+
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true"
+                         ColumnsForFilter="@ColumnsForFilter"
+                         IsSearchCriteriaNeeded="false"
+                         OnFilterApplied="@OnFilterApply" />
+    <div class="cls_container_div1">
+        <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span">*</span>Channel Partner</label>
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="tallyMasterViewModel.ChannelPartnerList"
+                                                               IsButtonVisible="true"
+                                                               Title="Channel Partner"
+                                                               OnSelect="OnChannelPartnerSelect"
+                                                               _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single"/>
+        </div>
+       @*  <div class="cls_file_upload_qps1">
+            <label class="cls_file_upload_label"><span class="cls_section_div_purchase2_span">*</span> Upload File</label>
+            <InputFile @key=fileId OnChange="HandleFileSelected" />
+           <button style="padding:10px 30px;" class="cls_file_upload_button" @onclick="UploadDetails">Upload</button>            
+           <a href="#" class="cls_hyperlink" style="width:41%;" @onclick="DownloadTemplate" @onclick:preventDefault>Download Template</a>
+        </div> *@
+    </div>  
+    @if (IsChannelPartnerSelected)
+    {
+        <div class="cls_header_right">
+            <Winit.UIComponents.Web.ExportToExcel.ExportToExcel ColumnHeaders="@DataGridColumnsForExcel" OnExportButtonClick="OnExcelDownloadClick" ButtonName="Export to Excel"
+                                                                DataSource="@tallyMasterViewModel.DealerMasterDataListForExcel" FileName="DealersMasterTally.xlsx" />
+
+        </div>
+        <div class="cls_container_div1">
+            <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" DataSource="tallyMasterViewModel.DealerMasterDataList" PageNumber="tallyMasterViewModel.PageNumber"
+                                                        PageSize="tallyMasterViewModel.PageSize" OnSort="OnSortApply"
+                                                        TotalItemsCount="tallyMasterViewModel.TotalItemsCount" ShowRecordsCount="true" />
+            <Winit.UIComponents.Web.Paging.Paging CurrentPage="tallyMasterViewModel.PageNumber" OnPageChange="PageIndexChanged" 
+            PageSize="tallyMasterViewModel.PageSize" TotalItems="tallyMasterViewModel.TotalItemsCount" />
+            
+        </div>
+    }
+
+
+    @if (ImportExcelPopup)
+    {
+        <PopUp Title="Add Unassigned Customer Classification" DisableOkBtn="true" DisableCrossBtn ="true"
+               OnCloseClick="() => ImportExcelPopup = false">
+        </PopUp>
+    }
+
+    @if (IsItemSelectedToShow)
+    {
+
+        <PopUp Title="@($"{tallyMasterViewModel.tallyDealerMaster.LedgerName} Details")" DisableCancelBtn="true" OkbtnText="Back"
+                   OnOkClick="OnBackButtonClick"  DisableCrossBtn="true"
+                   OnCloseClick="() => IsItemSelectedToShow = false">
+               <div class="cls_container_div1">
+                <div class="cls_pop_up_div">
+                    <label class="cls_section_div_purchase2_label"> Ledger Name </label>
+                    <label class="cls_credit_label2">@(@tallyMasterViewModel.tallyDealerMaster.LedgerName) </label>
+                </div>
+                <div class="cls_pop_up_div">
+                    <label class="cls_section_div_purchase2_label"> Parent Name </label>
+                    <label class="cls_credit_label2">@tallyMasterViewModel.tallyDealerMaster.ParentName </label>
+                </div>
+                <div class="cls_pop_up_div">
+                    <label class="cls_section_div_purchase2_label"> Opening Balance </label>
+                    <label class="cls_credit_label2">@tallyMasterViewModel.tallyDealerMaster.OpeningBalance </label>
+                </div>
+            </div>
+            <div class="cls_popup_outline">
+                <div class="cls_pop_up_div">
+                    <label class="cls_section_div_purchase2_label"> Primary Group </label>
+                    <label class="cls_credit_label2">@tallyMasterViewModel.tallyDealerMaster.PrimaryGroup </label>
+                </div>
+
+                @* <div class="cls_pop_up_div">
+                    <label class="cls_section_div_purchase2_label"> Remote Alt Guid </label>
+                    <label class="cls_credit_label2">@tallyMasterViewModel.tallyDealerMaster.RemoteAltGuid </label>
+                </div> *@
+                <div class="cls_pop_up_div">
+                    <label class="cls_section_div_purchase2_label"> GSTIN </label>
+                    <label class="cls_credit_label2">@tallyMasterViewModel.tallyDealerMaster.GSTIN </label>
+                </div>
+                <div class="cls_pop_up_div">
+                    <label class="cls_section_div_purchase2_label"> Address </label>
+                    <label class="cls_credit_label2">@tallyMasterViewModel.tallyDealerMaster.Address </label>
+                </div>
+            </div>
+            <div class="cls_popup_outline">
+                <div class="cls_pop_up_div">
+                    <label class="cls_section_div_purchase2_label"> Address 1 </label>
+                    <label class="cls_credit_label2">@tallyMasterViewModel.tallyDealerMaster.Address1 </label>
+                </div>
+                <div class="cls_pop_up_div">
+                    <label class="cls_section_div_purchase2_label"> Address 2 </label>
+                    <label class="cls_credit_label2">@tallyMasterViewModel.tallyDealerMaster.Address2 </label>
+                </div>
+                <div class="cls_pop_up_div">
+                    <label class="cls_section_div_purchase2_label"> Country Name </label>
+                    <label class="cls_credit_label2">@tallyMasterViewModel.tallyDealerMaster.CountryName </label>
+                </div>
+            </div>
+            <div class="cls_popup_outline">
+                <div class="cls_pop_up_div">
+                    <label class="cls_section_div_purchase2_label"> Email </label>
+                    <label class="cls_credit_label2">@(@tallyMasterViewModel.tallyDealerMaster.Email ) </label>
+                </div>
+
+                <div class="cls_pop_up_div">
+                    <label class="cls_section_div_purchase2_label"> Phone </label>
+                    <label class="cls_credit_label2">@(@tallyMasterViewModel.tallyDealerMaster.Phone ) </label>
+                </div>
+
+                <div class="cls_pop_up_div">
+                    <label class="cls_section_div_purchase2_label"> Pincode </label>
+                    <label class="cls_credit_label2">@tallyMasterViewModel.tallyDealerMaster.Pincode </label>
+                </div>
+            </div>
+            <div class="cls_popup_outline">
+                <div class="cls_pop_up_div">
+                    <label class="cls_section_div_purchase2_label"> State Name </label>
+                    <label class="cls_credit_label2">@tallyMasterViewModel.tallyDealerMaster.StateName </label>
+                </div>
+                <div class="cls_pop_up_div">
+                    <label class="cls_section_div_purchase2_label"> Income Tax Number </label>
+                    <label class="cls_credit_label2">@tallyMasterViewModel.tallyDealerMaster.IncomeTaxNumber </label>
+                </div>
+
+                <div class="cls_pop_up_div">
+                    <label class="cls_section_div_purchase2_label"> Country of Residence </label>
+                    <label class="cls_credit_label2">@tallyMasterViewModel.tallyDealerMaster.CountryOfResidence </label>
+                </div>
+            </div>
+            <div class="cls_popup_outline">
+                @* <div class="cls_pop_up_div">
+                    <label class="cls_section_div_purchase2_label"> Distributor Code </label>
+                    <label class="cls_credit_label2">@tallyMasterViewModel.tallyDealerMaster.DistributorCode </label>
+                </div> *@
+
+                <div class="cls_pop_up_div">
+                    <label class="cls_section_div_purchase2_label"> Status </label>
+                    <label class="cls_credit_label2">@tallyMasterViewModel.tallyDealerMaster.Status </label>
+                </div>
+
+                
+               </div>
+        </PopUp>
+    }
+
+}
+

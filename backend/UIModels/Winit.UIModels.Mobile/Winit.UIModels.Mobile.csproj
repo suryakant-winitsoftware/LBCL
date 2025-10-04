@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Sales\**" />
+    <EmbeddedResource Remove="Sales\**" />
+    <None Remove="Sales\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Modules\Store\Winit.Modules.Store.Model\Winit.Modules.Store.Model.csproj" />
+    <ProjectReference Include="..\..\SharedObjects\Winit.Shared.Models\Winit.Shared.Models.csproj" />
+    <ProjectReference Include="..\Winit.UIModels.Common\Winit.UIModels.Common.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,246 @@
+﻿<!-- ProductDetailsModal.razor -->
+@using Winit.Modules.SalesOrder.Model.UIInterfaces
+@using Winit.Shared.Models.Common
+@using Winit.Shared.Models.Events;
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+
+@if (Product != null)
+{
+    <div class="modal" style="display:block; position:absolute; top:0%; bottom:0%;padding-top:.5%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@Localizer["product_details"]</h5>
+                <button type="button" class="close" @onclick="CloseModal">
+                    <span style="color:black; padding:10px;" aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding:0px 2%;">
+                <!-- Display the first image here -->
+                <div class="cls_product_details">
+                    <Winit.UIComponents.Mobile.Common.ImageSwipe Images='Product.SKUImages' />
+                    <div style="width:100%;text-align:center; float:left;margin-top:0px;" class="cls_forget_right">
+                       @*  <a class="cls_a_pr_ctlog" style="width:100%;text-align:right; float:left;"
+                           href="@(Path.Combine(_appConfigs.ApiDataBaseUrl, Product.CatalogueURL?.ToString()))" target="_blank">
+                            View Product Catalogue
+                        </a> *@
+
+                        <a class="cls_a_pr_ctlog" style="width:100%;text-align:right; float:left;" @onclick='async ()=>await DownloadAndOpenCatalogue(Path.Combine(_appConfigs.ApiDataBaseUrl, Product.CatalogueURL?.ToString()))'>
+                            @Localizer["view_product_catalogue"]
+                        </a>
+                    </div>
+                    <h2 class="cls_product_details1">[@Product.SKUCode] @Product.SKULabel</h2>
+
+                    <div class="cls_product_details2">
+                        <p>@Localizer["unit_price"]</p><label>@Product.CurrencyLabel</label>
+                        <h3>@Product.UnitPrice</h3>
+                        <span @onclick="() => OnEditPriceBtnClick.InvokeAsync()">
+                            <img style="width:17px;" src="/Images/edit.png">
+                        </span>
+                    </div>
+
+                    <div class="cls_product_details3">
+                        <div class="cls_product_details3_left">
+                            <div class="cls_product_details3_left_rep">
+                                <label>
+                                    @Localizer["sc_qty"]<br>
+                                    (PC)
+                                </label>
+                                <h3>@Product.SCQty</h3>
+                            </div>
+                            <div class="cls_product_details3_left_rep">
+                                <label>
+                                    @Localizer["rc_qty"]<br>
+                                    (PC)
+                                </label>
+                                <h3>@Product.RCQty</h3>
+                            </div>
+                            <div class="cls_product_details3_left_rep">
+                                <label>
+                                    @Localizer["van_qty"]<br>
+                                    (PC)
+                                </label>
+                                <h3>@Product.VanQty</h3>
+                            </div>
+                        </div>
+                        <div class="cls_product_details3_right">
+                            <AddButtonForCreateSalesOrder UID="@Product.UID" MinQty="0"
+                                                          MaxQty="@Product.MaxQty" Qty="@Product.Qty" OnQtyChange="AddButtonOnQtyChange" 
+                                                          OnPreValidateQtyChange="PreValidateQtyChange"/>
+                        </div>
+                    </div>
+                    <div class="cls_product_base">
+                        <div class="cls_product_base_rep">
+                            <label>@Localizer["ppq"]</label>
+                            <h3>0,0,0,0</h3>
+                        </div>
+                        <div class="cls_product_base_rep">
+                            <label>@Localizer["upc"]</label>
+                            <h3>24</h3>
+                        </div>
+                        <div class="cls_product_base_rep">
+                            <label>@Localizer["price"]</label>
+                            <h3>300.0</h3>
+                        </div>
+
+                        <div class="cls_product_base_rep">
+                            <label>@Localizer["rlp"]</label>
+                            <h3>250</h3>
+                        </div>
+
+                        <div class="cls_product_base_rep">
+                            <label>@Localizer["nl"]</label>
+                            <h3>0.00</h3>
+                        </div>
+                        <div class="cls_product_base_rep">
+                            <label>@Localizer["base_margin"]</label>
+                            <h3>20%</h3>
+                        </div>
+                    </div>
+                    @if (Promotions != null && Promotions.Any())
+                    {
+                        <div class="cls_product_details4">
+                            @foreach (var promo in Promotions)
+                            {
+                                <span style="margin-right:6px;float:left;"><img style="width:24px;" src="/Images/promo.png"></span>
+                                <label style="margin-top:2px;float:left;">@promo.Label</label>
+                            }
+                        </div>
+                    }
+                    <!-- Add more product details here as needed -->
+                </div>
+            </div>
+
+            <div class="modal-footer cls_fil_footer">
+                <button type="button" class="cls_btn_primary2" @onclick="CloseModal">@Localizer["close"]</button>
+
+            </div>
+        </div>
+    </div>
+
+}
+@if (false && Promotions != null && Promotions.Any())
+{
+    <div class="modal fade show" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@Localizer["promotions"]</h5>
+                    <button type="button" class="close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @foreach (var promotion in Promotions)
+                    {
+                        <p>@promotion</p>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary">@Localizer["close"]</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public EventCallback OnEditPriceBtnClick { get; set; }
+
+    [Parameter]
+    public List<ISelectionItem> Promotions { get; set; }
+
+    [Parameter]
+    public ISalesOrderItemView Product { get; set; }
+
+    [Parameter]
+    public EventCallback OnCloseProductDetails { get; set; }
+
+    [Parameter]
+    public EventCallback<QtyChangeEvent> OnQtyChange { get; set; }
+    [Parameter]
+    public Func<QtyChangeEvent, Task<bool>> OnPreValidateQtyChange { get; set; }
+    private bool isDownloading { set; get; }
+    private void CloseModal()
+    {
+        OnCloseProductDetails.InvokeAsync();
+    }
+    private async Task<bool> PreValidateQtyChange(QtyChangeEvent qtyChangeEvent)
+    {
+        if (OnPreValidateQtyChange != null)
+        {
+            return await OnPreValidateQtyChange.Invoke(qtyChangeEvent);
+        }
+        return true;
+    }
+    private async void AddButtonOnQtyChange(QtyChangeEvent qtyChangeEvent)
+    {
+        await OnQtyChange.InvokeAsync(qtyChangeEvent);
+    }
+    private async Task DownloadAndOpenCatalogue(string catalogueUrl)
+    {
+        try
+        {
+            isDownloading = true;
+            _loadingService.ShowLoading(@Localizer["loading_product_catalogue"]);
+
+            string downloadedFilePath = await DownloadFile(catalogueUrl);
+            await OpenFile(downloadedFilePath);
+        }
+        finally
+        {
+            isDownloading = false;
+            _loadingService.HideLoading();
+        }
+    }
+
+    private async Task<string> DownloadFile(string fileUrl)
+    {
+        var httpClient = new HttpClient();
+        var fileBytes = await httpClient.GetByteArrayAsync(fileUrl);
+        string fileName = Path.GetFileName(fileUrl);
+        string downloadedFilePath = Path.Combine(FileSystem.CacheDirectory, fileName);
+
+        using (var stream = File.OpenWrite(downloadedFilePath))
+        {
+            await stream.WriteAsync(fileBytes, 0, fileBytes.Length);
+        }
+
+        return downloadedFilePath;
+    }
+
+    private async Task OpenFile(string filePath)
+    {
+        try
+        {
+            var fileResult = await Launcher.OpenAsync(new OpenFileRequest
+                {
+                    File = new ReadOnlyFile(filePath)
+                });
+
+            if (fileResult == null)
+            {
+                // handle later
+
+            }
+        }
+        catch (FeatureNotSupportedException ex)
+        {
+            await _alertService.ShowErrorAlert(@Localizer["openfile_not_supported"], ex.Message);
+
+        }
+        catch (PermissionException ex)
+        {
+            await _alertService.ShowErrorAlert(@Localizer["permission_not_granted"], ex.Message);
+        }
+        catch (Exception ex)
+        {
+            await _alertService.ShowErrorAlert(@Localizer["an_error_occurred"], ex.Message);
+        }
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        LoadResources(null, _languageService.SelectedCulture);
+    }
+}
+

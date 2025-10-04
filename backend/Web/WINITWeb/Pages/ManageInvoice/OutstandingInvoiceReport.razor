@@ -1,0 +1,15 @@
+﻿@page "/OutstandingInvoiceReport"
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.Invoice.BL.Interfaces.IInvoiceViewModel invoiceViewModel
+@inject Winit.Modules.Tally.BL.Interfaces.ITallyMasterViewModel masterviewmodel
+@if (IsInitialised)
+{
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true"
+                         ColumnsForFilter="@ColumnsForFilter"
+                         IsSearchCriteriaNeeded="true"
+                         OnFilterApplied="@OnFilterApply" />
+    <Winit.UIComponents.Web.ExportToExcel.ExportToExcel ColumnHeaders="@DataGridColumns" DataSource="@invoiceViewModel.OutstandingInvoiceReportDataList" ButtonName="Export to Excel" FileName="OutstandingInvoices.xlsx" />
+
+    <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" DataSource="invoiceViewModel.OutstandingInvoiceReportDataList" />
+
+}

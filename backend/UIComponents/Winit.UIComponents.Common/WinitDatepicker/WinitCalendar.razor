@@ -1,0 +1,77 @@
+﻿@using Microsoft.JSInterop
+@inject IJSRuntime JSRuntime
+@using Winit.UIModels.Common
+
+<div class="cls_select2_button">
+    <input type="text" class="cls_calender_input" id="@id"
+           @bind="@selectedDate"
+           autocomplete="off" onkeydown="return false" placeholder="dd/mm/yyyy"
+           disabled="@(IsDisabled)" />
+
+    <img src="./Images/calender.svg" draggable="false" class="cls_calender_img" @onclick="OpenDatepicker" />
+</div>
+
+@code {
+    private async Task OpenDatepicker()
+    {
+        await JSRuntime.InvokeVoidAsync("eval", $"document.getElementById('{id}').focus()");
+    }
+}
+
+
+<script>
+    window.GetDatepicker = (instance, callback, elementIds, minDate, maxDate) => {
+        // If elementIds is a string, convert it to an array with a single element
+        if (typeof elementIds === 'string') {
+            elementIds = [elementIds];
+        }
+
+        elementIds.forEach((elementId) => {
+            try {
+                $('#' + elementId).datepicker({
+                    format: 'dd/mm/yyyy',
+                    autoclose: true,
+                    startDate: minDate ? moment().subtract(parseInt(minDate), 'days').toDate() : null,
+                    endDate: maxDate ? moment().add(parseInt(maxDate), 'days').toDate() : null
+                }).on('changeDate', function (e) {
+                    var selectedValue = e.target.value; // The date selected in the datepicker
+                    var id = $(this).attr('id');
+
+                    console.log(`Date selected: ${selectedValue}, Element ID: ${id}`);
+
+                    if (instance && typeof instance.invokeMethodAsync === 'function') {
+                        instance.invokeMethodAsync(callback, id, selectedValue)
+                            .then((returnedDate) => {
+                                // Assume returnedDate is the date coming from Blazor after OnChange
+                                e.target.value = returnedDate; // Update the input with the returned date
+                                console.log("OnDateChanged completed.");
+                            })
+                            .catch(error => {
+                                console.error("Error during OnDateChanged call:", error);
+                            });
+                    } else {
+                        console.error("Blazor instance is not valid.");
+                    }
+                });
+            } catch (err) {
+                console.error(`Failed to initialize datepicker for element ${elementId}:`, err);
+            }
+        });
+    };
+    window.UpdateDatepickerMaxDate = (elementId, maxDate) => {
+        try {
+            $('#' + elementId).datepicker('setEndDate', moment().add(parseInt(maxDate), 'days').toDate());
+            console.log(`Updated max date of ${elementId} to ${maxDate} days`);
+        } catch (err) {
+            console.error(`Failed to update max date for element ${elementId}:`, err);
+        }
+    };
+     window.UpdateDatepickerMinDate = (elementId, minDate) => {
+        try {
+            $('#' + elementId).datepicker('setStartDate', moment().subtract(parseInt(minDate), 'days').toDate());
+            console.log(`Updated min date of ${elementId} to ${minDate} days`);
+        } catch (err) {
+            console.error(`Failed to update min date for element ${elementId}:`, err);
+        }
+    };
+</script>

@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Base\Winit.Modules.Base.BL\Winit.Modules.Base.BL.csproj" />
+    <ProjectReference Include="..\..\Common\Winit.Modules.Common.BL\Winit.Modules.Common.BL.csproj" />
+    <ProjectReference Include="..\..\Common\Winit.Modules.Common.Model\Winit.Modules.Common.Model.csproj" />
+    <ProjectReference Include="..\Winit.Modules.Target.Model\Winit.Modules.Target.Model.csproj" />
+    <ProjectReference Include="..\Winit.Modules.Target.DL\Winit.Modules.Target.DL.csproj" />
+    <ProjectReference Include="..\..\..\WINITSharedObjects\WINITSharedObjects.csproj" />
+  </ItemGroup>
+
+</Project>

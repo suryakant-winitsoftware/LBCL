@@ -1,0 +1,27 @@
+﻿Sample Code
+----------------
+Controller/VersionTest
+
+[HttpGet("Method2", Order = -1)]: Here we can define order for route. Lower route will be preferred by api
+
+When to use
+----------------
+Use when we are going to add some method specific to some client only. so that other client should not face problem.
+Use when new methods are going to introduced but old method still active and slowly that will be depricated
+Use when we are going to overide some method for some client
+
+Benefits
+------------------
+API versioning offers several benefits, even if you are only adding new methods. Here are some advantages of using API versioning:
+
+Compatibility: API versioning allows you to introduce changes and enhancements to your API while maintaining backward compatibility. By introducing a new version, you can add new methods or modify existing methods without breaking existing client applications that rely on the previous version.
+
+Incremental Updates: Versioning enables you to release updates incrementally. Instead of making sweeping changes to the entire API, you can introduce changes gradually in new versions. This approach can help mitigate risks associated with major changes and minimize the impact on existing clients.
+
+Granular Control: With versioning, you have control over which version of the API is accessed by each client. This allows you to manage the evolution of your API, provide different features or behavior based on client requirements, and phase out deprecated versions over time.
+
+API Lifecycle Management: Versioning facilitates the management of the API's lifecycle. You can deprecate older versions and communicate to clients that they should migrate to the latest version. This allows you to sunset older versions gracefully and focus your efforts on supporting the most recent versions.
+
+Client Flexibility: Versioning enables clients to adopt new features at their own pace. They can choose to upgrade to a newer version when they are ready or have the resources to implement the changes. This flexibility can be beneficial for clients who have different upgrade cycles or constraints.
+
+API Documentation: Having distinct versions makes it easier to document and communicate the changes and capabilities of your API. Clients can refer to the documentation specific to their targeted version, reducing confusion and helping them utilize the API effectively.

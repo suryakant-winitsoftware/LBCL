@@ -1,0 +1,51 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Remove="DialogBox\AddProductDialogBox.razor" />
+  </ItemGroup>
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Blazor.SignaturePad" Version="7.4.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Modules\Address\Winit.Modules.Address.BL\Winit.Modules.Address.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Address\Winit.Modules.Address.Model\Winit.Modules.Address.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\Bank\Winit.Modules.Bank.BL\Winit.Modules.Bank.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Base\Winit.Modules.Base.BL\Winit.Modules.Base.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Common\Winit.Modules.Common.BL\Winit.Modules.Common.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Contact\Winit.Modules.Contact.BL\Winit.Modules.Contact.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Contact\Winit.Modules.Contact.Model\Winit.Modules.Contact.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\Emp\Winit.Modules.Emp.BL\Winit.Modules.Emp.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Emp\Winit.Modules.Emp.Model\Winit.Modules.Emp.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\ListHeader\Winit.Modules.ListHeader.BL\Winit.Modules.ListHeader.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\ListHeader\Winit.Modules.ListHeader.DL\Winit.Modules.ListHeader.DL.csproj" />
+    <ProjectReference Include="..\..\Modules\ListHeader\Winit.Modules.ListHeader.Model\Winit.Modules.ListHeader.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\Location\Winit.Modules.Location.BL\Winit.Modules.Location.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Location\Winit.Modules.Location.Model\Winit.Modules.Location.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\StoreDocument\Winit.Modules.StoreDocument.BL\Winit.Modules.StoreDocument.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\StoreDocument\Winit.Modules.StoreDocument.Model\Winit.Modules.StoreDocument.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\Store\Winit.Modules.Store.BL\Winit.Modules.Store.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Store\Winit.Modules.Store.Model\Winit.Modules.Store.Model.csproj" />
+    <ProjectReference Include="..\..\SharedObjects\Winit.Shared.CommonUtilities\Winit.Shared.CommonUtilities.csproj" />
+    <ProjectReference Include="..\..\SharedObjects\Winit.Shared.Models\Winit.Shared.Models.csproj" />
+    <ProjectReference Include="..\..\UIModels\Winit.UIModels.Common\Winit.UIModels.Common.csproj" />
+    <ProjectReference Include="..\..\UIModels\Winit.UIModels.Mobile\Winit.UIModels.Mobile.csproj" />
+    <ProjectReference Include="..\Winit.UIComponents.Common\Winit.UIComponents.Common.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <UpToDateCheckInput Remove="DialogBox\AddProductDialogBox.razor" />
+  </ItemGroup>
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="DialogBox\AddProductDialogBox.razor" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="DialogBox\AddProductDialogBox.razor" />
+  </ItemGroup>
+</Project>

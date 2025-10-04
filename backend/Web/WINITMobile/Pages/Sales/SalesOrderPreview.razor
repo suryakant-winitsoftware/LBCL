@@ -1,0 +1,71 @@
+﻿@page "/salesorderpreview"
+@inherits WINITMobile.Pages.Sales.SalesOrderBase 
+@using Winit.Shared.CommonUtilities.Common
+@inject Winit.Modules.StoreActivity.BL.Interfaces.IStoreActivityViewModel _StoreActivityViewmodel
+@if(IsLoaded){
+    <div class="cls_serch_nn" style="margin-top:10px;display:none;">
+    <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder="Search Here..."
+                                                           MaxLength="200" DebounceInterval="500"
+                                                           OnDebounceIntervalElapsed="WinitTextBox_OnSearch"
+                                                           KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+                                                           Value="" IsForSearch="true" />
+</div>
+<div class="cls_top_head">
+    <div class="cls_top_head_left">
+            <h3>Daily Sales Report Preview</h3>
+    </div>
+    <div class="cls_top_head_right">
+        <a style="display:none"><img style="width:24px;" src="/Images/n_print.png"></a>
+            <a style="display:none"><img style="width:24px;" src="/Images/n_save.png" @onclick="SaveButtonClick"></a>
+        <button style="display:none" @onclick="CashDiscountClick">@Localizer["cash_disc"]</button>
+
+    </div>
+
+</div>
+
+<PlaceOrderPopUp IsOpen="@IsOrderPlacedPopupVisible"
+                 OrderNumber="@_salesOrderViewModel.SalesOrderNumber"
+                 CustomerName="@_salesOrderViewModel.SelectedStoreViewModel.Name"
+                 CustomerAddress="@_salesOrderViewModel.SelectedStoreViewModel.Address"
+                 OnClose="OrderPlacedPopup_CloseClicked"
+                 OnCollectPaymentClicked="OrderPlacedPopup_PaymentClicked" OnEmailClicked="OrderPlacedPopup_EmailClicked"
+                 OnShareClicked="OrderPlacedPopup_ShareClicked" OnPrintClicked="OrderPlacedPopup_PrintClicked" />
+
+<WINITMobile.Pages.Store.PreviewListView SalesOrderPreviewItemViewList="_salesOrderViewModel.DisplayedSalesOrderItemViews_Preview"
+                                         OnDeleteClick="HandleProductDelete" />
+<div class="">
+    <AddNotes Notes="@_salesOrderViewModel.Notes" LPONumber="@_salesOrderViewModel.CustomerPO"
+              DefaultDate="@_salesOrderViewModel.ExpectedDeliveryDate"
+              OnNotesSaved="Notes_OnApply" OnLPONumberSaved="CustomerPO_OnApply" />
+</div>
+<FooterSection FinalOrderValue="@_salesOrderViewModel.NetAmount"
+               LineCount="@_salesOrderViewModel.LineCount"
+               QtyCount="@_salesOrderViewModel.QtyCount"
+               AvailableCreditLimit="@_salesOrderViewModel.AvailableCreditLimit"
+               TotalExciseDuty="@_salesOrderViewModel.TotalExciseDuty"
+               TotalTax="@_salesOrderViewModel.TotalTax"
+               OrderValue="@(_salesOrderViewModel.TotalAmount + _salesOrderViewModel.TotalExciseDuty)"
+               DiscountValue="@(_salesOrderViewModel.TotalDiscount - _salesOrderViewModel.TotalCashDiscount)"
+               TotalCashDiscount="@_salesOrderViewModel.TotalCashDiscount"
+               CurrencyLabel="@_salesOrderViewModel.CurrencyLabel"
+               PlaceOrderBtnText="Place Order"
+               OnPlaceOrderButtonClicked="PlaceOrder_Click"
+               TextForBackButton="Back" />
+<DiscountPopup @ref="refDiscountPopup"
+               DiscountAmount="@_salesOrderViewModel.TotalCashDiscount"
+               OnClose="CashDiscount_OnClose"
+               OnApply="CashDiscount_OnApply" />
+@if (IsSignatureView)
+{
+    <MultiSignature Signature2Footer="@_appUser.Emp?.Name"
+                    Signature1Footer="@_salesOrderViewModel?.SelectedStoreViewModel?.Name"
+                    Signature1Heading="Customer Signature" Signature2Heading="Salesman Signature"
+                    OnProceedClick="HandleSignature_ProceedClick"
+                    OnCloseClick="() => IsSignatureView=false"
+                    Signature1FolderPath="@_salesOrderViewModel.CustomerSignatureFolderPath"
+                    Signature2FolderPath="@_salesOrderViewModel.UserSignatureFolderPath"
+                    Signature1FileName="@_salesOrderViewModel.CustomerSignatureFileName"
+                    Signature2FileName="@_salesOrderViewModel.UserSignatureFileName" />
+}
+}
+

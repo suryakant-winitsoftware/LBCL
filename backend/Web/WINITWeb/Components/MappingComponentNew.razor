@@ -1,0 +1,157 @@
+﻿@namespace WinIt.Components
+@inherits WinIt.Pages.Base.BaseComponentBase
+@using Winit.Modules.Common.BL
+@using Winit.Modules.Mapping.Model.Classes
+@using Winit.Modules.Mapping.Model.Interfaces
+@using Winit.Modules.Tax.Model.Classes
+@using Winit.UIComponents.Common.CustomControls
+@using Winit.Shared.Models.Common
+@using Winit.Shared.Models.Events
+@using WinIt.Models
+
+@if (ShowAddNewButton)
+{
+    <div class="rounded p-3 border" style="height:50px;background-color:#19298B;">
+        <span style="color:white">
+            @Localizer["add_new_mapping"]
+        </span>
+    </div>
+    <div class="cls_container_div1">
+        <div class="cls_container_div4">
+            <div class="cls_container_div4">
+                <button class="cls_add_new_sec" @onclick=@(() => ShowMapping = true)>Add Mapping</button>
+            </div>
+        </div>
+        <div class="cls_container_div1">
+
+            <TableGridView DataSource="MappingDTO.GridDataSource" Columns="MappingDTO.DataGridColumns" />
+        </div>
+    </div>
+}
+@if (ShowMapping)
+{
+
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show" tabindex="-1" style="display: block; overflow:auto;">
+        <div class="modal-dialog cls_pop_up_style1">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="close" @onclick="OnClose">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="cls_container_div1">
+                        <Winit.UIComponents.Common.CustomControles.Tabs OnTabSelect="MappingDTO.OnTabClick"
+                                                                        TabItems="MappingDTO.TabSelectionItems" />
+                    </div>
+                    <div class="cls_pop_up_style_div1">
+                        <div class="cls_container_div1">
+                            <input type="checkbox" class="cls_btn_radio_input" @bind-value="MappingDTO.IsExcluded" />
+                            <label class="cls_btn_radio_label">@Localizer["is_excluded"]</label>
+                        </div>
+                    </div>
+                    <div class="cls_container_div1">
+                        @switch (MappingDTO.TabIndex)
+                        {
+                            case 0:
+                                <div class="cls_container_div1">
+                                    <div class="cls_pop_up_style_div1">
+                                        <label class="cls_section_div_purchase2_label">@Localizer["type"]</label>
+                                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="MappingDTO.LocationTypesSelectionItems"
+                                                                                           IsButtonVisible=true
+                                                                                           OnSelect="@((e)=> MappingDTO.OnLocationTypeDDClick(e?.SelectionItems?.FirstOrDefault()??default))" />
+                                    </div>
+                                    <div class="cls_pop_up_style_div1">
+                                        <label class="cls_section_div_purchase2_label">@Localizer["select_location"]</label>
+                                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="MappingDTO.LocationsSelectionItems"
+                                                                                           IsButtonVisible=true
+                                                                                           _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Multiple" />
+                                    </div>
+                                    <div class="cls_pop_up_style_div1">
+                                        <button class="cls_comman_btn" @onclick="OnLocationAdd" style="margin-top:14px;">
+                                            @Localizer["add"]
+                                        </button>
+                                    </div>
+                                </div>
+                                break;
+                            case 1:
+                                <div class="cls_container_div1">
+                                    <div class="cls_pop_up_style_div1">
+                                        <label class="cls_section_div_purchase2_label">@Localizer["type"]</label>
+                                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="MappingDTO.StoreGroupTypesSelectionItems"
+                                                                                           IsButtonVisible=true
+                                                                                           OnSelect=" (e) => MappingDTO?.OnStoreGroupTypeDDClick(e?.SelectionItems?.FirstOrDefault()??default)" />
+                                    </div>
+                                    <div class="cls_pop_up_style_div1">
+                                        <label class="cls_section_div_purchase2_label">@Localizer["select_store"]</label>
+                                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="MappingDTO.StoreGroupsSelectionItems"
+                                                                                           IsButtonVisible=true
+                                                                                           _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Multiple" />
+                                    </div>
+                                    <div class="cls_pop_up_style_div1">
+                                        <button class="cls_comman_btn" style="margin-top:14px;" @onclick="OnStoreGroupAdd">
+                                            @Localizer["add"]
+                                        </button>
+                                    </div>
+                                </div>
+                                break;
+                            case 2:
+                                <div class="cls_container_div1">
+                                    <div class="cls_pop_up_style_div1">
+                                        <label class="cls_section_div_purchase2_label">@Localizer["type"]</label>
+                                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="MappingDTO.DistributorTypeSelectionItems"
+                                                                                           IsButtonVisible=true Disabled=true />
+                                    </div>
+                                    <div class="cls_pop_up_style_div1">
+                                        <label class="cls_section_div_purchase2_label">Select Distributor</label>
+                                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="MappingDTO.DistributorSelectionItems"
+                                                                                           IsButtonVisible=true
+                                                                                           _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Multiple" />
+                                    </div>
+                                    <div class="cls_pop_up_style_div1">
+                                        <button class="cls_comman_btn" style="margin-top:14px;" @onclick="OnDistributorAdd">
+                                            @Localizer["add"]
+                                        </button>
+                                    </div>
+                                </div>
+                                break;
+                            case 3:
+                                <div class="cls_container_div1">
+                                    <div class="cls_pop_up_style_div1">
+                                        <label class="cls_section_div_purchase2_label">@Localizer["type"]</label>
+                                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="MappingDTO.UserTypeSelectionItems"
+                                                                                           IsButtonVisible=true
+                                                                                           Disabled=true />
+                                    </div>
+                                    <div class="cls_pop_up_style_div1">
+                                        <label class="cls_section_div_purchase2_label">Select User</label>
+                                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="MappingDTO.UserSelectionItems"
+                                                                                           IsButtonVisible=true
+                                                                                           _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Multiple" />
+                                    </div>
+                                    <div class="cls_pop_up_style_div1">
+                                        <button class="cls_comman_btn" style="margin-top:14px;" @onclick="OnUserAdd">
+                                            @Localizer["add"]
+                                        </button>
+                                    </div>
+                                </div>
+                                break;
+                        }
+                        <div class="cls_container_div1">
+                            <Winit.UIComponents.Web.Table.TableGridView Columns="MappingDTO.DataGridColumns"
+                                                                        DataSource="MappingDTO.GridDataSource?.FindAll(e => e.ActionType != Winit.Shared.Models.Enums.ActionType.Delete)" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div style="float:left;">
+                        <button class="cls_comman_btn" @onclick="OnSaveMappingClick">
+                            @Localizer["save_mapping"]
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+

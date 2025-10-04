@@ -1,0 +1,49 @@
+﻿@page "/ManageCustomerPriceList"
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject WinIt.BreadCrum.Interfaces.IDataService _IDataService
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+
+
+@if (isShowPopup)
+{
+    <div class="modal fade show" tabindex="-1" style="display: block;">
+        <div class="modal-dialog" style="top:30%;">
+            <div class="modal-content">
+                <div class="modal-header">
+                </div>
+                <div class="modal-body">
+                    @Message
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @onclick="@(() => isShowPopup = false)">@Localizer["ok"]</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+                     OnFilterApplied="@OnFilterApply" />
+@if (isLoaded)
+{
+    @*   <button class="cls_add_new_sec" style="float:right;margin-right:0px" @onclick="ShowFilter">@Localizer["filter"]</button>
+    <Filter @ref="filterRef" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+            OnFilterApplied="@OnFilterApply" />  *@
+
+    <div class="div_section">
+        <Winit.UIComponents.Common.CustomControles.Tabs OnTabSelect="OnTabClick"
+                                                        TabItems="TabItems" />
+    </div>
+    <div class="cls_container_div4">
+        <button class="cls_add_new_sec" @onclick="@(() => _navigationManager.NavigateTo($"AddEditPrice?{PageType.Page}={PageType.New}"))">
+            @Localizer["add_new"]
+        </button>
+    </div>
+
+
+    <div class="cls_container_div1">
+        <TableGridView DataSource="_data" Columns="productColumns" />
+    </div>
+
+}
+
+

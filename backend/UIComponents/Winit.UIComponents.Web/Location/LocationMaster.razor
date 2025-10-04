@@ -1,0 +1,307 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@using System.Globalization
+@using Winit.Modules.Location.Model.Classes
+@using Winit.Modules.Store.Model.Classes
+@using Microsoft.Extensions.Localization
+@using Winit.UIComponents.Common.LanguageResources.Web
+@using System.Resources;
+@using Winit.UIComponents.Common.Language;
+@inject IStringLocalizer<LanguageKeys> Localizer
+@inject Winit.UIComponents.Common.Language.ILanguageService _languageService
+@inject Winit.Modules.Location.BL.Interfaces.ILocationMasterBaseViewModel _viewModel
+@inject Winit.UIComponents.Web.Location.Services.ILocationMasterService _locationData
+
+
+@if (ShowPopUp)
+{
+
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show" tabindex="-1" style="display: block;">
+        <div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    @* <h5 class="modal-title">@Title  </h5> *@
+                    <span class="close" @onclick="(()=>OnClose.InvokeAsync())">&times;</span>
+                </div>
+                <div class="modal-body">
+
+
+
+                    <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder=@Localizer["search_here..."]
+                    MaxLength="200"
+                    DebounceInterval="500" OnDebounceIntervalElapsed="_viewModel.OnSeach"
+                    KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+                    Value="" IsForSearch="true" />
+
+
+
+                    <ul style="width:100%;height:200px;overflow:auto;" class="list-group scrole cls_list_group">
+                        @if (IsLocationHierarchyData)
+                        {
+                            if (_viewModel.DispayLocationMasterForUIs != null)
+                            {
+                                @foreach (var item in _viewModel.DispayLocationMasterForUIs)
+                                {
+                                    <li class="list-group-item @((@item.IsSelected)?"active":"")" @onclick="()=>OnSelected(item)">@item.Label</li>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (_viewModel.DisplayStoreGroupData != null)
+                            {
+                                @foreach (var item in _viewModel.DisplayStoreGroupData)
+                                {
+                                    <li class="list-group-item @((@item.IsSelected)?"active":"")" @onclick="()=>OnSelected(item)">@item.Label</li>
+                                }
+                            }
+                        }
+                    </ul>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="Submit">@Localizer["ok"]</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    @*  <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show" tabindex="-1" style="display: block;">
+        <div>
+            <div class="modal-content">
+                <div class="modal-header">
+                   @*  <h5 class="modal-title">@Title  </h5> *@
+    @* <span class="close" @onclick="(()=>OnClose.InvokeAsync())">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <table >
+                        <thead>
+                            <tr>
+                            @(IsLocationHierarchyData ? "Location Name" : "Channel Name")
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (IsLocationHierarchyData)
+                            {
+                                foreach (var item in _viewModel.DispayLocationMasterForUIs)
+                                {
+                                    <tr>
+
+                                        <input type="checkbox" checked="@item.IsSelected" @onclick=@(()=>_viewModel.OnSelected(item))/>@item.Label
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                foreach (var item in _viewModel.DisplayStoreGroupData)
+                                {
+                                    <tr>
+                                        <td><input type="checkbox" checked="@item.IsSelected" @onclick=@(()=>_viewModel.OnSelected(item)) /></td>
+                                        <td>@item.Label</td>
+                                    </tr>
+                                }
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+                <button class="ok-btn" @onclick="@Submit">OK</button> <!-- OK button -->
+            </div>
+        </div>
+    </div>
+ *@
+    @*
+
+    <div class="popup">
+        <div class="popup-content">
+            <button class="close-btn" @onclick="@(()=>OnClose.InvokeAsync())">&times;</button> <!-- Cross button to close -->
+            <div>
+                <div>
+                    <Winit.UIComponents.Common.CustomControls.WinitTextBox OnDebounceIntervalElapsed="@_viewModel.OnSeach" />
+                    <input type="text" @bind="_viewModel.SearchField" />
+                     <button @onclick="_viewModel.OnSeach">Search</button>
+                </div>
+                <div>
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th>Select/Unselect</th>
+                                <th>@(IsLocationHierarchyData ? "Location Name" : "Channel Name")</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (IsLocationHierarchyData)
+                            {
+                                foreach (var item in _viewModel.DispayLocationMasterForUIs)
+                                {
+                                    <tr>
+                                        <td><input type="checkbox" checked="@item.IsSelected" @onclick=@(()=>_viewModel.OnSelected(item)) /></td>
+                                        <td>@item.Label</td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                foreach (var item in _viewModel.DisplayStoreGroupData)
+                                {
+                                    <tr>
+                                        <td><input type="checkbox" checked="@item.IsSelected" @onclick=@(()=>_viewModel.OnSelected(item)) /></td>
+                                        <td>@item.Label</td>
+                                    </tr>
+                                }
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <button class="ok-btn" @onclick="@Submit">OK</button> <!-- OK button -->
+        </div>
+    </div>*@
+
+}
+
+@code {
+    [Parameter]
+    public bool ShowPopUp { get; set; }
+    [Parameter]
+    public EventCallback<Winit.Modules.Location.Model.Classes.LocationData> OnLocationSelected { get; set; }
+    [Parameter]
+    public EventCallback<StoreGroupData> OnStoreGroupDataSelected { get; set; }
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+    [Parameter]
+    public bool IsLocationHierarchyData { get; set; }
+    [Parameter]
+    public bool IsChannelHierarchyData { get; set; }
+    [Parameter]
+    public string SelectedLocationOrStoreGroupUID { get; set; }
+    public void Submit()
+    {
+        if (IsLocationHierarchyData)
+            OnLocationSelected.InvokeAsync(((Winit.Modules.Location.BL.Classes.LocationMasterBaseViewModel)_viewModel).SelectedLocationMasterForUI);
+        else
+            OnStoreGroupDataSelected.InvokeAsync(((Winit.Modules.Location.BL.Classes.LocationMasterBaseViewModel)_viewModel).SelectedStoreGroupData);
+
+    }
+
+    protected override async void OnInitialized()
+    {
+        LoadResources(null, _languageService.SelectedCulture);
+        _viewModel.IsLocationHierarchyData = IsLocationHierarchyData;
+        _viewModel.SelectedLocationOrStoreGroupUID = SelectedLocationOrStoreGroupUID;
+        await _viewModel.PopulateViewModel();
+        // if (!_locationData.EventAsigned)
+        // {
+        //     _locationData.OnShowLocationEvent += HandleLocationData;
+        //     _locationData.EventAsigned = true;
+        // }
+        base.OnInitialized();
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        try
+        {
+            await _viewModel.PopulateViewModel();
+        }
+        catch (Exception)
+        {
+
+        }
+        finally
+        {
+            StateHasChanged();
+        }
+    }
+    protected void LoadResources(object sender, string culture)
+    {
+        CultureInfo cultureInfo = new CultureInfo(culture);
+        ResourceManager resourceManager = new ResourceManager("Winit.UIComponents.Common.LanguageResources.Web.LanguageKeys", typeof(Winit.UIComponents.Common.LanguageResources.Web.LanguageKeys).Assembly);
+        Localizer = new CustomStringLocalizer<LanguageKeys>(resourceManager, cultureInfo);
+    }
+    Action<object> Action { get; set; }
+    protected void HandleLocationData(Action<object> action)
+    {
+        ShowPopUp = true;
+        Action = action;
+        StateHasChanged();
+    }
+    void OnSelected(LocationData locationMasterForUI)
+    {
+        _viewModel.OnSelected(locationMasterForUI);
+        StateHasChanged();
+    }
+    void OnSelected(StoreGroupData channelMasterData)
+    {
+        _viewModel.OnSelected(channelMasterData);
+        StateHasChanged();
+    }
+}
+
+<style>
+    /* CSS for the popup */
+    .popup {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .popup-content {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Box shadow for the popup */
+    }
+
+    /* CSS for the table */
+    .custom-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .custom-table th, .custom-table td {
+            padding: 8px;
+            border: 1px solid #ddd; /* Border color for table cells */
+        }
+
+        .custom-table th {
+            background-color: #f2f2f2; /* Header background color */
+        }
+
+        .custom-table tr:nth-child(even) {
+            background-color: #f2f2f2; /* Even row background color */
+        }
+
+    /* CSS for the table */
+    .custom-table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+    }
+
+        .custom-table th, .custom-table td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            white-space: nowrap;
+        }
+
+        .custom-table th {
+            background-color: #f2f2f2;
+        }
+
+        .custom-table tbody {
+            max-height: 200px; /* Set the maximum height for tbody */
+            overflow-y: auto; /* Enable vertical scrolling */
+            display: block; /* Ensure tbody behaves as a block element */
+        }
+
+</style>

@@ -1,0 +1,97 @@
+﻿@inject Winit.Modules.Common.Model.Interfaces.IDataManager dataManager;
+@inject Winit.UIComponents.Common.IAlertService alert
+
+@if (IsLoad)
+{
+    <div class="cls_main_grid">
+        <h3>Promotion Items</h3>
+        <h1>@str1</h1>
+
+        <div class="Details row" style="margin-top: 43px;padding:8px 5px;float:left;width:100%;">
+
+            <div class="col-md-3">
+                <label class="control-label">
+                    Max Deal Count
+                    <span style="color: red">*</span>
+                </label>
+                <input autocomplete="off" class="form-control  " min="0" @bind=@maxdealCount placeholder="Enter Max Deal" required="" step="1" type="number">
+            </div>
+
+
+
+
+            <div class="col-md-3">
+                <label class="control-label">
+                    Eligible Qty <span style="color: red">*</span>
+                </label>
+                <input autocomplete="off" class="form-control  " min="0" placeholder="Enter eligible Qty" required="" @bind=@EligibleQty type="number">
+            </div>
+            @if (IsDiscountShow)
+            {
+                <div class="col-md-3">
+                    <label class="control-label">
+                        @DiscountLabel
+                    </label>
+                    <span style="color: red">*</span>
+                    <input autocomplete="off" class="form-control " min="0" @bind=@Discount type="number">
+                </div>
+            }
+            <div class="col-md-1" style="margin-top:20px;">
+            </div>
+        </div>
+
+
+
+
+
+
+
+        <div class="Details row" style="margin-top: 43px;padding:8px 5px;float:left;width:100%;">
+            <div class="col-md-3">
+                <label class="control-label">
+                    Select Group Type
+                </label>
+                <label class="form-control" @onclick="@(()=>IsGroupTypeVisible=!IsGroupTypeVisible)">@(string.IsNullOrEmpty(selectedGroupTypeLabel)?"Select Group Type":$"{selectedGroupTypeLabel}")</label>
+                @if (IsGroupTypeVisible)
+                {
+                    @* <Winit.UIComponents.Web.DropDown.DropDown DataSource="sKUGroupTypesList" ShowPopUp=IsShoDropDownPopup OnSelect=OnGroupItemsSelected Title="Select Group" /> *@
+                    <Winit.UIComponents.Common.CustomControls.DropDown DataSource="sKUGroupTypeList" ShowPopUp=true OnSelect="OnGroupTypeSelected" />
+                }
+               @*  <select class="form-control" @onchange=@OnSelectiomnGroupTypeChanged>
+                    <option value="0: null">Select Group Type </option>
+
+                    @foreach (var item in sKUGroupTypes)
+                    {
+                        <option value="@item.UID" >@item.Name </option>
+                    }
+
+                </select> *@
+            </div>
+
+            <div class="col-md-4">
+                <label class="control-label">
+                    Select Group 
+                </label>
+                <label class="form-control" @onclick="@(()=>IsGroupVisible=!IsGroupVisible)">@selectedGroupLabel</label>
+                @if (IsGroupVisible)
+                {
+                @* <Winit.UIComponents.Web.DropDown.DropDown DataSource="sKUGroupTypesList" ShowPopUp=IsShoDropDownPopup OnSelect=OnGroupItemsSelected Title="Select Group" /> *@
+                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="sKUGroupList" _SelectionMode=Shared.Models.Enums.SelectionMode.Multiple ShowPopUp=true OnSelect="OnGroupItemsSelected" />
+                }
+            </div>
+
+
+            <div class="col-md-2" style="margin-top:24px;padding:0px;">
+
+                <button class="cls_add_new" type="button" @onclick=@AddSelectedItems>
+                    Add
+                </button>
+            </div>
+
+
+            <Winit.UIComponents.Web.Table.TableGridView Columns="Columns" DataSource="promotionItemsModelList" />
+
+
+        </div>
+    </div>
+}

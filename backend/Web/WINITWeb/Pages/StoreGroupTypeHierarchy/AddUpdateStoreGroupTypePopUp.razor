@@ -1,0 +1,115 @@
+﻿@inherits WinIt.Pages.Base.BaseComponentBase
+@if (IsAddPopUp)
+{
+    <PopUp Title="@title" OnCloseClick="OnCloseClick" OnOkClick="OnOkbtnClick" OkbtnText="@OkBtnText" CancelbtnText="@CancelbtnText">
+        @if (!string.IsNullOrEmpty(ErrorMsg))
+        {
+            <div class="alert alert-danger">
+                <label><b>@Localizer["the_following_field(s)_have_invalid_value(s)"]:</b>@ErrorMsg</label>
+            </div>
+        }
+        <div class="row" style="padding: 0px;">
+            <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab">
+                    <span style="color:red;">*</span>@Localizer["code"]
+                </label>
+                <input class="form-control" placeholder=@Localizer["code"] type="text" @bind-value="Context.Code">
+            </div>
+            <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab">
+                    <span style="color:red;">*</span>@Localizer["name"]
+                </label>
+                <input class="form-control ng-valid" placeholder=@Localizer["name"] type="text" @bind-value="Context.Name">
+            </div>
+            <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab">
+                    <span style="color:red;">*</span>@Localizer["parent"]
+                </label>
+                <input class="form-control" type="text" disabled @bind-value="Context.ParentName">
+            </div>
+            <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab">
+                    <span style="color:red;">*</span>@Localizer["level"]
+                </label>
+                <input class="form-control" type="number" disabled @bind="Context.LevelNo">
+            </div>
+        </div>
+    </PopUp>
+}
+else
+{
+    <PopUp Title="@title" OnCloseClick="OnCloseClick" OkbtnText="@OkBtnText" CancelbtnText="@CancelbtnText" OnOkClick="OnOkbtnClick">
+        <div class="row" style="padding: 0px;">
+            <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab">
+                    <span style="color:red;">*</span>@Localizer["code"]
+                </label>
+                <input class="form-control" placeholder=@Localizer["code"] type="text" disabled @bind="Context.Code">
+            </div>
+            <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab">
+                    <span style="color:red;">*</span>@Localizer["name"]
+                </label>
+                <input class="form-control ng-valid" placeholder=@Localizer["name"] type="text" @bind-value="Context.Name">
+            </div>
+            <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab">
+                    <span style="color:red;">*</span>@Localizer["parent"]
+                </label>
+                <input class="form-control" type="text" disabled @bind="Context.ParentName">
+            </div>
+            <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab">
+                    <span style="color:red;">*</span>@Localizer["level"]
+                </label>
+                <input class="form-control" type="number" disabled @bind="Context.LevelNo">
+            </div>
+        </div>
+    </PopUp>
+}
+@code {
+    [Parameter]
+    public Winit.Modules.Store.Model.Interfaces.IStoreGroupTypeItemView storeGroupTypeItemView { get; set; }
+    [Parameter]
+    public Winit.Modules.Store.Model.Interfaces.IStoreGroupTypeItemView Context { get; set; }
+    [Parameter]
+    public EventCallback OnOkClick { get; set; }
+    [Parameter]
+    public EventCallback OnCloseClick { get; set; }
+    [Parameter]
+    public string OkBtnText { get; set; }
+    [Parameter]
+    public string CancelbtnText { get; set; }
+    [Parameter]
+    public string title { get; set; }
+    [Parameter]
+    public bool IsAddPopUp { get; set; }
+
+    private string ErrorMsg { get; set; }
+    protected async override Task OnInitializedAsync()
+    {
+        LoadResources(null, _languageService.SelectedCulture);
+    }
+    private void OnOkbtnClick()
+    {
+        if (ValidateForm())
+        {
+            OnOkClick.InvokeAsync();
+        }
+    }
+    private bool ValidateForm()
+    {
+        ErrorMsg = string.Empty;
+        List<string> missingFields = new List<string>();
+        if (string.IsNullOrEmpty(Context.Code))
+        {
+            missingFields.Add(@Localizer["code"]);
+        }
+        if (string.IsNullOrEmpty(Context.Name))
+        {
+            missingFields.Add(@Localizer["name"]);
+        }
+        ErrorMsg = string.Join(", ", missingFields);
+        return string.IsNullOrEmpty(ErrorMsg);
+    }
+}

@@ -1,0 +1,51 @@
+﻿@page "/MaintainPromotions"
+@inherits WinIt.Pages.Base.BaseComponentBase
+@using Winit.Modules.Common.Model.Classes
+@using Winit.Modules.Common.Model.Interfaces
+@layout MainLayout
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@inject Winit.Modules.Promotion.BL.UIInterfaces.IPromotionBase _promotionBase
+@inject IDataManager db
+
+
+@if (_promotionBase.IsLoad)
+{
+    <PageHeaderAndFilter IDataBreadcrumbService="DataService"
+                         IsShowFilter="true"
+                         ColumnsForFilter="@ColumnsForFilter"
+                         IsSearchCriteriaNeeded="true"
+                         OnFilterApplied="@OnFilterApply" />
+    @*  <button class="cls_add_new_sec" style="float:right;margin-right:0px" @onclick="ShowFilter">@Localizer["filter"]</button>
+    <Filter @ref="filterRef" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+            OnFilterApplied="@_PromotionBase.OnFilterApply" /> *@
+
+    <div class="div_section">
+
+        <div class="div_section_select" @onclick="@(() => _navigationManager.NavigateTo($"create-promotion?{Winit.Shared.Models.Constants.PageType.Page}={Winit.Shared.Models.Constants.PageType.New}&&promo={Winit.Shared.Models.Constants.Promotions.Line}"))">
+            <label class="div_section_select_label "> @Localizer["add_line"] </label>
+        </div>
+
+        <div class="div_section_select" @onclick="@(() => _navigationManager.NavigateTo($"create-promotion?{Winit.Shared.Models.Constants.PageType.Page}={Winit.Shared.Models.Constants.PageType.New}&&promo={Winit.Shared.Models.Constants.Promotions.Assorted}"))">
+            <label class="div_section_select_label "> @Localizer["add_assorted"]</label>
+        </div>
+
+
+        <div class="div_section_select" @onclick="@(() => _navigationManager.NavigateTo($"create-promotion?{Winit.Shared.Models.Constants.PageType.Page}={Winit.Shared.Models.Constants.PageType.New}&&promo={Winit.Shared.Models.Constants.Promotions.Invoice}"))">
+            <label class="div_section_select_label ">      @Localizer["add_invoice_promotion"]</label>
+        </div>
+
+    </div>
+
+
+    <Winit.UIComponents.Web.Table.TableGridView Columns="Columns"
+                                                DataSource="_promotionBase.PromotionsList"
+                                                TotalItemsCount=@_promotionBase.TotalItems
+                                                PageSize="_promotionBase.PagingRequest.PageSize"
+                                                PageNumber="_promotionBase.PagingRequest.PageNumber"
+                                                OnPageChange="_promotionBase.OnPageChange"
+                                                OnSort="OnSort" IsPaginationRequired=true ShowRecordsCount=true />
+
+}
+
+
+

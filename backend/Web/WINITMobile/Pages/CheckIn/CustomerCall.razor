@@ -1,0 +1,72 @@
+﻿@page "/CustomerCall"
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+@inject WINITMobile.Data.SideBarService _sideBarService
+@inject Winit.Modules.StoreActivity.BL.Interfaces.IStoreActivityViewModel _Viewmodel
+@inject Winit.Modules.JourneyPlan.BL.Interfaces.IJourneyPlanViewModelFactory _journeyplanBaseViewMobile
+@using WINITMobile.Models.TopBar;
+@inject Winit.Modules.Syncing.BL.Interfaces.IMobileDataSyncBL _mobileDataSyncBL;
+@inject StopwatchService _stopwatchService
+<div class="cls_Dash_customer_call" id="customer-call-page">
+    <div class="cls_Dash_customer_call_rep" style="border-radius:0px;">
+        <div class="cls_Dash_customer_call_rep1">
+            @if (SelectedStoreItemView != null)
+            {
+                <div class="cls_Dash_customer_call_rep1_top">
+                    <span><img style="width:35px;" src="/Images/img22.png" /></span>
+                    <h3>@SelectedStoreItemView.Name [@SelectedStoreItemView.Code]</h3>
+                </div>
+            }
+            <div class="cls_Dash_customer_call_rep1_bottom">
+                <label class="dn">RKT0076026</label><span class="dn"><img style="width:5px;" src="/Images/dot2.png" /></span><label class="dn">@Winit.Shared.CommonUtilities.Common.CommonFunctions.GetDateTimeInFormat(SelectedStoreItemView.CheckInTime)</label>
+                <p>@SelectedStoreItemView.Address</p>
+            </div>
+        </div>
+    </div>
+    <div class="cls_Dash_customer_call2">
+        <a @onclick="HandleCheckOutClicked">
+            <span><img style="width:26px;" src="/Images/ic_chekin.png" /></span><p>@Localizer["check_out"]</p>
+        </a>
+    </div>
+    <div class="cls_Dash_customer_call3_main">
+        <div class="cls_Dash_customer_call3">
+            <div class="cls_Dash_customer_call3_left">
+                <label>@Localizer["check_in"]</label>
+                <p>@Winit.Shared.CommonUtilities.Common.CommonFunctions.GetDateTimeInFormat(SelectedStoreItemView.CheckInTime)</p>
+            </div>
+            <div class="cls_Dash_customer_call3_right1">
+                <label class="cls_time_label">@Localizer["time_spent"]</label>
+                <div class="cls_time_outline">
+                    <label class="cls_time_label_green">@_stopwatchService.RunningTime.ToString("hh\\:mm\\:ss")</label>
+                    <label class="cls_time_label1"> @((_stopwatchService.RunningTime.Hours > 0) ? Localizer["hrs"] + " " + Localizer["mins"] : Localizer["mins"])</label>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="cls_Dash_customer_call4">
+        @if (storeActivityItems != null)
+        {
+
+            @foreach (var activity in storeActivityItems)
+            {
+                @if (activity != null)
+                {
+                    <div class="cls_Dash_customer_call4_rep">
+
+                        <a @onclick='async ()=> await HandleOnClickStoreItem(activity.NavPath,activity.store_activity_history_uid)'>
+                            <i><img style="width:24px;" src=@activity.IconPath /></i>
+                            <p>@activity.Name</p>
+                            @if (activity.Status == Winit.Modules.Base.Model.CommonConstant.COMPLETED)
+                            {
+                                <span> <img style="width:24px;" src="/Images/Righttick.png" /></span>
+                            }
+                        </a>
+                    </div>
+                }
+            }
+        }
+    </div>
+    <div class="cls_dashboard_7" style="width:100%">
+        <button class="cls_continue_btn" @onclick="HandleCheckOutClicked">@Localizer["check_out"]</button>
+    </div>
+</div>

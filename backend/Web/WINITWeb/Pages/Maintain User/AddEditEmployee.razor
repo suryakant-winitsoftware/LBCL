@@ -1,0 +1,226 @@
+﻿@page "/AddEditEmployee"
+@inherits WinIt.Pages.Base.BaseComponentBase
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@inject Winit.Modules.User.BL.Interfaces.IMaintainUsersViewModel _maintainusersViewModel;
+@inject Winit.Modules.User.BL.Interfaces.IAddEditEmployeeViewModel _addEditEmployeeViewModel;
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" />
+
+
+<div class="cls_sales_container2">
+
+    <button class="cls_dropdown_button_full"
+            @onclick="@(() =>OnEmployeeInfoClick())">
+
+        <span>@Localizer["employee_details"]</span>
+        <span>
+            @if (render.IsEmployeeInformationRendered)
+            {
+               <img src="./Images/arrow_up.png" class="cls_arrow_up">
+            }
+            else
+            {
+                 <img src="./Images/arrow_down.png" class="cls_arrow_down">
+            }
+        </span>
+
+    </button>
+
+    @if (render.IsEmployeeInformationRendered)
+    {
+        <EmployeeDetails EmpDTOmaintainUser="_addEditEmployeeViewModel.EmpDTOmaintainUser"  AuthTypeSelectionItems="_addEditEmployeeViewModel.AuthTypeSelectionItems" SaveOrUpdateEmployeeInformation="SaveOrUpdateEmployeeInformation"  CreateUpdateFileSysData="_addEditEmployeeViewModel.CreateUpdateFileSysData" FileSysList="FileSysList" />
+    }
+
+   @*  <button class="cls_dropdown_button_full"
+            @onclick="@(() =>OnLocationMappingSelectionClick())">
+
+        <span>Location Mapping</span>
+        <span>
+            @if (render.IsLocationMappingInformationRendered)
+            {
+                <img src="./Images/arrow_up.png" class="cls_arrow_up">
+            }
+            else
+            {
+                <img src="./Images/arrow_down.png" class="cls_arrow_down">
+            }
+        </span>
+
+    </button>
+    @if (render.IsLocationMappingInformationRendered)
+    {
+        <LocationMapping LocationTypesSelectionItem="_addEditEmployeeViewModel.LocationTypesForDD" 
+        locationTypeAndValue="_addEditEmployeeViewModel.locationTypeAndValue" 
+        SaveOrUpdateLocationInformation="_addEditEmployeeViewModel.CreateUpdateUserLocationDetails" 
+        OnLocationType="_addEditEmployeeViewModel.OnLocationTypeSelected" 
+        LocationValueSelectionItem="_addEditEmployeeViewModel.Locations" OnLocationValue="_addEditEmployeeViewModel.OnLocationSelected" />
+    } *@
+    <button class="cls_dropdown_button_full"
+            @onclick="@(() =>OnLocationMappingSelectionClick())">
+
+        <span>Location Mapping</span>
+        <span>
+            @if (render.IsLocationMappingInformationRendered)
+            {
+                <img src="./Images/arrow_up.png" class="cls_arrow_up">
+            }
+            else
+            {
+                <img src="./Images/arrow_down.png" class="cls_arrow_down">
+            }
+        </span>
+
+    </button>
+    @if (render.IsLocationMappingInformationRendered)
+    {
+        @* <UserlocationMapping  UserLocationTypes ="_addEditEmployeeViewModel.UserLocationTypes"
+                                UserLocationValues="_addEditEmployeeViewModel.UserLocationValues"
+                             LocationTypeAndValueForLocationMapping="_addEditEmployeeViewModel.LocationTypeAndValueForLocationMapping"
+                             SaveOrUpdateLocationInformation="SaveOrUpdateLocationInformation" OnUserLocationType="OnUserLocationTypeSelect" /> *@
+        <UserlocationMapping UserLocationTypes="_addEditEmployeeViewModel.UserLocationTypes"
+                             UserLocationValues="_addEditEmployeeViewModel.UserLocationValues"
+                             LocationTypeAndValueForLocationMapping="_addEditEmployeeViewModel.LocationTypeAndValueForLocationMapping"
+                             OnUserLocationType="HandleLocationTypeSelect"
+                             OnUserLocationValue="HandleLocationValueSelect"
+                             SaveOrUpdateLocationInformation="SaveLocationMappingAsync" />
+    }
+
+
+
+
+    <button class="cls_dropdown_button_full"
+            @onclick="@(() =>OnOrg_RoleMappingInfoClick())">
+
+        <span>@Localizer["org_&_role_mapping"]</span>
+        <span>
+            @if (render.IsOrg_RoleMapinngInformationRendered)
+            {
+               <img src="./Images/arrow_up.png" class="cls_arrow_up">
+            }
+            else
+            {
+                 <img src="./Images/arrow_down.png" class="cls_arrow_down">
+            }
+        </span>
+
+    </button>
+    @if (render.IsOrg_RoleMapinngInformationRendered)
+    {
+        <OrgRoleMapping RoleSelectionItems="_addEditEmployeeViewModel.RoleSelectionItems" 
+        OnRoleSelection="_addEditEmployeeViewModel.OnRoleSelection" OnBranchSelection="_addEditEmployeeViewModel.OnBranchSelection" 
+        BranchSelectionItems="_addEditEmployeeViewModel.BranchSelectionItems" 
+        IsBranchApplicable="_addEditEmployeeViewModel.IsBranchApplicable" 
+        SalesOfficeSelectionItems="_addEditEmployeeViewModel.SalesOfficeSelectionItems" 
+        OnSalesOfficeSelection="_addEditEmployeeViewModel.OnSalesOfficeSelection" ReportsToSelectionItems="_addEditEmployeeViewModel.ReportsToSelectionItems"
+        OnReportsToSelection="_addEditEmployeeViewModel.OnReportsToSelection" roleDD="_addEditEmployeeViewModel.roleDD"
+        jobPosition="_addEditEmployeeViewModel.jobPosition" DepartmentSelectionItems="_addEditEmployeeViewModel.DepartmentSelectionItems"
+        OnDepartmentSelection="_addEditEmployeeViewModel.OnDepartmentSelection" Roleddl="_addEditEmployeeViewModel.Roleddl" Reportsddl="_addEditEmployeeViewModel.Reportsddl"
+        SaveUpdateOrgMapping="SaveUpdateOrgRoleMapping" OrgName="@_addEditEmployeeViewModel.OrgName" />
+    }
+
+    @if (_iAppUser.Role.IsPrincipalRole && false)
+    {
+
+        <button class="cls_dropdown_button_full"
+                @onclick="@(() =>OnApplicableOrganizationInfoClick())">
+
+            <span>@Localizer["applicable_organization"]</span>
+            <span>
+                @if (render.IsApplicableOrganizationInformationRendered)
+                {
+                   <img src="./Images/arrow_up.png" class="cls_arrow_up">
+                }
+                else
+                {
+                     <img src="./Images/arrow_down.png" class="cls_arrow_down">
+                }
+            </span>
+
+        </button>
+        @if (render.IsApplicableOrganizationInformationRendered)
+        {
+            <ApplicableOrganization LoginID="@LoginID" ApplicableOrganizationSelectionItems="_addEditEmployeeViewModel.ApplicableOrganizationSelectionItems"
+            OnApplicableOrganizationSelection="_addEditEmployeeViewModel.OnApplicableOrganizationSelection" GetEmpOrgMappingDD="_addEditEmployeeViewModel.GetEmpOrgMappingDD"
+                                    DeleteApplicableOrg="DeleteApplicableOrg" EmpOrgMappingDD="_addEditEmployeeViewModel.EmpOrgMappingDD" jobPosition="_addEditEmployeeViewModel.jobPosition" GetGridviewData="GetApplicableGridview" SaveApplicableOrg="SaveApplicableOrg" empOrgMappings="@empOrgMappings" empOrgMappingDDLs="@empOrgMappingDDLs" />
+        }
+    }
+
+
+    <button class="cls_dropdown_button_full"
+            @onclick="@(() =>OnLocationSKUMAppingClick())"
+            style="display: none">
+
+        <span>Accessibility</span>
+        <span>
+            @if (IsOnLocationSKUMApping)
+            {
+               <img src="./Images/arrow_up.png" class="cls_arrow_up">
+            }
+            else
+            {
+                 <img src="./Images/arrow_down.png" class="cls_arrow_down">
+            }
+        </span>
+
+    </button>
+    @if (IsOnLocationSKUMApping && false)
+    {
+
+        <div class="cls_state_section1">
+
+
+            <div class="cls_state_section_div">
+
+                <label class="cls_section_div_purchase2_label">Location Mapping<span class="cls_section_div_purchase2_span">*</span></label>
+                <button class="cls_select2" @onclick="@(()=>_addEditEmployeeViewModel.IsLocationMappingVisible=!_addEditEmployeeViewModel.IsLocationMappingVisible)">
+                    <label class="cls_select2_label1">@_addEditEmployeeViewModel.LocationMappingLable</label>
+                    <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+                </button>
+                        @if (_addEditEmployeeViewModel.IsLocationMappingVisible)
+                        {
+                            <Winit.UIComponents.Common.CustomControls.DropDown DataSource=" _addEditEmployeeViewModel.LocationMappingList"
+                                                                               OnSelect="_addEditEmployeeViewModel.OnLocationMappingSelection" />
+                        }
+                    
+                </div>
+            <div class="cls_state_section_div">
+
+                <label class="cls_section_div_purchase2_label">SKU Mapping<span class="cls_section_div_purchase2_span">*</span></label>
+                <button class="cls_select2" @onclick="@(()=>_addEditEmployeeViewModel.IsSKUMappingVisible=!_addEditEmployeeViewModel.IsSKUMappingVisible)">
+                    <label class="cls_select2_label1"> @_addEditEmployeeViewModel.SKUMappingLable</label>
+                    <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+                        </button>
+                        @if (_addEditEmployeeViewModel.IsSKUMappingVisible)
+                        {
+                            <Winit.UIComponents.Common.CustomControls.DropDown DataSource=" _addEditEmployeeViewModel.SKUMappingList"
+                                                                               OnSelect="_addEditEmployeeViewModel.OnSKUMappingSelection" />
+                        }
+                    
+                </div>
+            <div class="cls_button_bottom_purchase">
+                <button class="cls_button_blue" @onclick="@SaveLocationAndSKUMapping"> Save Mapping</button>
+            </div>
+        </div>
+
+
+
+    }
+</div>
+<div class="cls_button_bottom_purchase" >
+    <button class="cls_button_light"  type="button" @onclick="BackBtnClicked">
+        @Localizer["back"]
+    </button>
+
+</div>
+@if(_addEditEmployeeViewModel.AllApprovalRequestData?.RequestID != null)
+{
+
+       
+       <WinIt.Pages.ApprovalRoleEngine.ApprovalEngine ShowApprovalEngine="@(true)"
+                                                       RequestId="@(_addEditEmployeeViewModel.AllApprovalRequestData.RequestID)"
+                                                       ApprovalUsercodes="_addEditEmployeeViewModel.ApprovalUserCodes"
+                                                       IsRejectButtonNeeded="_appSetting.IsRejectNeededInOnBoarding"
+                                                       IsReassignButtonNeeded="_appSetting.IsReassignNeededInOnBoarding"
+                                                       HandleApprovalAction="HandleApprovalAction"></WinIt.Pages.ApprovalRoleEngine.ApprovalEngine>
+
+                    
+ }

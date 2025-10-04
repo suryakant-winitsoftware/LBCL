@@ -1,0 +1,478 @@
+﻿@page "/dm"
+@using System.ComponentModel.DataAnnotations
+@using System.Linq
+@using MudBlazor
+@using Microsoft.JSInterop
+@using DistributionManagement.Models;
+@using MudBlazor
+@inject IDialogService DialogService
+@inject IJSRuntime JSRuntime
+@using Blazored.SessionStorage
+@inject ISessionStorageService SessionStorage
+
+
+
+
+<header>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</header>
+    <h2 class="heading">Maintain Customer BULK SALES ORDER</h2>
+
+    <div class="breadcrumb-container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb" style="background-color: transparent; margin: 0;">
+                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                <li class="separator" style="margin: 0 0.2rem;">></li>
+                <li class="breadcrumb-item active" aria-current="page">Create Sales Bulk Order</li>
+            </ol>
+        </nav>
+    </div>
+<div class="form-container">
+    <div class="d-flex">
+        <div class="form-group">
+            <label class="ddlwithdate" for="orderTypeddl">Order Type</label>
+            <select id="orderTypeddl" class="form-control"  @bind="formData.selectedOrderType" >
+               
+                <option value="forwardDate" >Forward Order</option>
+                <option value="backDate">Back Date Order</option>
+            </select>
+            <ValidationMessage For="() => formData.selectedOrderType" />
+        </div>
+
+        <div class="spacer"></div>
+        @if (formData.selectedOrderType != "backDate")
+        {
+   <div class="form-group">
+                
+                    <div class="dropdown">
+                    <label class="ddlwithdate">Select Route</label>   
+                        <div class="selected-option" @onclick="routeToggleDropdown">
+                        @((SelectedRoute != null) ? $"{SelectedRoute.Name}" : "Select a route")
+                            @*@((SelectedRoute != null) ? SelectedRoute : "Select a route")*@
+                        </div>
+                        <div class="dropdown-content" style="@routeDropdownStyle">
+                            <div class="search-box1">
+                                <input type="text" @oninput="routePerformSearch"  placeholder="Search routes..." />
+                            </div>
+                            <div class="options-list">
+                                @if (displayedRoutes.Count == 0 && !string.IsNullOrWhiteSpace(searchTerm))
+                                {
+                                    <div class="option nothing-found">Nothing Found...</div>
+                                }
+                                else
+                                {
+                                    @foreach (var route in displayedRoutes)
+                                    {
+                                        <label class="item">
+                                    <input type="checkbox" @onclick="() => routeToggleCheckbox(route.ID)" checked="@route.IsSelected" />
+                                    @route.Name
+                                    </label>
+                                   @* <div class="option" @onclick="() => SelectRoute(route.Name)">@route.Name</div>*@
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                
+</div>
+        }
+
+
+
+
+
+        <div class="spacer"></div>
+
+        <div class="form-group">
+            <label for="orderDate" class="ddlwithdate">Order Date</label>
+            <input type="date" class="form-control" id="orderDate" @bind="formData.selectedOrderDate" disabled />
+            <ValidationMessage For="() => formData.selectedOrderDate" />
+        </div>
+        <div class="spacer"></div>
+        <div class="form-group">
+            <label for="deliveryDate" class="ddlwithdate">Delivery Date</label>
+            <input type="date" class="form-control" id="deliveryDate" @bind="formData.selectedDeliveryDate" />
+            <ValidationMessage For="() => formData.selectedDeliveryDate" />
+        </div>
+    </div>
+
+
+</div>
+
+<div class="form-container" style="border-bottom: 2px solid #003898; padding-bottom: 0px;
+    padding-top: 0px;">
+    <div class="d-flex align-items-start">
+        <div class="form-group me-2">
+            <label for="customerDropdown" class="ddlwithdate">Add Customer</label>
+            
+                <button class="form-select" @onclick="ToggleDropdown">
+                    @((SelectedItem != null) ? $"[{SelectedItem.Id}] {SelectedItem.Name}" : "Select Item")
+                </button>
+                <div class="dropdown-content" style="@DropdownStyle">
+                <input @oninput="CustomerPerformSearch" placeholder="Filter Items......" />
+                    <div class="item-list">
+                    @if (formData.selectedOrderType == "backDate")
+                    {
+                        FilteredCustomer = CustomerData;
+                    }
+
+                    @if (FilteredCustomer.Count == 0)
+                    {
+                        <div class="option nothing-found">Nothing Found...</div>
+                    }
+                    else{
+                        @foreach (var customer in FilteredCustomer)
+                        {
+                            <label class="item">
+                                <input type="checkbox" @onclick="() => ToggleCheckboxCustomer(customer.Id)" checked="@customer.IsSelected" />
+                                [@customer.Id] @customer.Name
+                            </label>
+                        }
+                    }
+                    
+                    </div>
+                </div>
+            
+        </div>
+        <button @onclick="OpenDialog" class="btn btn-primary align-self-start" style="margin-top: 31px; background-color:#003898;">
+            Add Product
+        </button>
+
+      
+        
+    </div>
+</div>
+
+<div class="search-container">
+    <input type="text" class="search-box" @oninput="SearchAmongSelectedProduct" placeholder="Search" />
+    <button class="btn cancel-button">Cancel</button>
+</div>
+
+<div style="margin-top: 20px;">
+
+    
+        <MudTable Dense="true" Hover="true" @ref="table1" Items="selectedCustomerProducts">
+
+            <HeaderContent>
+                <MudTh class="custom-header">
+                    <MudCheckBox Checked="CheckAllRows1" CheckedChanged="EventCallback.Factory.Create<bool>(this, HandleAllSelectionChangePopulate)" />
+                </MudTh>
+                <MudTh class="custom-header">#</MudTh>
+                <MudTh class="custom-header">Customer Number</MudTh>
+                <MudTh class="custom-header">Customer Name</MudTh>
+                <MudTh class="custom-header">SKU Code</MudTh>
+                <MudTh class="custom-header">SKU Description</MudTh>
+                <MudTh class="custom-header">Order Qty</MudTh>
+                <MudTh class="custom-header">Order UOM</MudTh>
+            </HeaderContent>
+
+            <!-- Table row template -->
+            <RowTemplate>
+                @if (showCheckedProductInTable)
+                {
+
+                    <MudTd>
+                        <MudCheckBox Checked="@context.IsActive" CheckedChanged="(bool value) => HandleRowSelectionChangePopulate(context, value)" />
+                    </MudTd>
+                    <MudTd></MudTd>
+                    <MudTd>
+                        @context.Id
+                    </MudTd>
+                    <MudTd>
+                        @context.Name
+                    </MudTd>
+                    <MudTd>@context.SKUCode</MudTd>
+                    <MudTd>@context.SKUDescription</MudTd>
+                    <MudTd>
+    <input type="number" class="form-control" @bind="context.SKUqty"/>
+</MudTd>
+                    <MudTd>
+                    <select class="form-control" @bind="context.SKUuom"  >
+                            <option value="EA" selected>EA</option>
+                            <option value="OU">OU</option>
+                        </select>
+                    </MudTd>
+                }
+
+
+            </RowTemplate>
+
+            <FooterContent>
+                @if (!showCheckedProductInTable)
+                {
+                    <h7>No Product Added</h7>
+                }
+            </FooterContent>
+    </MudTable>
+    
+</div>
+
+
+@if (isDialogOpen)
+{
+    <div class="dialog-overlay" style="overflow: auto;">
+    <div class="dialog-container" style="width: 1196px; padding: 20px; max-height: 80vh; overflow-y: auto;">
+            <div class="dialog-header" >
+                <h2 class="dialog-title">Add Customer</h2>
+                <span class="close-button" @onclick="CloseDialog">&times;</span>
+            </div>
+            <div class="dialog-content" style="width: auto;">
+     <div class="form-container">
+       <div class="d-flex">
+                        <div class="form-group">
+
+                            <div class="dropdown">
+                               
+                                <label class="ddlwithdate">Select Category Type</label>
+                                <div class="selected-option" @onclick="SelectCategoryTypeDropDown">
+                                    @((CategoryTypecount != 0) ? "Selected Count" + " " + $"{CategoryTypecount}" : "Select Category Type")
+                                    
+                                </div>
+                                <div class="dropdown-content" style="@DropdownStyleSCT">
+                                    <div class="search-box1">
+                                        <input type="text" @oninput="PerformSearchSCT" placeholder="Search category type..." />
+                                    </div>
+                                    <div class="options-list">
+                                        @if (displayedCategoryType.Count == 0 && !string.IsNullOrWhiteSpace(searchTerm))
+                                        {
+                                            <div class="option nothing-found">Nothing Found...</div>
+                                        }
+                                        else
+                                        {
+                                            @foreach (var category in displayedCategoryType)
+                                            {
+                                                <label class="item">
+                                                    <input type="checkbox" @onclick="() => ToggleCheckboxCategoryType(category.Id)" checked="@category.IsSelected" />
+                                                    @category.Name
+                                                </label>
+                                                @* <div class="option" @onclick="() => SelectRoute(route.Name)">@route.Name</div>*@
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="spacer"></div>
+                        <div class="form-group">
+
+                            <div class="dropdown">
+
+                                <label class="ddlwithdate">Select Category</label>
+                                <div class="selected-option" @onclick="SelectCategoryDropDown">
+                                    @((Categorycount != 0) ? "Selected Count" + " " + $"{Categorycount}" : "Select Category")
+
+                                </div>
+                                <div class="dropdown-content" style="@DropdownStyleSC">
+                                    <div class="search-box1">
+                                        <input type="text" @oninput="PerformSearchSC" placeholder="Search category type..." />
+                                    </div>
+                                    <div class="options-list">
+                                        @if (selectedCategoryList.Count == 0 && !string.IsNullOrWhiteSpace(searchTerm))
+                                        {
+                                            <div class="option nothing-found">Nothing Found...</div>
+                                        }
+                                        else
+                                        {
+                                            @foreach (var category in selectedCategoryList)
+                                            {
+                                                <label class="item">
+                                                    <input type="checkbox" @onclick="() => ToggleCheckboxCategory(category.Id)" checked="@category.IsSelected" />
+                                                    @category.Name
+                                                </label>
+                                                @* <div class="option" @onclick="() => SelectRoute(route.Name)">@route.Name</div>*@
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+           
+                        
+        </div>
+                    <div>
+                        <input type="checkbox" @onchange="OnCheckboxChange" />
+                        <label for="promoCheckbox">Show Promo Records</label>
+                    </div>
+
+     </div>
+                <MudTable Dense="true" Hover="true" @ref="table" Items="DisplayedSKUList">
+                    <!-- Table header content -->
+                    <HeaderContent>
+                        <MudTh class="custom-header">
+                            <MudCheckBox Checked="CheckAllRows" CheckedChanged="EventCallback.Factory.Create<bool>(this, HandleAllSelectionChange)" />
+
+                        </MudTh>
+                        <MudTh class="custom-header">PROMO</MudTh>
+                        <MudTh class="custom-header">SKU Code</MudTh>
+                        <MudTh class="custom-header">SKU Name</MudTh>
+                    </HeaderContent> 
+
+                    <!-- Table row template -->
+                    <RowTemplate>
+                        <MudTd>
+                            <MudCheckBox Checked="@context.IsChecked" CheckedChanged="(bool value) => HandleRowSelectionChange(context, value)" />
+                        </MudTd>
+                        <MudTd>
+                            @if (context.IsPromo)
+                            {
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bag-check-fill" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M10.5 3.5a2.5 2.5 0 0 0-5 0V4h5v-.5zm1 0V4H15v10a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V4h3.5v-.5a3.5 3.5 0 1 1 7 0zm-.646 5.354a.5.5 0 0 0-.708-.708L7.5 10.793 6.354 9.646a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0l3-3z" />
+                                </svg>
+                            }
+                        </MudTd>
+                        <MudTd>@context.Id</MudTd>
+                        <MudTd>@context.Name</MudTd>
+                    </RowTemplate>
+
+                    <FooterContent>
+                        @if (DisplayedSKUList.Count == 0)
+                        {
+                            <div style="align-content:center">
+                                <h8 style="text-align:center; color:red;">No Record Found</h8>
+                            </div>
+                        }
+                    </FooterContent>
+                </MudTable>
+
+                <button class="btn btn-primary align-self-start" @onclick="AddCheckedProduct" style="margin-top: 13px; margin-left: 523px; background-color:#003898;">
+                        Add Selected Product
+                    </button>
+                
+            </div>
+        </div>
+    </div>
+}
+
+
+<div style="margin-top: 13px;">
+    
+
+        <button class="btn cancel-button" style="margin-left: 569px;" @onclick="CancelSelectedProduct">Cancel</button>
+    
+
+<button class="btn btn-primary align-self-start" @onclick="DeleteSelectedProduct" style="margin-left: 5px; background-color:#003898;">
+    Delete Selected Product
+</button>
+
+        <button class="btn btn-primary align-self-start" @onclick="DrafRecordsMethods" style="margin-left: 5px; background-color:#003898;">
+            SAVE AS DRAFT
+        </button>
+    
+ 
+
+</div>
+@if (showAlert)
+{
+    <div class="overlay">
+        <Alert IsVisible="showAlert" Message="@alertMessage" />
+    </div>
+}
+
+@code {
+
+  
+}
+
+<style>
+    /* Styles for the dialog */
+    .dialog-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .dialog-container {
+        width: 1196px; /* Adjust the width as needed */
+        background-color: #ffffff;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        border-radius: 5px;
+        overflow: hidden;
+    }
+
+    .dialog-header {
+        padding: 10px;
+        background-color: #003898;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .dialog-title {
+        margin: 0;
+        font-size: 18px;
+    }
+
+    .close-button {
+        cursor: pointer;
+        font-size: 20px;
+        color: white;
+    }
+
+        .close-button:hover {
+            color: #ff0000;
+        }
+
+    .dialog-content {
+        padding: 0px;
+        width: auto;
+    }
+
+    .product-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+        .product-table th, .product-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .product-table th {
+            background-color: #f5f5f5;
+        }
+
+
+
+    .custom-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .custom-table th, .custom-table td {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+    .custom-header {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+   @* .dialog-overlay {
+        width: 80%; /* Set the desired width */
+        max-height: 80%; /* Limit the maximum height */
+        overflow: auto; /* Add scrollbars if needed */
+        margin: 0 auto; /* Center the dialog box horizontally */
+    }
+
+    .dialog-container {
+        padding: 20px; /* Add padding to the content */
+    }*@
+
+    </style>
+
+

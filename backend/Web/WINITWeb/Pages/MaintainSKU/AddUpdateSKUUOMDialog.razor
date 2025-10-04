@@ -1,0 +1,176 @@
+﻿@using Winit.Modules.UOM.Model.Interfaces
+@using Winit.Modules.UOM.Model.Classes
+@using Winit.Modules.SKU.Model.Classes
+@using Winit.Modules.SKU.Model.Interfaces
+@using Newtonsoft.Json;
+@using Winit.Modules.Common.BL;
+@using Winit.Shared.CommonUtilities.Extensions;
+@using Winit.Shared.Models.Common;
+@using Winit.Shared.Models.Enums;
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+<PopUp Title="@Title" OkbtnText="@OKBtnText" CancelbtnText="@cancelBtnClick" OnOkClick="OnOkClick" OnCloseClick="OnCloseClick" DisableOkBtn="IsViewMode">
+    <label class="text-danger">@Msg</label>
+    
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab"><span style="color:red;">*</span>@Localizer["uom"] </label>
+                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="ListForUOMSelection" Title=@Localizer["add_uom"] IsButtonVisible="true" OnSelect="OnUOMTypeSelection" Disabled="IsEditMode" IsSearchable="false" />
+                </div>
+                <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab">@Localizer["barcodes"]</label>
+                    <input class="form-control" type="text" @bind-value="SKUUOM.Barcodes">
+                </div>
+                <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab"><span style="color:red;">*</span> @Localizer["multiplier"]</label>
+                    <input class="form-control" min="1" type="number" @bind-value="SKUUOM.Multiplier">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab"> @Localizer["weight_unit"]</label>
+                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="ListForWeightUnitSelection" Title=@Localizer["unit"] IsButtonVisible="true" OnSelect="OnWeightSelection" IsSearchable="false" />
+                </div>
+                <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab">@Localizer["weight"]</label>
+                    <input class="form-control" type="number" min="1" @bind-value="SKUUOM.Weight">
+                </div>
+                <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab">@Localizer["select_volume_unit"]</label>
+                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="ListForVolumeUnitSelection" Title=@Localizer["unit"] IsButtonVisible="true" OnSelect="OnVolumeUnitSelection" IsSearchable="false" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab">@Localizer["volume"]</label>
+                    <input class="form-control" type="number" min="1" @bind-value="SKUUOM.Volume">
+                </div>
+                <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab">@Localizer["gross_weight_unit"]</label>
+                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="ListForGrossWeightUnitSelection" Title=@Localizer["unit"]  IsButtonVisible="true" OnSelect="OnGrossWeightSelection" IsSearchable="false" />
+                </div>
+                <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab">@Localizer["gross_weight"]</label>
+                    <input class="form-control" type="number" min="1" @bind-value="SKUUOM.GrossWeight">
+                </div>
+            </div>
+            <div class="row">
+                <div style="width: 62%; float: left; margin-top: 19px;">
+                    <div style="float: left; padding-right: 10px; margin-left: 17px; margin-top: 10px;">
+                        <label>
+                            <input style="float: left; margin-right: 4px; margin-top: 3px;" type="checkbox" checked="@SKUUOM.IsBaseUOM" @onchange="ToggleIsBaseUOM">
+                        <span style="float: left;">@Localizer["is_base_uom"]</span>
+                        </label>
+                    </div>
+                    <div style="float: left; padding-right: 10px; margin-left: 17px; margin-top: 10px;">
+                        <label>
+                            <input style="float: left; margin-right: 4px; margin-top: 3px;" type="checkbox" checked="@SKUUOM.IsOuterUOM" @onchange="ToggleIsOuterUOM">
+                        <span style="float: left;">@Localizer["is_outer_uom"]</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+ 
+
+
+</PopUp>
+
+@code {
+
+    [Parameter]
+    public EventCallback OnOkClick { get; set; }
+    [Parameter]
+    public EventCallback OnCloseClick { get; set; }
+    [Parameter]
+    public string Title { get; set; } 
+    [Parameter]
+    public string Msg { get; set; }
+    [Parameter]
+    public string OKBtnText { get; set; }
+    [Parameter]
+    public string cancelBtnClick { get; set; }
+    [Parameter]
+    public Winit.Modules.SKU.Model.Interfaces.ISKUUOM SKUUOM { get; set; }
+    [Parameter]
+    public Winit.Modules.ListHeader.Model.Interfaces.IListItem LISTITEM { get; set; }
+    [Parameter]
+    public bool IsAddSKUUOM { get; set; }
+    [Parameter]
+    public bool IsEditMode { get; set; }
+    [Parameter]
+    public bool IsViewMode { get; set; }
+    private bool _isUOMDDLOpen = true;
+    [Parameter]
+    public EventCallback<Winit.Shared.Models.Events.DropDownEvent> OnSelectUOM { get; set; }
+    [Parameter]
+    public List<Winit.Shared.Models.Common.ISelectionItem> ListForUOMSelection { get; set; } = new List<Winit.Shared.Models.Common.ISelectionItem>();
+    private bool _isVolumeUnitDDLOpen;
+    private bool _isGrossWeightUnitDDLOpen;
+    private bool _isWeightUnitDDLOpen;
+    [Parameter]
+    public List<Winit.Shared.Models.Common.ISelectionItem> ListForVolumeUnitSelection { get; set; } = new List<Winit.Shared.Models.Common.ISelectionItem>();
+    [Parameter]
+    public List<Winit.Shared.Models.Common.ISelectionItem> ListForGrossWeightUnitSelection { get; set; } = new List<Winit.Shared.Models.Common.ISelectionItem>();
+    [Parameter]
+    public List<Winit.Shared.Models.Common.ISelectionItem> ListForWeightUnitSelection { get; set; } = new List<Winit.Shared.Models.Common.ISelectionItem>();
+
+    public void OnUOMTypeSelection(Winit.Shared.Models.Events.DropDownEvent dropDownEvent)
+    {
+        if (dropDownEvent.SelectionItems != null && dropDownEvent.SelectionItems.Any())
+        {
+            var selecetedValue = dropDownEvent.SelectionItems.FirstOrDefault();
+            SKUUOM.Code = selecetedValue?.Code;
+            SKUUOM.Name = selecetedValue?.Label;
+        }
+    }
+    public void OnVolumeUnitSelection(Winit.Shared.Models.Events.DropDownEvent dropDownEvent)
+    {
+        if (dropDownEvent.SelectionItems != null && dropDownEvent.SelectionItems.Any())
+        {
+            var selecetedValue = dropDownEvent.SelectionItems.FirstOrDefault();
+            SKUUOM.VolumeUnit = selecetedValue?.Code;
+        }
+        _isVolumeUnitDDLOpen = false;
+    }
+    public void OnGrossWeightSelection(Winit.Shared.Models.Events.DropDownEvent dropDownEvent)
+    {
+        if (dropDownEvent.SelectionItems != null && dropDownEvent.SelectionItems.Any())
+        {
+            var selecetedValue = dropDownEvent.SelectionItems.FirstOrDefault();
+            SKUUOM.GrossWeightUnit = selecetedValue?.Code;
+        }
+        _isGrossWeightUnitDDLOpen = false;
+    }
+    public void OnWeightSelection(Winit.Shared.Models.Events.DropDownEvent dropDownEvent)
+    {
+        if (dropDownEvent.SelectionItems != null && dropDownEvent.SelectionItems.Any())
+        {
+            var selecetedValue = dropDownEvent.SelectionItems.FirstOrDefault();
+            SKUUOM.WeightUnit = selecetedValue?.Code;
+        }
+        _isWeightUnitDDLOpen = false;
+    }
+    private void ToggleIsBaseUOM(ChangeEventArgs e)
+    {
+        SKUUOM.IsBaseUOM = (bool)e.Value;
+        if (SKUUOM.IsBaseUOM && SKUUOM.IsOuterUOM)
+        {
+            SKUUOM.IsOuterUOM = false;
+        }
+    }
+
+    private void ToggleIsOuterUOM(ChangeEventArgs e)
+    {
+        SKUUOM.IsOuterUOM = (bool)e.Value;
+        if (SKUUOM.IsOuterUOM && SKUUOM.IsBaseUOM)
+        {
+            SKUUOM.IsBaseUOM = false;
+        }
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        LoadResources(null, _languageService.SelectedCulture);
+    }
+}

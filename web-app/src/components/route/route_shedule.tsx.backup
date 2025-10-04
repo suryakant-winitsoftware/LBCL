@@ -1,0 +1,2395 @@
+"use client";
+import React, { useState, useEffect, useRef } from "react";
+import {
+  Calendar,
+  Clock,
+  Plus,
+  Settings,
+  Download,
+  Upload,
+  Copy,
+  Trash2,
+  Save,
+  X,
+  Search,
+  Filter,
+  Bell,
+  Users,
+  TrendingUp,
+  AlertTriangle,
+  CheckCircle2,
+  DragHandleDots2,
+  RotateCcw,
+  Star,
+  MapPin,
+  Phone,
+  Check,
+  ChevronDown
+} from "lucide-react";
+
+interface Customer {
+  UID: string;
+  Code: string;
+  Name: string;
+  Address?: string;
+  ContactNo?: string;
+  Type?: string;
+  Status?: string;
+}
+
+interface ScheduledCustomer {
+  id: number;
+  sequence: number;
+  name: string;
+  startTime: string;
+  endTime: string;
+  duration: number;
+  period: string;
+  day: string | null;
+  week: number | null;
+  date: number | null;
+  fortnightPart: string | null;
+  phone: string;
+  location: string;
+  priority: string;
+  notes: string;
+  createdAt: string;
+}
+
+interface CustomerScheduling {
+  customerUID: string;
+  frequency: "daily" | "weekly" | "monthly" | "fortnight";
+  scheduleConfigs: {
+    scheduleType: string;
+    weekNumber?: number;
+    dayNumber?: number;
+  }[];
+}
+
+interface CustomerSchedulerProps {
+  selectedPeriod?: string;
+  initialActiveScheduleTypes?: string[];
+  initialScheduleCustomerAssignments?: {
+    [scheduleType: string]: string[];
+  };
+  routeScheduleConfigs?: any[];
+  routeScheduleCustomerMappings?: any[];
+  availableCustomers?: Customer[];
+  onCustomersScheduled?: (customers: ScheduledCustomer[]) => void;
+  onCustomerSchedulingChange?: (
+    customerScheduling: CustomerScheduling[]
+  ) => void;
+}
+
+const CustomerScheduler = ({
+  selectedPeriod: propSelectedPeriod,
+  initialActiveScheduleTypes,
+  initialScheduleCustomerAssignments,
+  routeScheduleConfigs = [],
+  routeScheduleCustomerMappings = [],
+  availableCustomers = [],
+  onCustomersScheduled,
+  onCustomerSchedulingChange
+}: CustomerSchedulerProps) => {
+  // Multi-schedule support - allow multiple active schedule types
+  const [activeScheduleTypes, setActiveScheduleTypes] = useState<string[]>(
+    initialActiveScheduleTypes && initialActiveScheduleTypes.length > 0 
+      ? initialActiveScheduleTypes 
+      : ["weekly"]
+  );
+  const [currentlySelectedType, setCurrentlySelectedType] = useState(
+    initialActiveScheduleTypes && initialActiveScheduleTypes.length > 0 
+      ? initialActiveScheduleTypes[0] 
+      : "weekly"
+  );
+  const selectedPeriod = propSelectedPeriod || currentlySelectedType;
+  
+  // Backward compatibility: If propSelectedPeriod is provided, use single-schedule mode
+  const isMultiScheduleMode = !propSelectedPeriod;
+  
+  // Track customers assigned to each schedule type
+  const [scheduleCustomerAssignments, setScheduleCustomerAssignments] = useState<{
+    [scheduleType: string]: string[]; // customerUIDs
+  }>(initialScheduleCustomerAssignments || {});
+  
+  // Track which customers are assigned to which schedule types
+  const [assignedCustomers, setAssignedCustomers] = useState<Set<string>>(() => {
+    if (initialScheduleCustomerAssignments) {
+      const allAssigned = Object.values(initialScheduleCustomerAssignments).flat();
+      return new Set(allAssigned);
+    }
+    return new Set();
+  });
+
+  // Initialize customerScheduling from localStorage to persist across component re-renders
+  const [customerScheduling, setCustomerScheduling] = useState<
+    CustomerScheduling[]
+  >(() => {
+    try {
+      const saved = localStorage.getItem("tempCustomerScheduling");
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  // Sync activeScheduleTypes with frequencies that have assigned customers and auto-select first one
+  useEffect(() => {
+    const frequenciesWithCustomers = Object.keys(scheduleCustomerAssignments).filter(type => 
+      (scheduleCustomerAssignments[type] || []).length > 0
+    );
+    
+    // Update activeScheduleTypes to include all frequencies with customers
+    if (frequenciesWithCustomers.length > 0) {
+      setActiveScheduleTypes(frequenciesWithCustomers);
+      
+      // Auto-select the first frequency if current selection doesn't have customers
+      if (!frequenciesWithCustomers.includes(currentlySelectedType)) {
+        setCurrentlySelectedType(frequenciesWithCustomers[0]);
+      }
+    }
+  }, [scheduleCustomerAssignments, currentlySelectedType]);
+
+  // Helper function to get day name from day number
+  const getDayNameFromNumber = (dayNumber: number): string => {
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    return days[dayNumber] || 'Monday';
+  };
+
+  // Helper function to get fortnight part from week number
+  const getFortnightPartFromWeek = (weekNumber: number | string): string => {
+    // Handle string format like "W13" or just "13"
+    const numericWeek = typeof weekNumber === 'string' 
+      ? parseInt(weekNumber.replace('W', '').replace('w', ''))
+      : weekNumber;
+    
+    if (numericWeek === 13) return '1st-3rd';
+    if (numericWeek === 24) return '2nd-4th';
+    return '1st-3rd'; // default
+  };
+
+  // Populate dayWiseCustomers from scheduleCustomerAssignments with dynamic mapping
+  useEffect(() => {
+    const hasAnyAssignments = Object.values(scheduleCustomerAssignments).some(customers => customers.length > 0);
+    const hasAnyDayWiseCustomers = Object.values(dayWiseCustomers).some(customers => customers.length > 0);
+    
+    
+    // Run if we have assignments and available customers (remove the !hasAnyDayWiseCustomers condition for now)
+    if (hasAnyAssignments && availableCustomers.length > 0) {
+      
+      if (routeScheduleConfigs.length === 0) {
+      }
+      if (routeScheduleCustomerMappings.length === 0) {
+      }
+      
+      const newDayWiseCustomers = { ...dayWiseCustomers };
+      
+      // Create a map of customer UID to their schedule configs
+      const customerConfigMap = new Map();
+      
+      // Process route schedule customer mappings to get config relationships
+      routeScheduleCustomerMappings.forEach((mapping: any) => {
+        // Handle customer UID format - might have route prefix
+        let customerUID = mapping.CustomerUID;
+        // Remove route prefix if present (e.g., "RT17578801369880VPMNS48R3_1008" -> "1008")
+        if (customerUID && customerUID.includes('_')) {
+          customerUID = customerUID.split('_').pop();
+        }
+        const configUID = mapping.RouteScheduleConfigUID;
+        
+        // Find the matching config
+        const config = routeScheduleConfigs.find((c: any) => c.UID === configUID);
+        if (config) {
+          if (!customerConfigMap.has(customerUID)) {
+            customerConfigMap.set(customerUID, []);
+          }
+          customerConfigMap.get(customerUID).push(config);
+        }
+      });
+      
+      
+      // Process each frequency type
+      
+      Object.entries(scheduleCustomerAssignments).forEach(([frequency, customerUIDs]) => {
+        if (customerUIDs.length > 0) {
+          
+          // Convert customer UIDs to full customer objects
+          const customers: ScheduledCustomer[] = customerUIDs.map((uid, index) => {
+            const customer = availableCustomers.find(c => c.UID === uid);
+            return customer ? {
+              id: `${customer.UID}_${frequency}`,
+              customerUID: customer.UID,
+              customerCode: customer.Code,
+              name: customer.Name,
+              address: customer.Address || '',
+              contactNo: customer.ContactNo || '',
+              type: customer.Type || '',
+              status: customer.Status || 'Active',
+              sequence: index + 1,
+              startTime: "09:00",
+              endTime: "10:00",
+              visitDuration: 60,
+              travelTime: 15,
+              frequency: frequency,
+              conflict: false,
+              conflictType: '',
+              isEditing: false,
+              priority: 'normal'
+            } : null;
+          }).filter(Boolean) as ScheduledCustomer[];
+          
+          
+          // Map to appropriate dayWise keys based on frequency and actual config data
+          if (frequency === 'daily') {
+            newDayWiseCustomers.daily_all = customers;
+          } else if (frequency === 'weekly') {
+            // For weekly, try to use actual config data, otherwise default to Monday W1
+            const sampleCustomer = customerUIDs[0];
+            const configs = customerConfigMap.get(sampleCustomer) || [];
+            const weeklyConfig = configs.find((c: any) => c.ScheduleType === 'weekly');
+            
+            if (weeklyConfig && weeklyConfig.WeekNumber && weeklyConfig.DayNumber !== undefined) {
+              const dayName = getDayNameFromNumber(weeklyConfig.DayNumber);
+              // Handle string format like "W1" or just "1"
+              const weekNum = typeof weeklyConfig.WeekNumber === 'string' 
+                ? weeklyConfig.WeekNumber.replace('W', '').replace('w', '')
+                : weeklyConfig.WeekNumber;
+              const contextKey = `weekly_W${weekNum}_${dayName}`;
+              newDayWiseCustomers[contextKey] = customers;
+            } else {
+              newDayWiseCustomers.weekly_W1_Monday = customers;
+            }
+          } else if (frequency === 'fortnight') {
+            // For fortnight, use actual config data
+            const sampleCustomer = customerUIDs[0];
+            const configs = customerConfigMap.get(sampleCustomer) || [];
+            // Handle typo in database - "fortnigtly" instead of "fortnight"
+            const fortnightConfig = configs.find((c: any) => 
+              c.ScheduleType === 'fortnight' || c.ScheduleType === 'fortnigtly'
+            );
+            
+            if (fortnightConfig && fortnightConfig.WeekNumber && fortnightConfig.DayNumber) {
+              const dayName = getDayNameFromNumber(fortnightConfig.DayNumber);
+              const fortnightPart = getFortnightPartFromWeek(fortnightConfig.WeekNumber);
+              const contextKey = `${fortnightPart}_week1_${dayName}`;
+              newDayWiseCustomers[contextKey] = customers;
+            } else {
+              newDayWiseCustomers['1st-3rd_week1_Monday'] = customers;
+            }
+          } else if (frequency === 'monthly') {
+            // For monthly, use actual day number from config
+            const sampleCustomer = customerUIDs[0];
+            const configs = customerConfigMap.get(sampleCustomer) || [];
+            const monthlyConfig = configs.find((c: any) => c.ScheduleType === 'monthly');
+            
+            if (monthlyConfig && monthlyConfig.DayNumber) {
+              const contextKey = `date_${monthlyConfig.DayNumber}`;
+              newDayWiseCustomers[contextKey] = customers;
+            } else {
+              newDayWiseCustomers.date_1 = customers;
+            }
+          }
+        }
+      });
+      
+      setDayWiseCustomers(newDayWiseCustomers);
+    }
+  }, [scheduleCustomerAssignments, availableCustomers, routeScheduleConfigs, routeScheduleCustomerMappings]);
+
+  // Function to rebuild customerScheduling from dayWiseCustomers (backup recovery)
+  const rebuildCustomerSchedulingFromDayWise = () => {
+    const allCustomers = Object.values(dayWiseCustomers).flat();
+    if (allCustomers.length === 0) return [];
+
+    const schedulingMap = new Map<string, CustomerScheduling>();
+
+    allCustomers.forEach((customer) => {
+      if (!customer.name || !customer.period) return;
+
+      // Find the customer UID from availableCustomers based on name
+      const matchingCustomer = availableCustomers.find(
+        (ac) => ac.Name === customer.name
+      );
+      if (!matchingCustomer) return;
+
+      const customerUID = matchingCustomer.UID;
+
+      // Generate schedule config based on customer data
+      const scheduleConfig = {
+        scheduleType: customer.period,
+        weekNumber:
+          customer.week ||
+          (customer.fortnightPart === "1st-3rd"
+            ? 13
+            : customer.fortnightPart === "2nd-4th"
+            ? 24
+            : 1),
+        dayNumber: customer.day
+          ? getDayNumber(customer.day)
+          : customer.date || 1
+      };
+
+      if (schedulingMap.has(customerUID)) {
+        // Customer exists, add to their configs
+        schedulingMap.get(customerUID)!.scheduleConfigs.push(scheduleConfig);
+      } else {
+        // New customer
+        schedulingMap.set(customerUID, {
+          customerUID,
+          frequency: customer.period as
+            | "daily"
+            | "weekly"
+            | "monthly"
+            | "fortnight",
+          scheduleConfigs: [scheduleConfig]
+        });
+      }
+    });
+
+    const rebuilt = Array.from(schedulingMap.values());
+
+    return rebuilt;
+  };
+
+  // Save customerScheduling to localStorage and debug changes
+  useEffect(() => {
+
+    // Save to localStorage to persist across component re-renders
+    const previousData = localStorage.getItem("tempCustomerScheduling");
+    const previousCount = previousData ? JSON.parse(previousData).length : 0;
+
+    localStorage.setItem(
+      "tempCustomerScheduling",
+      JSON.stringify(customerScheduling)
+    );
+  }, [customerScheduling]);
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(
+    null
+  );
+  const [selectedWeek, setSelectedWeek] = useState(1);
+  const [selectedDay, setSelectedDay] = useState("Monday");
+  const [selectedDate, setSelectedDate] = useState(1);
+  const [monthlyDaysCount, setMonthlyDaysCount] = useState(30);
+  const [selectedFortnightPart, setSelectedFortnightPart] = useState("1st-3rd");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCustomerUIDs, setSelectedCustomerUIDs] = useState<string[]>(
+    []
+  );
+  const [showCustomerDropdown, setShowCustomerDropdown] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [showSettings, setShowSettings] = useState(false);
+  const [showTimeView, setShowTimeView] = useState(false);
+  const [lastAction, setLastAction] = useState(null);
+  const [settings, setSettings] = useState({
+    dayStart: "08:00",
+    dayEnd: "20:00",
+    defaultDuration: 30,
+    travelTime: 30,
+    includeTime: true,
+    autoSave: false,
+    notifications: true
+  });
+  const [customers, setCustomersInternal] = useState<ScheduledCustomer[]>([]);
+
+  // Helper function to convert day name to number
+  const getDayNumber = (dayName: string): number => {
+    const days = {
+      monday: 1,
+      tuesday: 2,
+      wednesday: 3,
+      thursday: 4,
+      friday: 5,
+      saturday: 6,
+      sunday: 7
+    };
+    return days[dayName.toLowerCase() as keyof typeof days] || 1;
+  };
+
+  // Helper function to generate schedule configs based on frequency and selections
+  const generateScheduleConfigs = (frequency: string, selections: any) => {
+    const configs = [];
+
+    switch (frequency) {
+      case "daily":
+        // For daily, use dayNumber: 0 to match master data: daily_NA_0
+        configs.push({ scheduleType: "daily", dayNumber: 0 });
+        break;
+      case "weekly":
+        // Weekly with specific day and week
+        if (selections.day) {
+          configs.push({
+            scheduleType: "weekly",
+            weekNumber: selections.week || 1, // Include the week number (W1 for weekly)
+            dayNumber: getDayNumber(selections.day)
+          });
+        }
+        break;
+      case "monthly":
+        // Monthly with specific date
+        if (selections.date) {
+          configs.push({ scheduleType: "monthly", dayNumber: selections.date });
+        }
+        break;
+      case "fortnight":
+        // Fortnight with week pattern based on part selection (W13 or W24) AND specific day
+        if (selections.fortnightPart === "1st-3rd" && selections.day) {
+          configs.push({
+            scheduleType: "fortnight",
+            weekNumber: 13, // Fixed week number for 1st-3rd part
+            dayNumber: getDayNumber(selections.day)
+          });
+        } else if (selections.fortnightPart === "2nd-4th" && selections.day) {
+          configs.push({
+            scheduleType: "fortnight",
+            weekNumber: 24, // Fixed week number for 2nd-4th part
+            dayNumber: getDayNumber(selections.day)
+          });
+        }
+        break;
+    }
+
+    return configs;
+  };
+
+  // Handle adding customer with specific frequency
+  const addCustomerWithFrequency = (customer: Customer, frequency: string) => {
+    const scheduleConfigs = generateScheduleConfigs(frequency, {
+      day: selectedDay,
+      week: selectedWeek, // Pass the selected week
+      date: selectedDate,
+      fortnightPart: selectedFortnightPart
+    });
+
+    const newCustomerScheduling: CustomerScheduling = {
+      customerUID: customer.UID,
+      frequency: frequency as "daily" | "weekly" | "monthly" | "fortnight",
+      scheduleConfigs
+    };
+
+    // Check if this customer already exists in the current scheduling
+    const existingIndex = customerScheduling.findIndex(
+      (cs) => cs.customerUID === customer.UID
+    );
+    let updatedScheduling: CustomerScheduling[];
+
+    if (existingIndex !== -1) {
+      // Customer exists - merge schedule configs
+      updatedScheduling = [...customerScheduling];
+      updatedScheduling[existingIndex].scheduleConfigs.push(...scheduleConfigs);
+    } else {
+      // New customer - add to array
+      updatedScheduling = [...customerScheduling, newCustomerScheduling];
+    }
+
+    setCustomerScheduling(updatedScheduling);
+
+    // Also add to the visual customers list
+    const newScheduledCustomer: ScheduledCustomer = {
+      id: Date.now() + Math.random(),
+      sequence: customers.length + 1,
+      name: customer.Name,
+      startTime: "NA",
+      endTime: "NA",
+      duration: 0,
+      period: frequency,
+      day:
+        frequency === "weekly" || frequency === "fortnight"
+          ? selectedDay
+          : null,
+      week: frequency === "weekly" ? selectedWeek : null, // Week only for weekly schedules
+      date: frequency === "monthly" ? selectedDate : null,
+      fortnightPart: frequency === "fortnight" ? selectedFortnightPart : null,
+      phone: customer.ContactNo || "",
+      location: customer.Address || "",
+      priority: "normal",
+      notes: `Customer Code: ${customer.Code}`,
+      createdAt: new Date().toISOString()
+    };
+
+    // Update both customers list and dayWiseCustomers
+    setCustomers([...customers, newScheduledCustomer]);
+
+    // Update dayWiseCustomers based on context
+    const contextKey = getCurrentContextKey();
+    setDayWiseCustomers((prev) => ({
+      ...prev,
+      [contextKey]: [...(prev[contextKey] || []), newScheduledCustomer]
+    }));
+
+    // Notify parent component
+    if (onCustomerSchedulingChange) {
+      onCustomerSchedulingChange(updatedScheduling);
+    }
+    if (onCustomersScheduled) {
+      onCustomersScheduled([...customers, newScheduledCustomer]);
+    }
+  };
+
+  // Handle adding selected customers with current frequency (FIXED for batch operations)
+  const addSelectedCustomers = () => {
+    if (selectedCustomerUIDs.length === 0) return;
+
+    
+    // Update multi-schedule tracking only if in multi-schedule mode
+    if (isMultiScheduleMode) {
+      // Update assigned customers tracking
+      const newAssignedCustomers = new Set(assignedCustomers);
+      selectedCustomerUIDs.forEach(uid => newAssignedCustomers.add(uid));
+      setAssignedCustomers(newAssignedCustomers);
+      
+      // Update schedule-specific assignments
+      const currentAssignments = scheduleCustomerAssignments[selectedPeriod] || [];
+      setScheduleCustomerAssignments({
+        ...scheduleCustomerAssignments,
+        [selectedPeriod]: [...currentAssignments, ...selectedCustomerUIDs]
+      });
+    }
+
+    // BATCH OPERATION: Process all customers at once to avoid race conditions
+    const newCustomerSchedulingEntries: CustomerScheduling[] = [];
+    const newScheduledCustomers: ScheduledCustomer[] = [];
+
+    selectedCustomerUIDs.forEach((uid, index) => {
+      const customer = availableCustomers.find((c) => c.UID === uid);
+      if (customer) {
+
+        // Generate schedule configs for this customer
+        const scheduleConfigs = generateScheduleConfigs(selectedPeriod, {
+          day: selectedDay,
+          week: selectedPeriod === "weekly" ? selectedWeek : 1, // Only use selectedWeek for weekly
+          date: selectedDate,
+          fortnightPart: selectedFortnightPart
+        });
+
+        // Create customer scheduling entry
+        const newCustomerScheduling: CustomerScheduling = {
+          customerUID: customer.UID,
+          frequency: selectedPeriod as
+            | "daily"
+            | "weekly"
+            | "monthly"
+            | "fortnight",
+          scheduleConfigs
+        };
+
+        newCustomerSchedulingEntries.push(newCustomerScheduling);
+
+        // Create visual customer entry
+        const newScheduledCustomer: ScheduledCustomer = {
+          id: Date.now() + Math.random() + index, // Ensure unique IDs
+          sequence: customers.length + index + 1,
+          name: customer.Name,
+          startTime: "NA",
+          endTime: "NA",
+          duration: 0,
+          period: selectedPeriod,
+          day:
+            selectedPeriod === "weekly" || selectedPeriod === "fortnight"
+              ? selectedDay
+              : null,
+          week: selectedPeriod === "weekly" ? selectedWeek : null, // Week only for weekly schedules
+          date: selectedPeriod === "monthly" ? selectedDate : null,
+          fortnightPart:
+            selectedPeriod === "fortnight" ? selectedFortnightPart : null,
+          phone: customer.ContactNo || "",
+          location: customer.Address || "",
+          priority: "normal",
+          notes: `Customer Code: ${customer.Code}`,
+          createdAt: new Date().toISOString()
+        };
+
+        newScheduledCustomers.push(newScheduledCustomer);
+      }
+    });
+
+    // BATCH UPDATE: Update all states at once
+
+    // Check for duplicates and merge with existing data
+    const updatedScheduling = [...customerScheduling];
+
+    newCustomerSchedulingEntries.forEach((newEntry) => {
+      const existingIndex = updatedScheduling.findIndex(
+        (cs) => cs.customerUID === newEntry.customerUID
+      );
+      if (existingIndex !== -1) {
+        // Customer exists - merge schedule configs
+        updatedScheduling[existingIndex].scheduleConfigs.push(
+          ...newEntry.scheduleConfigs
+        );
+      } else {
+        // New customer - add to array
+        updatedScheduling.push(newEntry);
+      }
+    });
+
+    // Single state update for customerScheduling
+    setCustomerScheduling(updatedScheduling);
+
+    // Update visual customers
+    setCustomers([...customers, ...newScheduledCustomers]);
+
+    // Update dayWiseCustomers
+    const contextKey = getCurrentContextKey();
+    setDayWiseCustomers((prev) => ({
+      ...prev,
+      [contextKey]: [...(prev[contextKey] || []), ...newScheduledCustomers]
+    }));
+
+    // Notify parent component of the batch update
+    if (onCustomerSchedulingChange) {
+      onCustomerSchedulingChange(updatedScheduling);
+    }
+
+    // Notify parent about visual customers
+    if (onCustomersScheduled) {
+      onCustomersScheduled([...customers, ...newScheduledCustomers]);
+    }
+
+    // Clear selection
+    setSelectedCustomerUIDs([]);
+    setShowCustomerDropdown(false);
+  };
+
+  // Initialize dayWiseCustomers with all possible keys
+  const initializeDayWiseCustomers = () => {
+    const initial: { [key: string]: ScheduledCustomer[] } = {
+      // Daily: Store all daily customers
+      daily_all: []
+    };
+
+    const days = [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday"
+    ];
+
+    // Weekly: Store by week-day combinations (W1-W5, Monday-Sunday)
+    for (let week = 1; week <= 5; week++) {
+      for (const day of days) {
+        initial[`weekly_W${week}_${day}`] = [];
+      }
+    }
+
+    // Monthly: Store by date (1-31)
+    for (let i = 1; i <= 31; i++) {
+      initial[`date_${i}`] = [];
+    }
+
+    // Fortnightly: Store by week-day-part combinations
+    const fortnightParts = ["1st-3rd", "2nd-4th"];
+    for (let week = 1; week <= 5; week++) {
+      for (const part of fortnightParts) {
+        for (const day of days) {
+          initial[`${part}_week${week}_${day}`] = [];
+        }
+      }
+    }
+
+    return initial;
+  };
+
+  // Store customers by day/week/date depending on period type (with localStorage persistence)
+  const [dayWiseCustomers, setDayWiseCustomers] = useState<{
+    [key: string]: ScheduledCustomer[];
+  }>(() => {
+    try {
+      const saved = localStorage.getItem("tempDayWiseCustomers");
+      if (saved) {
+        const parsedData = JSON.parse(saved);
+        return parsedData;
+      }
+    } catch (e) {
+    }
+    return initializeDayWiseCustomers();
+  });
+
+  // Save dayWiseCustomers to localStorage whenever it changes
+  useEffect(() => {
+    const totalCustomers = Object.values(dayWiseCustomers).flat().length;
+    if (totalCustomers > 0) {
+      localStorage.setItem(
+        "tempDayWiseCustomers",
+        JSON.stringify(dayWiseCustomers)
+      );
+    }
+  }, [dayWiseCustomers]);
+
+  // Wrapper to track all setCustomers calls
+  const setCustomers = (newCustomers: any) => {
+    setCustomersInternal(newCustomers);
+
+    // Notify parent component about scheduled customers
+    if (onCustomersScheduled) {
+      onCustomersScheduled(newCustomers);
+    }
+  };
+
+  // Handle click outside to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        const button = document.querySelector('[data-dropdown-trigger]');
+        if (button && !button.contains(event.target as Node)) {
+          setShowCustomerDropdown(false);
+        }
+      }
+    };
+
+    if (showCustomerDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showCustomerDropdown]);
+
+  // Debug logging and clear any stale data
+  useEffect(() => {
+
+    // Clear any stale localStorage data on mount to prevent auto-population (but keep tempCustomerScheduling)
+    localStorage.removeItem("customerSchedule");
+
+    // Check if we need to rebuild customerScheduling from dayWiseCustomers
+    const allDayWiseCustomers = Object.values(dayWiseCustomers).flat();
+    if (
+      allDayWiseCustomers.length > customerScheduling.length &&
+      availableCustomers.length > 0
+    ) {
+      const rebuiltScheduling = rebuildCustomerSchedulingFromDayWise();
+      if (rebuiltScheduling.length > customerScheduling.length) {
+        setCustomerScheduling(rebuiltScheduling);
+
+        // Also save to localStorage
+        localStorage.setItem(
+          "tempCustomerScheduling",
+          JSON.stringify(rebuiltScheduling)
+        );
+
+        // Notify parent immediately
+        if (onCustomerSchedulingChange) {
+          onCustomerSchedulingChange(rebuiltScheduling);
+        }
+      }
+    } else if (onCustomerSchedulingChange && customerScheduling.length > 0) {
+      onCustomerSchedulingChange(customerScheduling);
+    }
+
+    // Cleanup on unmount
+    return () => {
+    };
+  }, [availableCustomers, dayWiseCustomers]);
+
+  useEffect(() => {
+  }, [customers]);
+  const [isAddingCustomer, setIsAddingCustomer] = useState(false);
+  const [editingCustomer, setEditingCustomer] = useState(null);
+  const [selectedCustomers, setSelectedCustomers] = useState([]);
+  const [expandedCustomerId, setExpandedCustomerId] = useState(null); // Track which customer row is expanded
+  const [newCustomer, setNewCustomer] = useState({
+    name: "",
+    startTime: "",
+    duration: settings.defaultDuration,
+    phone: "",
+    location: "",
+    priority: "normal",
+    notes: ""
+  });
+  const [conflicts, setConflicts] = useState([]);
+
+  // Available customers for selection (don't auto-create)
+  const getAvailableCustomersForSelection = () => {
+    const contextKey = getCurrentContextKey();
+    const currentContextCustomers = dayWiseCustomers[contextKey] || [];
+
+    if (isMultiScheduleMode) {
+      // In multi-schedule mode: only show customers assigned to the current frequency type
+      const assignedToCurrentFrequency = scheduleCustomerAssignments[currentlySelectedType] || [];
+      return availableCustomers.filter((customer) => {
+        // Only show customers that are assigned to the current frequency type
+        const isAssignedToCurrentFrequency = assignedToCurrentFrequency.includes(customer.UID);
+        
+        // Check if customer is already in the current schedule context
+        const alreadyInContext = currentContextCustomers.some(
+          (scheduledCustomer) => scheduledCustomer.name === customer.Name
+        );
+        
+        return isAssignedToCurrentFrequency && !alreadyInContext;
+      });
+    } else {
+      // Single-schedule mode: original behavior
+      return availableCustomers.filter((customer) => {
+        const alreadyInContext = currentContextCustomers.some(
+          (scheduledCustomer) => scheduledCustomer.name === customer.Name
+        );
+        return !alreadyInContext;
+      });
+    }
+  };
+
+  // Filter customers based on search term
+  const getFilteredAvailableCustomers = () => {
+    const availableCustomers = getAvailableCustomersForSelection();
+    if (!searchTerm) return availableCustomers;
+
+    return availableCustomers.filter(
+      (customer) =>
+        customer.Name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        customer.Code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (customer.Address &&
+          customer.Address.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+  };
+
+  // Toggle customer selection
+  const toggleCustomerSelection = (customerUID: string) => {
+    setSelectedCustomerUIDs((prev) =>
+      prev.includes(customerUID)
+        ? prev.filter((uid) => uid !== customerUID)
+        : [...prev, customerUID]
+    );
+  };
+
+  // Get the current context key based on period and selection
+  const getCurrentContextKey = () => {
+    switch (selectedPeriod) {
+      case "daily":
+        return "daily_all";
+      case "weekly":
+        return `weekly_W${selectedWeek}_${selectedDay}`;
+      case "monthly":
+        return `date_${selectedDate}`;
+      case "fortnight":
+        return `${selectedFortnightPart}_week1_${selectedDay}`; // Use week1 as default for fortnight
+      default:
+        return selectedDay;
+    }
+  };
+
+  // Add multiple selected customers
+
+  const periods = [
+    { value: "daily", label: "Daily", icon: "☀️" },
+    { value: "weekly", label: "Weekly", icon: "📅" },
+    { value: "monthly", label: "Monthly", icon: "📆" },
+    { value: "fortnight", label: "Fortnight", icon: "🗓️" }
+  ];
+
+  const weeks = [
+    {
+      id: 1,
+      label: "Week 1",
+      dates: "Jan 1-7",
+      color: "bg-gradient-to-r from-blue-500 to-blue-600"
+    },
+    {
+      id: 2,
+      label: "Week 2",
+      dates: "Jan 8-14",
+      color: "bg-gradient-to-r from-purple-500 to-purple-600"
+    },
+    {
+      id: 3,
+      label: "Week 3",
+      dates: "Jan 15-21",
+      color: "bg-gradient-to-r from-green-500 to-green-600"
+    },
+    {
+      id: 4,
+      label: "Week 4",
+      dates: "Jan 22-28",
+      color: "bg-gradient-to-r from-orange-500 to-orange-600"
+    },
+    {
+      id: 5,
+      label: "Week 5",
+      dates: "Jan 29-31",
+      color: "bg-gradient-to-r from-pink-500 to-pink-600"
+    }
+  ];
+
+  const days = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday"
+  ];
+
+  const monthlyDates = Array.from(
+    { length: monthlyDaysCount },
+    (_, i) => i + 1
+  );
+
+  const monthlyDaysOptions = Array.from({ length: 30 }, (_, i) => ({
+    value: i + 1,
+    label: `${i + 1} Day${i + 1 > 1 ? "s" : ""}`
+  }));
+
+  const fortnightParts = [
+    { value: "1st-3rd", label: "1st and 3rd Week", weeks: [1, 3] },
+    { value: "2nd-4th", label: "2nd and 4th Week", weeks: [2, 4] }
+  ];
+
+  const priorityColors = {
+    high: "bg-red-50 text-red-700 border-red-200",
+    normal: "bg-blue-50 text-blue-700 border-blue-200",
+    low: "bg-gray-50 text-gray-600 border-gray-200"
+  };
+
+  // Auto-save functionality
+  useEffect(() => {
+    if (settings.autoSave && customers.length > 0) {
+      localStorage.setItem("customerSchedule", JSON.stringify(customers));
+    }
+  }, [customers, settings.autoSave]);
+
+  // Commented out auto-load to prevent automatic customer creation on page load
+  // useEffect(() => {
+  //   const saved = localStorage.getItem("customerSchedule");
+  //   if (saved) {
+  //     setCustomers(JSON.parse(saved));
+  //   }
+  // }, []);
+
+  // Check for time conflicts
+  useEffect(() => {
+    // Get customers for current period selection (ignore NA times)
+    const currentCustomers = customers.filter((c) => {
+      // Skip customers with NA times
+      if (c.startTime === "NA" || c.endTime === "NA") return false;
+      switch (selectedPeriod) {
+        case "daily":
+          // Show all customers across all periods for conflict checking when Daily is selected
+          return true;
+        case "weekly":
+          return (
+            c.day === selectedDay &&
+            c.week === selectedWeek &&
+            c.period === "weekly"
+          );
+        case "monthly":
+          return c.date === selectedDate && c.period === "monthly";
+        case "fortnight":
+          return (
+            c.day === selectedDay &&
+            c.period === "fortnight" &&
+            c.fortnightPart === selectedFortnightPart
+          );
+        default:
+          return false;
+      }
+    });
+
+    const newConflicts = [];
+
+    currentCustomers.forEach((customer, index) => {
+      const startTime = timeToMinutes(customer.startTime);
+      const endTime = startTime + customer.duration;
+
+      currentCustomers.slice(index + 1).forEach((otherCustomer) => {
+        const otherStartTime = timeToMinutes(otherCustomer.startTime);
+        const otherEndTime = otherStartTime + otherCustomer.duration;
+
+        if (startTime < otherEndTime && endTime > otherStartTime) {
+          newConflicts.push({
+            customer1: customer.id,
+            customer2: otherCustomer.id
+          });
+        }
+      });
+    });
+
+    setConflicts(newConflicts);
+  }, [
+    customers,
+    selectedPeriod,
+    selectedDay,
+    selectedWeek,
+    selectedDate,
+    selectedFortnightPart
+  ]);
+
+  const timeToMinutes = (timeStr) => {
+    const [hours, minutes] = timeStr.split(":").map(Number);
+    return hours * 60 + minutes;
+  };
+
+  const getAvailableWeeks = () => {
+    switch (selectedPeriod) {
+      case "weekly":
+        return weeks;
+      case "fortnight":
+        // No week selection needed for fortnightly - handled by part selection only
+        return [];
+      case "monthly":
+      case "daily":
+      default:
+        return [];
+    }
+  };
+
+  const getCurrentPeriodLabel = () => {
+    switch (selectedPeriod) {
+      case "daily":
+        return "All Days";
+      case "weekly":
+        return `Week ${selectedWeek}`;
+      case "monthly":
+        return `Day ${selectedDate}`;
+      case "fortnight":
+        return `Week ${selectedWeek}`;
+      default:
+        return "";
+    }
+  };
+
+  const getCurrentDaysLabel = () => {
+    if (selectedPeriod === "weekly") {
+      return selectedDay;
+    }
+    if (selectedPeriod === "fortnight") {
+      return `${selectedDay} (${selectedFortnightPart})`;
+    }
+    return "";
+  };
+
+  const addCustomer = () => {
+    if (!newCustomer.name || !newCustomer.startTime) return;
+
+    const endTime = calculateEndTime(
+      newCustomer.startTime,
+      newCustomer.duration
+    );
+    const customer = {
+      id: Date.now(),
+      sequence: customers.length + 1,
+      name: newCustomer.name,
+      startTime: newCustomer.startTime,
+      endTime: endTime,
+      duration: newCustomer.duration,
+      period: selectedPeriod,
+      day:
+        selectedPeriod === "weekly" || selectedPeriod === "fortnight"
+          ? selectedDay
+          : null,
+      week:
+        selectedPeriod === "weekly" || selectedPeriod === "fortnight"
+          ? selectedWeek
+          : null,
+      date: selectedPeriod === "monthly" ? selectedDate : null,
+      fortnightPart:
+        selectedPeriod === "fortnight" ? selectedFortnightPart : null,
+      phone: newCustomer.phone,
+      location: newCustomer.location,
+      priority: newCustomer.priority,
+      notes: newCustomer.notes,
+      createdAt: new Date().toISOString()
+    };
+
+    setCustomers([...customers, customer]);
+    setLastAction({ type: "add", customer });
+    setNewCustomer({
+      name: "",
+      startTime: "",
+      duration: settings.defaultDuration,
+      phone: "",
+      location: "",
+      priority: "normal",
+      notes: ""
+    });
+    setIsAddingCustomer(false);
+  };
+
+  const calculateEndTime = (startTime, duration) => {
+    const [hours, minutes] = startTime.split(":").map(Number);
+    const totalMinutes = hours * 60 + minutes + duration;
+    const endHours = Math.floor(totalMinutes / 60);
+    const endMins = totalMinutes % 60;
+    return `${endHours.toString().padStart(2, "0")}:${endMins
+      .toString()
+      .padStart(2, "0")}`;
+  };
+
+  const deleteCustomer = (id) => {
+    const contextKey = getCurrentContextKey();
+    const customerToDelete = getCustomersForCurrentContext().find(
+      (c) => c.id === id
+    );
+
+    if (customerToDelete) {
+      // Update day-wise customers
+      const updatedDayWiseCustomers = {
+        ...dayWiseCustomers,
+        [contextKey]: (dayWiseCustomers[contextKey] || []).filter(
+          (c) => c.id !== id
+        )
+      };
+      setDayWiseCustomers(updatedDayWiseCustomers);
+
+      // Update flat list
+      const allCustomers = Object.values(updatedDayWiseCustomers).flat();
+      setCustomers(allCustomers);
+
+      setLastAction({
+        type: "delete",
+        customer: customerToDelete,
+        context: contextKey
+      });
+    }
+  };
+
+  const updateCustomer = (id, updatedData) => {
+    const oldCustomer = customers.find((c) => c.id === id);
+    setCustomers(
+      customers.map((c) =>
+        c.id === id
+          ? {
+              ...c,
+              ...updatedData,
+              endTime: calculateEndTime(
+                updatedData.startTime,
+                updatedData.duration
+              )
+            }
+          : c
+      )
+    );
+    setLastAction({ type: "update", oldCustomer, newCustomer: updatedData });
+    setEditingCustomer(null);
+  };
+
+  const undoLastAction = () => {
+    if (!lastAction) return;
+
+    switch (lastAction.type) {
+      case "add":
+        setCustomers(customers.filter((c) => c.id !== lastAction.customer.id));
+        break;
+      case "delete":
+        setCustomers([...customers, lastAction.customer]);
+        break;
+      case "update":
+        setCustomers(
+          customers.map((c) =>
+            c.id === lastAction.oldCustomer.id ? lastAction.oldCustomer : c
+          )
+        );
+        break;
+    }
+    setLastAction(null);
+  };
+
+  // Get customers for current context
+  const getCustomersForCurrentContext = () => {
+    const contextKey = getCurrentContextKey();
+    return dayWiseCustomers[contextKey] || [];
+  };
+
+  const filteredCustomers = getCustomersForCurrentContext()
+    .filter((c) => {
+      // Filter by search term
+      return c.name.toLowerCase().includes(searchTerm.toLowerCase());
+    })
+    .sort((a, b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime));
+
+  const isConflicted = (customerId) => {
+    return conflicts.some(
+      (conflict) =>
+        conflict.customer1 === customerId || conflict.customer2 === customerId
+    );
+  };
+
+  const QuickAddForm = () => (
+    <div className={`bg-white border-gray-200 border rounded-lg p-6 mb-6`}>
+      <div className="flex items-center gap-3 mb-6">
+        <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg">
+          <Plus className="w-5 h-5 text-white" />
+        </div>
+        <h3 className={`text-lg font-semibold ${"text-gray-900"}`}>
+          Add New Customer
+        </h3>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+        <div className="space-y-2">
+          <label className={`text-sm font-medium ${"text-gray-700"}`}>
+            Select Customer *
+          </label>
+          <select
+            value={newCustomer.name}
+            onChange={(e) => {
+              const selectedCustomer = availableCustomers.find(
+                (c) => c.Name === e.target.value
+              );
+              setNewCustomer({
+                ...newCustomer,
+                name: e.target.value,
+                phone: selectedCustomer?.ContactNo || "",
+                location: selectedCustomer?.Address || "",
+                notes: selectedCustomer
+                  ? `Customer Code: ${selectedCustomer.Code}`
+                  : ""
+              });
+            }}
+            className="w-full px-4 py-3 rounded-lg border transition-all focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white border-gray-300 text-gray-900"
+          >
+            <option value="">Select a customer...</option>
+            {getAvailableCustomersForSelection().map((customer) => (
+              <option key={customer.UID} value={customer.Name}>
+                {customer.Name} ({customer.Code})
+              </option>
+            ))}
+          </select>
+          {getAvailableCustomersForSelection().length === 0 && (
+            <p className="text-sm text-gray-500 italic">
+              All selected customers have been added to the schedule
+            </p>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <label className={`text-sm font-medium ${"text-gray-700"}`}>
+            Start Time *
+          </label>
+          <input
+            type="time"
+            value={newCustomer.startTime}
+            onChange={(e) =>
+              setNewCustomer({ ...newCustomer, startTime: e.target.value })
+            }
+            className="w-full px-4 py-3 rounded-lg border transition-all focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white border-gray-300 text-gray-900"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className={`text-sm font-medium ${"text-gray-700"}`}>
+            Duration
+          </label>
+          <select
+            value={newCustomer.duration}
+            onChange={(e) =>
+              setNewCustomer({
+                ...newCustomer,
+                duration: parseInt(e.target.value)
+              })
+            }
+            className="w-full px-4 py-3 rounded-lg border transition-all focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white border-gray-300 text-gray-900"
+          >
+            <option value={15}>15 minutes</option>
+            <option value={30}>30 minutes</option>
+            <option value={45}>45 minutes</option>
+            <option value={60}>1 hour</option>
+            <option value={90}>1.5 hours</option>
+            <option value={120}>2 hours</option>
+          </select>
+        </div>
+
+        <div className="space-y-2">
+          <label className={`text-sm font-medium ${"text-gray-700"}`}>
+            Phone Number
+          </label>
+          <input
+            type="tel"
+            placeholder="(555) 123-4567"
+            value={newCustomer.phone}
+            onChange={(e) =>
+              setNewCustomer({ ...newCustomer, phone: e.target.value })
+            }
+            className="w-full px-4 py-3 rounded-lg border transition-all focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white border-gray-300 text-gray-900"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className={`text-sm font-medium ${"text-gray-700"}`}>
+            Location
+          </label>
+          <input
+            type="text"
+            placeholder="Address or location"
+            value={newCustomer.location}
+            onChange={(e) =>
+              setNewCustomer({ ...newCustomer, location: e.target.value })
+            }
+            className="w-full px-4 py-3 rounded-lg border transition-all focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white border-gray-300 text-gray-900"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className={`text-sm font-medium ${"text-gray-700"}`}>
+            Priority
+          </label>
+          <select
+            value={newCustomer.priority}
+            onChange={(e) =>
+              setNewCustomer({ ...newCustomer, priority: e.target.value })
+            }
+            className="w-full px-4 py-3 rounded-lg border transition-all focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white border-gray-300 text-gray-900"
+          >
+            <option value="low">Low Priority</option>
+            <option value="normal">Normal Priority</option>
+            <option value="high">High Priority</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="space-y-2 mb-6">
+        <label className={`text-sm font-medium ${"text-gray-700"}`}>
+          Notes
+        </label>
+        <textarea
+          placeholder="Additional notes or requirements..."
+          value={newCustomer.notes}
+          onChange={(e) =>
+            setNewCustomer({ ...newCustomer, notes: e.target.value })
+          }
+          rows={3}
+          className="w-full px-4 py-3 rounded-lg border transition-all focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none bg-white border-gray-300 text-gray-900"
+        />
+      </div>
+
+      <div className="flex gap-3">
+        <button
+          type="button"
+          onClick={addCustomer}
+          disabled={!newCustomer.name || !newCustomer.startTime}
+          className="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-lg hover:from-blue-600 hover:to-purple-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105 disabled:hover:scale-100 font-medium"
+        >
+          Add Customer
+        </button>
+        <button
+          type="button"
+          onClick={() => setIsAddingCustomer(false)}
+          className="px-6 py-3 rounded-lg border transition-all duration-200 font-medium border-gray-300 text-gray-700 hover:bg-gray-50"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  );
+
+  // Save time settings for a customer
+  // Customer Row Component
+  const CustomerRow = ({
+    customer,
+    index,
+    isConflicted,
+    expandedCustomerId,
+    setExpandedCustomerId,
+    saveTimeSettings,
+    deleteCustomer
+  }) => {
+    const isExpanded = expandedCustomerId === customer.id;
+    const [tempStartTime, setTempStartTime] = useState(
+      customer.startTime === "NA" ? "09:00" : customer.startTime
+    );
+    const [tempDuration, setTempDuration] = useState(
+      customer.duration === 0 ? 30 : customer.duration
+    );
+
+    return (
+      <div>
+        <div
+          className={`px-4 py-3 transition-all ${
+            isConflicted(customer.id)
+              ? "bg-red-50 border-l-4 border-red-400"
+              : "hover:bg-gray-50"
+          }`}
+        >
+          <div className="grid grid-cols-8 gap-4 items-center">
+            <div className="text-sm text-gray-500">{index + 1}</div>
+
+            <div className="col-span-2">
+              <div className="font-medium text-gray-900">
+                {customer.name}
+              </div>
+              {customer.location && (
+                <div className="text-sm text-gray-500 flex items-center gap-1">
+                  <MapPin className="w-3 h-3" />
+                  {customer.location}
+                </div>
+              )}
+              {customer.notes && (
+                <div className="text-xs text-gray-400 mt-1">
+                  {customer.notes.substring(0, 50)}
+                  {customer.notes.length > 50 ? "..." : ""}
+                </div>
+              )}
+            </div>
+
+            <div className="text-sm text-gray-600">
+              <div className="flex items-center gap-1">
+                <Clock className="w-3 h-3" />
+                {customer.startTime === "NA" ? (
+                  <span className="text-gray-400">NA</span>
+                ) : (
+                  `${customer.startTime} - ${customer.endTime}`
+                )}
+              </div>
+            </div>
+
+            <div className="text-sm text-gray-600">
+              {customer.duration === 0 ? "NA" : `${customer.duration} min`}
+            </div>
+
+            <div>
+              <span
+                className={`px-2 py-0.5 text-xs rounded border ${
+                  priorityColors[customer.priority]
+                }`}
+              >
+                {customer.priority}
+              </span>
+            </div>
+
+            <div className="text-sm text-gray-600">
+              {customer.phone && (
+                <div className="flex items-center gap-1">
+                  <Phone className="w-3 h-3" />
+                  {customer.phone}
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-1">
+              <button
+                type="button"
+                onClick={() =>
+                  setExpandedCustomerId(
+                    expandedCustomerId === customer.id ? null : customer.id
+                  )
+                }
+                className="p-1.5 rounded text-gray-600 hover:bg-gray-100"
+                title="Set Time"
+              >
+                <Clock className="w-4 h-4" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => deleteCustomer(customer.id)}
+                className="p-1.5 rounded text-red-600 hover:bg-red-50"
+                title="Delete"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Expandable Time Settings */}
+        {isExpanded && (
+          <div className="px-4 py-3 bg-gray-50 border-t border-gray-200">
+            <div className="flex items-center gap-4">
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Start Time
+                </label>
+                <input
+                  type="time"
+                  value={tempStartTime}
+                  onChange={(e) => setTempStartTime(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Duration (minutes)
+                </label>
+                <input
+                  type="number"
+                  min="5"
+                  max="240"
+                  step="5"
+                  value={tempDuration}
+                  onChange={(e) =>
+                    setTempDuration(parseInt(e.target.value) || 30)
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  End Time
+                </label>
+                <div className="px-3 py-2 bg-white border border-gray-300 rounded-lg text-gray-700">
+                  {calculateEndTime(tempStartTime, tempDuration)}
+                </div>
+              </div>
+
+              <div className="flex gap-2 pt-6">
+                <button
+                  type="button"
+                  onClick={() =>
+                    saveTimeSettings(customer.id, tempStartTime, tempDuration)
+                  }
+                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setExpandedCustomerId(null)}
+                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const saveTimeSettings = (customerId, startTime, duration) => {
+    const contextKey = getCurrentContextKey();
+    const updatedCustomers = (dayWiseCustomers[contextKey] || []).map((c) => {
+      if (c.id === customerId) {
+        return {
+          ...c,
+          startTime: startTime,
+          endTime: calculateEndTime(startTime, duration),
+          duration: duration
+        };
+      }
+      return c;
+    });
+
+    const updatedDayWiseCustomers = {
+      ...dayWiseCustomers,
+      [contextKey]: updatedCustomers
+    };
+    setDayWiseCustomers(updatedDayWiseCustomers);
+
+    const allCustomers = Object.values(updatedDayWiseCustomers).flat();
+    setCustomers(allCustomers);
+
+    setExpandedCustomerId(null); // Close the expanded row
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="w-full p-4 space-y-3">
+        {/* Header */}
+        <div className="bg-white rounded-lg p-4 border border-gray-200">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <Calendar className="w-5 h-5 text-blue-600" />
+              </div>
+              <div>
+                <h1 className="text-xl font-semibold text-gray-900">
+                  Customer Scheduler
+                </h1>
+                <p className="text-sm text-gray-500">
+                  Manage your appointments efficiently
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              {lastAction && (
+                <button
+                  type="button"
+                  onClick={undoLastAction}
+                  className="flex items-center gap-2 px-3 py-1.5 text-sm bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  Undo
+                </button>
+              )}
+
+              <button
+                type="button"
+                className="flex items-center gap-2 px-3 py-1.5 text-sm bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all"
+              >
+                <Upload className="w-3.5 h-3.5" />
+                Import
+              </button>
+
+              <button
+                type="button"
+                className="flex items-center gap-2 px-3 py-1.5 text-sm bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all"
+              >
+                <Download className="w-3.5 h-3.5" />
+                Export
+              </button>
+            </div>
+          </div>
+
+          {/* Quick Stats - Compact */}
+          <div className="grid grid-cols-4 gap-3 mt-4">
+            <div className="flex items-center gap-2 p-3 rounded-lg bg-white border border-gray-200">
+              <Users className="w-4 h-4 text-blue-600" />
+              <div>
+                <div className="text-lg font-semibold text-gray-900">
+                  {filteredCustomers.length}
+                </div>
+                <div className="text-xs text-gray-500">
+                  Customers Today
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 p-3 rounded-lg bg-white border border-gray-200">
+              <Clock className="w-4 h-4 text-green-600" />
+              <div>
+                <div className="text-lg font-semibold text-gray-900">
+                  {filteredCustomers.reduce((acc, c) => acc + c.duration, 0)}min
+                </div>
+                <div className="text-xs text-gray-500">Total Time</div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 p-3 rounded-lg bg-white border border-gray-200">
+              <AlertTriangle className="w-4 h-4 text-orange-600" />
+              <div>
+                <div className="text-lg font-semibold text-gray-900">
+                  {conflicts.length}
+                </div>
+                <div className="text-xs text-gray-500">Conflicts</div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 p-3 rounded-lg bg-white border border-gray-200">
+              <TrendingUp className="w-4 h-4 text-purple-600" />
+              <div>
+                <div className="text-lg font-semibold text-gray-900">
+                  {Math.round(
+                    (filteredCustomers.reduce(
+                      (acc, c) => acc + c.duration,
+                      0
+                    ) /
+                      (timeToMinutes(settings.dayEnd) -
+                        timeToMinutes(settings.dayStart))) *
+                      100
+                  )}%
+                </div>
+                <div className="text-xs text-gray-500">
+                  Day Utilization
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Scheduling Controls */}
+        <div className="bg-white rounded-lg border border-gray-200">
+          {/* Row 1: Visit Frequency and Time Settings Button */}
+          <div className="p-4 border-b border-gray-200">
+            <div className="flex justify-between items-start">
+              {/* Multi-Schedule Selection (only in multi-schedule mode) OR Single Schedule Display */}
+              {isMultiScheduleMode ? (
+                <div className="flex-1">
+                  {/* Schedule Types - Row Format */}
+                  <div className="mb-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-sm font-medium text-gray-900">Schedule Types for this Route</h3>
+                      <span className="text-xs text-gray-500">
+                        {Object.keys(scheduleCustomerAssignments).filter(type => 
+                          (scheduleCustomerAssignments[type] || []).length > 0
+                        ).length} frequency types selected
+                      </span>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                      {Object.keys(scheduleCustomerAssignments).filter(scheduleType => {
+                        const assignedCustomerUIDs = scheduleCustomerAssignments[scheduleType] || [];
+                        return assignedCustomerUIDs.length > 0; // Only show frequencies with assigned customers
+                      }).map((scheduleType) => {
+                        const period = periods.find(p => p.value === scheduleType);
+                        const assignedCustomerUIDs = scheduleCustomerAssignments[scheduleType] || [];
+                        const isSelected = currentlySelectedType === scheduleType;
+                        const hasCustomers = assignedCustomerUIDs.length > 0;
+                        
+                        return (
+                          <button
+                            key={scheduleType}
+                            type="button"
+                            onClick={() => setCurrentlySelectedType(scheduleType)}
+                            className={`px-3 py-2 rounded-lg border text-left transition-all duration-200 hover:shadow-md relative ${
+                              isSelected
+                                ? "bg-blue-600 text-white border-blue-600 shadow-lg"
+                                : hasCustomers
+                                ? "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100"
+                                : "bg-white text-gray-700 border-gray-200 hover:border-blue-200 hover:bg-blue-50"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-sm">{period?.icon}</span>
+                              <div className="font-semibold text-xs">{period?.label}</div>
+                            </div>
+                            <div className={`text-xs ${
+                              isSelected ? "text-blue-100" : "text-gray-500"
+                            }`}>
+                              {period?.value === "daily" ? "Every day" : 
+                               period?.value === "weekly" ? "Once/week" :
+                               period?.value === "monthly" ? "Once/month" :
+                               period?.value === "fortnight" ? "Bi-weekly" : ""}
+                            </div>
+                            
+                            {/* Customer count badge */}
+                            {hasCustomers && (
+                              <div className={`absolute top-1 right-1 px-1.5 py-0.5 rounded-full text-xs font-medium ${
+                                isSelected 
+                                  ? "bg-white text-blue-600" 
+                                  : "bg-blue-500 text-white"
+                              }`}>
+                                {assignedCustomerUIDs.length}
+                              </div>
+                            )}
+                            
+                            {/* Active indicator */}
+                            {isSelected && (
+                              <div className="absolute bottom-1 right-1">
+                                <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
+                              </div>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  
+                  {/* Currently Configuring */}
+                  <div className="text-sm text-gray-600 mb-2">
+                    Currently configuring: <span className="font-medium text-blue-600">
+                      {periods.find(p => p.value === currentlySelectedType)?.label}
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                /* Single Schedule Display - when propSelectedPeriod is provided */
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Visit Frequency
+                  </label>
+                  <div className="flex items-center">
+                    <span className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm font-medium">
+                      {periods.find((p) => p.value === selectedPeriod)?.label || selectedPeriod}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {/* Show selected period from Customer Selection step */}
+              {propSelectedPeriod && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Visit Frequency
+                  </label>
+                  <div className="flex items-center">
+                    <span className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm font-medium">
+                      {periods.find((p) => p.value === selectedPeriod)?.label ||
+                        selectedPeriod}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {/* Time Settings Toggle Button */}
+              <button
+                type="button"
+                onClick={() => setShowSettings(!showSettings)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all border ${
+                  showSettings
+                    ? "bg-gray-100 text-gray-900 border-gray-300"
+                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                }`}
+              >
+                <Clock className="w-4 h-4" />
+                Time Settings
+              </button>
+            </div>
+          </div>
+
+          {/* Row 2: Week and Day Selection (Period-specific controls) */}
+          <div className="p-4">
+            {/* Weekly: Week and Day Selection */}
+            {selectedPeriod === "weekly" && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Select Week
+                  </label>
+                  <div className="flex gap-2">
+                    {getAvailableWeeks().map((week) => (
+                      <button
+                        type="button"
+                        key={week.id}
+                        onClick={() => setSelectedWeek(week.id)}
+                        className={`px-3 py-2 rounded-lg text-sm font-medium transition-all border ${
+                          selectedWeek === week.id
+                            ? "bg-blue-500 text-white border-blue-500"
+                            : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                        }`}
+                      >
+                        Week {week.id}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Select Day
+                  </label>
+                  <div className="grid grid-cols-7 gap-1">
+                    {days.map((day) => {
+                      const contextKey = `weekly_W${selectedWeek}_${day}`;
+                      const customerCount = (dayWiseCustomers[contextKey] || [])
+                        .length;
+
+                      return (
+                        <button
+                          key={day}
+                          type="button"
+                          onClick={() => setSelectedDay(day)}
+                          className={`px-2 py-2 rounded-lg text-xs font-medium transition-all border relative ${
+                            selectedDay === day
+                              ? "bg-blue-500 text-white border-blue-500"
+                              : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                          }`}
+                        >
+                          {day.substring(0, 3)}
+                          {customerCount > 0 && (
+                            <span
+                              className={`absolute -top-1 -right-1 text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
+                                selectedDay === day
+                                  ? "bg-white text-blue-600"
+                                  : "bg-blue-500 text-white"
+                              }`}
+                            >
+                              {customerCount}
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Fortnightly: Part and Day Selection */}
+            {selectedPeriod === "fortnight" && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Select Fortnight Part
+                  </label>
+                  <select
+                    value={selectedFortnightPart}
+                    onChange={(e) => setSelectedFortnightPart(e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white text-gray-900"
+                  >
+                    {fortnightParts.map((part) => (
+                      <option key={part.value} value={part.value}>
+                        {part.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Select Day
+                  </label>
+                  <div className="grid grid-cols-7 gap-1">
+                    {days.map((day) => {
+                      const contextKey = `${selectedFortnightPart}_week1_${day}`;
+                      const customerCount = (dayWiseCustomers[contextKey] || [])
+                        .length;
+
+                      return (
+                        <button
+                          key={day}
+                          type="button"
+                          onClick={() => setSelectedDay(day)}
+                          className={`px-2 py-2 rounded-lg text-xs font-medium transition-all border relative ${
+                            selectedDay === day
+                              ? "bg-blue-500 text-white border-blue-500"
+                              : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                          }`}
+                        >
+                          {day.substring(0, 3)}
+                          {customerCount > 0 && (
+                            <span
+                              className={`absolute -top-1 -right-1 text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
+                                selectedDay === day
+                                  ? "bg-white text-blue-600"
+                                  : "bg-blue-500 text-white"
+                              }`}
+                            >
+                              {customerCount}
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Monthly: Schedule Configuration */}
+            {selectedPeriod === "monthly" && (
+              <div className="space-y-4">
+                {/* Monthly Days Configuration */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Monthly Schedule Configuration
+                  </label>
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm text-gray-600">
+                      Schedule for:
+                    </span>
+                    <input
+                      type="number"
+                      min="1"
+                      max="31"
+                      value={monthlyDaysCount}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        const numValue = parseInt(value);
+                        if (numValue >= 1 && numValue <= 31) {
+                          setMonthlyDaysCount(numValue);
+                          // Reset selected date if it's beyond the new count
+                          if (selectedDate > numValue) {
+                            setSelectedDate(1);
+                          }
+                        }
+                      }}
+                      onBlur={(e) => {
+                        const value = e.target.value;
+                        const numValue = parseInt(value);
+                        if (!numValue || numValue < 1 || numValue > 31) {
+                          setMonthlyDaysCount(31);
+                        }
+                      }}
+                      placeholder="1-31"
+                      className="w-16 px-2 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                    />
+                    <span className="text-sm text-gray-600">
+                      day{monthlyDaysCount > 1 ? "s" : ""} per month
+                    </span>
+                  </div>
+                </div>
+
+                {/* Day Selection Grid */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Select Day of Month
+                  </label>
+                  <div className="grid grid-cols-7 gap-1">
+                    {Array.from({ length: monthlyDaysCount }, (_, i) => i + 1).map((date) => {
+                      const contextKey = `date_${date}`;
+                      const customerCount = (dayWiseCustomers[contextKey] || []).length;
+                      
+                      return (
+                        <button
+                          key={date}
+                          type="button"
+                          onClick={() => setSelectedDate(date)}
+                          disabled={date > monthlyDaysCount}
+                          className={`px-2 py-2 rounded-lg text-xs font-medium transition-all border relative ${
+                            selectedDate === date
+                              ? "bg-blue-500 text-white border-blue-500"
+                              : date > monthlyDaysCount
+                              ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+                              : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                          }`}
+                        >
+                          {date}
+                          {customerCount > 0 && (
+                            <span
+                              className={`absolute -top-1 -right-1 text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
+                                selectedDate === date
+                                  ? "bg-white text-blue-600"
+                                  : "bg-blue-500 text-white"
+                              }`}
+                            >
+                              {customerCount}
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Daily: No additional controls needed */}
+            {selectedPeriod === "daily" && (
+              <div className="text-center py-4">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 border border-green-200 rounded-lg">
+                  <CheckCircle2 className="w-4 h-4 text-green-600" />
+                  <span className="text-sm text-green-700">
+                    Daily visits scheduled - no additional configuration needed
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content - merged into single container */}
+        {/* Search and Controls */}
+        <div className="bg-white rounded-lg p-4 border border-gray-200">
+          <div className="mb-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-base font-semibold text-gray-900">Customer Selection</h3>
+                <p className="text-sm text-gray-500">
+                  {isMultiScheduleMode 
+                    ? `Add customers for ${periods.find(p => p.value === selectedPeriod)?.label} schedule`
+                    : "Add customers to schedule for this route"
+                  }
+                </p>
+              </div>
+              <div className="text-sm text-gray-500">
+                <span className="font-medium">{getAvailableCustomersForSelection().length}</span> available customers
+                {isMultiScheduleMode && assignedCustomers.size > 0 && (
+                  <span className="ml-2 text-blue-600">
+                    ({assignedCustomers.size} assigned to other schedules)
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center justify-between gap-4">
+            {/* Left side - Customer Dropdown */}
+            <div className="flex-1 max-w-md">
+              <div className="relative">
+                <button
+                  type="button"
+                  data-dropdown-trigger
+                  onClick={() => setShowCustomerDropdown(!showCustomerDropdown)}
+                  className="w-full flex items-center justify-between px-4 py-2 rounded-lg border transition-all focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white border-gray-300 text-gray-900 hover:bg-gray-50"
+                >
+                  <div className="flex items-center gap-2">
+                    <Search className="w-4 h-4 text-gray-400" />
+                    {selectedCustomerUIDs.length === 0 ? (
+                      <span className="text-gray-500">
+                        Select customers to add...
+                      </span>
+                    ) : (
+                      <span className="text-blue-600">
+                        {selectedCustomerUIDs.length} customer
+                        {selectedCustomerUIDs.length !== 1 ? "s" : ""} selected
+                      </span>
+                    )}
+                  </div>
+                  <div
+                    className={`transform transition-transform duration-200 ${
+                      showCustomerDropdown ? "rotate-180" : ""
+                    }`}
+                  >
+                    <Plus className="w-4 h-4 text-gray-400" />
+                  </div>
+                </button>
+
+                {/* Multi-select dropdown */}
+                {showCustomerDropdown && (
+                  <div
+                    ref={dropdownRef}
+                    className="absolute z-50 top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden"
+                    style={{ width: "380px" }}
+                  >
+                    {/* Search within dropdown */}
+                    <div className="p-3 border-b border-gray-200 bg-gray-50">
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <input
+                          type="text"
+                          placeholder="Search customers..."
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          className="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                          autoFocus
+                        />
+                      </div>
+                    </div>
+
+                    {/* Customer list */}
+                    <div className="overflow-y-auto" style={{ minHeight: "120px", maxHeight: "240px" }}>
+                      {getFilteredAvailableCustomers().length === 0 ? (
+                        <div className="p-6 text-center">
+                          <div className="text-gray-300 mb-1">
+                            <Users className="w-8 h-8 mx-auto" />
+                          </div>
+                          <p className="text-sm text-gray-500">
+                            {getAvailableCustomersForSelection().length === 0
+                              ? "All customers have been added"
+                              : "No customers found"}
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="py-1">
+                          {getFilteredAvailableCustomers().map((customer) => (
+                            <div
+                              key={customer.UID}
+                              onClick={() =>
+                                toggleCustomerSelection(customer.UID)
+                              }
+                              className="flex items-center gap-3 px-3 py-2 hover:bg-gray-50 cursor-pointer transition-colors"
+                            >
+                              <div className="flex-shrink-0">
+                                <div
+                                  className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-all ${
+                                    selectedCustomerUIDs.includes(customer.UID)
+                                      ? "bg-blue-500 border-blue-500 text-white"
+                                      : "border-gray-300 bg-white"
+                                  }`}
+                                >
+                                  {selectedCustomerUIDs.includes(
+                                    customer.UID
+                                  ) && <Check className="w-3 h-3" />}
+                                </div>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="text-sm font-medium text-gray-900">
+                                  {customer.Name}
+                                </div>
+                                <div className="text-xs text-gray-500">
+                                  {customer.Code}
+                                  {customer.Address && ` • ${customer.Address.substring(0, 35)}${customer.Address.length > 35 ? '...' : ''}`}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Action buttons */}
+                    <div className="p-3 border-t border-gray-200 bg-gray-50">
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={addSelectedCustomers}
+                          disabled={selectedCustomerUIDs.length === 0}
+                          className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                            selectedCustomerUIDs.length > 0
+                              ? "bg-blue-500 text-white hover:bg-blue-600"
+                              : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                          }`}
+                        >
+                          {selectedCustomerUIDs.length > 0 
+                            ? `Add ${selectedCustomerUIDs.length} Customer${selectedCustomerUIDs.length !== 1 ? "s" : ""}`
+                            : "Add Customers"
+                          }
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedCustomerUIDs([]);
+                            setShowCustomerDropdown(false);
+                            setSearchTerm("");
+                          }}
+                          className="px-4 py-2 border border-gray-300 bg-white text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Right side - Summary */}
+            <div className="flex-shrink-0">
+              <div className="flex items-center gap-4">
+                <div className="text-right">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {getCurrentPeriodLabel()}
+                  </h3>
+                  {getCurrentDaysLabel() && (
+                    <p className="text-sm text-gray-600">
+                      {getCurrentDaysLabel()}
+                    </p>
+                  )}
+                </div>
+                <div className="px-4 py-2 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="flex items-center gap-2">
+                    <Users className="w-4 h-4 text-blue-600" />
+                    <span className="text-sm font-medium text-blue-900">
+                      {filteredCustomers.length} scheduled
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {conflicts.length > 0 && (
+            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <div className="flex items-center gap-2 text-red-800">
+                <AlertTriangle className="w-4 h-4" />
+                <span className="font-medium">Time Conflicts Detected</span>
+              </div>
+              <p className="text-sm text-red-600 mt-1">
+                {conflicts.length} appointment
+                {conflicts.length > 1 ? "s have" : " has"} overlapping times.
+                Please review and adjust.
+              </p>
+            </div>
+          )}
+
+        {/* Quick Settings */}
+        {showSettings && (
+          <div className="bg-white rounded-lg p-4 border border-gray-200">
+            <h4 className="text-base font-medium mb-3 text-gray-900">
+              Quick Settings
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className="space-y-2">
+                <label className={`text-sm font-medium ${"text-gray-700"}`}>
+                  Day Start
+                </label>
+                <input
+                  type="time"
+                  value={settings.dayStart}
+                  onChange={(e) =>
+                    setSettings({ ...settings, dayStart: e.target.value })
+                  }
+                  className="w-full px-3 py-2 rounded-lg border transition-all focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white border-gray-300 text-gray-900"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className={`text-sm font-medium ${"text-gray-700"}`}>
+                  Day End
+                </label>
+                <input
+                  type="time"
+                  value={settings.dayEnd}
+                  onChange={(e) =>
+                    setSettings({ ...settings, dayEnd: e.target.value })
+                  }
+                  className="w-full px-3 py-2 rounded-lg border transition-all focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white border-gray-300 text-gray-900"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className={`text-sm font-medium ${"text-gray-700"}`}>
+                  Default Duration
+                </label>
+                <select
+                  value={settings.defaultDuration}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      defaultDuration: parseInt(e.target.value)
+                    })
+                  }
+                  className="w-full px-3 py-2 rounded-lg border transition-all focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white border-gray-300 text-gray-900"
+                >
+                  <option value={15}>15 minutes</option>
+                  <option value={30}>30 minutes</option>
+                  <option value={45}>45 minutes</option>
+                  <option value={60}>1 hour</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-6 mt-4">
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={settings.autoSave}
+                  onChange={(e) =>
+                    setSettings({ ...settings, autoSave: e.target.checked })
+                  }
+                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
+                <span className={`text-sm ${"text-gray-700"}`}>
+                  Auto-save changes
+                </span>
+              </label>
+
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={settings.notifications}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      notifications: e.target.checked
+                    })
+                  }
+                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
+                <span className={`text-sm ${"text-gray-700"}`}>
+                  Enable notifications
+                </span>
+              </label>
+            </div>
+          </div>
+        )}
+
+        {/* Add Customer Form */}
+        {isAddingCustomer && <QuickAddForm />}
+
+        {/* Customer List */}
+        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden mt-3">
+          <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
+            <div className="grid grid-cols-8 gap-4 text-sm font-medium">
+              <div className="text-gray-600">#</div>
+              <div className="text-gray-600 col-span-2">Customer</div>
+              <div className="text-gray-600">Time</div>
+              <div className="text-gray-600">Duration</div>
+              <div className="text-gray-600">Priority</div>
+              <div className="text-gray-600">Contact</div>
+              <div className="text-gray-600">Actions</div>
+            </div>
+          </div>
+
+          <div className="max-h-[500px] overflow-y-auto">
+            <div className="divide-y divide-gray-200">
+              {filteredCustomers.length === 0 ? (
+                <div className="px-4 py-8 text-center">
+                  <Calendar className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+                  <p className="text-base mb-1 text-gray-500">
+                    No customers scheduled
+                  </p>
+                  <p className="text-sm text-gray-400">
+                    Add your first customer to get started
+                  </p>
+                </div>
+              ) : (
+                filteredCustomers.map((customer, index) => (
+                  <CustomerRow
+                    key={customer.id}
+                    customer={customer}
+                    index={index}
+                    isConflicted={isConflicted}
+                    expandedCustomerId={expandedCustomerId}
+                    setExpandedCustomerId={setExpandedCustomerId}
+                    saveTimeSettings={saveTimeSettings}
+                    deleteCustomer={deleteCustomer}
+                  />
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+    </div>
+    // </div>
+  );
+};
+
+export default CustomerScheduler;

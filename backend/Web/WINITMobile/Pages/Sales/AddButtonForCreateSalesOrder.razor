@@ -1,0 +1,205 @@
+﻿@using Winit.Shared.Models.Events;
+@inject IJSRuntime JSRuntime
+@using System.Globalization;
+@using System.Resources;
+@using Winit.UIComponents.Common.Language;
+@using Winit.UIComponents.Common.LanguageResources.Mobile;
+@inject IStringLocalizer<LanguageKeys> Localizer
+@using Microsoft.Extensions.Localization
+@inject Winit.UIComponents.Common.IAlertService _alertService
+<div>
+    @if (Qty == 0)
+    {
+        <button class="btn btn-outline-primary" style="width: 113.11px;" @onclick="OnIncrement">@Localizer["add"]</button>
+    }
+    else
+    {
+        <div class="cls_ne_add_pl">
+            <a @onclick="OnDecrement"><img src="/Images/mm.png"></a>
+            <span>
+                <input style="width:100%;" type="number" @bind="Qty"
+                       @oninput="OnQtyInput" />
+            </span>
+            @* <a @onmousedown="@StartHoldTimer" @onmouseup="@StopHoldTimer" @onclick="OnIncrement" style="float: right;"><img src="/Images/pp.png"></a> *@
+            <a @onclick="OnIncrement" style="float: right;"><img src="/Images/pp.png"></a>
+        </div>
+    }
+</div>
+
+
+
+
+<style>
+
+
+    .background-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+        display: none;
+        z-index: 9998; /* Below the alert */
+    }
+
+    /* Hide the spinner in the input[type=number] */
+    .no-spinner::-webkit-inner-spin-button,
+    .no-spinner::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+</style>
+
+@code {
+    [Parameter]
+    public string UID { get; set; }
+    [Parameter]
+    public decimal MinQty { get; set; } = 0;
+    [Parameter]
+    public decimal MaxQty { get; set; } = 999;
+    [Parameter]
+    public decimal Qty {get; set;}
+    [Parameter]
+    public EventCallback<QtyChangeEvent> OnQtyChange { get; set; }
+
+    [Parameter]
+    public Func<QtyChangeEvent, Task<bool>> OnPreValidateQtyChange { get; set; }
+    public bool isAllowedToChangeQty{ get; set; }
+
+    private Timer holdTimer;
+    private bool isHolding = false;
+    private string AlertText;
+    private bool showAlert = false;
+
+    private async Task AfterQtyChange()
+    {
+        await OnQtyChange.InvokeAsync(new QtyChangeEvent { UID = this.UID, Qty = this.Qty });
+    }
+    private async Task<bool> PreValidateQtyChange(decimal qty)
+    {
+        bool retValue = true;
+        if (OnPreValidateQtyChange != null)
+        {
+            // Invoke the callback and get the returned value
+            retValue = await OnPreValidateQtyChange(new QtyChangeEvent { UID = this.UID, Qty = qty});
+        }
+        return retValue;
+    }
+    private async Task OnIncrement()
+    {
+        bool retValue = await PreValidateQtyChange(this.Qty + 1);
+        if (!retValue)
+        {
+            return;
+        }
+
+        if (Qty < MaxQty)
+        {
+            Qty++;
+            await AfterQtyChange();
+        }
+        else
+        {
+            await _alertService.ShowErrorAlert(@Localizer["error"], @Localizer["you_have_reached_the_maximum_value"], null);
+        }
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        LoadResources(null, _languageService.SelectedCulture);
+    }
+    protected void LoadResources(object sender, string culture)
+    {
+        CultureInfo cultureInfo = new CultureInfo(culture);
+        ResourceManager resourceManager = new ResourceManager("Winit.UIComponents.Common.LanguageResources.Mobile.LanguageKeys", typeof(Winit.UIComponents.Common.LanguageResources.Mobile.LanguageKeys).Assembly);
+        Localizer = new CustomStringLocalizer<LanguageKeys>(resourceManager, cultureInfo);
+    }
+    private async Task OnDecrement()
+    {
+        if (Qty <= MinQty)
+        {
+            // Handle minimum value case if needed
+        }
+        else
+        {
+            Qty--;
+            await AfterQtyChange();
+        }
+    }
+
+    private bool isTyping = false;
+
+    private async Task OnQtyInput(ChangeEventArgs e)
+    {
+        decimal value = Winit.Shared.CommonUtilities.Common.CommonFunctions.GetDecimalValue(e.Value);
+        bool retValue = await PreValidateQtyChange(value);
+        if (!retValue)
+        {
+            return;
+        }
+        if (value >= 0 && value < MaxQty)
+        {
+            if (!isTyping)
+            {
+                isTyping = true;
+                Qty = value;
+            }
+            else
+            {
+                Qty = value;
+            }
+            await AfterQtyChange();
+        }
+        else if (value > MaxQty)
+        {
+            Qty = MaxQty;
+            await _alertService.ShowErrorAlert(@Localizer["error"], @Localizer["maxqty_reached"], null);
+        }
+        else
+        {
+            Qty = 0;
+            await _alertService.ShowErrorAlert(@Localizer["error"], @Localizer["please_enter_a_non-negative_value"], null);
+        }
+    }
+
+    private async Task InvokeJavaScriptAsync(string script)
+    {
+        await JSRuntime.InvokeVoidAsync("eval", script);
+    }
+
+
+
+    private void CloseAlert()
+    {
+        showAlert = false;
+    }
+
+
+
+    private async Task StartHoldTimer()
+    {
+        isHolding = true;
+        holdTimer = new Timer(async _ =>
+        {
+            bool retValue = await PreValidateQtyChange(this.Qty + 1);
+            if (!retValue)
+            {
+                await StopHoldTimer();
+                return;
+            }
+            if (isHolding && Qty < MaxQty)
+            {
+                Qty++;
+                await InvokeAsync(StateHasChanged); // Update UI after each increment
+            }
+        }, null, 0, 200); // Start after 300ms, repeat every 300ms
+    }
+
+    private async Task StopHoldTimer()
+    {
+        isHolding = false;
+        holdTimer?.Dispose();
+        await AfterQtyChange();
+    }
+
+}

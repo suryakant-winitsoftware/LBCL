@@ -1,0 +1,146 @@
+﻿@page "/ViewVanStock"
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize]
+<PageTitle>View Van Stock</PageTitle>
+@using Winit.Shared.Models.Common
+@using Winit.UIComponents.Common.CustomControles
+@inject Winit.Modules.Org.BL.Interfaces.IViewWareHouse_VanStockViewModel _warehousestockViewModel;
+@inject Winit.UIComponents.Common.IAlertService _AlertMessgae;
+@using Winit.UIComponents.Web.Filter
+@using Winit.UIModels.Common.Filter
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+
+@if (IsInitialized)
+{
+    <div>
+
+        @* <button class="cls_add_new_sec" style="float:right;margin-right:0px" @onclick="ShowFilter">@Localizer["filter"]</button>
+            <Filter @ref="filterRef" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+                    OnFilterApplied=@ApplyFilter /> *@
+        <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+                             OnFilterApplied="@ApplyFilter" />
+
+    </div>
+    <div class="col-md-4 cls_padd_left">
+        <label class="form-label cls_mar_top_10px"><span style="color:rgb(73, 8, 8);">*</span>@Localizer["van"] </label>
+        <div class="d-flex align-items-start">
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_warehousestockViewModel.VanSelectionItems" Title="WareHouse" IsButtonVisible="true" OnSelect="HandleVanSelection" IsSearchable="false" />
+        </div>
+    </div>
+    @if (TabSelectionItems[1].IsSelected)
+    {
+        <div class="row">
+            <div class="col-md-12 d-flex justify-content-end cls_padding_0px">
+                @if (!string.IsNullOrEmpty(ViewingMessageFoc))
+                {
+                    <p class="cls_table_page_split_count">@ViewingMessageFoc</p>
+                }
+            </div>
+        </div>
+    }
+    <ExportToExcel Columns="DataGridColumnsNormalStock" Items="_warehousestockViewModel.Warehouse_VanFocstockList" FileName="UnallocatedOrder.xlsx" />
+
+    <Tabs TabItems="TabSelectionItems" OnTabSelect="OnTabSelect"></Tabs>
+
+    <div class="cls_export_main dn">
+        <button class="cls_add_new_sec dn">@Localizer["export_to_excel"]</button>
+        <button class="cls_add_new_sec dn">@Localizer["export_to_csv"]</button>
+        <button class="cls_add_new_sec dn">@Localizer["export_to_pdf"]</button>
+    </div>
+    @if (TabSelectionItems[0].IsSelected)
+    {
+
+        <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumnsNormalStock" DataSource="@_warehousestockViewModel.Warehouse_VanSalablestockList" OnSort="OnSortApply" PageNumber="_warehousestockViewModel.PageNumberSalableWarehouse_Van" PageSize="_warehousestockViewModel.PageSizeSalableWarehouse_Van" TotalItemsCount="_warehousestockViewModel.TotalItemsCountSalableWarehouse_Van" ShowRecordsCount="true" />
+        <Winit.UIComponents.Web.Paging.Paging CurrentPage="_warehousestockViewModel.PageNumberSalableWarehouse_Van" OnPageChange="PageIndexChangedSalable" PageSize="_warehousestockViewModel.PageSizeSalableWarehouse_Van" TotalItems="_warehousestockViewModel.TotalItemsCountSalableWarehouse_Van" />
+    }
+
+    @if (TabSelectionItems[1].IsSelected)
+    {
+        @*     <Winit.UIComponents.Web.Table.DivGridView Columns="DataGridColumnsFocStock" DataSource="_warehousestockViewModel.warehouseFocstockList" /> *@
+        <div class="div1">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th rowspan="2" class="tblHeader" style="text-align: center;vertical-align: middle;" @onclick='() => SortByColumn("SKUCode")'>@Localizer["sku_code"]</th>
+                    <th rowspan="2" class="tblHeader" style="text-align: center;vertical-align: middle;" @onclick='() => SortByColumn("SKUName")'>@Localizer["sku_name"]</th>
+                    <th colspan="2" class="tblHeader" style="text-align: center;">@Localizer["total"]</th>
+@*                     <th @onclick='() => SortByColumn("SalesmanLoginId")'>Total</th>
+ *@                    
+                        
+                </tr>
+                <tr>
+                    <th class="tblHeader" style="text-align: center;" contenteditable="false" @onclick='() => SortByColumn("OuterQty")'>@Localizer["ou_qty"]</th>
+                    <th class="tblHeader" style="text-align: center;" contenteditable="false" @onclick='() => SortByColumn("EAQty")'>@Localizer["ea_qty"]</th>
+                       
+                </tr>
+            </thead>
+            <tbody>
+                @if (_warehousestockViewModel.Warehouse_VanFocstockList != null && _warehousestockViewModel.Warehouse_VanFocstockList.Any())
+                {
+                @foreach (var row in _warehousestockViewModel.Warehouse_VanFocstockList)
+                {
+                   @*  TotalOuter = TotalOuter + row.OuterQty;
+                    TotalEach = TotalEach + row.EAQty;
+                    AllocatedOuter = AllocatedOuter + row.OuterQty2;
+                    AllocatedEach = AllocatedEach + row.EAQty2;
+                    AvailableOuter = AvailableOuter + row.OuterQty3;
+                    AvailableEach = AvailableEach + row.EAQty3; *@
+                    <tr>
+                        <td>@row.SKUCode</td>
+                        <td>@row.SKUName</td>
+                        <td>@row.OuterQty.ToString("N0")</td>
+                        <td>@row.EAQty.ToString("N0")</td>
+                            
+                    </tr>
+                }
+                }
+                else
+                {
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center">@Localizer["no_records_found."]</td>
+                        </tr>
+                    }
+                }
+
+                <tr style="background-color: brown !important;">
+                    @* <td></td>
+                    <td>Total</td>
+                    <td>@TotalOuter</td>
+                    <td>@TotalEach</td>
+                    @if (!IsVanPage)
+                    {
+                        <td>@AllocatedOuter</td>
+                        <td>@AllocatedEach</td>
+                        <td>@AvailableOuter</td>
+                        <td>@AvailableEach</td>
+                    } *@
+                </tr>
+
+            </tbody>
+            </table>
+        </div>
+        <Winit.UIComponents.Web.Paging.Paging CurrentPage="_warehousestockViewModel.PageNumberFocWarehouse_Van" OnPageChange="PageIndexChangedFoc" PageSize="_warehousestockViewModel.PageSizeFocWarehouse_Van" TotalItems="_warehousestockViewModel.TotalItemsCountFocWarehouse_Van" />
+     }
+}
+@* @if(IsVanPage)
+{
+    <Winit.UIComponents.Web.Paging.Paging CurrentPage="_warehousestockViewModel.PageNumber" OnPageChange="_warehousestockViewModel.PageIndexChanged_Van" PageSize="_warehousestockViewModel.PageSize" TotalItems="_warehousestockViewModel.TotalItemsCount" />
+}
+else
+{
+    <Winit.UIComponents.Web.Paging.Paging CurrentPage="_warehousestockViewModel.PageNumber" OnPageChange="_warehousestockViewModel.PageIndexChanged" PageSize="_warehousestockViewModel.PageSize" TotalItems="_warehousestockViewModel.TotalItemsCount" />
+
+} *@
+@* <Winit.UIComponents.Web.Paging.Paging CurrentPage="_warehousestockViewModel.PageNumber" OnPageChange="_warehousestockViewModel.PageIndexChanged" PageSize="_warehousestockViewModel.PageSize" TotalItems="_warehousestockViewModel.TotalItemsCount" />
+ *@
+<style>
+    .table-container {
+        margin-top: 20px;
+    }
+
+</style>
+@code {
+
+}

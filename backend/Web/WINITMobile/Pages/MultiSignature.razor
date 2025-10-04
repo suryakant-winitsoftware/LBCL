@@ -1,0 +1,47 @@
+﻿@page "/multisignature"
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+
+<div class="modal-backdrop fade show"></div>
+<div class="modal fade show" tabindex="-1" style="display: block; ">
+    <div class="modal-dialog">
+        <div class="modal-content" style="height: 80vh;overflow-y: auto;">
+            <div class="modal-header">
+                <h5>@Signature1Heading </h5>
+                <button type="button" @onclick="() => OnCloseClick.InvokeAsync()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="cls_signature_pop_main">
+                    <Winit.UIComponents.Mobile.Common.SignatureComponent OnSaveClick="HandleSignature1Save"
+                                                                         Signature="Signature1"
+                                                                         DisableSaveBtn="true"
+                                                                         FolderPath="@Signature1FolderPath"
+                                                                         FileName="@Signature1FileName"
+                                                                         OnSignatureInput="(e) => Signature1 = e" />
+                    <p>@Signature1Footer</p>
+                    <h5>@Signature2Heading</h5>
+                    <Winit.UIComponents.Mobile.Common.SignatureComponent OnSaveClick="HandleSignature2Save"
+                                                                         Signature="Signature2"
+                                                                         DisableSaveBtn="true"
+                                                                         FolderPath="@Signature2FolderPath"
+                                                                         FileName="@Signature2FileName"
+                                                                         OnSignatureInput="(e) => Signature2 = e" />
+                    <p>@Signature2Footer</p>
+                    @if (IsLPONumberNeeded)
+                    {
+                        <label class="form-label">@Localizer["lpo_number"]</label>
+                        <input @oninput="(e) => LPONumber = e.Value.ToString() " type="text" class="form-control" value="@LPONumber"
+                               placeholder="Enter Here" />
+                    }
+                </div>
+            </div>
+            <div class="modal-footer" style="padding: 0px;border: 0px;">
+                <div class="cls_btn_new">
+                    <button type="button" class="cls_btn_new2" style="width:100%" @onclick="Handle_ProceedClick">
+                        Proceed
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

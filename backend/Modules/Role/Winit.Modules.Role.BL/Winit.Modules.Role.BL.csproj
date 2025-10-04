@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\SharedObjects\Winit.Shared.CommonUtilities\Winit.Shared.CommonUtilities.csproj" />
+    <ProjectReference Include="..\..\..\SharedObjects\Winit.Shared.Models\Winit.Shared.Models.csproj" />
+    <ProjectReference Include="..\..\..\UIComponents\Winit.UIComponents.Common\Winit.UIComponents.Common.csproj" />
+    <ProjectReference Include="..\..\..\UIModels\Winit.UIModels.Common\Winit.UIModels.Common.csproj" />
+    <ProjectReference Include="..\..\Base\Winit.Modules.Base.BL\Winit.Modules.Base.BL.csproj" />
+    <ProjectReference Include="..\..\Common\Winit.Modules.Common.BL\Winit.Modules.Common.BL.csproj" />
+    <ProjectReference Include="..\..\Common\Winit.Modules.Common.Model\Winit.Modules.Common.Model.csproj" />
+    <ProjectReference Include="..\Winit.Modules.Role.DL\Winit.Modules.Role.DL.csproj" />
+    <ProjectReference Include="..\Winit.Modules.Role.Model\Winit.Modules.Role.Model.csproj" />
+  </ItemGroup>
+</Project>

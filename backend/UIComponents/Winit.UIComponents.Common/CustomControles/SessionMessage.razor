@@ -1,0 +1,58 @@
+﻿@using Microsoft.Extensions.Localization
+@using Winit.UIComponents.Common.LanguageResources.Mobile
+@inject Winit.UIComponents.Common.Language.ILanguageService _languageService
+@inject IStringLocalizer<LanguageKeys> Localizer
+<div class="overlay"></div>
+<div class="alert alert-Error alert-dismissible fade show" role="alert">
+
+    <div class="modal-container">
+        <div class="modal_header cls_popup_header">
+               
+            <h5 class="modal_title cls_popup_header_title" style="color:bg-warning"> @Localizer["alert"]!</h5>
+            <button type="button" class="close cls_close_btn" data-bs-dismiss="alert" aria-label="Close" @onclick="CloseAlert">x</button>
+
+            </div>
+        <div class="cls_content_alert">
+            <p> @_popmessage </p>
+                @if (_popmessage == @Localizer["your_session_will_end_in"])
+                {
+             <Timer></Timer>
+                }
+            </div>
+        <div class="cls_fil_footer">
+            <div class="cls_btn_new">
+                <button type="button" class="btn  btn-primary cls_button_blue" data-bs-dismiss="modal" @onclick="Close"> @Localizer["ok"]</button>
+            </div>
+        </div>
+        </div>
+    
+</div>
+
+
+@code {
+    private bool isAlertVisible = false;
+    private AlertOptions? options;
+
+    private void CloseAlert()
+    {
+        isAlertVisible = false;
+    }
+
+    private void HandleButton(Func<object, Task> action)
+    {
+        CloseAlert();
+        if (options != null)
+        {
+            action?.Invoke(options.data);
+        }
+    }
+
+
+
+    private async void HandleShowAlert(AlertOptions alertOptions)
+    {
+        options = alertOptions;
+        isAlertVisible = true;
+        await InvokeAsync(StateHasChanged);
+    }
+}

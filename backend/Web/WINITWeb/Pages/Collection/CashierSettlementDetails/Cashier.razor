@@ -1,0 +1,41 @@
+﻿@page "/cash"
+@using Practice;
+@using Winit.Modules.Address.Model.Classes;
+@using Winit.Modules.CollectionModule.Model.Classes;
+@using Winit.Modules.CollectionModule.Model.Constants
+@using Winit.Modules.CollectionModule.Model.Interfaces;
+@using static Winit.Modules.CollectionModule.Model.Interfaces.IAccCollection;
+@using static Winit.Modules.CollectionModule.Model.Interfaces.IAccReceivable;
+@using WinIt.Pages.Collection.NonCashSettlementDetails;
+@using Newtonsoft.Json;
+@inject NavigationManager NavigationManager;
+@layout MainLayout
+@inject HttpClient http;
+@inject IJSRuntime JSRuntime;
+@using Winit.UIComponents.Web.Filter
+@inject Winit.Modules.CollectionModule.BL.Interfaces.ICashSettlementViewModel _cashSettlementViewModel
+@inject Winit.Modules.CollectionModule.BL.Interfaces.ICreatePaymentViewModel _createPaymentViewModel;
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+
+@if (IsInitialized)
+{
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="false" />
+    <WinIt.Pages.Collection.CreatePayment.TotalCollectionCalculationTabs DataSource="_cashSettlementViewModel.CollectionTabDetails"></WinIt.Pages.Collection.CreatePayment.TotalCollectionCalculationTabs>
+    <button class="cls_add_new_sec" style="float:right;margin-right:0px" @onclick="ShowFilter">@Localizer["filter"]</button>
+
+    <Filter @ref="filterRef" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+    OnFilterApplied="@OnFilterApply" />
+
+
+    <Winit.UIComponents.Common.CustomControles.Tabs TabItems="@TabSelectionItems" OnTabSelect="OnTabSelect" IsCountRequired="true"></Winit.UIComponents.Common.CustomControles.Tabs>
+    @if (TabName == TabConstants.Pending)
+    {
+        <button class="cls_add_new_sec" @onclick="(()=>GetInformation())">Settle</button>
+    }
+    <Winit.UIComponents.Web.Table.TableGridView Columns="@DataGridColumns" DataSource="@GridDataSource"
+                                                ShowRecordsCount="true" PageNumber="_cashSettlementViewModel._currentPage" PageSize="_cashSettlementViewModel._pageSize"
+                                                TotalItemsCount="@Count" IsFirstColumnCheckbox="@(TabName == TabConstants.Pending ? true : false)" AfterCheckBoxSelection="OnCheckBoxSelection" />
+    <Winit.UIComponents.Web.Paging.Paging CurrentPage="_cashSettlementViewModel._currentPage" OnPageChange="PageIndexChanged" PageSize="_cashSettlementViewModel._pageSize" TotalItems="@Count" />
+
+}

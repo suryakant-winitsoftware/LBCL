@@ -1,0 +1,220 @@
+﻿@using Newtonsoft.Json
+@using Winit.Modules.PurchaseOrder.Model.Classes
+@using Winit.Modules.PurchaseOrder.Model.Constatnts
+@using Winit.Shared.CommonUtilities.Common
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+@inject JsonSerializerSettings _jsonSerializerSettings;
+
+<PopUp OkbtnText="Update" DisableCancelBtn="true" Title="Provisioning Details" OnCloseClick="OnCloseClick"
+       DisableOkBtn="DisableFields"
+       OnOkClick="OnUpdateBtnClick">
+    <div class="div1">
+        <table>
+            <thead>
+                <tr>
+                    @if (!DisableFields)
+                    {
+                        <th>
+                            <input type="checkbox" class="form-check" checked="@IsAllSelected"
+                                   @onchange="OnSelectAllClick" />
+                        </th>
+                    }
+                    <th>
+                        Particular
+                    </th>
+                    <th>
+                        Unit Amount(@_appUser.DefaultOrgCurrency?.Symbol)
+                    </th>
+                    <th>
+                        Remarks
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @if (_appUser.Role.HasP1Access)
+                {
+                    @foreach (var sellInCnP1 in DuplicatedPurchaseOrderLineProvisions.Where(e => e.ProvisionType == ProvisionTypeConst.SellInCnP1))
+                    {
+                        <tr>
+                            @if (!DisableFields)
+                            {
+                                <td>
+
+                                    <input type="checkbox" class="form-check"
+                                           checked="@sellInCnP1.IsSelected"
+                                           @onchange='(e) => OnCheckBoxClicked(e, ProvisionTypeConst.SellInCnP1)'
+                                           disabled="@(PurchaseOrderLineProvisions.Exists(p => (p.ProvisionType == sellInCnP1.ProvisionType && p.SchemeCode == sellInCnP1.SchemeCode && !p.IsSelected)))" />
+                                </td>
+                            }
+                            <td>Credit Note (P1) @sellInCnP1.SchemeCode</td>
+                            <td>
+                                @CommonFunctions.FormatNumberInIndianStyle(sellInCnP1.ApprovedProvisionUnitAmount, _appSetting.RoundOffDecimal)
+                            </td>
+                            <td>
+                                <textarea disabled="@DisableFields" class="form-control" type="text"
+                                          @bind="sellInCnP1.Remarks" />
+                            </td>
+                        </tr>
+                    }
+
+                }
+
+
+
+                @if (_appUser.Role.HasP2Access)
+                {
+                    @foreach (var sellInP2 in DuplicatedPurchaseOrderLineProvisions.Where(e => e.ProvisionType == ProvisionTypeConst.SellInP2))
+                    {
+                        <tr>
+
+                            @if (!DisableFields)
+                            {
+                                <td>
+                                    <input type="checkbox" class="form-check"
+                                           checked="@sellInP2.IsSelected"
+                                           @onchange='(e) => OnCheckBoxClicked(e, ProvisionTypeConst.SellInP2)'
+                                           disabled="@(PurchaseOrderLineProvisions.Exists(p => (p.ProvisionType == sellInP2.ProvisionType && p.SchemeCode == sellInP2.SchemeCode && !p.IsSelected)))" />
+                                </td>
+                            }
+                            <td>CN Branch (P2) @sellInP2.SchemeCode</td>
+                            <td>
+                                @CommonFunctions.FormatNumberInIndianStyle(sellInP2.ApprovedProvisionUnitAmount,
+                                         _appSetting.RoundOffDecimal)
+                            </td>
+                            <td>
+                                <textarea disabled="@DisableFields" class="form-control" @bind="sellInP2.Remarks" />
+                            </td>
+                        </tr>
+                    }
+                }
+
+                @if (_appUser.Role.HasP3Access)
+                {
+                    @foreach (var sellInP3 in DuplicatedPurchaseOrderLineProvisions.Where(e => e.ProvisionType == ProvisionTypeConst.SellInP3))
+                    {
+                        <tr>
+                            @if (!DisableFields)
+                            {
+                                <td>
+                                    <input type="checkbox" class="form-check"
+                                           checked="@sellInP3.IsSelected"
+                                           @onchange='(e) => OnCheckBoxClicked(e, ProvisionTypeConst.SellInP3)'
+                                           disabled="@(PurchaseOrderLineProvisions.Exists(p => (p.ProvisionType == sellInP3.ProvisionType && p.SchemeCode == sellInP3.SchemeCode && !p.IsSelected)))" />
+                                </td>
+                            }
+                            <td>CN HO (P3) @sellInP3.SchemeCode</td>
+                            <td>
+                                @CommonFunctions.FormatNumberInIndianStyle(sellInP3.ApprovedProvisionUnitAmount,
+                                         _appSetting.RoundOffDecimal)
+                            </td>
+                            <td>
+                                <textarea class="form-control" disabled="@DisableFields" @bind="sellInP3.Remarks" />
+                            </td>
+                        </tr>
+                    }
+
+                    @foreach (var standingScheme in DuplicatedPurchaseOrderLineProvisions.Where(e => e.ProvisionType == ProvisionTypeConst.StandingScheme))
+                    {
+                        <tr>
+                            @if (!DisableFields)
+                            {
+                                <td>
+                                    <input type="checkbox" class="form-check"
+                                           checked="@standingScheme.IsSelected"
+                                           @onchange="(e) => OnStandingSchemeChanged(e, standingScheme)"
+                                           disabled="@(PurchaseOrderLineProvisions.Exists(p => (p.ProvisionType == standingScheme.ProvisionType && p.SchemeCode == standingScheme.SchemeCode && !p.IsSelected)))" />
+                                </td>
+                            }
+                            <td>CN HO (S) @standingScheme.SchemeCode</td>
+                            <td>
+                                @CommonFunctions.FormatNumberInIndianStyle(standingScheme.ApprovedProvisionUnitAmount, _appSetting.RoundOffDecimal)
+                            </td>
+                            <td>
+                                <textarea disabled="@DisableFields" class="form-control" @bind="standingScheme.Remarks" />
+                            </td>
+                        </tr>
+                    }
+                    @foreach (var cashDiscount in DuplicatedPurchaseOrderLineProvisions.Where(e => e.ProvisionType == ProvisionTypeConst.CashDiscount))
+                    {
+                        <tr>
+                            @if (!DisableFields)
+                            {
+                                <td>
+                                    <input type="checkbox" class="form-check"
+                                           checked="@cashDiscount.IsSelected"
+                                           @onchange='(e) => OnCheckBoxClicked(e, ProvisionTypeConst.CashDiscount)'
+                                           disabled="@(PurchaseOrderLineProvisions.Exists(p => (p.ProvisionType == cashDiscount.ProvisionType && p.SchemeCode == cashDiscount.SchemeCode && !p.IsSelected)))" />
+                                </td>
+                            }
+                            <td>Cash Discount HO (N)</td>
+                            <td>
+                                @CommonFunctions.FormatNumberInIndianStyle(cashDiscount.ApprovedProvisionUnitAmount,
+                                         _appSetting.RoundOffDecimal)
+                            </td>
+                            <td>
+                                <textarea disabled="@DisableFields" class="form-control" @bind="cashDiscount.Remarks" />
+                            </td>
+                        </tr>
+                    }
+                    @foreach (var p2Qps in DuplicatedPurchaseOrderLineProvisions.Where(e => e.ProvisionType == ProvisionTypeConst.P2QPS))
+                    {
+                        <tr>@* QPS p2 row *@
+                            @if (!DisableFields)
+                            {
+
+                                <td>
+                                    <input type="checkbox" class="form-check"
+                                           checked="@p2Qps.IsSelected"
+                                           @onchange='(e) => OnCheckBoxClicked(e, ProvisionTypeConst.P2QPS)'
+                                           disabled="@(PurchaseOrderLineProvisions.Exists(p => (p.ProvisionType == p2Qps.ProvisionType && p.SchemeCode == p2Qps.SchemeCode && !p.IsSelected)))" />
+                                </td>
+                            }
+                            <td>QPS P2 @p2Qps.SchemeCode</td>
+                            <td>
+                                @CommonFunctions.FormatNumberInIndianStyle(p2Qps.ApprovedProvisionUnitAmount,
+                                         _appSetting.RoundOffDecimal)
+                            </td>
+                            <td>
+                                <textarea disabled="@DisableFields" class="form-control" @bind="p2Qps.Remarks" />
+                            </td>
+                        </tr>
+                    }
+                    @foreach (var p3Qps in DuplicatedPurchaseOrderLineProvisions.Where(e => e.ProvisionType == ProvisionTypeConst.P3QPS))
+                    {
+
+                        <tr>@* QPS p3 row *@
+                            @if (!DisableFields)
+                            {
+                                <td>
+                                    <input type="checkbox" class="form-check"
+                                           checked="@p3Qps.IsSelected"
+                                           @onchange='(e) => OnCheckBoxClicked(e,ProvisionTypeConst.P3QPS)'
+                                           disabled="@(PurchaseOrderLineProvisions.Exists(p => (p.ProvisionType == p3Qps.ProvisionType && p.SchemeCode == p3Qps.SchemeCode && !p.IsSelected)))" />
+                                </td>
+                            }
+                            <td>QPS P3 @p3Qps.SchemeCode</td>
+                            <td>
+                                @CommonFunctions.FormatNumberInIndianStyle(p3Qps.ApprovedProvisionUnitAmount,
+                                         _appSetting.RoundOffDecimal)
+                            </td>
+                            <td>
+                                <textarea disabled="@DisableFields" class="form-control" @bind="p3Qps.Remarks" />
+                            </td>
+                        </tr>
+                    }
+                }
+                @if (_appUser.Role.HasMarginAccess)
+                {
+                    <tr class="cls_table_footer">
+                        <td></td>
+                        <td style="font-size:13px;font-weight:700;">NLC - Minimum Price</td>
+                        <td style="font-size:13px;font-weight:700;">
+                            @(Margin == null ? "N/A" : CommonFunctions.FormatNumberInIndianStyle(Margin ?? 0, _appSetting.RoundOffDecimal))
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</PopUp>

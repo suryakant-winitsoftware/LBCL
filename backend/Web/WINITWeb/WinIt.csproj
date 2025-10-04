@@ -1,0 +1,175 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+  <PropertyGroup>
+    <!--<TargetFramework>net8.0</TargetFramework>-->
+	  <TargetFramework>netcoreapp8.0</TargetFramework>
+	  <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
+	  <SelfContained>false</SelfContained>
+	  <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Pages\MainComponents\**" />
+    <Content Remove="Pages\MainComponents\**" />
+    <EmbeddedResource Remove="Pages\MainComponents\**" />
+    <None Remove="Pages\MainComponents\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Pages\AddEditCustomer.razor.cs" />
+    <Compile Remove="Pages\Demo\DivGridView.razor.cs" />
+    <Compile Remove="Pages\Demo\TableGridView.razor.cs" />
+    <Compile Remove="Pages\Mapping.razor.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="Pages\AddEditCustomer.razor" />
+    <Content Remove="Pages\AlertComponent.razor" />
+    <Content Remove="Pages\Demo\DivGridView.razor" />
+    <Content Remove="Pages\Demo\TableGridView.razor" />
+    <Content Remove="Pages\MaintainProduct.razor" />
+    <Content Remove="Pages\MaintainProductEdit.razor" />
+    <Content Remove="Pages\Mapping.razor" />
+    <Content Remove="Pages\ProductComponent.razor" />
+    <Content Remove="Pages\ProductEditComponent.razor" />
+    <Content Remove="Pages\PurchaseOrder\AddEditPurchaseOrderTemplate.razor" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Pages\Demo\DivGridView.razor.css" />
+    <None Remove="Pages\Demo\TableGridView.razor.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="DinkToPdf" Version="1.0.8" />
+    <PackageReference Include="itext7" Version="8.0.5" />
+    <PackageReference Include="itext7.pdfhtml" Version="6.1.0" />
+    <PackageReference Include="iTextSharp.LGPLv2.Core" Version="3.4.21" />
+    <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="8.0.13" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="8.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.7" />
+    <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="8.0.7" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.Text.Json" Version="8.0.5" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Data\Icons\" />
+  </ItemGroup>
+    <ItemGroup>
+    <UpToDateCheckInput Remove="Pages\PurchaseOrder\AddEditPurchaseOrderTemplate.razor" />
+  </ItemGroup>
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Pages\PurchaseOrder\AddEditPurchaseOrderTemplate.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Pages\Clear Data\ClearData.razor" />
+    <None Include="Pages\PurchaseOrderTemplate\AddEditPurchaseOrderTemplate.razor" />
+    <None Include="Pages\ViewAppVersion\ViewAppVersion.razor" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Modules\Address\Winit.Modules.Address.Model\Winit.Modules.Address.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\ApprovalEngine\Winit.Modules.ApprovalEngine.BL\Winit.Modules.ApprovalEngine.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\AuditTrail\Winit.Modules.AuditTrail.BL\Winit.Modules.AuditTrail.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Auth\Winit.Modules.Auth.BL\Winit.Modules.Auth.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\AwayPeriod\Winit.Modules.AwayPeriod.Model\Winit.Modules.AwayPeriod.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\Bank\Winit.Modules.Bank.BL\Winit.Modules.Bank.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Bank\Winit.Modules.Bank.Model\Winit.Modules.Bank.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\Base\Winit.Modules.Base.BL\Winit.Modules.Base.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Calender\Winit.Modules.Calender.Models\Winit.Modules.Calender.Models.csproj" />
+    <ProjectReference Include="..\..\Modules\CollectionModule\Winit.Modules.CollectionModule.BL\Winit.Modules.CollectionModule.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\CollectionModule\Winit.Modules.CollectionModule.DL\Winit.Modules.CollectionModule.DL.csproj" />
+    <ProjectReference Include="..\..\Modules\CollectionModule\Winit.Modules.CollectionModule.Model\Winit.Modules.CollectionModule.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\Common\UIState\Winit.Modules.Common.UIState.csproj" />
+    <ProjectReference Include="..\..\Modules\Common\Winit.Modules.Common.BL\Winit.Modules.Common.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Contact\Winit.Modules.Contact.Model\Winit.Modules.Contact.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\CreditLimit\Winit.Modules.CreditLimit.BL\Winit.Modules.CreditLimit.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Currency\Winit.Modules.Store.BL\Winit.Modules.Currency.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Currency\Winit.Modules.Store.Model\Winit.Modules.Currency.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\CustomSKUFields\Winit.Modules.CustomSKUFields.BL\Winit.Modules.CustomSKUFields.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\CustomSKUFields\Winit.Modules.CustomSKUFields.Model\Winit.Modules.CustomSKUFields.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\DashBoard\Winit.Modules.DashBoard.BL\Winit.Modules.DashBoard.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\DashBoard\Winit.Modules.DashBoard.Model\Winit.Modules.DashBoard.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\Distributor\Winit.Modules.Distributor.BL\Winit.Modules.Distributor.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Distributor\Winit.Modules.Distributor.Model\Winit.Modules.Distributor.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\ErrorHandling\Winit.Modules.ErrorHandling.BL\Winit.Modules.ErrorHandling.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\FirebaseReport\Winit.Modules.FirebaseReport.BL\Winit.Modules.FirebaseReport.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Invoice\Winit.Modules.Invoice.BL\Winit.Modules.Invoice.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\JobPosition\Winit.Modules.JobPosition.Model\Winit.Modules.JobPosition.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\JourneyPlan\Winit.Modules.JourneyPlan.BL\Winit.Modules.JourneyPlan.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\JourneyPlan\Winit.Modules.JourneyPlan.Model\Winit.Modules.JourneyPlan.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\ListHeader\Winit.Modules.ListHeader.BL\Winit.Modules.ListHeader.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\ListHeader\Winit.Modules.ListHeader.DL\Winit.Modules.ListHeader.DL.csproj" />
+    <ProjectReference Include="..\..\Modules\ListHeader\Winit.Modules.ListHeader.Model\Winit.Modules.ListHeader.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\Location\Winit.Modules.Location.BL\Winit.Modules.Location.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Location\Winit.Modules.Location.Model\Winit.Modules.Location.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\Mapping\Winit.Modules.Mapping.BL\Winit.Modules.Mapping.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\MobileApp\Winit.Modules.MobileApp.BL\Winit.Modules.MobileApp.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\MobileApp\Winit.Modules.MobileApp.DL\Winit.Modules.MobileApp.DL.csproj" />
+    <ProjectReference Include="..\..\Modules\MobileApp\Winit.Modules.MobileApp.Model\Winit.Modules.MobileApp.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\NewsActivity\Winit.Modules.NewsActivity.BL\Winit.Modules.NewsActivity.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Org\Winit.Modules.Org.BL\Winit.Modules.Org.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Org\Winit.Modules.Org.Model\Winit.Modules.Org.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\Org\Winit.Modules.Store.DL\Winit.Modules.Org.DL.csproj" />
+    <ProjectReference Include="..\..\Modules\PriceLadder\Winit.Modules.PriceLadder.BL\Winit.Modules.PriceLadder.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Promotion\Winit.Modules.Promotion.BL\Winit.Modules.Promotion.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Promotion\Winit.Modules.Promotion.Model\Winit.Modules.Promotion.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\ProvisionComparisonReport\Winit.Modules.ProvisionComparisonReport.BL\Winit.Modules.ProvisionComparisonReport.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\ProvisionComparisonReport\Winit.Modules.ProvisionComparisonReport.Model\Winit.Modules.ProvisionComparisonReport.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\Provisioning\Winit.Modules.Provisioning.BL\Winit.Modules.Provisioning.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\PurchaseOrder\Winit.Modules.PurchaseOrder.BL\Winit.Modules.PurchaseOrder.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\ReturnOrder\Winit.Modules.ReturnOrder.BL\Winit.Modules.ReturnOrder.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\ReturnOrder\Winit.Modules.ReturnOrder.Model\Winit.Modules.ReturnOrder.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\Role\Winit.Modules.Role.BL\Winit.Modules.Role.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Route\Winit.Modules.Route.BL\Winit.Modules.Route.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Route\Winit.Modules.Route.Model\Winit.Modules.Route.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\SalesOrder\Winit.Modules.SalesOrder.BL\Winit.Modules.SalesOrder.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\SalesOrder\Winit.Modules.SalesOrder.Model\Winit.Modules.SalesOrder.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\Scheme\Winit.Modules.Scheme.BL\Winit.Modules.Scheme.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\ServiceAndCallRegistration\ServiceAndCallRegistration.Model\Winit.Modules.ServiceAndCallRegistration.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\ServiceAndCallRegistration\Winit.Modules.ServiceAndCallRegistration.BL\Winit.Modules.ServiceAndCallRegistration.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\ServiceAndCallRegistration\Winit.Modules.ServiceAndCallRegistration.DL\Winit.Modules.ServiceAndCallRegistration.DL.csproj" />
+    <ProjectReference Include="..\..\Modules\Settings\Winit.Modules.Settings.BL\Winit.Modules.Setting.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Settings\Winit.Modules.Settings.Model\Winit.Modules.Setting.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\SKUClass\Winit.Modules.SKUClass.BL\Winit.Modules.SKUClass.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\SKUClass\Winit.Modules.SKUClass.Model\Winit.Modules.SKUClass.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\SKU\Winit.Modules.SKU.Model\Winit.Modules.SKU.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\Store\Winit.Modules.Store.Model\Winit.Modules.Store.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\Tally\Winit.Modules.Tally.BL\Winit.Modules.Tally.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Tally\Winit.Modules.Tally.DL\Winit.Modules.Tally.DL.csproj" />
+    <ProjectReference Include="..\..\Modules\Tally\Winit.Modules.Tally.Model\Winit.Modules.Tally.Model.csproj" />
+	<ProjectReference Include="..\..\Modules\Tax\Winit.Modules.Tax.BL\Winit.Modules.Tax.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Tax\Winit.Modules.Tax.Model\Winit.Modules.Tax.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\UOM\Winit.Modules.UOM.Model\Winit.Modules.UOM.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\User\Winit.Modules.User.BL\Winit.Modules.User.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\User\Winit.Modules.User.Model\Winit.Modules.User.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\Vehicle\Winit.Modules.Vehicle.BL\Winit.Modules.Vehicle.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Vehicle\Winit.Modules.Vehicle.Model\Winit.Modules.Vehicle.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\WHStock\Winit.Modules.WHStock.BL\Winit.Modules.WHStock.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\WHStock\Winit.Modules.WHStock.Model\Winit.Modules.WHStock.Model.csproj" />
+    <ProjectReference Include="..\..\SharedObjects\Winit.Shared.Models\Winit.Shared.Models.csproj" />
+    <ProjectReference Include="..\..\UIComponents\Winit.UIComponents.Common\Winit.UIComponents.Common.csproj" />
+    <ProjectReference Include="..\..\UIComponents\Winit.UIComponents.Web\Winit.UIComponents.Web.csproj" />
+    <ProjectReference Include="..\..\UIModels\Winit.UIModels.Common\Winit.UIModels.Common.csproj" />
+    <ProjectReference Include="..\..\Modules\BroadClassification\Winit.Modules.BroadClassification.BL\Winit.Modules.BroadClassification.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\BroadClassification\Winit.Modules.BroadClassification.DL\Winit.Modules.BroadClassification.DL.csproj" />
+
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="wwwroot\appsettings.Development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\appsettings.Production.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Pages\PurchaseOrder\AddEditPurchaseOrderTemplate.razor" />
+  </ItemGroup>
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Pages\PurchaseOrder\AddEditPurchaseOrderTemplate.razor" />
+  </ItemGroup>
+</Project>

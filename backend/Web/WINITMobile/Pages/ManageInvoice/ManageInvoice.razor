@@ -1,0 +1,17 @@
+﻿@page "/manageinvoice"
+@using Winit.UIComponents.Web.Table
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+@inject Winit.Modules.Invoice.BL.Interfaces.IInvoiceViewModel _viewModel
+<PageTitle>Manage Invoices</PageTitle>
+
+@if (_viewModel.InvoiceHeaderViews != null && GridColumns != null)
+{
+    <TableGridView Columns="GridColumns"
+                   DataSource="_viewModel.InvoiceHeaderViews"
+                   OnSort="OnSortClick" />
+    <Winit.UIComponents.Web.Paging.Paging CurrentPage="_viewModel.PageNumber"
+                                          OnPageChange="OnPageIndexChange"
+                                          PageSize="_viewModel.PageSize"
+                                          TotalItems="_viewModel.TotalCount" />
+
+}

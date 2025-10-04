@@ -1,0 +1,61 @@
+﻿@page "/OutStandingInvoices"
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.CollectionModule.BL.Interfaces.IOutStandingInvoicesViewModel OutStanding_Invoices
+@if (IsInitialised)
+{
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" IsSearchCriteriaNeeded="true"
+                         ColumnsForFilter="ColumnsForFilter" OnFilterApplied="OnFilterApplied" />
+    <div class="cls_container_div1">
+        <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns"
+                                                    DataSource="OutStanding_Invoices.AccPayableCMIs"
+                                                    TotalItemsCount="OutStanding_Invoices.TotalItems"
+                                                    PageSize="OutStanding_Invoices.PagingRequest.PageSize"
+                                                    PageNumber="OutStanding_Invoices.PagingRequest.PageNumber"
+                                                    ShowRecordsCount="true"
+                                                    IsPaginationRequired="true" OnSort="OnSort" OnPageChange=OnPageChange />
+    </div>
+    @if (IsView)
+    {
+        <PopUp Title="View Outstanding Invoices" OnCloseClick="() => IsView = false" DisableCancelBtn=true DisableOkBtn="true"
+               CancelbtnText="Cancel">
+            <div class="cls_container_div1">
+                <div class="cls_pop_up_div">
+                    <label class="cls_section_div_purchase2_label"> Customer </label>
+                    <label class="cls_credit_label2">@($"[{SelectedInvoice.CustomerCode}] {SelectedInvoice.CustomerName}") </label>
+                </div>
+                <div class="cls_pop_up_div">
+                    <label class="cls_section_div_purchase2_label"> OU </label>
+                    <label class="cls_credit_label2">@SelectedInvoice.OU </label>
+                </div>
+                <div class="cls_pop_up_div">
+                    <label class="cls_section_div_purchase2_label"> Balance </label>
+                    <label class="cls_credit_label2">@CommonFunctions.GetStringInNumberFormatExcludingZero(SelectedInvoice.TotalBalanceAmount) </label>
+                </div>
+                @*   <div class="cls_pop_up_div">
+                    <label class="cls_section_div_purchase2_label"> No. of Invoices </label>
+                    <label class="cls_credit_label2">@CommonFunctions.GetStringInNumberFormatExcludingZero(SelectedInvoice.CountOfInvoices) </label>
+                </div> *@
+            </div>
+            <br />
+            <br />
+            <div class="cls_container_div1">
+                <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder="Search here..."
+                                                                       MaxLength="200"
+                                                                       DebounceInterval="500"
+                                                                       OnDebounceIntervalElapsed="Search"
+                                                                       KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+                                                                       IsForSearch="true" />
+            </div>
+            <div class="cls_container_div1">
+                <Winit.UIComponents.Web.Table.TableGridView Columns="CMIItemDataGridColumns"
+                                                            DataSource="FilteredOutSTandingInvoicesDetails"
+                                                            TotalItemsCount="SelectedInvoice.CountOfInvoices"
+                                                            PageSize="popUpPageSize"
+                                                            PageNumber="popUpPageNumber"
+                                                            ShowRecordsCount="true"
+                                                            IsPaginationRequired="@(SelectedInvoice.CountOfInvoices>popUpPageSize)"
+                                                            OnPageChange=OnPopUpPageChange />
+            </div>
+        </PopUp>
+    }
+}

@@ -1,0 +1,52 @@
+﻿@page "/MaintainCallRegistration"
+@inject Winit.Modules.ServiceAndCallRegistration.BL.Interfaces.IServiceAndCallRegistrationViewModel _serviceAndCallRegistrationViewModel;
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+@if (IsInitialised)
+{
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true"
+                         ColumnsForFilter="@ColumnsForFilter"
+                         IsSearchCriteriaNeeded="false"
+                         OnFilterApplied="@OnFilterApply" />
+    <button class="cls_add_new_sec" @onclick="AddCallRegistration">Add Call Registration</button>
+    <div class="cls_container_div1">
+        <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" DataSource="_serviceAndCallRegistrationViewModel.CallRegisteredDataList" PageNumber="_serviceAndCallRegistrationViewModel.PageNumber"
+                                                    PageSize="_serviceAndCallRegistrationViewModel.PageSize" OnSort="OnSortApply"
+                                                    TotalItemsCount="_serviceAndCallRegistrationViewModel.TotalItemsCount" ShowRecordsCount="true" />
+
+        <Winit.UIComponents.Web.Paging.Paging CurrentPage="_serviceAndCallRegistrationViewModel.PageNumber" OnPageChange="PageIndexChanged"
+                                              PageSize="_serviceAndCallRegistrationViewModel.PageSize" TotalItems="_serviceAndCallRegistrationViewModel.TotalItemsCount" />
+
+    </div>
+    @if (CheckStatus)
+    {
+        <PopUp Title="Call Status" DisableCancelBtn="true" OkbtnText="Back"
+               OnOkClick="() => CheckStatus = false" DisableCrossBtn="true"
+               OnCloseClick="() => CheckStatus = false">
+            <div class="card" style="max-width: 800px; margin: 2rem auto; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);">
+                <div class="card-header" style="font-weight: bold; font-size: 1.2rem;">
+                    Check your Service Request Status
+                </div>
+                <table class="table table-bordered" style="text-align: center; font-size: 14px;">
+                    <thead style="background-color: #f8f9fa;">
+                        <tr>
+                            <th>Complain Number</th>
+                            @*                              <th>Customer Name</th>
+  *@                            <th>Service Status</th>
+                            <th>Call Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>@_serviceAndCallRegistrationViewModel.ServiceStatus.CallId</td>
+                            @*  <td>@_serviceAndCallRegistrationViewModel.serviceRequestStatusResponce.ItemName</td> *@
+                            <td>@_serviceAndCallRegistrationViewModel.serviceRequestStatusResponce.ServiceStatus</td>
+                            <td>@_serviceAndCallRegistrationViewModel.serviceRequestStatusResponce.CallStatus</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </PopUp>
+    }
+
+}

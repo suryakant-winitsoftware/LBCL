@@ -1,0 +1,17 @@
+﻿@page "/ReturnOrderSummary"
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.ReturnOrder.BL.Interfaces.IReturnSummaryWebViewModel _ReturnSummeryViewModel
+@using Winit.UIComponents.Web.Filter
+@using Winit.UIModels.Common.Filter
+@using Winit.Shared.Models.Common
+
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@FilterColumns" IsSearchCriteriaNeeded="true"
+                     OnFilterApplied="@OnFilterApply" />
+<Winit.UIComponents.Common.CustomControles.Tabs TabItems="_ReturnSummeryViewModel.TabList" IsCountRequired="true" OnTabSelect="OnTabSelected" />
+@if (IsInitialized)
+{
+    <Winit.UIComponents.Web.Table.TableGridView IsFirstColumnCheckbox="true" Columns="DataGridColumns"
+                                                DataSource="_ReturnSummeryViewModel.DisplayedReturnSummaryItemViews" AfterCheckBoxSelection="OnCheckBoxClick" />
+    <Winit.UIComponents.Web.Paging.Paging CurrentPage="_ReturnSummeryViewModel.PageNumber" OnPageChange="_ReturnSummeryViewModel.PageIndexChanged"
+                                          PageSize="_ReturnSummeryViewModel.PageSize" TotalItems="_ReturnSummeryViewModel.TotalReturnSummaryItemViews" />
+}

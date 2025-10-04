@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\UIModels\Winit.UIModels.Common\Winit.UIModels.Common.csproj" />
+    <ProjectReference Include="..\..\Bank\Winit.Modules.Bank.BL\Winit.Modules.Bank.BL.csproj" />
+    <ProjectReference Include="..\..\Common\Winit.Modules.Common.BL\Winit.Modules.Common.BL.csproj" />
+    <ProjectReference Include="..\ServiceAndCallRegistration.Model\Winit.Modules.ServiceAndCallRegistration.Model.csproj" />
+    <ProjectReference Include="..\Winit.Modules.ServiceAndCallRegistration.DL\Winit.Modules.ServiceAndCallRegistration.DL.csproj" />
+  </ItemGroup>
+
+</Project>

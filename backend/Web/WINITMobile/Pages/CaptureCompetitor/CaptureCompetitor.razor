@@ -1,0 +1,190 @@
+﻿@page "/capturecompetitor"
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+@inject Winit.Modules.CaptureCompetitor.BL.Interfaces.ICaptureCompetitorViewModel _viewmodel
+@inject WINITMobile.Data.IImageUploadService _imageUploadService
+@inject Winit.Modules.StoreActivity.BL.Interfaces.IStoreActivityViewModel _StoreActivityViewmodel
+
+    @* <h3 style="display:inline;"><b>Capture</b> Competitor</h3>
+    <button class="btn btn-danger" style="display:inline;" @onclick="ShowCaptureForm">Capture</button> *@
+
+    @if (showCaptureForm)
+{
+    <div class="container-fluid">
+            <div class="capture-form mt-3"> 
+
+
+                <!-- Competitor Info Section -->
+                <div class="form-section mb-4">
+                    <h2 class="cls_main_heading" style="padding-left:0px;">Competitor Observation</h2>
+                        <div class="form-group">
+                                <label class="form-label">Competitor Brand Name</label>
+
+                            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="CompetitorDataSource"
+                                                                                   OnSelect="HandleCompetitorBrandSelection"
+                                                                               Title="Cometitor Brand Name"
+                                                                               _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single"
+                                                                               IsButtonVisible="true" />
+                        </div>
+                    <div class="form-group">
+
+                            <label class="form-label">Product Name</label>
+                    <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_viewmodel.Brands.OrderBy(p => p.Label).ToList()"
+                                                                           OnSelect="HandleChannelSelection"
+                                                                           Title="Product Name"
+                                                                           _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single"
+                                                                           IsButtonVisible="true" />
+                    @* <input type="text" class="form-control" placeholder="Select Company name" @bind=_viewmodel.CreateCaptureCompetitor.OtherCompany/> *@
+
+                    </div>
+
+                        <div class="form-group">
+                                    <label class="form-label">MRP</label>
+                            <input type="number" step="0.01" class="form-control" placeholder="Enter MRP" @bind=_viewmodel.CreateCaptureCompetitor.OtherPrice />
+                        </div>
+                    <div class="form-group">
+                            <label class="form-label">Selling Price</label>
+                            <input type="number" step="0.01" class="form-control" placeholder="Enter SP" @bind=_viewmodel.CreateCaptureCompetitor.OtherSellingPrice />
+                    </div>
+
+                    <div class="form-group">
+                            <label class="form-label">UOM</label>
+                        <input type="number" step="0.01" class="form-control" placeholder="Enter UOM (Gram/KG)" @bind=_viewmodel.CreateCaptureCompetitor.OtherUOM />
+                    </div>
+                              
+                    <div class="form-group">
+                        <label class="form-label">Capture Image</label>
+                        <div class="image-capture-area">
+                            <FileCapture OnImageDeleteClick="OnImageDeleteClick"
+                                         OnImageCapture="OnImageCapture"
+                                         FolderPath=@ImgFolderPath
+                                         FileName="CaptureCompetitor"
+                                         CaptureData="fileCaptureData"
+                            >
+                            </FileCapture>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Capture Image Section -->
+
+
+                <!-- Action Buttons -->
+               
+            </div>
+    </div>
+        <div class="cls_dashboard_7">
+
+            <button class="cls_btn_check1" @onclick="CancelCaptureForm">Cancel</button>
+            <button class="cls_btn_check2" @onclick="SaveData">Submit</button>
+        </div>
+    }
+    else
+    {
+            <!-- Search and Action Bar -->
+              <div class="container-fluid">
+            <div class="cls_newbtn__main">
+            <h2 style="width:70%;padding-left:0px;margin-top:6px;" class="cls_main_heading">Competitor Observation</h2>
+                <button class="cls_nn_btn" @onclick="ShowCaptureForm">
+                    Capture
+                </button>
+            @*  <button class="cls_nn_btn">PROCEED</button> *@
+            </div>
+
+            <!-- Search Bar -->
+            <div class="cls_serch_nn">
+                <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder="Search by Item Code/ Item Description"
+                                                                       MaxLength="200" DebounceInterval="500"
+                                                                       OnDebounceIntervalElapsed="WinitTextBox_OnSearch"
+                                                                       KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+                                                                       IsForSearch="true "
+                                                                       @ref="wtbSearch" />
+            </div>
+    </div>
+            <div class="div1" style="float:left">
+            <table class="table" style="table-layout:fixed;">
+            <!-- Grid Header -->
+            <thead>
+                <tr>
+                   @*  <th style="width:14%;">Image</th> *@
+                        <th>Competitor Brand Name</th>
+                        <th>Product Name</th>
+                    <th style="width:20%;">Date & Time</th>
+                </tr>
+            </thead>
+
+            <!-- Grid Content -->
+            <tbody>
+                @if (_viewmodel.ListOfCaptureCompetitors?.Count > 0 && _viewmodel.ListOfCaptureCompetitors.Any())
+                {
+                    @foreach (var item in _viewmodel.ListOfCaptureCompetitors)
+                    {
+                                <tr @onclick="() => ShowItemDetails(item)">
+                              @*       <td>
+                                        <div class="image-placeholder">
+                                                        <img src="@($"{_appConfigs.ApiDataBaseUrl}{item.ImageUrl}")" alt="Product" />
+                                        </div>
+                                    </td> *@
+                                    <td>
+                                        <div class="company-name">@item.OtherCompany</div>
+                                    </td>
+                                    <td>
+                                        <div class="brand-name">@item.OurBrand</div>
+                                    </td>
+                                    <td>
+                                        <div class="date-time">
+                                            <div class="date">@item.ActivityDate?.ToString("dd MMM, yyyy")</div>
+                                            <div class="time">@item.ActivityDate?.ToString("h:mm tt")</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                    }
+                }
+                else
+                {
+                        <tr>
+                        <td colspan="3"> <p style="display: flex; justify-content: center; align-items: center;">No competitor data found</p></td>
+                           
+                        </tr>
+                }
+            </tbody>
+            </table>
+            </div>
+    }
+
+    <!-- Details Modal -->
+    @if (showDetailsModal)
+    {
+            <div class="modal" style="display:block;">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5>Competitor Details</h5>
+                            <button type="button" class="btn-close" @onclick="CloseModal"></button>
+                        </div>
+                        <div class="modal-body">
+                    <p><strong>Competitor Brand Name:</strong> @selectedItem.OurBrand</p>
+                    <p><strong>Product Name:</strong> @selectedItem.OtherCompany</p>
+                            <p class="dn"><strong>Brand:</strong> @selectedItem.OtherBrandName</p>
+                    <p class="dn"><strong>Item:</strong> @selectedItem.OtherItemName</p>
+                    <p class="dn"><strong>Selling Price:</strong> INR @selectedItem.OtherPrice</p>
+                    <p><strong>Date & Time:</strong> @selectedItem.ActivityDate</p>
+                    <p class="dn"><strong>Promotion:</strong> @selectedItem.OtherPromotion</p>
+                    <p class="dn"><strong>Note:</strong> @selectedItem.OtherNotes</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-primary" @onclick="CloseModal">OK</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    }
+
+
+
+                            <style>
+                                .form-group{width:100%;float:left;margin-bottom:10px;}
+                                .cls_select2{margin-bottom:0px;}
+                                .btn-primary{background-color: #1B478A;border-color:#1B478A;}
+
+                            </style>

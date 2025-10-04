@@ -1,0 +1,131 @@
+﻿@using System.Globalization
+@using System.Resources
+@using Winit.UIComponents.Common.Language
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+
+<PopUp Title="@Title" OkbtnText="@OKBtnText" CancelbtnText="@cancelBtnClock" OnOkClick="OnOkClick" OnCloseClick="OnCloseClick">
+     <label class="text-danger">@Msg</label>
+      <div class="container">
+            <div class="row">
+    <div class="col-md-4 cls_padd_l_b" style="height: 70px;">
+                <label class="cls_new_lab"> <span style="color:red;">*</span>@Localizer["distribution_channel"] </label>
+                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="ListForDistributionSelection" Title=@Localizer["distribution_channel"] IsButtonVisible="true" OnSelect="OnDistributionSelection" IsSearchable="false" />
+    </div>
+    <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab">@Localizer["buying_uom"]</label>
+                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="ListForBuyingUomSelection" Title=@Localizer["buying_uom"] IsButtonVisible="true" OnSelect="OnBuyingUOMSelection" IsSearchable="false" />
+    </div>
+    <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab">@Localizer["selling_uom"]</label>
+                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="ListForSellingUomSelection" Title=@Localizer["selling_uom"] IsButtonVisible="true" OnSelect="OnSellingUOMSelection" IsSearchable="false" />
+    </div>
+        </div>
+            <div class="row">
+    <div style="width: 62%; float: left; margin-top: 19px;">
+        <div style="float: left; padding-right: 10px; margin-left: 17px; margin-top: 10px;">
+            <label>
+                <input style="float: left; margin-right: 4px; margin-top: 3px;" type="checkbox" @bind="SKUConfig.CanSell">
+                        <span style="float: left;">@Localizer["can_sell"]</span>
+            </label>
+        </div>
+        <div style="float: left; padding-right: 10px; margin-left: 17px; margin-top: 10px;">
+            <label>
+                <input style="float: left; margin-right: 4px; margin-top: 3px;" type="checkbox" @bind="SKUConfig.CanBuy">
+                        <span style="float: left;">@Localizer["can_buy"]</span>
+            </label>
+        </div>
+        <div style="float: left; padding-right: 10px; margin-left: 17px; margin-top: 10px;">
+            <label>
+                <input style="float: left; margin-right: 4px; margin-top: 3px;" type="checkbox" @bind="SKUConfig.IsActive">
+                        <span style="float: left;">@Localizer["is_active"]</span>
+            </label>
+        </div>
+    </div>
+        </div>
+    </div>
+
+</PopUp>
+
+
+@code {
+
+    [Parameter]
+    public EventCallback OnOkClick { get; set; }
+    [Parameter]
+    public EventCallback OnCloseClick { get; set; }
+    [Parameter]
+    public string Title { get; set; }
+    [Parameter]
+    public string OKBtnText { get; set; }
+    [Parameter]
+    public string Msg { get; set; }
+   
+    [Parameter]
+    public string cancelBtnClock { get; set; }
+    [Parameter]
+    public Winit.Modules.SKU.Model.Interfaces.ISKUConfig SKUConfig { get; set; }
+    [Parameter]
+    public Winit.Modules.SKU.Model.Interfaces.ISKUUOM SKUUOM { get; set; }
+    [Parameter]
+    public Winit.Modules.Org.Model.Interfaces.IOrg OrgDistribution { get; set; }
+    private bool IsDistrubutionChannelPopup;
+    private bool IsBuyingUOMPopUp;
+    private bool IsSellingUOMPopUp;
+    [Parameter]
+    public List<Winit.Shared.Models.Common.ISelectionItem> ListForDistributionSelection { get; set; } = new List<Winit.Shared.Models.Common.ISelectionItem>();
+    [Parameter]
+    public List<Winit.Shared.Models.Common.ISelectionItem> ListForSellingUomSelection { get; set; } = new List<Winit.Shared.Models.Common.ISelectionItem>();
+    [Parameter]
+    public List<Winit.Shared.Models.Common.ISelectionItem> ListForBuyingUomSelection { get; set; } = new List<Winit.Shared.Models.Common.ISelectionItem>();
+    protected override async Task OnInitializedAsync()
+    {
+        LoadResources(null, _languageService.SelectedCulture);
+        if (SKUConfig.DistributionChannelOrgUID != null)
+        {
+            ListForDistributionSelection.Find(e => e.UID == SKUConfig.DistributionChannelOrgUID).IsSelected = true;
+        }
+        if (SKUConfig.SellingUOM != null)
+        {
+            ListForSellingUomSelection.Find(e => e.Code == SKUConfig.SellingUOM).IsSelected = true;
+        }
+        if (SKUConfig.BuyingUOM != null)
+        {
+            ListForBuyingUomSelection.Find(e => e.Code == SKUConfig.BuyingUOM).IsSelected = true;
+        }
+    }
+   
+    public void OnDistributionSelection(Winit.Shared.Models.Events.DropDownEvent dropDownEvent)
+    {
+        if (dropDownEvent.SelectionItems != null && dropDownEvent.SelectionItems.Any())
+        {
+            var selecetedValue = dropDownEvent.SelectionItems.FirstOrDefault();
+            SKUConfig.DistributionChannelOrgUID = selecetedValue?.UID;
+            SKUConfig.Name = selecetedValue?.Label;
+            //SKUConfig.Name = selecetedValue?.Label;
+        }
+        IsDistrubutionChannelPopup = false;
+    }
+    public void OnBuyingUOMSelection(Winit.Shared.Models.Events.DropDownEvent dropDownEvent)
+    {
+        if (dropDownEvent.SelectionItems != null && dropDownEvent.SelectionItems.Any())
+        {
+            var selecetedValue = dropDownEvent.SelectionItems.FirstOrDefault();
+            SKUConfig.BuyingUOM = selecetedValue?.Code;
+            //SKUConfig.Name = selecetedValue?.Label;
+        }
+        IsBuyingUOMPopUp = false;
+    }
+    public void OnSellingUOMSelection(Winit.Shared.Models.Events.DropDownEvent dropDownEvent)
+    {
+        if (dropDownEvent.SelectionItems != null && dropDownEvent.SelectionItems.Any())
+        {
+            var selecetedValue = dropDownEvent.SelectionItems.FirstOrDefault();
+            SKUConfig.SellingUOM = selecetedValue?.Code;
+            //SKUConfig.Name = selecetedValue?.Label;
+        }
+        IsSellingUOMPopUp = false;
+    }
+    
+    
+}

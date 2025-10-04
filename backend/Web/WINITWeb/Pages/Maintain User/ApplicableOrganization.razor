@@ -1,0 +1,68 @@
+﻿@using Microsoft.AspNetCore.Components.Forms
+@using WinIt.Pages.Maintain_User;
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+
+@if (IsLoaded)
+{
+    <div class="cls_state_section1">
+        @if (!string.IsNullOrWhiteSpace(ValidationMessage))
+        {
+            <div class="alert alert-danger">
+                <div class="col-md-12">
+                    <div style="color: red;">@ValidationMessage</div>
+                </div>
+            </div>
+
+        }
+
+        <div class="cls_state_section_div">
+
+            <label class="cls_section_div_purchase2_label">@Localizer["organization"]</label>
+                    <Winit.UIComponents.Common.CustomControls.DropDown DataSource="ApplicableOrganizationSelectionItems" Title=@Localizer["org"] IsButtonVisible="true" OnSelect="OnApplicableOrganizationSelect" IsSearchable="false" _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Multiple" @ref="OrgDDL" />
+                    
+                
+            </div>
+        <div class="cls_state_section_div">
+                <button class="cls_add_new_sec" style="margin-top:17px;" type="button" @onclick="()=>AddSelectedItems()">
+                    @Localizer["add"] 
+                </button>
+            </div>
+        
+        @if (IsInitailized)
+        {
+            
+                        <!-- Use col-md-12 to occupy full width on medium screens and above -->
+                        <div class="div1">
+                        <table >
+                            <thead>
+                                <tr>
+                                    <th>@Localizer["orgcode"]</th>
+                                    <th>@Localizer["orgname"]</th>
+                                    <th>@Localizer["actions"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in EmpOrgMappingDD)
+                                {
+                                    <tr>
+                                        <td>@item.OrgCode</td>
+                                        <td>@item.OrgName</td>
+                                        <td>
+                                                <button class="cls_button_blue" title=@Localizer["delete"] @onclick="()=>OnDeleteClick(item)">
+                                                <img src="Images/delete.png" />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        </div>
+                        @*                         <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns"  />
+                *@
+                    
+        }
+    </div>
+
+
+}

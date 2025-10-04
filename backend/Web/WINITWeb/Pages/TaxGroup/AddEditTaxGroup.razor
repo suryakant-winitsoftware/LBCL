@@ -1,0 +1,37 @@
+﻿@page "/AddEditTaxGroup"
+@page "/AddEditTaxGroup/{TaxGroupUID}"
+@using Winit.UIComponents.Web.Table
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.Tax.BL.UIInterfaces.ITaxGroupViewModel _taxGroupViewModel
+
+
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" />
+@if (IsInitialized)
+{
+   
+    <div class="cls_section" >
+        <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label">
+                <span class="cls_section_div_purchase2_span">*</span>@Localizer["name"]
+            </label>
+            <input class="cls_select2_button" placeholder=@Localizer["name"] type="text" @bind-value="TaxGroup.Name">
+        </div>
+        <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label">
+                <span class="cls_section_div_purchase2_span">*</span>@Localizer["code"]
+            </label>
+            <input class="cls_select2_button" disabled="@IsEditMode" placeholder=@Localizer["code"] type="text" @bind-value="TaxGroup.Code">
+        </div>
+        <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label">
+                <span class="cls_section_div_purchase2_span">*</span>@Localizer["tax"]
+            </label>
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_taxGroupViewModel.TaxSelectionItemsDD" Title=@Localizer["tax"]
+                                                               IsButtonVisible="true" _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Multiple"
+                                                                IsSearchable="false" @ref="dropDown" />
+        </div>
+    </div>
+    <div class="cls_button_bottom_purchase">
+        <button class="cls_button_blue " @onclick="OnSaveClick">@(IsEditMode ? @Localizer["update"] : @Localizer["save"])</button>
+    </div>
+}

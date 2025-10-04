@@ -1,0 +1,172 @@
+﻿@inject Winit.Modules.SalesOrder.BL.UIInterfaces.ISalesOrderViewModel _salesOrderViewModel;
+@inject Winit.Modules.SalesOrder.Model.UIInterfaces.ISalesOrderItemView _salesOrderItemView;
+@inject IServiceProvider _serviceProvider;
+@inject Winit.Modules.Store.BL.Interfaces.IStoreBL _storeBL;
+@inject Winit.Modules.SKU.BL.Interfaces.ISKUPriceBL _SKUPriceBL;
+@inject Winit.Modules.Setting.BL.Interfaces.ISettingBL _settingBL;
+@page "/salestest"
+@using Microsoft.Extensions.Configuration;
+@inject IConfiguration Configuration
+@inject IShareService ShareService
+@inject Winit.Modules.Common.BL.Interfaces.IScopedService scopedService
+@inject Winit.Modules.ReturnOrder.BL.Interfaces.IReturnOrderViewModel _returnOrderViewModel;
+@inherits WINITMobile.Pages.Base.BaseComponentBase;
+<p>Scope Identifier: @scopedService.ScopeIdentifier</p>
+Clearable Text Field 
+<div style="width:100%;width:200px;">
+<Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder="Search Text..." 
+MaxLength="20" DebounceInterval="500" OnDebounceIntervalElapsed="WinitTextBox_OnSearch" 
+KeyboardType="Winit.Shared.Models.Enums.InputType.Numeric" />
+</div>
+<br />
+
+<button @onclick="ShareTextFile">Share Text File</button>
+<h3>Configuration Settings</h3>
+<p>API Base URL: @Configuration["AppSettings:ApiBaseUrl"]</p>
+<p>API Key: @Configuration["AppSettings:ApiKey"]</p>
+<button @onclick="ReadConfiguration">Read Configuration</button>
+<br />
+<button @onclick="TestSalesOrderViewModel">Test Sales Order View Model</button>
+<br />
+<button @onclick="TestExtension">Test Extension</button>
+<br />
+<button @onclick="DownloadSqlite" class="btn btn-primary">Download Sqlite</button>
+<br/>
+<button @onclick="LoadSettingMaster">Load Setting Master</button>
+<br />
+<button @onclick="ReadSettingData">Read Setting Data</button>
+<br />
+<button @onclick="ReadDataFromSqlite">Reqd Data from Sqlite</button>
+<br />
+<button @onclick="ReadSKUPriceDataDataFromSqlite">Read SKU price Data from Sqlite</button>
+<br />
+<button @onclick="NavigateToPage1">Navigate to Page1</button>
+<br />
+<Winit.UIComponents.Mobile.Common.SignatureComponent/>
+<Winit.UIComponents.Mobile.Common.CustomAlert Heading="Alert Heading"
+    Body="This is the alert body text."
+    Button1Text="Button 1"
+    Button1Class="btn-primary"
+    Button1Action="Button1ActionHandler"
+    Button2Text="Button 2"
+    Button2Class="btn-secondary"
+    Button2Action="Button2ActionHandler"
+    AlertType="success"  
+/>
+
+<Winit.UIComponents.Mobile.Common.CustomAlert Heading="Confirm Delete"
+             Body="Are you sure you want to delete this item?"
+             Button1Text="Okay"
+             Button1Class="btn-danger"
+             Button1Action="DeleteActionHandler"
+             Button2Text="Wait"
+             Button2Class="btn-secondary" />
+
+<Winit.UIComponents.Mobile.Common.CustomAlert Heading="Alert"
+             Body="Please enter only Positive Values."
+             Button1Text="Okay"
+             Button1Class="btn-primary"
+             Button1Action="PositiveValuesActionHandler" />
+
+<Winit.UIComponents.Common.Common.Loader  Color="text-success" />
+
+<div>
+    <label>
+        Select classifications (Minimum: 2, Maximum: 3):
+        <InputSelect @bind-Value="s">
+            <option value="1">Exploration</option>
+            <option value="2">Diplomacy</option>
+            <option value="3">Defense</option>
+            <option value="4">Research</option>
+        </InputSelect>
+    </label>
+</div>
+<InputDate TValue="DateTime" @bind-Value="date" DisplayName="Select Start Date" AdditionalAttributes="addAttr" ></InputDate>
+<button @onclick="tostop">stop</button>
+@code {
+    private string s { get; set; }
+    private DateTime date { get; set; } = DateTime.Now;
+    private Dictionary<string,object> addAttr { get; set; }
+    // public async Task ShareFile(string filePath, string title)
+    // {
+    //     await Share.RequestAsync(new ShareFileRequest
+    //         {
+    //             Title = title,
+    //             File = new ShareFile(filePath)
+    //         });
+    // }
+    public async Task getDate(DateTime dateTime) {
+        Console.WriteLine(dateTime.ToString());
+    }
+    private async Task ShareTextFile()
+    {
+        var filename = "sharetext.txt";
+        var fileContent = "This is a sample text file to share.";
+
+        await ShareService.ShareTextFileAsync(filename, fileContent);
+    }
+    private void Button1ActionHandler()
+    {
+        // Handle the action for Button 1 here
+    }
+
+    private void Button2ActionHandler()
+    {
+        // Handle the action for Button 2 here
+    }
+    private void DeleteActionHandler()
+    {
+        // Handle the action for confirming deletion here
+    }
+
+    private void PositiveValuesActionHandler()
+    {
+        // Handle the action for the positive values alert here
+    }
+
+    public void tostop()
+    {
+        _loadingService.HideLoading();
+
+
+    }
+
+
+    // // for send file
+    // private async Task HandleShareText()
+    // {
+    //     await ShareText("Hello from .NET MAUI Blazor in UseToSend.razor!");
+    // }
+
+    // private async Task HandleSharePdf()
+    // {
+    //     // Assuming the PDF is a local file with a path 'pdfFilePath'
+    //     // You might need logic here to get the path of your PDF
+    //     var pdfFilePath = "path_to_your_pdf_file.pdf";
+    //     await ShareFile(pdfFilePath);
+    // }
+
+    // private async Task ShareText(string text)
+    // {
+    //     await Share.RequestAsync(new ShareTextRequest
+    //         {
+    //             Text = text,
+    //             Title = "Share from UseToSend"
+    //         });
+    // }
+
+    // private async Task ShareFile(string filePath)
+    // {
+    //     await Share.RequestAsync(new ShareFileRequest
+    //         {
+    //             Title = "Share PDF",
+    //             File = new ShareFile(filePath)
+    //         });
+    // }
+
+    public void WinitTextBox_OnSearch(string textValue)
+    {
+    }
+}
+
+

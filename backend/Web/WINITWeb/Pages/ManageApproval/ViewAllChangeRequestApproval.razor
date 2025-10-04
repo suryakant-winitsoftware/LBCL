@@ -1,0 +1,25 @@
+﻿@page "/viewallchangerequestapprovalinfo"
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.ApprovalEngine.BL.Interfaces.IApprovalEngineView _ApprovalEngine;
+@attribute [Authorize]
+
+
+
+
+<div>
+@if(ColumnsForFilter != null && ColumnsForFilter.Count>0)
+{
+   <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+                     OnFilterApplied="@OnFilterApply" /> 
+}
+</div>
+@if(!IsPageLoading)
+{
+    <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" DataSource="_ApprovalEngine.ViewChangeRequestApprovals" OnSort="OnSortApply" PageNumber="_ApprovalEngine.PageNumber" PageSize="_ApprovalEngine.PageSize" TotalItemsCount="_ApprovalEngine.TotalChangeRequests" ShowRecordsCount="true" />
+    <Winit.UIComponents.Web.Paging.Paging CurrentPage="_ApprovalEngine.PageNumber" OnPageChange="_ApprovalEngine.PageIndexChanged" PageSize="_ApprovalEngine.PageSize" TotalItems="_ApprovalEngine.TotalChangeRequests" />
+}
+
+    
+@code {
+
+}

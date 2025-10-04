@@ -1,0 +1,81 @@
+﻿@page "/MaintainUsers"
+@using Winit.Shared.Models.Common
+@using Winit.UIComponents.Common.CustomControles
+<PageTitle>Maintain Users</PageTitle>
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize]
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.UIComponents.Common.IAlertService _AlertMessgae;
+@inject Winit.Modules.User.BL.Interfaces.IMaintainUsersViewModel _maintainusersViewModel;
+@inject Winit.Modules.Auth.BL.Interfaces.ILoginViewModel _loginViewModel;
+@using Winit.UIComponents.Web.Filter
+@using Winit.UIModels.Common.Filter
+
+
+
+<div>
+   @*  <button class="cls_add_new_sec" style="float:right;margin-right:0px" @onclick="ShowFilter">@Localizer["filter"]</button>
+    <Filter @ref="filterRef" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+            OnFilterApplied=@OnFilterApply /> *@
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+                         OnFilterApplied="@OnFilterApply" />
+</div>
+
+    <button class="cls_add_new_sec" @onclick="()=>AddNewUsers()">
+        @Localizer["add_new"]
+    </button>
+
+
+@if (IsLoaded)
+{
+    <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" DataSource="_maintainusersViewModel.maintainUsersList" OnSort="OnSortApply" PageNumber="_maintainusersViewModel.PageNumber" PageSize="_maintainusersViewModel.PageSize" TotalItemsCount="_maintainusersViewModel.TotalSKUItemsCount" ShowRecordsCount="true" />
+    <Winit.UIComponents.Web.Paging.Paging CurrentPage="_maintainusersViewModel.PageNumber" OnPageChange="_maintainusersViewModel.PageIndexChanged" PageSize="_maintainusersViewModel.PageSize" TotalItems="_maintainusersViewModel.TotalSKUItemsCount" />
+}
+
+@if (IsBackBtnPopUp)
+{
+    <WinIt.Pages.PopUp Title=@Localizer["back"] OkbtnText=@Localizer["ok"] CancelbtnText=@Localizer["cancel"] OnOkClick="OnOkBtnPopUpClick" OnCloseClick="OnBackBtnPopUpClick">
+        <label>
+            @Localizer["are_you_sure_you_want_to_cancel?_your_work_will_be_lost."] 
+        </label>
+    </WinIt.Pages.PopUp>
+}
+@if (IsDisablePopUp)
+{
+    <WinIt.Pages.PopUp Title="Back" OkbtnText="Ok" CancelbtnText="Cancel" OnOkClick="OnOkDisbaleBtnPopUpClick" OnCloseClick="OnCancelDisbaleBtnPopUpClick">
+        <label>
+            @Localizer["are_you_sure_you_want_to"] @(_maintainusersViewModel.EmpDTOmaintainUser.Emp.Status == "Active" ? @Localizer["disable"] : @Localizer["enable"]) @Localizer["this_record?"]
+        </label>
+    </WinIt.Pages.PopUp>
+}
+@if (IsChangePassWordPopUpOpen)
+{
+    <PopUp CancelbtnText=@Localizer["cancel"] OkbtnText=@Localizer["change_password"]
+           OnCloseClick="() => {IsChangePassWordPopUpOpen = false; ErrorMsg = null;}"
+           OnOkClick="OnChangePasswordClick">
+        @if (!string.IsNullOrEmpty(ErrorMsg))
+        {
+            <div class="alert alert-danger">
+                <label><b>@Localizer["the_following_field(s)_have_invalid_value(s):"]</b>@ErrorMsg</label>
+            </div>
+        }
+        <div class="row" style="padding: 0px;">
+            <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab">
+                    <span style="color:red;">*</span>@Localizer["new_password"]
+                </label>
+                <input class="form-control" type="password" @bind="ChangePassword.NewPassword">
+            </div>
+            <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab">
+                    <span style="color:red;">*</span>@Localizer["confirm_password"]
+                </label>
+                <input class="form-control" type="password" @oninput="(e) => ConfirmPassword = e?.Value?.ToString()"
+                       @bind="ConfirmPassword">
+            </div>
+        </div>
+    </PopUp>
+}
+@code {
+
+}

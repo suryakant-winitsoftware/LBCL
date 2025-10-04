@@ -1,0 +1,250 @@
+﻿@page "/SelloutLiquidation"
+@page "/SelloutLiquidation/{SellOutHeaderUID}"
+@using Winit.Modules.Scheme.Model.Interfaces
+@using Winit.Modules.User.Model.Constants
+@inject Winit.Modules.Scheme.BL.Interfaces.ISellOutSchemeHeaderItemViewModel _viewModel
+@inherits SchemeBaseComponent
+
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" />
+<div class="page-container">
+    <div class="cls_section">
+        <div class="cls_container_div1">
+            <div class="cls_section_sellout">
+                <label class="cls_div3_p">Channel Partner:<sup class="cls_section_div_purchase2_span">*</sup></label>
+                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_viewModel.ChannelPartner" IsSearchable="true"
+                                                                   OnSelect="HandleChannelSelection"
+                                                                   Title="Channel Partner"
+                                                                   _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single"
+                                                                   IsButtonVisible="true" />
+            </div>
+            <div class="cls_section_sellout">
+                <p class="cls_div1_p">Scheme Code</p>
+                <a class="cls_div1_span">₹ @_viewModel.SellOutMaster.SellOutSchemeHeader.Code</a>
+            </div>
+            <div class="cls_section_textarea_sellout">
+                <label class="cls_div3_p">@* <sup class="cls_section_div_purchase2_span">*</sup> *@Remarks</label>
+
+                <textarea type="text" class="cls_text_div_text1" @bind=@_viewModel.SellOutMaster.SellOutSchemeHeader.Remarks maxlength="500" />
+
+            </div>
+        </div>
+        <div class="cls_container_div4">
+            <div class="cls_section_sellout">
+                <p class="cls_div1_p">Available Provision Amount</p>
+                <a class="cls_div1_span">₹ @CommonFunctions.RoundForSystem(_viewModel.SellOutMaster.SellOutSchemeHeader.AvailableProvision2Amount)</a>
+            </div>
+            <div class="cls_section_sellout">
+                <p class="cls_div1_p">Proposed Sell Out Credit Note Amount</p>
+                <span class="cls_div1_span">₹ @CommonFunctions.RoundForSystem(_viewModel.SellOutMaster.SellOutSchemeHeader.TotalCreditNote)</span>
+            </div>
+            @if (_iAppUser.Role.HasP2Access || _iAppUser.Role.HasP3Access)
+            {
+                <div class="cls_section_textarea_sellout">
+                    <p class="cls_div_p1">Source of Funding</p>
+                    @if (_iAppUser.Role.HasP2Access)
+                    {
+                        <div class="cls_sales_section3_sub2">
+                            <span class="cls_sales_section3_sub1_span">Branch Contribution</span>
+                            <input type="number" min="0" max="100" placeholder=""
+                                   @onchange=@((e)=>OnContributionsEnter(e,nameof(_viewModel.SellOutMaster.SellOutSchemeHeader.ContributionLevel1)))
+                                   value="@CommonFunctions.RoundForSystem(_viewModel.SellOutMaster.SellOutSchemeHeader.ContributionLevel1!)"
+                                   class="cls_sales_section3_sub1_input">
+                            <label class="cls_sales_section3_sub1_label">%</label>
+                        </div>
+                    }
+                    @if (_iAppUser.Role.HasP3Access)
+                    {
+                        <div class="cls_sales_section3_sub2" style="width:39%;">
+                            <span class="cls_sales_section3_sub1_span">HO(P3) Contribution Type</span>
+                            <input type="number" min="0" max="100" placeholder=""
+                                   @onchange=@((e)=>OnContributionsEnter(e,nameof(_viewModel.SellOutMaster.SellOutSchemeHeader.ContributionLevel2)))
+                                   value="@CommonFunctions.RoundForSystem(_viewModel.SellOutMaster.SellOutSchemeHeader.ContributionLevel2)"
+                                   class="cls_sales_section3_sub1_input">
+                            <label class="cls_sales_section3_sub1_label">%</label>
+                        </div>
+                        <div class="cls_sales_section3_sub2" style="width:26%;">
+                            <span class="cls_sales_section3_sub1_span">HO(S) Contribution</span>
+                            <input type="number" min="0" max="100" placeholder=""
+                                   @onchange=@((e)=>OnContributionsEnter(e,nameof(_viewModel.SellOutMaster.SellOutSchemeHeader.ContributionLevel3)))
+                                   value="@CommonFunctions.RoundForSystem(_viewModel.SellOutMaster.SellOutSchemeHeader.ContributionLevel3)"
+                                   class="cls_sales_section3_sub1_input">
+                            <label class="cls_sales_section3_sub1_label">%</label>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+    <div class="cls_sales_container1">
+        <div class="cls_contianer">
+            <div class="cls_search1">
+                <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder="Search by Model Number"
+                                                                       MaxLength="200" DebounceInterval="500"
+                                                                       OnDebounceIntervalElapsed="e => SearchString = e"
+                                                                       KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+                                                                       IsForSearch="true"  />
+            </div>
+            @if (!IsEditMode)
+            {
+                <div class="cls_content_right1">
+                    <button class="cls_comman_btn1" @onclick="OpenPreviousOrders"> Add products from past orders</button>
+                </div>
+            }
+
+        </div>
+        <div class="div1">
+            <table style="table-layout:fixed;">
+                <thead>
+                    <tr>
+                        <th style="width:34%;">Model No</th>
+                        <th style="width:10%;"><sup class="cls_section_div_purchase2_span">*</sup>Qty</th>
+                        <th style="width:15%;">Reason</th>
+                        @*   <th style="width:5%;"></th> *@
+                        <th style="width:12%;text-align:right;">Last Sold Price</th>
+                        <th style="width:12%;">Credit Note Per Unit</th>
+                        <th style="width:12%;text-align:right;">Total Credit Note</th>
+                        <th style="width:5%;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (_viewModel.SellOutMaster.SellOutSchemeLines != null && _viewModel.SellOutMaster.SellOutSchemeLines.Any())
+                    {
+                        @foreach (var product in Searcheditems)
+                        {
+                            <tr>
+                                <td>@product.SkuName</td>
+                                <td>
+                                    <div class="cls_select" style="background-color:#FFFFFF;padding:4px;">
+                                        <input type="number" @bind="@product.Qty" @bind:event="onchange"
+                                               @oninput="@(e => Debounce<string>((q) => DebouncedCalculateTotalCreditNoteAmountForQty(q, product), e.Value?.ToString(), TimeSpan.FromMilliseconds(300)))" />
+                                    </div>
+                                </td>
+                                <td>
+                                    <Winit.UIComponents.Common.CustomControls.DropDown DataSource="product.ResonsDDL"
+                                                                                       OnSelect="@((e)=>HandleReasonSelection(e,product))"
+                                                                                       Title="Select Reason" IsSearchable="true"
+                                                                                       _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single"
+                                                                                       IsButtonVisible="true" UniqueUID="@product.SkuUID" />
+                                    @* <p @onclick="() => ShowSerialNumberPopupm(product)">Serial Number</p> *@
+                                </td>
+                                @* <td style="text-align:center;"><img src="./Images/scan.png" style="width:17px;cursor:pointer;" @onclick="() => ShowSerialNumberPopupm(product)"></td> *@
+                                <td data-column="sellout_color1" style="text-align:right;">₹@product.UnitPrice.ToString()</td>
+                                @*    <td><input type="number" @bind="@product.UnitCreditNoteAmount"  @bind:event="onchange" @oninput="@(async e => await CalculateTotalCreditNoteAmount(product))" /></td> *@
+                                <td>
+                                    <div class="cls_select" style="background-color:#FFFFFF;padding:4px;">
+                                        <input type="number" @bind="product.UnitCreditNoteAmount" @bind:event="onchange" style="text-align:right;"
+                                               @oninput="@(e => Debounce<string>((q) => DebouncedCalculateTotalCreditNoteAmountForUnitCreditNoteAmount(q, product), e.Value?.ToString(), TimeSpan.FromMilliseconds(300)))" />
+                                    </div>
+                                </td>
+                                <td data-column="sellout_color" style="text-align:right;">₹@CommonFunctions.RoundForSystem(product.TotalCreditNoteAmount)</td>
+                                <td style="text-align:center;">
+
+                                    <img style="width:17px;" src="Images/delete.png" @onclick="() => DeleteProduct(product)" />
+                                </td>
+                            </tr>
+                        }
+                        <tr>
+
+                            <td colspan="5" class="text-right"><label style="font-size:13px;font-weight:600;margin-bottom:0px;">Total:</label></td>
+                            <td><label style="font-size:15px;font-weight:700;margin-bottom:0px;">₹@CommonFunctions.RoundForSystem(_viewModel.SellOutMaster.SellOutSchemeHeader.TotalCreditNote)</label></td>
+
+                            <td></td>
+
+                        </tr>
+                    }
+                    else
+                    {
+                        <tr><td colspan="8" style="text-align:center;font-size:14px;font-weight:700;color:orangered;">No products selected.</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="cls_button_bottom">
+        <button class="cls_button_bottom_left" @onclick=@(()=>_navigationManager.NavigateTo("ManageScheme"))>Cancel</button>
+        <button class="cls_button_bottom_right" @onclick="SaveMasterData">Submit</button>
+    </div>
+</div>
+
+
+@*     <AddPreviousOrders IsVisible="IsVisible"
+                       PreviousOrderList="_viewmodel.SKUList"
+                       SelectedCustomersChanged="_viewmodel.HandleSelectedCustomers" IsVisibleChanged="HandlePopupVisibilityChanges" /> *@
+
+<Winit.UIComponents.Web.DialogBox.ProductDialogBox T="Winit.Modules.Scheme.Model.Interfaces.IPreviousOrders"
+                                                   DataSource="_viewModel.PreviousOrdersList"
+                                                   SKUCode="@(e => e.SKUCode )"
+                                                   SKUHeader="@(e => e.SKUName)"
+                                                   OnCancelClick="() => AddProductDialogBox?.OnCloseClick()"
+                                                   OnOkClick="_viewModel.HandleSelectedCustomers"
+                                                   @ref="AddProductDialogBox"></Winit.UIComponents.Web.DialogBox.ProductDialogBox>
+
+
+@if (ShowSerialNumberPopup && SelectedProduct != null)
+{
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show" tabindex="-1" style="display: block; overflow:auto; ">
+        <div class="modal-dialog cls_pop_up_style1">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Serial Number</h5>
+                    @* <img src="./Images/cancel.png" width="30px" height="20px" @onclick="CloseSerialNumberPopup"> *@
+                    <span class="close" @onclick="CloseSerialNumberPopup">×</span>
+                </div>
+                <div class="modal-body">
+                    <div class="cls_container_div1">
+                        <div class="cls_popup_container_text">
+                            <label>Model No</label>
+                            <p>@SelectedProduct?.SkuUID</p>
+                        </div>
+                        <div class="cls_popup_container_text">
+                            <label>Price</label>
+                            <p>@SelectedProduct?.UnitPrice.ToString("C")</p>
+                        </div>
+                        <div class="cls_popup_container_text">
+                            <label>Qty</label>
+                            <p>@SelectedProduct?.Qty</p>
+                        </div>
+                    </div>
+                    <div class="div1">
+                        <table style="table-layout:fixed;">
+                            <thead>
+                                <tr>
+                                    <th style="width:5%;">Sl No</th>
+                                    <th>Serial Number</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (ISerialNumbers item in SelectedProduct.SerialNosUILevel)
+                                {
+                                    <tr>
+                                        <td style="text-align:center;">@item.SlNo</td>
+                                        <td>
+                                            <div class="cls_select" style="background-color:#FFFFFF;width:22%;">
+                                                <input style="margin:7px;" type="text" placeholder="Enter Serial Number" @bind=@item.SerialNumber />
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div style="float:left">
+                        <button class="cls_comman_btn" @onclick="CloseSerialNumberPopup">Done</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<WinIt.Pages.ApprovalRoleEngine.ApprovalEngine ShowApprovalEngine="@(true)"
+                                               @ref="childComponentRef"
+                                               RuleId="@_viewModel.RuleId"
+                                               RequestId="@_viewModel.RequestId.ToString()"
+                                               ApprovalUsercodes="_viewModel.ApprovalUserCodes"
+                                               IsRejectButtonNeeded="_appSetting.IsRejectNeededInScheme"
+                                               IsReassignButtonNeeded="_appSetting.IsReassignNeededInScheme"
+                                               OnApprovalTracker="@(async (e)=>await OnApprovalTracker(e))"
+                                               HandleApprovalAction="HandleApprovalAction" />

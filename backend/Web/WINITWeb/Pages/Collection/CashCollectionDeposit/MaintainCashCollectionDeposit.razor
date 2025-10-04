@@ -1,0 +1,8 @@
+﻿@page "/maintaincashcollectiondeposit"
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.CollectionModule.BL.Interfaces.ICashCollectionDepositViewModel _cashCollectionDepostViewModel
+
+
+<Winit.UIComponents.Common.CustomControles.Tabs OnTabSelect="ActiveTabChanged" TabItems="TabHeaders"></Winit.UIComponents.Common.CustomControles.Tabs>
+
+    <Winit.UIComponents.Web.Table.TableGridView Columns="Columns" DataSource="accCollectionDeposit" />

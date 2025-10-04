@@ -1,0 +1,124 @@
+﻿@page "/executepromotion"
+@using Winit.Modules.Scheme.Model.Constants
+@inject Winit.Modules.Scheme.BL.Interfaces.ISalesPromotionSchemeViewModel _viewModel
+@layout MainLayout
+<PageTitle>Page Title</PageTitle>
+<PageHeaderAndFilter IDataBreadcrumbService="IDataBreadcrumbService" />
+@if (!isEditMode)
+{
+    <TableGridView Columns="productColumns" DataSource="_viewModel.SalesPromotions" />
+}
+else
+{
+    <div class="cls_main_page_style">
+
+        <div class="cls_section">
+            <!-- Select Channel Partner -->
+            <div class="cls_container_div1">
+                <label class="cls_section_div_purchase2_label">Select Channel Partner</label>
+                <label class="cls_credit_label">@_viewModel.SalesPromotion.ChannelPartnerName</label>
+            </div>
+        </div>
+        <div class="cls_section2">
+            <p class="cls_sales_sectionp">Details</p>
+            <div class="cls_container_div4">
+                <div class="cls_section_div2">
+                    <span class="cls_section_div2_span">Activity Type</span>
+                    <Winit.UIComponents.Common.CustomControls.DropDown DataSource="@_viewModel.ActivityType"
+                                                                       Title="Activity Type"
+                                                                       IsButtonVisible=true
+                                                                       OnSelect="_viewModel.OnActivityTypeChanged" />
+                </div>
+                <div class="cls_section_div2">
+                    <span class="cls_section_div2_span">From Date</span>
+                    <div class="cls_select2">
+                        <input type="date" @bind="_viewModel.SalesPromotion.FromDate"
+                               class="cls_select2_input"
+                               readonly />
+                    </div>
+                </div>
+                <div class="cls_section_div2">
+                    <span class="cls_section_div2_span">To Date</span>
+                    <div class="cls_select2">
+                        <input type="date" @bind="_viewModel.SalesPromotion.ToDate"
+                               class="cls_select2_input"
+                               readonly />
+                    </div>
+                </div>
+                <div class="cls_section_div2">
+                    <span class="cls_section_div2_span">Amount</span>
+                    <div class="cls_select2">
+                        <input type="number" @bind="@Amount"
+                               class="cls_select2_input"
+                               readonly />
+                        <label class="cls_select2_label">₹</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cls_container_div4">
+                <div class="cls_section_div2">
+                    <span class="cls_section_div2_span">Attach Document</span>
+                    <Winit.UIComponents.Common.FileUploader.FileUploader @ref=fileUploader
+                                                                         RelativePath="@FilePath"
+                                                                         FileSysList="_viewModel.ApprovedFiles"
+                                                                         LinkedItemType="store"
+                                                                         LinkedItemUID="@_viewModel.PromotionUID"
+                                                                         FileSysType="@SchemeConstants.SalesPromotionExecution"
+                                                                         AllowMultipleFiles="true"
+                                                                         FileExtension=".jpg,.jpeg,.png,.pdf,.doc,.docx"
+                                                                         UploadEventCallBack="@((e)=>ModifiedApprovedFiles.AddRange(e))"
+                                                                         DeleteEventCallBack="@((e)=>ModifiedApprovedFiles.RemoveAll(p=>p.UID==e))" />
+                </div>
+                <div class="cls_text_div">
+                    <span class="cls_section_div2_span">Description</span>
+                    <div class="cls_text_div_text">
+                        <textarea @bind="_viewModel.SalesPromotion.Description"
+                                  class="cls_text_div_input"
+                                  readonly></textarea>
+                    </div>
+                </div>
+                <div class="cls_section_div2">
+                    <span class="cls_section_div2_span">Status</span>
+
+                    <label class="cls_credit_label2">@_viewModel.SalesPromotion.Status</label>
+
+                </div>
+            </div>
+        </div>
+        <div class="cls_section">
+            <!-- Execution Section -->
+            <p class="cls_sales_sectionp">Mark Sales Promotion as Executed</p>
+            <div class="cls_container_div4">
+                <div class="cls_file_upload_qps">
+                    <h3 class="cls_file_upload_label">Attach Document</h3>
+                    <Winit.UIComponents.Common.FileUploader.FileUploader @ref=fileUploader
+                                                                         RelativePath="@FilePath"
+                                                                         FileSysList="_viewModel.ApprovedFiles"
+                                                                         LinkedItemType="store"
+                                                                         LinkedItemUID="@_viewModel.PromotionUID"
+                                                                         FileSysType="@SchemeConstants.SalesPromotionExecution"
+                                                                         AllowMultipleFiles="true"
+                                                                         FileExtension=".jpg,.jpeg,.png,.pdf,.doc,.docx"
+                                                                         UploadEventCallBack="@((e)=>ModifiedApprovedFiles.AddRange(e))"
+                                                                         DeleteEventCallBack="@((e)=>ModifiedApprovedFiles.RemoveAll(p=>p.UID==e))" />
+                </div>
+
+            </div>
+
+        </div>
+        @if (SchemeConstants.Approved.Equals(_viewModel.SalesPromotion.Status, StringComparison.OrdinalIgnoreCase))
+        {
+            <div class="cls_button_bottom_purchase">
+                <button class="cls_button_light" @onclick="HandleCancel">Cancel</button>
+                <button class="cls_button_blue" @onclick="HandleUpdate">Submit</button>
+            </div>
+        }
+
+    </div>
+
+}
+
+
+
+

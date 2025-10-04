@@ -1,0 +1,34 @@
+﻿@page "/MaintainWarehouse"
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize]
+<PageTitle>Maintain WareHouse</PageTitle>
+@inject Winit.Modules.Org.BL.Interfaces.IMaintainWareHouseViewModel _warehouseViewModel;
+@inject Winit.UIComponents.Common.IAlertService _AlertMessgae;
+@using Winit.UIComponents.Web.Filter
+@using Winit.UIModels.Common.Filter
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+
+<div>
+  @*   <button class="cls_add_new_sec" style="float:right;margin-right:0px" @onclick="ShowFilter">@Localizer["filter"]</button>
+    <Filter @ref="filterRef" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+            OnFilterApplied=@OnFilterApply  /> *@
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+                         OnFilterApplied="@OnFilterApply" />
+</div>
+
+
+
+    <button class="cls_add_new_sec" @onclick="AddNewWareHouse">
+        @Localizer["add_new"]
+    </button>
+
+@if (IsLoaded)
+{
+    <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" DataSource="_warehouseViewModel.MaintainWarehouseGridList" OnSort="OnSortApply" PageNumber="_warehouseViewModel.PageNumber"  PageSize="_warehouseViewModel.PageSize" TotalItemsCount="_warehouseViewModel.TotalItemsCount" ShowRecordsCount="true" />
+    <Winit.UIComponents.Web.Paging.Paging CurrentPage="_warehouseViewModel.PageNumber" OnPageChange="_warehouseViewModel.PageIndexChanged" PageSize="_warehouseViewModel.PageSize" TotalItems="_warehouseViewModel.TotalItemsCount" />
+}
+
+@code {
+
+}

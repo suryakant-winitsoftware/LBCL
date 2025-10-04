@@ -1,0 +1,58 @@
+﻿@page "/ViewSalesOrder"
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize]
+@using Winit.Shared.Models.Common
+@using Winit.UIComponents.Common.CustomControles
+@inject Winit.Modules.SalesOrder.BL.Interfaces.IManageSalesOrdersViewModel _manageSalesOrdersViewModel;
+<PageTitle>View Sales Order</PageTitle>
+@using Winit.UIComponents.Web.Filter
+@using Winit.UIModels.Common.Filter
+
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+<div>
+    @* <button class="cls_add_new_sec" style="float:right;margin-right:0px" @onclick="ShowFilter">@Localizer["filter"]</button>
+    <Filter @ref="filterRef" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+            OnFilterApplied=@OnFilterApply /> *@
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+                         OnFilterApplied="@OnFilterApply" />
+</div>
+<div class="storeupper">
+    <div class="tab-content">
+        <div class="row">
+            <div class="col-md-2 dn">
+                <div class="form-group">
+                    <div class="form-group">
+                        <button class="cls_add_new_sec">@Localizer["export_to_excel"]</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 dn">
+                <div class="form-group">
+                    <div class="form-group">
+                        <button class="cls_add_new_sec">@Localizer["export_to_csv"]</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 dn">
+                <div class="form-group">
+                    <button class="cls_add_new_sec">@Localizer["export_to_pdf"]</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<Winit.UIComponents.Common.CustomControles.Tabs TabItems="TabSelectionItems" OnTabSelect="OnTabSelect"/>
+<button class="cls_add_new_sec dn">@Localizer["select_all_on_page"]</button>
+<button class="cls_add_new_sec dn">@Localizer["clear_all_on_page"]</button>
+<button class="cls_add_new_sec dn">@Localizer["print_selected_order"]</button>
+@if (IsLoaded)
+{
+    <Winit.UIComponents.Web.Table.TableGridView IsFirstColumnCheckbox="true" AfterCheckBoxSelection="Product_AfterCheckBoxSelection" Columns="DataGridColumnsDeliveredlStock" DataSource="_manageSalesOrdersViewModel.ManageSalesOrderList" OnSort="OnSortApply" />
+@*     <Winit.UIComponents.Web.Paging.Paging CurrentPage="_manageSalesOrdersViewModel.PageNumber" OnPageChange="_manageSalesOrdersViewModel.PageIndexChanged" PageSize="_manageSalesOrdersViewModel.PageSize" TotalItems="_manageSalesOrdersViewModel.TotalItemsCount" />
+ *@ 
+}
+
+@code {
+
+}

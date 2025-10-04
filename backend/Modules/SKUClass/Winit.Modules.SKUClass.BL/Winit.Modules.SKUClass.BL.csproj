@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Base\Winit.Modules.Base.BL\Winit.Modules.Base.BL.csproj" />
+    <ProjectReference Include="..\..\BroadClassification\Winit.Modules.BroadClassification.Model\Winit.Modules.BroadClassification.Model.csproj" />
+    <ProjectReference Include="..\..\Common\Winit.Modules.Common.BL\Winit.Modules.Common.BL.csproj" />
+    <ProjectReference Include="..\..\Common\Winit.Modules.Common.Model\Winit.Modules.Common.Model.csproj" />
+    <ProjectReference Include="..\..\Mapping\Winit.Modules.Mapping.Model\Winit.Modules.Mapping.Model.csproj" />
+    <ProjectReference Include="..\..\Settings\Winit.Modules.Settings.BL\Winit.Modules.Setting.BL.csproj" />
+    <ProjectReference Include="..\..\SKU\Winit.Modules.SKU.BL\Winit.Modules.SKU.BL.csproj" />
+    <ProjectReference Include="..\Winit.Modules.SKUClass.DL\Winit.Modules.SKUClass.DL.csproj" />
+    <ProjectReference Include="..\Winit.Modules.SKUClass.Model\Winit.Modules.SKUClass.Model.csproj" />
+  </ItemGroup>
+</Project>

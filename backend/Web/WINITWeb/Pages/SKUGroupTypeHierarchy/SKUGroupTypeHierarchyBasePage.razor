@@ -1,0 +1,44 @@
+﻿@page "/SKUGroupTypeHierarchy"
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.SKU.BL.Interfaces.ISKUGroupTypeViewModel _SKUGroupTypeViewModel
+
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@FilterColumns" IsSearchCriteriaNeeded="true"
+                     OnFilterApplied="@OnFilterApply" />
+
+<button class="cls_add_new_sec" @onclick="() => {Context = new Winit.Modules.SKU.Model.Classes.SKUGroupTypeItemView(); Context.ItemLevel=1; IsAddSKUGroupType = !IsAddSKUGroupType; } ">@Localizer["add_new"]</button>
+<div class="div1 cls_Hierarchy_1">
+    <table style="table-layout:fixed;">
+        <thead>
+            <tr>
+                <th style="width:20%">
+        </th>
+                <th style="width:20%">
+            <span style="cursor:default;">@Localizer["code_&_name"]</span>
+        </th>
+                <th style="width:20%">
+            <span style="cursor:default;">@Localizer["level"]</span>
+        </th>
+                <th style="width:20%">
+            <span style="cursor:default;">@Localizer["parent"]</span>
+        </th>
+                <th style="width:20%">
+            <span style="cursor:default;">@Localizer["action"]</span>
+        </th>
+            </tr>
+        </thead>
+        <tbody>
+            <SKUGroupTypeHierarchy HierarchyGrids="@_SKUGroupTypeViewModel.SKUGroupTypeItemViews" OnBtnExpandClick="GetChildGrid"
+                                   OnCreateClick="CreateSKUGroupType" OnDeleteSKUGroupType="DeleteSKUGroupType"
+                                   OnCreateClone="getClonedISKUGroupTypeItemView" OnUpdateClick="UpdateSKUGroupType"></SKUGroupTypeHierarchy>
+
+        </tbody>
+    </table>
+
+</div>
+@if (IsAddSKUGroupType)
+{
+    <AddUpdateSKUGroupTypePopUp CancelbtnText=@Localizer["cancel"] OkBtnText=@Localizer["create"] Context="Context" IsAddPopUp="true"
+                            OnCloseClick="AddSKUGroupTypePOPupClosed" OnOkClick="CreateClickedFromHome"
+                                title=@Localizer["add_sku_group_type_hierarchy"] />
+}
+

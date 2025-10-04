@@ -1,0 +1,7 @@
+﻿@page "/testcounter"
+
+<TestCounter counter="@counter" CounterValueChanged="HandleCounterValueChanged" />
+<TestDisplayCounter counter="@counter" />
+<p>Test Counter Value: @counter.CounterValue</p>
+
+<button @onclick="CheckParent">Check Value in parent</button>

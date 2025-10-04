@@ -1,0 +1,107 @@
+﻿@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using System.Globalization;
+@using System.Resources;
+@using Winit.UIComponents.Common.Language;
+@using Microsoft.Extensions.Localization
+
+@inject Winit.Modules.Base.BL.ILocalStorageService _localStorageService
+@inject AuthenticationStateProvider _authStateProvider
+@inject Winit.UIComponents.Common.Language.ILanguageService _languageService
+@inject IStringLocalizer<LanguageKeys> Localizer
+@inject Winit.Modules.Role.Model.Interfaces.IMenuMasterHierarchyView _menuHierarchy
+@inject IAppUser _appUser
+
+@if (!IsMenuNeeded)
+{
+    <nav class="cls_header fixed-top" data-bs-theme="dark">
+        <div class="container-fluid">
+            @*  <a class="fl" href="dashboard"><img style="width:172px;margin-top:10px;" src="Images/logo.png" /></a> *@
+            <div class="cls_header_center navnew" style="width:100%!important">
+                <div class="navnew_left">
+                    <a href="landing">
+                        <img alt="" style="width:132px" src="./Images/logo_n.png" class="img-responsive"
+                             @onclick=@(()=>_menuHierarchy.ModuleMasterHierarchies.ForEach(p=>p.IsClicked=false))
+                             b-qgxxy9zsi2="">
+                    </a>
+                </div>
+                <div class="navnew_center">
+
+                    @if (_menuHierarchy != null && _menuHierarchy.ModuleMasterHierarchies != null && _menuHierarchy.ModuleMasterHierarchies.Count > 0)
+                    {
+                        <ul>
+                            @foreach (var module in _menuHierarchy.ModuleMasterHierarchies)
+                            {
+                                @if (module.Module != null)
+                                {
+                                    <li>
+                                        @if (module.Module.SerialNo != 1)
+                                        {
+                                            <div class="@(module.IsClicked?"cls_nav_link_selected_div" :"cls_nav_link_nonselected_div")">
+                                                @module.Module.ModuleNameEn
+                                            </div>
+                                            <ul style="margin:0px auto" class="cls_Serial8">
+                                                @if (module.SubModuleHierarchies != null)
+                                                {
+                                                    @foreach (var subModule in module.SubModuleHierarchies)
+                                                    {
+                                                        <li style="width:19%;text-align:center;margin-left:10px;margin-right:10px;margin-top:20px;margin-bottom: 20px;">
+                                                            <a class="cla_a0" href="javascript:void(0)"
+                                                               style="color:#fff;width:auto;float:left;border-bottom:2px solid #fff;">
+                                                                @subModule.SubModule.SubModuleNameEn
+                                                            </a>
+                                                            <div style="width:100%;float:left;margin-bottom:4px;">
+                                                                @if (subModule.SubSubModules != null)
+                                                                {
+                                                                    @foreach (var subSubModules in subModule.SubSubModules)
+                                                                    {
+                                                                        <div class="cls_main_in_list"
+                                                                             style="width:100%;float:left;">
+                                                                            <a class="cls_bgnn"
+                                                                                     href="@subSubModules.RelativePath"
+                                                                                     @onclick=@(() =>OnMenuClick(module))>
+                                                                                @subSubModules.SubSubModuleNameEn
+                                                                            </a>
+                                                                        </div>
+                                                                    }
+                                                                }
+                                                            </div>
+                                                        </li>
+                                                    }
+                                                }
+                                            </ul>
+                                        }
+                                    </li>
+                                }
+                            }
+                        </ul>
+                    }
+                </div>
+                <div class="navnew_right">
+                    <div class="navnew_right_outline">
+                        <AuthorizeView>
+                            <Authorized>
+                                <div class="cls_new_nav">
+                                    <div class="cls_new_nav_left"
+                                         @onclick='() => _navigationManager.NavigateTo("profile")'>
+                                        <img style="width:30px;" src="Images/profile.svg" />
+                                    </div>
+                                    <div class="cls_new_nav_cen">
+                                        <p> [@_appUser.Emp.Code] </p>
+                                        <p>@_appUser.Emp.Name</p>
+                                        <span>Role: @_iAppUser.Role?.RoleNameEn</span>
+                                    </div>
+                                    <div class="cls_new_nav_right">
+                                        <img style="width:30px" src="Images/logout.svg" @onclick="OnLogOutClick" />
+                                    </div>
+                                </div>
+
+                            </Authorized>
+                        </AuthorizeView>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+}
+

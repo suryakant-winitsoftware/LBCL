@@ -1,0 +1,107 @@
+﻿@page "/distributoradmin"
+@inject Winit.Modules.Distributor.BL.Interfaces.IDistributorAdminBaseViewModel _distributorAdmin
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+
+
+@if (_distributorAdmin.IsShowPopUp)
+{
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show" tabindex="-1" style="display: block; overflow:auto; ">
+        <div class="modal-dialog cls_pop_up_style1">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@Localizer["add/edit_distributor_admin"]</h5>
+                    <span class="close" @onclick="_distributorAdmin.CloseTab">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div style="cls_container_div1">
+                        
+                            @if (_distributorAdmin.IsEditLoginID || _distributorAdmin.IsNewEmp)
+                            {
+                                
+                                    <div class="cls_section_div_sku">
+                                <label class="cls_section_div_purchase2_label">@Localizer["name"] </label>
+                                    <input type="text" class="cls_select2_button" placeholder="Enter Here" @bind="@_distributorAdmin.Name" />
+
+                                    </div>
+                                
+                                    <div class="cls_section_div_sku">
+                                        <label class="cls_section_div_purchase2_label">@Localizer["login_id"]</label>
+                                    <input type="text" class="cls_select2_button" placeholder="Enter Here" @bind="@_distributorAdmin.LoginId" />
+
+                                    </div>
+                               
+
+                            }
+                            @if (_distributorAdmin.IsPassword || _distributorAdmin.IsNewEmp)
+                            {
+                                
+                                    <div class="cls_section_div_sku">
+                                        <label class="cls_section_div_purchase2_label">@Localizer["password"]</label>
+                                    <input type="password" class="cls_select2_button" placeholder="Enter Here" @bind="@_distributorAdmin.Password" />
+
+                                    </div>
+                                
+                                    <div class="cls_section_div_sku">
+                                        <label class="cls_section_div_purchase2_label">@Localizer["confirm_password"]</label>
+                                    <input type="password" class="cls_select2_button" placeholder="Enter Here" @bind="@_distributorAdmin.ConfirmPassword" />
+
+                                    </div>
+                                
+                            }
+                        
+
+
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <div style="float:left;">
+                    <button type="button" class="cls_comman_sec_btn cls_mar_right_10px" @onclick="_distributorAdmin.CloseTab">@Localizer["back"]</button>
+                        <button type="button" class="cls_comman_btn" @onclick="_distributorAdmin.SaveOrUpdate">@Localizer["save"]</button>
+                </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+}
+@if (_distributorAdmin.IsLoad)
+{
+    <div class="cls_main_page_style">
+        <div class="cls_container_div1">
+            <button class="cls_add_new_sec" @onclick=@(()=>_distributorAdmin.AddNewAdmin())>@Localizer["add"]</button>
+        </div>
+        <div class="div1">
+           @*  <Winit.UIComponents.Web.Table.TableGridView Columns="_distributorAdmin.Columns" DataSource="_distributorAdmin.EmpList" /> *@
+
+           <table>
+               <thead>
+                   <tr>
+                        <th>@Localizer["login_id"]</th>
+                        <th>@Localizer["name"]</th>
+                        <th>@Localizer["action"]</th>
+                   </tr>
+               </thead>
+               <tbody>
+                    @foreach (var item in _distributorAdmin.EmpList)
+                    {
+                        <tr>
+                            <td>@item.LoginId</td>
+                            <td>@item.Name</td>
+                            <td>
+                                <button @onclick=@(()=>_distributorAdmin.EditLogInIdName(item))><img src="Images/edit.png" /></button>
+                                <button @onclick=@(()=>_distributorAdmin.ResetPassword(item))>@Localizer["reset_pw"]</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+           </table>
+        </div>
+    </div>
+}
+
+

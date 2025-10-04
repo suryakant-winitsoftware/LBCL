@@ -1,0 +1,57 @@
+﻿@page "/UserJourney_AttendanceReport"
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize]
+@using Winit.Shared.Models.Common
+@using Winit.UIComponents.Common.CustomControles
+@inject Winit.Modules.JourneyPlan.BL.Interfaces.IUserJourney_AttendanceReportViewModel _userJourneyViewModel;
+<PageTitle>UserJourney_AttendanceReport</PageTitle>
+@using Winit.UIComponents.Web.Filter
+@using Winit.UIModels.Common.Filter
+
+
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+
+<div>
+    @* <button class="cls_add_new_sec" style="float:right;margin-right:0px" @onclick="ShowFilter">@Localizer["filter"]</button>
+    <Filter @ref="filterRef" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+            OnFilterApplied=@OnFilterApply /> *@
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+                         OnFilterApplied="@OnFilterApply" />
+</div>
+<div class="storeupper">
+    <div class="tab-content">
+        <div class="row">
+            <div class="col-md-2 dn">
+                <div class="form-group">
+                    <div class="form-group">
+                        <button class="cls_add_new_sec">@Localizer["export_to_excel"]</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 dn">
+                <div class="form-group">
+                    <div class="form-group">
+                        <button class="cls_add_new_sec">@Localizer["export_to_csv"]</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 dn">
+                <div class="form-group">
+                    <button class="cls_add_new_sec">@Localizer["export_to_pdf"]</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (IsLoaded)
+{
+    <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" DataSource="_userJourneyViewModel.userJourneyGrids" OnSort="OnSortApply" PageNumber="_userJourneyViewModel.PageNumber"  PageSize="_userJourneyViewModel.PageSize" TotalItemsCount="_userJourneyViewModel.TotalItemsCount" ShowRecordsCount="true" />
+    <Winit.UIComponents.Web.Paging.Paging CurrentPage="_userJourneyViewModel.PageNumber" OnPageChange="_userJourneyViewModel.PageIndexChanged" PageSize="_userJourneyViewModel.PageSize" TotalItems="_userJourneyViewModel.TotalItemsCount" />
+ 
+}
+
+@code {
+
+}

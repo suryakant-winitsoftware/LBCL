@@ -1,0 +1,206 @@
+@page "/price-check"
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+@using WINITMobile.Pages.DialogBoxes;
+
+<div class="container-fluid">
+    <div class="price-check-header">
+        <div class="store-info">
+            <div class="store-name">@_appUser.SelectedCustomer.Name</div>
+            <div class="store-code">@_appUser.SelectedCustomer.Code</div>
+        </div>
+        <button class="btn-add" @onclick="ShowAddProductDialog">
+            <i class="fas fa-plus"></i> Add
+        </button>
+    </div>
+
+    <div class="search-box">
+        <Winit.UIComponents.Common.CustomControls.WinitTextBox 
+            Placeholder="Search by Item Code/Description"
+            MaxLength="200" 
+            DebounceInterval="500"
+            OnDebounceIntervalElapsed="SearchItems"
+            KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+            IsForSearch="true" />
+    </div>
+
+    @if (displayItems?.Any() == true)
+    {
+        <div class="price-list">
+            @foreach (var item in displayItems)
+            {
+                <div class="price-item">
+                    <div class="item-details">
+                        <div class="item-code">@item.SKUCode</div>
+                        <div class="item-name">@item.SKUName</div>
+                    </div>
+                    <div class="price-details">
+                        <div class="price-row">
+                            <span class="price-label">Last Visit:</span>
+                            <span class="price-value">@item.LastVisitPrice.ToString("0.00")</span>
+                        </div>
+                        <div class="price-row">
+                            <span class="price-label">RSP:</span>
+                            <span class="price-value">@item.RSP.ToString("0.00")</span>
+                        </div>
+                        <div class="price-row">
+                            <span class="price-label">Shelf Price:</span>
+                            <input type="number" 
+                                   class="shelf-price-input" 
+                                   value="@item.ShelfPrice" 
+                                   @onchange="@(e => UpdateShelfPrice(item, e))" />
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="submit-section">
+            <button class="btn-submit" @onclick="SubmitPrices">Submit</button>
+        </div>
+    }
+    else
+    {
+        <div class="no-data">
+            <p>No items added for price check</p>
+        </div>
+    }
+</div>
+
+
+    <AddProductDialogBox T="WINITMobile.Pages.PriceCheck.Models.PriceCheckItem"
+                         DataSource="availableProducts"
+                         FilterAction="filterAction"
+                         SKUCode="@(e => e.SKUCode)"
+                         SKUHeader="@(e => e.SKUName)"
+                         ImageUrl="@(e => e.SKUImage)"
+                         OnCancelClick="CancelAddProducts"
+                         OnOkClick="AddProducts"
+                         FilterDataList="filterDataList"
+                         @ref="addProductDialog" />
+
+
+<style>
+    .price-check-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px;
+        background: white;
+        border-bottom: 1px solid #eee;
+    }
+
+    .store-info {
+        flex: 1;
+    }
+
+    .store-name {
+        font-weight: 600;
+        color: #333;
+        font-size: 1.1rem;
+    }
+
+    .store-code {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .btn-add {
+        background: #1976d2;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .search-box {
+        padding: 16px;
+        background: white;
+        border-bottom: 1px solid #eee;
+    }
+
+    .price-list {
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .price-item {
+        background: white;
+        border-radius: 8px;
+        padding: 16px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .item-details {
+        margin-bottom: 12px;
+    }
+
+    .item-code {
+        font-weight: 500;
+        color: #333;
+    }
+
+    .item-name {
+        color: #666;
+        font-size: 0.9rem;
+        margin-top: 4px;
+    }
+
+    .price-details {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .price-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .price-label {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .price-value {
+        font-weight: 500;
+        color: #333;
+    }
+
+    .shelf-price-input {
+        width: 100px;
+        padding: 4px 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        text-align: right;
+    }
+
+    .submit-section {
+        padding: 16px;
+        position: sticky;
+        bottom: 0;
+        background: white;
+        border-top: 1px solid #eee;
+    }
+
+    .btn-submit {
+        width: 100%;
+        background: #1976d2;
+        color: white;
+        border: none;
+        padding: 12px;
+        border-radius: 6px;
+        font-weight: 500;
+    }
+
+    .no-data {
+        text-align: center;
+        padding: 32px;
+        color: #666;
+    }
+</style> 

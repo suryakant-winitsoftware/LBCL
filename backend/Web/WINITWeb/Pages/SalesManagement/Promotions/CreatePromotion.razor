@@ -1,0 +1,688 @@
+﻿@page "/create-promotion"
+@inherits WinIt.Pages.Base.BaseComponentBase
+@using WinIt.Components
+@using Winit.Modules.Promotion.Model.Interfaces
+@inject Winit.Modules.Common.Model.Interfaces.IDataManager dataManager;
+@inject Winit.UIComponents.Common.IAlertService alert
+@inject Winit.Modules.Promotion.BL.Interfaces.ICreatepromotionBaseViewModel iCreatePromotionBVM
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@inject Winit.Modules.Mapping.BL.Interfaces.IMappingViewModel mappingViewModel
+
+
+@if (iCreatePromotionBVM.IsLoad)
+{
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" />
+    <div class="cls_section">
+        <h3 class="cls_container_p_full">@Localizer["details"]</h3>
+
+        <div class="cls_container_div4">
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">
+                    @Localizer["code"]
+                    <span class="cls_section_div_purchase2_span">*</span>
+                </label>
+                <div class="cls_select">
+                    <input disabled="@(!iCreatePromotionBVM.IsNewPromotion)" autocomplete="off" @bind=@iCreatePromotionBVM.PromotionView.Code type="text" placeholder="Enter Here">
+                </div>
+            </div>
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">
+                    @Localizer["name"]
+                    <span class="cls_section_div_purchase2_span">*</span>
+                </label>
+                <div class="cls_select">
+                    <input autocomplete="off" @bind=@iCreatePromotionBVM.PromotionView.Name type="text" placeholder="Enter Here">
+                </div>
+            </div>
+
+
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">
+                    @Localizer["category"]
+                </label>
+                @if (!iCreatePromotionBVM.IsCategoryDisplay)
+                {
+                    @* <button class="form-select" @onclick=@(()=>iCreatePromotionBVM.IsCategoryDisplay=!iCreatePromotionBVM.IsCategoryDisplay)>
+                            @iCreatePromotionBVM.CategoryLabel
+                        </button> *@
+
+                    <button class="cls_select2" @onclick=@(()=>iCreatePromotionBVM.IsCategoryDisplay=!iCreatePromotionBVM.IsCategoryDisplay)>
+                        <label class="cls_select2_label1">  @iCreatePromotionBVM.CategoryLabel </label>
+                        <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+
+                    </button>
+
+                }
+                else
+                {
+                    <Winit.UIComponents.Common.CustomControls.DropDown DataSource="iCreatePromotionBVM.Category" _SelectionMode=Winit.Shared.Models.Enums.SelectionMode.Single ShowPopUp=true OnSelect="iCreatePromotionBVM.OnCategorySelected" />
+                }
+
+
+
+            </div>
+
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">
+                    @Localizer["type"]
+                    <span class="cls_section_div_purchase2_span">*</span>
+                </label>
+                <button disabled=@true class="cls_select2">
+                    <label class="cls_select2_label1">  @iCreatePromotionBVM.PromotionView.Type   </label>
+                    <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+
+                </button>
+
+            </div>
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">
+                    @Localizer["promotion_format"]
+                    <span class="cls_section_div_purchase2_span">*</span>
+                </label>
+                @if (!iCreatePromotionBVM.IsInstantFormatsDisplay)
+                {
+                    @* <button disabled="@(!iCreatePromotionBVM.IsNewPromotion)" class="form-select" @onclick=@(()=>iCreatePromotionBVM.IsInstantFormatsDisplay=!iCreatePromotionBVM.IsInstantFormatsDisplay)>
+                                @iCreatePromotionBVM.InstantFormatsLabel
+                            </button> *@
+
+                    <button class="cls_select2" disabled="@(!iCreatePromotionBVM.IsNewPromotion)" @onclick=@(()=>iCreatePromotionBVM.IsInstantFormatsDisplay=!iCreatePromotionBVM.IsInstantFormatsDisplay)>
+                        <label class="cls_select2_label1"> @iCreatePromotionBVM.InstantFormatsLabel </label>
+                        <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+
+                    </button>
+
+                }
+                else
+                {
+                    <Winit.UIComponents.Common.CustomControls.DropDown DataSource="iCreatePromotionBVM.InstantFormats" _SelectionMode=Winit.Shared.Models.Enums.SelectionMode.Single ShowPopUp=true OnSelect="iCreatePromotionBVM.OnInstantFormatsSelected" />
+                }
+
+            </div>
+        </div>
+        <div class="cls_container_div4">
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">
+                    @Localizer["priority"]
+                    <span class="cls_section_div_purchase2_span">*</span>
+                </label>
+                <div class="cls_select">
+                    <input autocomplete="off" maxlength="5" min="1" onkeypress="return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13) ? null :
+                       event.charCode>= 48 &amp;&amp; event.charCode <= 57" onpaste="return false;" required="" step="1" type="number" @bind=iCreatePromotionBVM.PromotionView.Priority>
+                </div>
+            </div>
+
+
+
+
+
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">
+                    @Localizer["valid_from"]
+                    <span class="cls_section_div_purchase2_span">*</span>
+                </label>
+                <input class="cls_select_date" required="" type="date" usevalueasdate="" min="@DateTime.Now.ToString("yyyy-MM-dd")" max="2099-12-31" @bind="@iCreatePromotionBVM.PromotionView.ValidFrom">
+
+            </div>
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">
+                    @Localizer["no_end_date"]
+                </label>
+                <input name="NN" checked="@iCreatePromotionBVM.IsNoEndDate" @onclick=@(()=>iCreatePromotionBVM.IsNoEndDate=!iCreatePromotionBVM.IsNoEndDate) type="checkbox" class="cls_section_div_purchase2_input">
+            </div>
+            <div class="cls_section_div_purchase2" style="display:@(iCreatePromotionBVM.IsNoEndDate==true?"none":"block") ">
+                <label class="cls_section_div_purchase2_label">
+                    @Localizer["valid_upto"]
+                    <span class="cls_section_div_purchase2_span">*</span>
+                </label>
+                <input class="cls_select_date" required="" type="date" usevalueasdate="" min="@DateTime.Now.AddDays(1).ToString("yyyy-MM-dd")" max="2099-12-31" @bind="@iCreatePromotionBVM.PromotionView.ValidUpto">
+
+            </div>
+        </div>
+
+        <div class="cls_container_div4">
+            <div class="cls_text_div">
+                <label class="cls_section_div2_span">
+                    @Localizer["promotion_description"] <span class="cls_section_div_purchase2_span">*</span>
+                </label>
+                <div class="cls_text_div_text">
+                    <textarea autocomplete="off" class="cls_text_div_input" cols="20" maxlength="495" rows="2" @bind="@iCreatePromotionBVM.PromotionView.Remarks"></textarea>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <div class="cls_container_div4">
+            <div class="cls_section_div_purchase2" style="display:none;">
+                <label class="cls_section_div_purchase2_label">
+                    <input name="HasSlabs" type="checkbox" class=" ng-pristine ng-valid"> @Localizer["has_slabs"]
+                </label>
+            </div>
+            <div class="cls_section_div_purchase2" style="display:none;">
+                <label class="cls_section_div_purchase2_label">
+                    <input name="HasFactSheet" type="checkbox" class=" ng-pristine ng-valid"> @Localizer["has_budget?"] <!---->
+
+                </label>
+            </div>
+        </div>
+
+
+
+    </div>
+
+
+
+    @if (iCreatePromotionBVM.IsSlabTypePromotion)
+    {
+        <div class="cls_section">
+            <h3 class="cls_container_p_full">@Localizer["buy"]</h3>
+            <div class="cls_container_div4">
+                <div class="cls_section_div_purchase2">
+                    <label class="cls_section_div_purchase2_label">
+                        @Localizer["order_type"]
+                        <span class="cls_section_div_purchase2_span">*</span>
+                    </label>
+                    @if (!iCreatePromotionBVM.IsSlabOrderTypeDisplay)
+                    {
+                        <button disabled="@(!iCreatePromotionBVM.IsNewPromotion)" class="cls_select2" @onclick=@(()=>iCreatePromotionBVM.IsSlabOrderTypeDisplay=!iCreatePromotionBVM.IsSlabOrderTypeDisplay)>
+
+                            <label class="cls_select2_label1">@iCreatePromotionBVM.SlabOrderTypeLabel</label><!--!-->
+                            <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1">
+
+                        </button>
+                    }
+                    else
+                    {
+                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="@iCreatePromotionBVM.SlabOrderTypeList" _SelectionMode=Winit.Shared.Models.Enums.SelectionMode.Single ShowPopUp=true OnSelect="iCreatePromotionBVM.OnSlabOrderTypeChanaged" />
+                    }
+                </div>
+
+                <div class="cls_section_div_purchase2">
+                    <label class="cls_section_div_purchase2_label">
+                        @Localizer["sku"]
+                        <span class="cls_section_div_purchase2_span">*</span>
+                    </label>
+                    <div class="cls_table_container margin_top">
+                        <label class="cls_section_div_purchase2_label">
+                            @iCreatePromotionBVM.SlabSKULabel
+                        </label>
+                    </div>
+
+                </div>
+
+
+                <div class="cls_button_bottom_purchase">
+                    <button class="cls_button_blue" @onclick="@AddProductClick">@Localizer["add_product"]</button>
+
+                    <button class="cls_button_blue" @onclick="@iCreatePromotionBVM.AddTierOrSlab">@Localizer["add_tier"]</button>
+                </div>
+            </div>
+            <div class="div2">
+                @foreach (IPromoOrderForSlabs promoOrder in iCreatePromotionBVM.PromoOrderForSlabsList)
+                {
+
+                    <div class="cls_container_div4">
+                        <div class="cls_section_div_purchase2">
+                            <label class="cls_section_div_purchase2_label">
+                                @Localizer["min_qty"]
+                                <span class="cls_section_div_purchase2_span">*</span>
+                            </label>
+                            <div class="cls_select">
+                                <input autocomplete="off" min="0" @bind=@promoOrder.Min placeholder="Enter Max Deal" required="" step="1" type="number">
+                            </div>
+
+                        </div>
+                        <div class="cls_section_div_purchase2">
+                            <label class="cls_section_div_purchase2_label">
+                                @Localizer["max_qty"]
+                                <span class="cls_section_div_purchase2_span">*</span>
+                            </label>
+                            <div class="cls_select">
+                                <input autocomplete="off" min="0" @bind=@promoOrder.Max placeholder="Enter Max Deal" required="" step="1" type="number">
+                            </div>
+
+                        </div>
+
+                        <div class="cls_section_div_purchase2">
+                            <label class="cls_section_div_purchase2_label">
+                                @Localizer["offer_type"]
+                                <span class="cls_section_div_purchase2_span">*</span>
+                            </label>
+                            @if (!promoOrder.IsOfferTypeDisplay)
+                            {
+                                <button disabled="@(!promoOrder.IsNewOfferType)" class="cls_select2" @onclick=@(()=>iCreatePromotionBVM.ShowFreeSlabSKU(promoOrder))>
+
+                                    <label class="cls_select2_label1">@promoOrder.OfferTypeLabel</label><!--!-->
+                                    <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1">
+                                </button>
+                            }
+                            else
+                            {
+                                <Winit.UIComponents.Common.CustomControls.DropDown UniqueUID="@promoOrder.UID" DataSource="iCreatePromotionBVM.DisplaySlabOfferTypeList" _SelectionMode=Winit.Shared.Models.Enums.SelectionMode.Single ShowPopUp=true OnSelect="@((e)=>iCreatePromotionBVM.OnSlabOfferTypeChanaged(e,promoOrder))" />
+                            }
+                        </div>
+
+                        <div class="cls_section_div_purchase2" style="display:@(promoOrder.IsDiscountVisible?"block":"none")">
+                            <label class="cls_section_div_purchase2_label">
+                                @promoOrder.DiscountLabel
+                                <span class="cls_section_div_purchase2_span">*</span>
+                            </label>
+                            <div class="cls_select">
+                                <input autocomplete="off" min="0" @bind=@promoOrder.Discount placeholder="Enter Max Deal" required="" step="1" type="number">
+                            </div>
+                        </div>
+                        <div class="cls_section_div_purchase2" style="display:@(promoOrder.IsFreeSKUVisible?"block":"none")">
+                            <label class="cls_section_div_purchase2_label">
+                                @Localizer["free_sku"]
+                                <span class="cls_section_div_purchase2_span">*</span>
+                            </label>
+                            @*  @if (!promoOrder.IsFreeSKUVisibleinPopUP)
+                            { *@
+                            <button class="cls_select2" @onclick=@(()=>AddProductClickFreeSKU(promoOrder))>
+
+                                <label class="cls_select2_label1"> @promoOrder.FreeSKULabel</label><!--!-->
+                                <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1">
+                            </button>
+                            @*  }
+                            else
+                            { *@
+                            @*   <Winit.UIComponents.Web.SalesManagement.PriceManagement.AddProduct 
+                                SKUList="iCreatePromotionBVM.SKUList" SelectionMode=Winit.Shared.Models.Enums.SelectionMode.Single SendSKU="@((e)=>iCreatePromotionBVM.GetSelectedItemForSlab(e,promoOrder))" />
+                             }*@
+                        </div>
+
+                    </div>
+
+                }
+            </div>
+        </div>
+
+
+
+
+    }
+    else
+    {
+
+
+        <div class="cls_section2">
+            <h3 class="cls_sales_sectionp">@Localizer["promotion_items"]</h3>
+            @if (iCreatePromotionBVM.IsInvoice)
+            {
+                <div class="cls_container_div4">
+                    <div class="cls_section_div_purchase2">
+                        <label class="cls_section_div_purchase2_label">
+                            @Localizer["order_type"]
+                            <span class="cls_section_div_purchase2_span">*</span>
+                        </label>
+                        @if (!iCreatePromotionBVM.IsOrderTypeDisplay)
+                        {
+
+                            @*   <div class="cls_select2" disabled="@(!iCreatePromotionBVM.IsNewPromotion)" @onclick=@(()=>iCreatePromotionBVM.IsInstantFormatsDisplay=!iCreatePromotionBVM.IsInstantFormatsDisplay)>
+                                <label class="cls_select2_label1"> @iCreatePromotionBVM.InstantFormatsLabel </label>
+                                <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+
+                            </div> *@
+
+                            <button class="cls_select2" @onclick=@(()=>iCreatePromotionBVM.IsOrderTypeDisplay=!iCreatePromotionBVM.IsOrderTypeDisplay)>
+
+                                <label class="cls_select2_label1"> @iCreatePromotionBVM.OrderTypeLabel </label>
+                                <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+                            </button>
+                        }
+                        else
+                        {
+                            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="iCreatePromotionBVM.OrderTypeList" _SelectionMode=Winit.Shared.Models.Enums.SelectionMode.Single ShowPopUp=true OnSelect="iCreatePromotionBVM.OnOfferOrorderTypeSelected" />
+                        }
+                    </div>
+
+                    <div class="cls_section_div_purchase2">
+                        <label class="cls_section_div_purchase2_label">
+                            Buy @(iCreatePromotionBVM.SelectedOrderType)
+                            <span class="cls_section_div_purchase2_span">*</span>
+                        </label>
+                        <div class="cls_select">
+                            <input autocomplete="off" min="0" @bind=@iCreatePromotionBVM.EligibleOrBundleQty required="" step="1" type="number">
+                        </div>
+                    </div>
+
+                    <div class="cls_section_div_purchase2">
+                        <label class="cls_section_div_purchase2_label">
+                            @Localizer["promotion_offer_type"]
+                            <span class="cls_section_div_purchase2_span">*</span>
+                        </label>
+                        @if (!iCreatePromotionBVM.IsOfferTypeDisplay)
+                        {
+                            <button disabled="@(!iCreatePromotionBVM.IsNewPromotion)" class="cls_select2" @onclick=@(()=>iCreatePromotionBVM.IsOfferTypeDisplay=!iCreatePromotionBVM.IsOfferTypeDisplay)>
+
+                                <label class="cls_select2_label1"> @iCreatePromotionBVM.OfferTypeLabel </label>
+                                <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+
+                            </button>
+                        }
+                        else
+                        {
+                            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="iCreatePromotionBVM.OfferTypeList" _SelectionMode=Winit.Shared.Models.Enums.SelectionMode.Single ShowPopUp=true OnSelect="iCreatePromotionBVM.OnOfferOrorderTypeSelected" />
+
+                        }
+                    </div>
+                    <div class="cls_container_div4">
+                        <h3 class="cls_sales_sectionp">@Localizer["get"]</h3>
+                    </div>
+
+                    <div class="cls_section_div_purchase2">
+
+                        @if (!string.IsNullOrEmpty(iCreatePromotionBVM.OfferTypeCode))
+                        {
+                            @if (iCreatePromotionBVM.IsOfferFOCType)
+                            {
+                                <div class="cls_container_div4">
+                                    <button class="cls_add_new_sec" @onclick="@(()=>AddSkuGroupTypeSKU(false))">@Localizer["add_foc_product"]</button>
+                                </div>
+
+                            }
+                            else
+                            {
+                                <div class="cls_select">
+                                    <input autocomplete="off" min="0" @bind=@iCreatePromotionBVM.Discount type="number">
+                                </div>
+
+                            }
+
+                        }
+
+                    </div>
+                </div>
+
+            }
+            else
+            {
+                <div class="cls_container_div4">
+                    @if (iCreatePromotionBVM.IsAssorted)
+                    {
+                        <div class="cls_section_div_purchase2">
+                            <label class="cls_section_div_purchase2_label">
+                                @Localizer["order_item_selection_type"]
+                                <span class="cls_section_div_purchase2_span">*</span>
+                            </label>
+                            @if (!iCreatePromotionBVM.IsSelectionModelDisplay)
+                            {
+                                @* <button disabled="@(!iCreatePromotionBVM.IsNewPromotion)" class="form-select" @onclick=@(()=>iCreatePromotionBVM.IsSelectionModelDisplay=!iCreatePromotionBVM.IsSelectionModelDisplay)>
+                                    @iCreatePromotionBVM.SelectionModelLabel
+                                </button> *@
+
+                                <button class="cls_select2" disabled="@(!iCreatePromotionBVM.IsNewPromotion)" @onclick=@(()=>iCreatePromotionBVM.IsSelectionModelDisplay=!iCreatePromotionBVM.IsSelectionModelDisplay)>
+                                    <label class="cls_select2_label1"> @iCreatePromotionBVM.SelectionModelLabel </label>
+                                    <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+
+                                </button>
+
+                            }
+                            else
+                            {
+                                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="iCreatePromotionBVM.SelectionModelList" _SelectionMode=Winit.Shared.Models.Enums.SelectionMode.Single ShowPopUp=true OnSelect="iCreatePromotionBVM.OnSelectionModelSelected" />
+                            }
+                        </div>
+                    }
+
+
+                    <div class="cls_section_div_purchase2">
+                        <label class="cls_section_div_purchase2_label">
+                            @Localizer["max_deal_count"]
+                            <span class="cls_section_div_purchase2_span">*</span>
+                        </label>
+                        <div class="cls_select">
+                            <input autocomplete="off" min="0" @bind=@iCreatePromotionBVM.MaxDealCount placeholder="Enter Max Deal" required="" step="1" type="number">
+                        </div>
+                    </div>
+
+                    @if (iCreatePromotionBVM.ShowBundleQty)
+                    {
+                        <div class="cls_section_div_purchase2">
+                            <label class="cls_section_div_purchase2_label">
+                                @(iCreatePromotionBVM.IsAssorted ? "Bundle" : "Eligible")@Localizer["qty"]  <span class="cls_section_div_purchase2_span">*</span>
+                            </label>
+                            <div class="cls_select">
+                                <input autocomplete="off" min="0" required="" @bind=@iCreatePromotionBVM.EligibleOrBundleQty type="number">
+                            </div>
+                        </div>
+                    }
+
+                    @if (iCreatePromotionBVM.IsDiscountShow && !iCreatePromotionBVM.IsAssorted)
+                    {
+                        <div class="cls_section_div_purchase2">
+                            <label class="cls_section_div_purchase2_label">
+                                @iCreatePromotionBVM.DiscountLabel
+                                <span class="cls_section_div_purchase2_span">*</span>
+                            </label>
+
+                            <div class="cls_select">
+                                <input autocomplete="off" min="0" @bind=@iCreatePromotionBVM.Discount type="number">
+                            </div>
+                        </div>
+                    }
+
+                    <div class="cls_section_div_purchase2">
+                        <label class="cls_section_div_purchase2_label">
+                            @Localizer["select_group_type"]
+                        </label>
+                        @* <label class="form-select" @onclick="@(()=>iCreatePromotionBVM.IsGroupTypeVisible=!iCreatePromotionBVM.IsGroupTypeVisible)">@(string.IsNullOrEmpty(iCreatePromotionBVM.SelectedGroupTypeLabel) ? "Select Group Type" : $"{iCreatePromotionBVM.SelectedGroupTypeLabel}")</label>
+ *@
+                        <button class="cls_select2" @onclick="@(()=>iCreatePromotionBVM.IsGroupTypeVisible=!iCreatePromotionBVM.IsGroupTypeVisible)">
+                            <label class="cls_select2_label1">  @(string.IsNullOrEmpty(iCreatePromotionBVM.SelectedGroupTypeLabel) ? "Select Group Type" : $"{iCreatePromotionBVM.SelectedGroupTypeLabel}") </label>
+                            <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+
+                        </button>
+
+                        @if (iCreatePromotionBVM.IsGroupTypeVisible)
+                        {
+                            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="iCreatePromotionBVM.SKUGroupTypeList" ShowPopUp=true OnSelect="iCreatePromotionBVM.OnGroupTypeSelected" />
+                        }
+                    </div>
+
+                    @if (iCreatePromotionBVM.IsGroupTypeSKUType)
+                    {
+                        <div class="cls_container_div4">
+                            <button class="cls_add_new_sec" @onclick="@(()=>AddSkuGroupTypeSKU(true))">@Localizer["add_product"]</button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="cls_section_div_purchase2">
+                            <label class="cls_section_div_purchase2_label">
+                                @Localizer["select_group"]
+                            </label>
+                            @* <label class="form-select" @onclick="@(()=>iCreatePromotionBVM.IsGroupVisible=!iCreatePromotionBVM.IsGroupVisible)">@iCreatePromotionBVM.SelectedGroupLabel</label>
+ *@
+                            <button class="cls_select2" @onclick="@(()=>iCreatePromotionBVM.IsGroupVisible=!iCreatePromotionBVM.IsGroupVisible)">
+                                <label class="cls_select2_label1">  @iCreatePromotionBVM.SelectedGroupLabel </label>
+                                <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+
+                            </button>
+
+                            @if (iCreatePromotionBVM.IsGroupVisible)
+                            {
+                                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="iCreatePromotionBVM.SKUGroupList" _SelectionMode=Winit.Shared.Models.Enums.SelectionMode.Multiple ShowPopUp=true OnSelect="iCreatePromotionBVM.OnGroupItemsSelected" />
+                            }
+                        </div>
+
+
+                        <div class="cls_container_div4">
+
+                            <button class="cls_add_new_sec" type="button" @onclick=@iCreatePromotionBVM.AddSelectedItems>
+                                @Localizer["add"]
+                            </button>
+                        </div>
+                    }
+                    <div class="cls_container_div1">
+                        <div class="div1">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>@Localizer["type"] </th>
+                                        <th>@Localizer["code"] </th>
+                                        <th>@Localizer["name"] </th>
+                                        @if (iCreatePromotionBVM.IsAssorted)
+                                        {
+                                            <th>@Localizer["qty"]</th>
+                                            @if (iCreatePromotionBVM.ShowBundleQty)
+                                            {
+                                                <th>@Localizer["is_compulsary"]</th>
+                                            }
+                                        }
+                                        <th>@Localizer["action"]</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (iCreatePromotionBVM.PromotionItemsModelList == null || iCreatePromotionBVM.PromotionItemsModelList.Count == 0)
+                                    {
+                                        <tr>
+                                            <td colspan="0" style="text-align: center;color:red">@Localizer["password"]No Record Found</td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        @foreach (var item in iCreatePromotionBVM.PromotionItemsModelList)
+                                        {
+                                            if (item.ActionType != Winit.Shared.Models.Enums.ActionType.Delete)
+                                            {
+                                                <tr>
+                                                    <td>@item.GroupTypeName</td>
+                                                    <td>@item.GroupCode</td>
+                                                    <td>@item.GroupName</td>
+                                                    @if (iCreatePromotionBVM.IsAssorted)
+                                                    {
+                                                        <td><input disabled="@(!item.IsCompulsary)" type="number" @bind="@item.Qty"/></td>
+                                                        @if (iCreatePromotionBVM.ShowBundleQty)
+                                                        {
+                                                            <td><input type="checkbox" checked="@item.IsCompulsary" @onclick="@(()=>item.IsCompulsary=!item.IsCompulsary)" /></td>
+                                                        }
+                                                    }
+                                                    <td><a @onclick=@(()=>iCreatePromotionBVM.DeleteOrderItem(item))><img src="Images/delete.png" /></a></td>
+                                                </tr>
+                                            }
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    @if (iCreatePromotionBVM.IsDiscountShow && iCreatePromotionBVM.IsAssorted)
+                    {
+                        <div class="cls_container_div1">
+                            <div class="cls_section_div_purchase3">
+                                <label class="cls_section_div_purchase2_label">
+                                    @iCreatePromotionBVM.DiscountLabel
+
+                                    <span class="cls_section_div_purchase2_span">*</span>
+                                </label>
+                                <div class="cls_select">
+                                    <input autocomplete="off" min="0" @bind=@iCreatePromotionBVM.Discount type="number">
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            @if (iCreatePromotionBVM.IsOfferFOCType)
+            {
+                @if (!iCreatePromotionBVM.IsInvoice)
+                {
+                    <p>@Localizer["offer_items"]</p>
+                    <button class="btn btn-primary" @onclick="@(()=>AddSkuGroupTypeSKU(false))">@Localizer["password"]Add FOC Product</button>
+                }
+                <div class="div1">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>@Localizer["code"] </th>
+                                <th>@Localizer["name"]</th>
+                                <th>@Localizer["qty"]</th>
+                                <th>@Localizer["action"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (iCreatePromotionBVM.SelectedSKU == null || iCreatePromotionBVM.SelectedSKU.Count == 0)
+                            {
+                                <tr>
+                                    <td colspan="4" style="text-align: center;color:red">@Localizer["no_record_found"]</td>
+                                </tr>
+                            }
+                            else
+                            {
+
+
+                                @foreach (var item in iCreatePromotionBVM.SelectedSKU)
+                                {
+                                    if (item.ActionType != Winit.Shared.Models.Enums.ActionType.Delete)
+                                    {
+                                        <tr>
+                                            <td>@item.Code</td>
+                                            <td>@item.Name</td>
+                                            <td><input type="number" @bind="@item.Qty"/></td>
+                                            <td><a @onclick=@(()=>iCreatePromotionBVM.DeleteOfferItem(item))><img src="Images/delete.png" /></a></td>
+                                        </tr>
+                                    }
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+            }
+
+
+
+
+        </div>
+
+
+    <div class="cls_container_div4">
+        <div class="cls_container_div4">
+@*             <button class="cls_add_new_sec" @onclick=@(()=>mappingViewModel.DisplayMappingComponent=true)>Add Mapping</button>
+ *@        </div>
+    </div>
+    <div class="cls_container_div1">
+          <MappingComponentNew MappingDTO="@mappingViewModel.MappingDTO" />
+       @*  <TableGridView DataSource="mappingViewModel.MappingDTO.GridDataSource" Columns="mappingViewModel.MappingDTO.DataGridColumns" /> *@
+    </div>
+    <div class="cls_button_bottom_purchase"><button class="cls_button_blue" @onclick=@Save>@Localizer["save_promotion"]</button></div>
+}
+@* @if (iCreatePromotionBVM.AddProducts)
+{
+       <Winit.UIComponents.Web.SalesManagement.PriceManagement.AddProduct SelectionMode=@(iCreatePromotionBVM.IsSlabTypePromotion?Winit.Shared.Models.Enums.SelectionMode.Single:Winit.Shared.Models.Enums.SelectionMode.Multiple)
+                                                                       SKUList="iCreatePromotionBVM.SKUList"
+                                                                       SendSKU="@iCreatePromotionBVM.GetSelectedItems" /> 
+} *@
+@* <div style="display:@(mappingViewModel.DisplayMappingComponent?"block":"none")"> *@
+
+   @*  @if (!string.IsNullOrEmpty(iCreatePromotionBVM.PromotionUID))
+    {
+        <MappingComponent @ref=mappingComponent LinkedItemType="customer" LinkedItemUID="@iCreatePromotionBVM.PromotionUID" OnSaveMapping="@(()=>DisplayMappingComponent=false)" OnCloseClick="@(()=>DisplayMappingComponent=false)" />
+    } *@
+ 
+@* 
+</div> *@
+    }
+
+
+<WinIt.Pages.DialogBoxes.AddProductDialogBoxV1 T="Winit.Modules.SKU.Model.Interfaces.ISKUV1"
+                                               DataSource="iCreatePromotionBVM.SKUList"
+                                               L1="@(e => e.L1)"
+                                               L2="@(e => e.L2)"
+                                               L3="@(e => e.L3)"
+                                               L4="@(e => e.L4)"
+                                               L5="@(e => e.L5)"
+                                               L6="@(e => e.L6)"
+                                               L7="@(e => e.Code)"
+                                               L8="@(e => e.Name)"
+                                               UID="@(e => e.UID)"
+                                               DropDownDataSource="iCreatePromotionBVM.SKUAttributeData"
+                                               OnDropdownValueSelectSKUAtrribute="@(async (e) => await iCreatePromotionBVM._addProductPopUpDataHelper.OnSKuAttributeDropdownValueSelect(e.UID))"
+                                               FilterAction="iCreatePromotionBVM._addProductPopUpDataHelper.FilterAction"
+                                               OnCancelClick="() => AddProductDialogBox?.OnCloseClick()"
+                                               OnOkClick="action" SelectedItems=SelectedItems
+                                               @ref="AddProductDialogBox"></WinIt.Pages.DialogBoxes.AddProductDialogBoxV1>
+

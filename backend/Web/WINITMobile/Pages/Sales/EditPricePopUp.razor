@@ -1,0 +1,145 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+
+@if (IsVisible)
+{
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show" tabindex="-1" style="display: block;">
+        <div style="margin-top:30%">
+            <div class="modal-content">
+                <div class="modal-header" style="display:block">
+                    <h5 class="modal-title">Selling Price </h5>
+                    <button type="button" class="close" @onclick="Close">
+                        <span style="color:black; padding:10px;width:100%">&times;</span>
+                    </button>
+
+                    <div></div>
+                    @*   <div>@ActualPrice</div> *@
+                </div>
+
+                <div class="modal-body">
+                    <div class="cls_edit_price_pop">
+                        <div class="cls_edit_price_pop1">
+                            <span> <img style="width:38px" src="@SKUImg" /></span>
+                           
+                            <h3>@SKULable</h3>
+                        </div>
+                        <div class="cls_edit_price_pop2 dn">
+                            <div class="cls_edit_price_pop2_rep">
+                                <p>@Localizer["minimum_price_limit"]</p>
+                                <h3>@MinPrice</h3>
+                            </div>
+                            <div class="cls_edit_price_pop2_rep">
+                                <p>@Localizer["maximum_price_limit"]</p>
+                                <h3> @MaxPrice</h3>
+                            </div>
+
+                        </div>
+                        <div class="cls_edit_price_pop3">
+                            <p> Selling Price </p>
+                            <input value="@NewPrice" @oninput="(e) => HandlePriceChange(e)" />
+                        </div>
+
+                    </div>
+                    <div>
+                        @CurrencyLabel
+                    </div>
+                </div>
+                <div class="modal-footer" style="padding: 0px;border: 0px;">
+                    <div class="cls_btn_new">
+                        <button type="button" class="cls_btn_new2" style="width:100%" @onclick="Apply">
+                            @Localizer["update_amount"]
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@if (ShowApprovalNeededPopUP)
+{
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show" tabindex="-1" style="display: block;">
+        <div style="margin-top:30%">
+            <div class="modal-content">
+                <div class="modal-header" style="display:block">
+                    <h5 class="modal-title">@Localizer["alert"]! </h5>
+                    <button type="button" class="close" @onclick="() => ShowApprovalNeededPopUP = false">
+                        <span style="color:black; padding:10px;width:100%">&times;</span>
+                    </button>
+
+                </div>
+                <div class="modal-body">
+                    <div class="cls_edit_price_pop1">
+                        <span> <img style="width:38px" src="@SKUImg" /></span>                       
+                        <h3>@SKULable</h3>
+                        <p>
+                            @Localizer["approval_is_needed_for_price_updates_as_the_unit_price_of_the_item_is_beyond_the_specified range"].
+                        </p>
+                    </div>
+                 
+                </div>
+                <div class="modal-footer" style="padding: 0px;border: 0px;">
+                    <div class="cls_btn_new">
+                        <button type="button" class="cls_btn_new2" style="width:100%" @onclick="() => OnApply.InvokeAsync(NewPrice)">
+                            @Localizer["proceed"]
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@code {
+    [Parameter]
+    public bool IsVisible { get; set; } = true;
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+    [Parameter]
+    public EventCallback<decimal> OnApply { get; set; }
+    [Parameter]
+    public string SKULable { get; set; }
+    [Parameter]
+    public decimal ActualPrice { get; set; }
+    [Parameter]
+    public decimal MaxPrice { get; set; }
+    [Parameter]
+    public decimal MinPrice { get; set; }
+    [Parameter]
+    public string CurrencyLabel { get; set; }
+    [Parameter]
+    public string SKUImg { get; set; }
+    [Parameter]
+    public decimal NewPrice { get; set; }
+    private string ValidationMessage { get; set; } = "";
+    public bool ShowApprovalNeededPopUP = false;
+    private void Apply()
+    {
+        if (NewPrice > MaxPrice || NewPrice < MinPrice)
+        {
+            ShowApprovalNeededPopUP = true;
+        }
+        else
+        {
+            OnApply.InvokeAsync(NewPrice);
+        }
+    }
+    private void Close()
+    {
+        IsVisible = false;
+        OnClose.InvokeAsync(false);
+    }
+    private void HandlePriceChange(ChangeEventArgs eventArgs)
+    {
+        if (eventArgs != null && eventArgs.Value != null)
+        {
+            decimal deci;
+            decimal.TryParse(eventArgs.Value.ToString(), out deci);
+            NewPrice = deci;
+        }
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        LoadResources(null, _languageService.SelectedCulture);
+    }
+}

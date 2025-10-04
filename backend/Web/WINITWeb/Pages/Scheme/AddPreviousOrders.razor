@@ -1,0 +1,106 @@
+@page "/AddPreviousOrders"
+@using System.Collections.Generic
+@using System.Threading.Tasks
+@using Winit.Modules.SKU.Model.Interfaces
+@using Winit.Modules.Scheme.Model.Interfaces
+
+@if (IsVisible)
+{
+    <div class="modal fade show" tabindex="-1" role="dialog" style="display: block;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="height:600px;">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Products from Past Orders</h5>
+                    <button type="button" class="close" @onclick="HidePopup">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Search bar -->
+                    <Winit.UIComponents.Common.CustomControls.WinitTextBox Value="@searchQuery" OnDebounceIntervalElapsed="OnSearch" />
+                    <!-- Table with dynamic data -->
+                    <div class="div1">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Select</th>
+                                    <th scope="col">Model Number</th>
+                                    <th scope="col">Model Name</th>
+                           
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (PreviousOrderListToShow != null && PreviousOrderListToShow.Any())
+                                {
+                                    @foreach (var order in PreviousOrderListToShow)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <input type="checkbox" @onchange="() => ToggleCustomerSelection(order)" checked="@order.IsSelected" />
+                                            </td>
+                                            <td>@order.Code</td>
+                                            <td>@order.Label</td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr><td colspan="4">No records found.</td></tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" @onclick="AddSelectedOrders">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public bool IsVisible { get; set; }
+    [Parameter]
+    public List<ISKU>? PreviousOrderList { get; set; }
+    public List<ISelectionItem>? PreviousOrderListToShow { get; set; }
+    [Parameter]
+    public EventCallback<List<ISKU>> SelectedCustomersChanged { get; set; }
+    [Parameter]
+    public EventCallback<bool> IsVisibleChanged { get; set; }
+
+    private string searchQuery = "";
+
+    private void ToggleCustomerSelection(ISelectionItem previousOrder)
+    {
+        previousOrder.IsSelected = !previousOrder.IsSelected;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        PreviousOrderListToShow = CommonFunctions.ConvertToSelectionItems<ISKU>
+            (PreviousOrderList?.ToList() ?? new List<ISKU>(), new List<string> { "UID", "Code", "Name" });
+
+        await Task.CompletedTask;
+    }
+
+    private async Task AddSelectedOrders()
+    {
+        var selectedSKUs = PreviousOrderList?
+            .Where(sku => PreviousOrderListToShow?.Any(sel => sel.IsSelected && sel.UID == sku.UID) == true)
+            .ToList();
+        await SelectedCustomersChanged.InvokeAsync(selectedSKUs);
+        HidePopup();
+    }
+    private void HidePopup()
+    {
+        IsVisible = false;
+        IsVisibleChanged.InvokeAsync(IsVisible);
+    }
+    private void OnSearch(string searchString)
+    {
+        searchQuery = searchString;
+    }
+
+}

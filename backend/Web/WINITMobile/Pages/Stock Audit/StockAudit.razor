@@ -1,0 +1,50 @@
+﻿@page "/stockaudit"
+@inject Winit.Modules.StockAudit.BL.Interfaces.IAddEditStockAudit _AddEditStockAudit
+@inject NavigationManager NavManager
+@inject Winit.Modules.JourneyPlan.BL.Interfaces.IBeatHistoryViewModel _beatHistoryViewModel;
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+@if(!IsPreviewClicked)
+{
+<Winit.UIComponents.Common.CustomControles.Tabs TabItems="TabSelectionItems" OnTabSelect="OnTabSelect" />
+<div class="cls_serch_nn" style="margin-top:10px;">
+        <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder=@Localizer["search_by_item_code_/_description"] MaxLength="200" DebounceInterval="500" OnDebounceIntervalElapsed="ItemSearch"
+                                                           KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+                                                           Value="" IsForSearch="true" />
+</div>
+}
+     @if (_AddEditStockAudit.ActiveTab == Winit.Shared.Models.Common.StockAuditConst.Saleable)
+    {
+        <SaleableStockAudit IsPreviewClicked="IsPreviewClicked"
+                        GetSelectionItemsForUOM="GetSelectionItemsForUOM"
+                        SelectionItems="UomSelectionItemsList"
+                        CloneSelectionItems="UomCloneSelectionItemsList"
+                        GetCloneUOMSelectionItems="GetCloneUOM_SelectionItems"
+                        DeleteClonedProduct="DeleteCloned_Product"
+                        DropDownSelectionOnSingleSelect = "DropDownSelection_OnSingleSelect"
+                        DropDownCloneOnSingleSelect="DropDownClone_OnSingleSelect">
+       
+        </SaleableStockAudit>
+    }
+    else
+    {
+        <FocStockAudit IsPreviewClicked="IsPreviewClicked"
+                   GetSelectionItemsForUOM="GetSelectionItemsForUOM"
+                   CloneSelectionItems="UomCloneSelectionItemsList"
+                   SelectionItems="UomSelectionItemsList"
+                   GetCloneUOMSelectionItems="GetCloneUOM_SelectionItems"
+                   DeleteClonedProduct="DeleteCloned_Product"
+                   DropDownSelectionOnSingleSelect="DropDownSelection_OnSingleSelect"
+                   DropDownCloneOnSingleSelect="DropDownClone_OnSingleSelect">
+        
+        </FocStockAudit>
+    } 
+
+@* @if (IsSignatureView)
+{
+    <CustomerSignature StoreName="@_appUser.Emp?.Name" UserName="@_appUser.Emp?.Name" OrderNumber="OrderNumber"
+                       OnProceedClick="() => {IsSignatureView=false;IsOrderPlacedPopupVisible=true;}" OnCloseClick="() => IsSignatureView=false" />
+} *@
+
+@code{
+    
+}

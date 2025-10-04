@@ -1,0 +1,11 @@
+﻿@page "/fbnotification"
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+
+
+@Localizer["device_id"] :
+<input type="text" @bind-value="deviceId">
+<br />
+Enter Message:
+<input type="text" @bind-value="message" ><br/>
+<button class="btn btn-primary" @onclick="SendMessage">Send</button>

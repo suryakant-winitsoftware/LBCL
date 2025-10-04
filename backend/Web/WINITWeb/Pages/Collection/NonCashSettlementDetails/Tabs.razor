@@ -1,0 +1,54 @@
+﻿@page "/tab"
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+
+<div class="div_section">
+    
+        @foreach (var tab in tabItems)
+        {
+       
+
+            <a class="div_section_select_label   @((selectedTab == tab || selectedTab1 == tab) ? "active" : "")" @onclick="() => ChangeTab(tab)">@tab</a>
+      
+        }
+    </div>
+
+
+<div class="cls_container_div1">
+    @foreach (var tab in tabItems)
+    {
+        <div class="tab-pane @((selectedTab == tab || selectedTab1 == tab) ? "active" : "")" id="@($"tab-{tab}")">
+            
+            
+                @if(tab == "Pendings")
+                {
+                    <button class="cls_add_new_sec" @onclick="(()=>GetInformation())">@Localizer["settle"]</button>
+                    <Winit.UIComponents.Web.Table.TableGridView IsFirstColumnCheckbox="true" AfterCheckBoxSelection="Product_AfterCheckBoxSelection" Columns="GetColumnsForTab(tab)" DataSource="@(tabItems.Count > 4 ? GetDataSourceForTab(tab) : GetDataSourceForTab1(tab) )" />
+                }
+                else
+                {
+                    <Winit.UIComponents.Web.Table.TableGridView Columns="GetColumnsForTab(tab)" DataSource="@(tabItems.Count > 4 ? GetDataSourceForTab(tab) : GetDataSourceForTab1(tab) )"  />
+                }
+               
+                @if (Count != 0)
+                {
+                    <Winit.UIComponents.Web.Paging.Paging TotalItems=@Count PageSize="10" CurrentPage="1" OnPageChange="Product_OnPageChange" />
+                }
+            
+        </div>
+    }
+</div>
+
+@code {
+    private string selectedTab = "Pending";
+    private string selectedTab1 = "Pendings";
+
+    private void ChangeTab(string tab)
+    {
+        selectedTab = tab;
+        selectedTab1 = tab;
+    }
+}
+
+
+

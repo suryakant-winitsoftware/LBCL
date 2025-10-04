@@ -1,0 +1,80 @@
+[
+  {
+    "column_name": "initiative_id"
+  },
+  {
+    "column_name": "contract_code"
+  },
+  {
+    "column_name": "allocation_no"
+  },
+  {
+    "column_name": "name"
+  },
+  {
+    "column_name": "description"
+  },
+  {
+    "column_name": "sales_org_code"
+  },
+  {
+    "column_name": "brand"
+  },
+  {
+    "column_name": "contract_amount"
+  },
+  {
+    "column_name": "activity_type"
+  },
+  {
+    "column_name": "display_type"
+  },
+  {
+    "column_name": "display_location"
+  },
+  {
+    "column_name": "customer_type"
+  },
+  {
+    "column_name": "customer_group"
+  },
+  {
+    "column_name": "posm_file"
+  },
+  {
+    "column_name": "default_image"
+  },
+  {
+    "column_name": "email_attachment"
+  },
+  {
+    "column_name": "start_date"
+  },
+  {
+    "column_name": "end_date"
+  },
+  {
+    "column_name": "status"
+  },
+  {
+    "column_name": "cancel_reason"
+  },
+  {
+    "column_name": "is_active"
+  },
+  {
+    "column_name": "created_by"
+  },
+  {
+    "column_name": "created_on"
+  },
+  {
+    "column_name": "modified_by"
+  },
+  {
+    "column_name": "modified_on"
+  },
+  {
+    "column_name": "ss"
+  }
+]

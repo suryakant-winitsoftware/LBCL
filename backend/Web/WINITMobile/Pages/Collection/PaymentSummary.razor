@@ -1,0 +1,760 @@
+﻿@page "/paymentsummary"
+@using Winit.Shared.CommonUtilities.Common
+@using Winit.UIComponents.Common.CustomControles
+@using Winit.UIComponents.Common.CustomControls
+@inject NavigationManager _navigate
+@inject Winit.Modules.CollectionModule.BL.Interfaces.ICollectionModuleViewModel _collectionModuleViewModel
+@inject Winit.Modules.CollectionModule.BL.Interfaces.ICreatePaymentViewModel _createPaymentAppViewModel
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+
+
+<style>
+    .card {
+        border: 1px solid #ddd;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+        height: 45px;
+    }
+
+    .card-cd {
+        border: 1px solid #ddd;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+        height: 60px;
+    }
+
+    .card-c {
+        border: 1px solid #ddd;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+        border-bottom: 1px solid royalblue;
+        border-left: 5px solid royalblue;
+    }
+
+    .img {
+        margin-left: -40px;
+        height: 20px;
+        width: 20px;
+        margin-top: 10px;
+    }
+
+    .card1 {
+        border: 1px solid #ddd;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+        font-size: 11px;
+        border-bottom: 1px solid royalblue;
+        border-top: 1px solid #ddd;
+    }
+
+    .custom-date-input {
+        border: none;
+        border-bottom: 1px solid black;
+        outline: none;
+        background: transparent;
+        width: 88%;
+        font-size: 12px;
+        line-height: 1.5;
+        color: #3d5167;
+        margin-bottom: 20px;
+        margin-top: 12px;
+    }
+
+    .date-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between; /* Equal spacing between divs */
+        width: 100%; /* Ensure full width within card */
+    }
+
+    .col-6 {
+        flex: 1; /* Equal width distribution for divs */
+        display: flex;
+        align-items: center;
+        gap: 0.5rem; /* Optional spacing between label and input */
+    }
+
+    .search-icon {
+        color: #fff;
+        background-color: #fff;
+        padding: 10px;
+        border-radius: 0 5px 5px 0;
+        cursor: pointer;
+    }
+
+    .slide-down-content {
+        padding: 10px;
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        margin-top: 10px;
+    }
+
+    .search-card {
+        display: flex;
+        border: 1px solid #ddd;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .col-10::placeholder {
+        color: white; /* Set the placeholder text color to white */
+        font-size: 12px;
+    }
+
+    .blue-text {
+        color: blue;
+    }
+
+    .new_cls {
+        width: 360px;
+        height: 40px;
+        border-radius: 5px 0px 0px 0px;
+        background: #FFFFFFCC;
+        border: 1px solid #FFFFFF;
+        box-shadow: 0px 16px 51px -16px #314F7C70;
+    }
+
+    .tc_cls {
+        font-size: 11px;
+        font-weight: 600;
+        color: #494949;
+    }
+
+    .amt_cls {
+        font-size: 10px;
+        font-weight: 400;
+        color: #555555;
+    }
+
+    .spn_cls {
+        font-size: 14px;
+        font-weight: 700;
+        color: #1B478A;
+    }
+
+    .data_new_cls {
+        width: 350px;
+        height: 109px;
+        margin-left: -7px;
+        border-radius: 5px 5px 0px 0px;
+        background: #FFFFFFCC;
+        box-shadow: 0px 16px 51px -16px #314F7C70;
+        border: 1px solid #FFFFFF;
+        color: #6D6E75;
+    }
+
+    .data_sub_cls {
+        width: 340px;
+        height: 0px;
+        margin-top: -12px;
+        margin-left: 5px;
+        border-bottom: 1px solid #C7CFD6;
+    }
+
+    .pmt_new_cls {
+        font-size: 8px;
+        font-weight: 500;
+        margin-top: 10px;
+        color: #6D6E75;
+    }
+
+    .date_cls {
+        font-size: 10px;
+        font-weight: 700;
+        margin-top: -15px;
+        color: #555555;
+    }
+
+    .curr_cls {
+        font-size: 8px;
+        font-weight: 500;
+        margin-top: -15px;
+        color: #555555;
+    }
+
+    .extra_cls {
+        width: 352px;
+        margin-left: -8px;
+    }
+
+    .stat_cls {
+        font-size: 12px;
+        font-weight: 600;
+        margin-top: -12px;
+    }
+
+    .extra_sub_cls {
+        width: 351px;
+        margin-left: 5px;
+    }
+
+    .print_cls {
+        margin-left: -98px;
+        width: 20px;
+        height: 20px;
+    }
+
+    .view_cls {
+        margin-left: -28px;
+        width: 20px;
+        height: 20px;
+    }
+
+    .share_cls {
+        margin-left: -97px;
+        width: 20px;
+        height: 20px;
+    }
+
+    .cpo_cls {
+        width: 350px;
+        margin-left: -7px;
+        height: 76px;
+        gap: 5px;
+        background: #E8F1FF;
+        border: 1px solid #FFFFFF;
+        box-shadow: 0px 16px 51px -16px #314F7C70;
+    }
+
+    .hdr_cls {
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 0.5;
+        padding: 13px 13px;
+    }
+
+    .bdy_cls {
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 0.5;
+        padding: 13px 13px;
+    }
+
+    .amt_cls_1 {
+        font-size: 10px;
+        font-weight: 600;
+        margin-top: -15px;
+    }
+
+    .active-tab {
+        background-color: #e0e0e0;
+        border-bottom: 2px solid #007bff;
+        font-weight: bold;
+    }
+</style>
+
+<MultiCurrencyPopUp @ref="_multi" IsShow="IsShowMultiCurrency" _currencyCls="ViewMultiCurrencyDetails" IsReadOnly="true" Closebtn="@(() => CloseMultiCurrency())"></MultiCurrencyPopUp>
+
+
+
+
+<div class="cls_pay_summary_header">
+    <div class="cls_pay_summary_header_left">
+        <b>@Localizer["payment"]</b> @Localizer["summary"]
+    </div>
+    <div class="cls_pay_summary_header_right">
+        <button class="cls_wastage_btn" style="padding:4px 10px;font-weight: bold;" @onclick="PrintSummary">@Localizer["print_summary"]</button>
+    </div>
+    <h1 class="headr_cls">
+    </h1>
+    <div style="margin-left: 50px;">
+    </div>
+</div>
+
+
+<div class="card">
+    <div class="date-container" style="margin-left: -3px;">
+        <div class="col-6" style="margin-left: 25px;">
+            <input @bind="FromDate" class="custom-date-input" max="@DateTime.Now" type="date" @oninput="@((e)=>OnTabSelect(e,selectedTab,"From"))" />
+        </div>
+        <p style="font-size: 12px;margin-top: 12px;margin-left: 5px;">To</p>
+        <div class="col-6" style="margin-left: 21px;">
+            <input @bind="ToDate" class="custom-date-input" max="@DateTime.Now" type="date" @oninput="@((e)=>OnTabSelect(e,selectedTab,"To"))" />
+        </div>
+    </div>
+</div>
+
+<div class="cls_main_padding">
+
+
+    <div class="cls_pay_summary_3">
+        <div class="cls_pay_summary_3_left"><label class="tc_cls">@Localizer["total_collection"]</label></div>
+        <div class="cls_pay_summary_3_right">
+            <p>@Localizer["inr"]</p><h3>@TotalAmount</h3>
+        </div>
+
+
+    </div>
+
+
+
+    <div class="tab-container card " style="height:52px;">
+        <div class="nav nav-tabs ">
+            @foreach (var tab in tabItems)
+            {
+                <button class="col-3 @(selectedTab == tab ? "active-tab" : "") tab-button" style="height:50px;font-size: 12px;" @onclick="() => ChangeTab(tab)">
+                    <p style="margin-top: 10px;">@tab</p>
+                    <p class="amt_cls_1" style=@(tab == "Cash" ? "color: #4EB12C;" : "color: #EF6F26;")>@TabAmount(tab)</p>
+                </button>
+            }
+        </div>
+    </div>
+
+    <div class="tab-content">
+        @if (selectedTab == "Cash")
+        {
+            @if (CollectionList.Count > 0)
+            {
+                @foreach (var list in CollectionList)
+                {
+                    <div style="margin-bottom: 5px;"></div>
+
+
+                    <div class="container" @onclick="() => DivClicked(list)">
+                        <div>
+                            <div class="data_new_cls">
+                                <div>
+                                    <div class="d-flex flex-column" style="margin-left: 5px;padding: 5px;">
+                                        <div class="d-flex flex-row" style="gap: 117px;margin-top: 5px;">
+                                            <p style="font-size: 14px;font-weight: 700;color: #3F3F5B;">@list.ReceiptNumber</p>
+                                            <img class="view_cls" src="Images/view_eye.png" @onclick="() => View(list)" />
+                                            <img class="print_cls" src="Images/Print.png" @onclick="@(() => Printer(list))" />
+                                            <img class="share_cls" src="Images/Share.png" @onclick="Share" />
+                                        </div>
+                                        <div class="d-flex flex-row" style="gap: 130px;">
+                                            <p style="font-size: 12px;font-weight: 500;margin-top: -12px;">@BidirectionalLookup(list.StoreUID)</p>
+                                            <p class="stat_cls" style="@(Status.Contains(list.Status) ? "color: #4EB12C;position: absolute;right:10px;" : "color: #EF6F26;margin-left: 50px;position: absolute;right:10px;" )"> @(Status.Contains(list.Status) ? "Payment Success" : "Pending")</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="data_sub_cls"></div>
+                                    <div>
+                                        <div class="d-flex flex-row" style="gap: 215px;margin-left: 10px;">
+                                            <div>
+                                                <p class="pmt_new_cls">@Localizer["payment_date"]</p>
+                                                <p class="date_cls">@CommonFunctions.GetDateTimeInFormat(list.ModifiedTime)</p>
+                                            </div>
+                                            <div>
+                                                <p class="pmt_new_cls">@Localizer["total_amount"]</p>
+                                                <p class="curr_cls">
+                                                    @Localizer["inr"] <span style="font-weight: 700;font-size: 12px;">@list.Amount</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @if (list.IsExpanded)
+                            {
+                                @if (list.Category != "Cash" && list.Category != "CREDITNOTE")
+                                {
+                                    <div class="cpo_cls d-flex flex-row">
+                                        <div class="hdr_cls">
+                                            <p>@Localizer["cheque_no"]</p>
+                                            <p>@Localizer["branch_name"]</p>
+                                            <p>@Localizer["bank_name"]</p>
+                                        </div>
+                                        <div class="bdy_cls">
+                                            <p>: @CPODetails.FirstOrDefault().ChequeNo</p>
+                                            <p>: @CPODetails.FirstOrDefault().Branch</p>
+                                            <p>: @CPODetails.FirstOrDefault().BankUID</p>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            @if (list.flag)
+                            {
+                                <div class="card1 d-flex flex-row extra_cls">
+                                    <div class="col-3" style="margin-left: 4px;">
+                                        @Localizer["invoice_no"]
+                                    </div>
+                                    <div class="col-5">
+                                    </div>
+                                    <div class="col-2">
+                                    </div>
+                                    <div class="col-2">
+                                        @Localizer["amount"]
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    @if (list.IsExpanded)
+                    {
+                        <div class="card-c extra_sub_cls">
+                            @foreach (var c in AllotmentList)
+                            {
+                                <div class="d-flex flex-row" style="font-size:11px;margin-left: 4px;">
+                                    <div class="col-3" style="color:deepskyblue">
+                                        @c.ReferenceNumber
+                                    </div>
+                                    <div class="col-5">
+                                    </div>
+                                    <div class="col-2">
+                                    </div>
+                                    <div class="col-2" style="color:deepskyblue">
+                                        @_appUser.OrgCurrencyList.FirstOrDefault(p => p.UID == "INR").Symbol
+                                        @c.Amount
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                }
+
+            }
+            else
+            {
+                <div style="margin-bottom: 3px;"></div>
+                <div class="container">
+                    <div class="row">
+                        <div class="card">
+                            <div class="card-title" style="color:red;margin-left:100px;margin-top: 10px;font-size: 12px;">
+                                @Localizer["no_records_available"]
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        @if (selectedTab == "Cheque")
+        {
+            @if (CollectionList.Count > 0)
+            {
+                @foreach (var list in CollectionList)
+                {
+                    <div style="margin-bottom: 5px;"></div>
+                    <div class="container" @onclick="() => DivClicked(list)">
+                        <div>
+                            <div class="data_new_cls">
+                                <div>
+                                    <div class="d-flex flex-column" style="margin-left: 5px;padding: 5px;">
+                                        <div class="d-flex flex-row" style="gap: 117px;margin-top: 5px;">
+                                            <p style="font-size: 14px;font-weight: 700;color: #3F3F5B;">@list.ReceiptNumber</p>
+                                            <img class="view_cls" src="Images/view_eye.png" @onclick="() => View(list)" />
+                                            <img class="print_cls" src="Images/Print.png" @onclick="@(() => Printer(list))" />
+                                            <img class="share_cls" src="Images/Share.png" @onclick="Share" />
+                                        </div>
+                                        <div class="d-flex flex-row" style="gap: 130px;">
+                                            <p style="font-size: 12px;font-weight: 500;margin-top: -12px;">@BidirectionalLookup(list.StoreUID)</p>
+                                            <p class="stat_cls" style="@(list.Status == "Collected" ? "color: #4EB12C;position: absolute;right:10px;" : "color: #EF6F26;margin-left: 50px;position: absolute;right:10px;" )"> @(list.Status == "Collected" ? "Payment Success" : "Pending")</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="data_sub_cls"></div>
+                                    <div>
+                                        <div class="d-flex flex-row" style="gap: 215px;margin-left: 10px;">
+                                            <div>
+                                                <p class="pmt_new_cls">@Localizer["payment_date"]</p>
+                                                <p class="date_cls">@CommonFunctions.GetDateTimeInFormat(list.ModifiedTime)</p>
+                                            </div>
+                                            <div>
+                                                <p class="pmt_new_cls">@Localizer["total_amount"]</p>
+                                                <p class="curr_cls">
+                                                    @Localizer["inr"] <span style="font-weight: 700;font-size: 12px;">@list.Amount</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @if (list.IsExpanded)
+                            {
+                                @if (list.Category != "Cash" && list.Category != "CREDITNOTE")
+                                {
+                                    <div class="cpo_cls d-flex flex-row">
+                                        <div class="hdr_cls">
+                                            <p>@Localizer["cheque_no"]</p>
+                                            <p>@Localizer["branch_name"]</p>
+                                            <p>@Localizer["bank_name"]</p>
+                                        </div>
+                                        <div class="bdy_cls">
+                                            <p>: @CPODetails.FirstOrDefault().ChequeNo</p>
+                                            <p>: @CPODetails.FirstOrDefault().Branch</p>
+                                            <p>: @CPODetails.FirstOrDefault().BankUID</p>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            @if (list.flag)
+                            {
+                                <div class="card1 d-flex flex-row extra_cls">
+                                    <div class="col-3" style="margin-left: 4px;">
+                                        @Localizer["invoice_no"]
+                                    </div>
+                                    <div class="col-5">
+                                    </div>
+                                    <div class="col-2">
+                                    </div>
+                                    <div class="col-2">
+                                        @Localizer["amount"]
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    @if (list.IsExpanded)
+                    {
+                        <div class="card-c extra_sub_cls">
+                            @foreach (var c in AllotmentList)
+                            {
+                                <div class="d-flex flex-row" style="font-size:11px;margin-left: 4px;">
+                                    <div class="col-3" style="color:deepskyblue">
+                                        @c.ReferenceNumber
+                                    </div>
+                                    <div class="col-5">
+                                    </div>
+                                    <div class="col-2">
+                                    </div>
+                                    <div class="col-2" style="color:deepskyblue">
+                                        @_appUser.OrgCurrencyList.FirstOrDefault(p => p.UID == "INR").Symbol
+                                        @c.Amount
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                }
+
+            }
+            else
+            {
+                <div style="margin-bottom: 3px;"></div>
+                <div class="container">
+                    <div class="row">
+                        <div class="card">
+                            <div class="card-title" style="color:red;margin-left:100px;margin-top: 10px;font-size: 12px;">@Localizer["no_records_available"]</div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        @if (selectedTab == "POS")
+        {
+            @if (CollectionList.Count > 0)
+            {
+                @foreach (var list in CollectionList)
+                {
+                    <div style="margin-bottom: 5px;"></div>
+                    <div class="container" @onclick="() => DivClicked(list)">
+                        <div>
+                            <div class="data_new_cls">
+                                <div>
+                                    <div class="d-flex flex-column" style="margin-left: 5px;padding: 5px;">
+                                        <div class="d-flex flex-row" style="gap: 117px;margin-top: 5px;">
+                                            <p style="font-size: 14px;font-weight: 700;color: #3F3F5B;">@list.ReceiptNumber</p>
+                                            <img class="view_cls" src="Images/view_eye.png" @onclick="() => View(list)" />
+                                            <img class="print_cls" src="Images/Print.png" @onclick="@(() => Printer(list))" />
+                                            <img class="share_cls" src="Images/Share.png" @onclick="Share" />
+                                        </div>
+                                        <div class="d-flex flex-row" style="gap: 130px;">
+                                            <p style="font-size: 12px;font-weight: 500;margin-top: -12px;">@BidirectionalLookup(list.StoreUID)</p>
+                                            <p class="stat_cls" style="@(list.Status == "Collected" ? "color: #4EB12C;position: absolute;right:10px;" : "color: #EF6F26;margin-left: 50px;position: absolute;right:10px;" )"> @(list.Status == "Collected" ? "Payment Success" : "Pending")</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="data_sub_cls"></div>
+                                    <div>
+                                        <div class="d-flex flex-row" style="gap: 215px;margin-left: 10px;">
+                                            <div>
+                                                <p class="pmt_new_cls">@Localizer["payment_date"]</p>
+                                                <p class="date_cls">@CommonFunctions.GetDateTimeInFormat(list.ModifiedTime)</p>
+                                            </div>
+                                            <div>
+                                                <p class="pmt_new_cls">@Localizer["total_amount"]</p>
+                                                <p class="curr_cls">
+                                                    @Localizer["inr"] <span style="font-weight: 700;font-size: 12px;">@list.Amount</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @if (list.IsExpanded)
+                            {
+                                @if (list.Category != "Cash" && list.Category != "CREDITNOTE")
+                                {
+                                    <div class="cpo_cls d-flex flex-row">
+                                        <div class="hdr_cls">
+                                            <p>@Localizer["cheque_no"]</p>
+                                            <p>@Localizer["branch_name"]</p>
+                                            <p>@Localizer["bank_name"]</p>
+                                        </div>
+                                        <div class="bdy_cls">
+                                            <p>: @CPODetails.FirstOrDefault().ChequeNo</p>
+                                            <p>: @CPODetails.FirstOrDefault().Branch</p>
+                                            <p>: @CPODetails.FirstOrDefault().BankUID</p>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            @if (list.flag)
+                            {
+                                <div class="card1 d-flex flex-row extra_cls">
+                                    <div class="col-3" style="margin-left: 4px;">
+                                        @Localizer["invoice_no"]
+                                    </div>
+                                    <div class="col-5">
+                                    </div>
+                                    <div class="col-2">
+                                    </div>
+                                    <div class="col-2">
+                                        @Localizer["amount"]
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    @if (list.IsExpanded)
+                    {
+                        <div class="card-c extra_sub_cls">
+                            @foreach (var c in AllotmentList)
+                            {
+                                <div class="d-flex flex-row" style="font-size:11px;margin-left: 4px;">
+                                    <div class="col-3" style="color:deepskyblue">
+                                        @c.ReferenceNumber
+                                    </div>
+                                    <div class="col-5">
+                                    </div>
+                                    <div class="col-2">
+                                    </div>
+                                    <div class="col-2" style="color:deepskyblue">
+                                        @_appUser.OrgCurrencyList.FirstOrDefault(p => p.UID == "INR").Symbol
+                                        @c.Amount
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                }
+            }
+            else
+            {
+                <div style="margin-bottom: 3px;"></div>
+                <div class="container">
+                    <div class="row">
+                        <div class="card">
+                            <div class="card-title" style="color:red;margin-left:100px;margin-top: 10px;font-size: 12px;">@Localizer["no_records_available"]</div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        @if (selectedTab == "Online")
+        {
+            @if (CollectionList.Count > 0)
+            {
+                @foreach (var list in CollectionList)
+                {
+                    <div style="margin-bottom: 5px;"></div>
+                    <div class="container" @onclick="() => DivClicked(list)">
+                        <div>
+                            <div class="data_new_cls">
+                                <div>
+                                    <div class="d-flex flex-column" style="margin-left: 5px;padding: 5px;">
+                                        <div class="d-flex flex-row" style="gap: 117px;margin-top: 5px;">
+                                            <p style="font-size: 14px;font-weight: 700;color: #3F3F5B;">@list.ReceiptNumber</p>
+                                            <img class="view_cls" src="Images/view_eye.png" @onclick="() => View(list)" />
+                                            <img class="print_cls" src="Images/Print.png" @onclick="@(() => Printer(list))" />
+                                            <img class="share_cls" src="Images/Share.png" @onclick="Share" />
+                                        </div>
+                                        <div class="d-flex flex-row" style="gap: 130px;">
+                                            <p style="font-size: 12px;font-weight: 500;margin-top: -12px;">@BidirectionalLookup(list.StoreUID)</p>
+                                            <p class="stat_cls" style="@(list.Status == "Collected" ? "color: #4EB12C;position: absolute;right:10px;" : "color: #EF6F26;margin-left: 50px;position: absolute;right:10px;" )"> @(list.Status == "Collected" ? "Payment Success" : "Pending")</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="data_sub_cls"></div>
+                                    <div>
+                                        <div class="d-flex flex-row" style="gap: 215px;margin-left: 10px;">
+                                            <div>
+                                                <p class="pmt_new_cls">@Localizer["payment_date"]</p>
+                                                <p class="date_cls">@CommonFunctions.GetDateTimeInFormat(list.ModifiedTime)</p>
+                                            </div>
+                                            <div>
+                                                <p class="pmt_new_cls">@Localizer["total_amount"]</p>
+                                                <p class="curr_cls">
+                                                    @Localizer["inr"] <span style="font-weight: 700;font-size: 12px;">@list.Amount</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @if (list.IsExpanded)
+                            {
+                                @if (list.Category != "Cash" && list.Category != "CREDITNOTE")
+                                {
+                                    <div class="cpo_cls d-flex flex-row">
+                                        <div class="hdr_cls">
+                                            <p>@Localizer["cheque_no"]</p>
+                                            <p>@Localizer["branch_name"]</p>
+                                            <p>@Localizer["bank_name"]</p>
+                                        </div>
+                                        <div class="bdy_cls">
+                                            <p>: @CPODetails.FirstOrDefault().ChequeNo</p>
+                                            <p>: @CPODetails.FirstOrDefault().Branch</p>
+                                            <p>: @CPODetails.FirstOrDefault().BankUID</p>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            @if (list.flag)
+                            {
+                                <div class="card1 d-flex flex-row extra_cls">
+                                    <div class="col-3" style="margin-left: 4px;">
+                                        @Localizer["invoice_no"]
+                                    </div>
+                                    <div class="col-5">
+                                    </div>
+                                    <div class="col-2">
+                                    </div>
+                                    <div class="col-2">
+                                        @Localizer["amount"]
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    @if (list.IsExpanded)
+                    {
+                        <div class="card-c extra_sub_cls">
+                            @foreach (var c in AllotmentList)
+                            {
+                                <div class="d-flex flex-row" style="font-size:11px;margin-left: 4px;">
+                                    <div class="col-3" style="color:deepskyblue">
+                                        @c.ReferenceNumber
+                                    </div>
+                                    <div class="col-5">
+                                    </div>
+                                    <div class="col-2">
+                                    </div>
+                                    <div class="col-2" style="color:deepskyblue">
+                                        @_appUser.OrgCurrencyList.FirstOrDefault(p => p.UID == "INR").Symbol
+                                        @c.Amount
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                }
+
+            }
+            else
+            {
+                <div style="margin-bottom: 3px;"></div>
+                <div class="container">
+                    <div class="row">
+                        <div class="card">
+                            <div class="card-title" style="color:red;margin-left:100px;margin-top: 10px;font-size: 12px;">@Localizer["no_records_available"]</div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+</div>

@@ -1,0 +1,21 @@
+﻿@page "/TemporaryCreditEnhancement"
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+@inject Winit.Modules.CreditLimit.BL.Interfaces.IMaintainTemporaryCreditEnhancementViewModel _viewModel;
+
+
+<div class="cls_main1">
+@if (IsInitialised)
+{
+        <div class="cls_export_main cls_mar_top_14px">
+        <button class="cls_add_new_sec" @onclick="AddNewTemporaryCreditEnhancementDetails">Add New</button>
+    </div>
+    <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns"
+    DataSource="_viewModel.TemporaryCreditEnhancementList"
+    OnSort="OnSortClick" PageNumber="_viewModel.PageNo"
+    PageSize="_viewModel.PageSize" TotalItemsCount="_viewModel.TotalCount"
+    ShowRecordsCount="true"
+    IsPaginationRequired="true"
+    OnPageChange="_viewModel.OnPageIndexChanged"/>
+}
+
+</div>

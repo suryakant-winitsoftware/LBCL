@@ -1,0 +1,35 @@
+﻿@page "/HorizontalTabs"
+@using Winit.Shared.Models.Common
+@using Winit.UIComponents.Common.CustomControles
+<PageTitle>Tabs</PageTitle>
+<div style="margin-top:100px;"></div>
+<Winit.UIComponents.Common.CustomControles.Tabs TabItems="tabitems" OnTabSelect="OnTabSelect"></Winit.UIComponents.Common.CustomControles.Tabs>
+<Tabs TabItems="tabCountitems" OnTabSelect="OnTabSelect" IsCountRequired="true"></Tabs>
+@code {
+    public List<Winit.Shared.Models.Common.ISelectionItem> tabitems = new List<ISelectionItem>
+    {
+        new SelectionItem{ Label="Tab1", Code="Tab1", UID="1"},
+        new SelectionItem{ Label="Tab2", Code="Tab2", UID="2"},
+        new SelectionItem{ Label="Tab3", Code="Tab3", UID="3"},
+        new SelectionItem{ Label="Tab4", Code="Tab4", UID="4"},
+        new SelectionItem{ Label="Tab5", Code="Tab5", UID="5"},
+        new SelectionItem{ Label="Tab6", Code="Tab6", UID="6"},
+        new SelectionItem{ Label="Tab7", Code="Tab7", UID="7"},
+        new SelectionItem{ Label="Tab8", Code="Tab8", UID="8"},
+    };
+    public List<Winit.Shared.Models.Common.ISelectionItem> tabCountitems = new List<ISelectionItem>
+    {
+        new SelectionItemTab{ Label="Tab1", Code="Tab1", UID="1",Count=1},
+        new SelectionItemTab{ Label="Tab2", Code="Tab2", UID="2",Count=3},
+        new SelectionItemTab{ Label="Tab3", Code="Tab3", UID="3",Count=6},
+        new SelectionItemTab{ Label="Tab4", Code="Tab4", UID="4",Count=1},
+        new SelectionItemTab{ Label="Tab5", Code="Tab5", UID="5",Count=31},
+        new SelectionItemTab{ Label="Tab6", Code="Tab6", UID="6",Count=15},
+        new SelectionItemTab{ Label="Tab7", Code="Tab7", UID="7",Count=18},
+        new SelectionItemTab{ Label="Tab8", Code="Tab8", UID="8",Count=19},
+    };
+    public void OnTabSelect(ISelectionItem selectionItem)
+    {
+        selectionItem.IsSelected = true;
+    }
+}

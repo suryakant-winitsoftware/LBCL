@@ -1,0 +1,129 @@
+﻿
+    <div class="modal-body" style="width:100%;float:left;">
+        <h3>Details</h3>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="">
+                        Code
+                        <span style="color: red">*</span>
+                    </label>
+                    <input autocomplete="off" class="form-control" @bind=@PromotionView.Code required="" type="text">
+                </div>
+                <div class="col-md-4">
+                    <label class="">
+                        Name
+                        <span style="color: red">*</span>
+                    </label>
+                    <input autocomplete="off" class="form-control" @bind=@PromotionView.Name required="" type="text">
+                </div>
+
+
+                <div class="col-md-4">
+                    <label class="">
+                        Category
+                    </label>
+
+                    <select class="form-control " name="datatype" required="" @onchange=@((e)=>PromotionView.Category=e.Value.ToString())>
+                        <option value="0: null">Select Category</option>
+                        @foreach (var item in PROMOTION_CATEGORY)
+                        {
+                            <option value="@item.UID">@item.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="row" style="width:100%;float:left;margin:15px 0px 0px 0px;">
+                    <div class="col-md-4">
+                        <label class="">
+                            Type
+                            <span style="color: red">*</span>
+                        </label>
+
+                        <select class="form-control  ng-pristine" disabled="" name="datatype" required="" @onchange=@((e)=>PromotionView.Type=e.Value.ToString())>
+                            @foreach (var item in PROMOTION_TYPE)
+                            {
+                                <option value="@item.UID">@item.Name</option>
+                            }
+
+
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="">
+                            Promotion Format
+                            <span style="color: red">*</span>
+                        </label>
+
+                        <select class="form-control " name="datatype" required="" @onchange=OnPromotionchange >
+                            <option value="0: null">Select Format</option>
+
+                            @foreach (var item in PROMO_INSTANT_FORMATS)
+                            {
+                                <option value="@item.UID">@item.Name</option>
+                            }
+
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="">
+                            Priority
+                            <span style="color: red">*</span>
+                        </label>
+                        <input autocomplete="off" class="form-control  ng-pristine ng-valid" maxlength="5" min="1" onkeypress="return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13) ? null :
+                           event.charCode>= 48 &amp;&amp; event.charCode <= 57" onpaste="return false;" required="" step="1" type="number" @bind=PromotionView.Priority>
+                    </div>
+
+
+
+
+                </div>
+
+                <div class="row" style="width:100%;float:left;margin:15px 0px;">
+                    <div class="col-md-4">
+                        <label class="">
+                            Valid From
+                            <span style="color: red">*</span>
+                        </label>
+                        <input class="form-control " required="" type="date" usevalueasdate="" min="2023-12-07" max="9999-12-31" @bind="@PromotionView.ValidFrom">
+
+                    </div>
+                    <div class="col-md-4" style="margin-top:8px;margin-bottom: 10px;">
+                        <label class="">
+                            <input name="NN" style="margin-top:20px;" type="checkbox" class=" ng-pristine ng-valid"> No End Date
+                        </label>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="">
+                            Valid Upto
+                            <span style="color: red">*</span>
+                        </label>
+                        <input class="form-control " required="" type="date" usevalueasdate="" min="2023-12-07" max="9999-12-31" @bind="@PromotionView.ValidUpto" >
+
+                    </div>
+                    <div class="col-md-4 Rewarks">
+                        <label class="">
+                            Promotion Description<span style="color: red">*</span>
+                        </label>
+                        <textarea autocomplete="off" class="form-control  ng-pristine ng-valid" cols="20" maxlength="495" rows="2" @bind="@PromotionView.PromoMessage"></textarea>
+                    </div>
+
+
+
+
+                </div>
+                <div class="col-md-4" style="display:none;">
+                    <label class="">
+                        <input name="HasSlabs" type="checkbox" class=" ng-pristine ng-valid"> Has
+                        Slabs
+                    </label>
+                </div>
+                <div class="col-md-4" style="display:none;">
+                    <label class="">
+                        <input name="HasFactSheet" type="checkbox" class=" ng-pristine ng-valid"> Has Budget? <!---->
+
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+   

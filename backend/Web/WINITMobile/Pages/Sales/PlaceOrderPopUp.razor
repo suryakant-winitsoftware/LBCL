@@ -1,0 +1,121 @@
+﻿@inherits WINITMobile.Pages.Base.BaseComponentBase
+@if (IsOpen)
+{
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show" tabindex="-1" style="display: block;">
+        <div class="modal-dialog">
+            <div class="modal-content" style="padding: 10px; margin-left:0%;">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="font-size: 16px;">
+                        @Localizer["success"]
+                    </h5>
+                    <button type="button" class="close w-16 h-16" @onclick="Close">
+                        <span aria-hidden="true" style="color:#000000;">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 10px;">
+                    <div class="cls_place_order">
+                        <div class="cls_place_order_top">
+                            <div class="cls_place_order_top1">
+                                <img style="width:72px;" src="/Images/checked1.png" />
+                            </div>
+                            <div class="cls_place_order_top2">
+                                <h3>
+                                    @(@Message == "Today Sales Captured successfully"
+                                        ? "Today Sales Captured successfully"
+                                        : @Message) 
+                                </h3>
+                                <label>
+                                    @(@Header == "Order"
+                                    ? @Localizer["order"]
+                                        : @Header) @Localizer["number"] <b> @OrderNumber</b>
+                                </label>
+                            </div>
+                            <div class="cls_place_order_top3">
+                                <h3>@CustomerName</h3>
+                                <p>@CustomerAddress</p>
+                            </div>
+                        </div>
+                        <div class="cls_place_order_bottom dn">
+                            @if (OnCollectPaymentClicked.HasDelegate)
+                            {
+                                <div @onclick="CollectPayment" class="cls_place_order_bottom_rep">
+                                    <a>
+                                        <i><img style="width:20px;" src="/Images/CollectPayment.png"></i>
+                                        <p>@Localizer["collect_payment"]</p>
+                                    </a>
+                                </div>
+                            }
+                            @if (OnEmailClicked.HasDelegate)
+                            {
+                                <div @onclick="SendEmail" class="cls_place_order_bottom_rep">
+                                    <a>
+                                        <i><img style="width:20px;" src="/Images/Email.png"></i>
+                                        <p> @Localizer["email"]</p>
+                                    </a>
+                                </div>
+                            }
+                            @if (OnShareClicked.HasDelegate)
+                            {
+                                <div @onclick="Share" class="cls_place_order_bottom_rep">
+                                    <a>
+                                        <i><img style="width:20px;" src="/Images/Share.png"></i>
+                                        <p> @Localizer["share"]</p>
+                                    </a>
+                                </div>
+                            }
+                            @if (OnPrintClicked.HasDelegate)
+                            {
+                                <div @onclick="Print" class="cls_place_order_bottom_rep">
+                                    <a>
+                                        <i><img style="width:24px;" src="/Images/Print.png"></i>
+                                        <p> @Localizer["print"]</p>
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public string OrderNumber { get; set; }
+    [Parameter] public string CustomerName { get; set; }
+    [Parameter] public string CustomerAddress { get; set; }
+    [Parameter] public bool IsOpen { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public EventCallback OnCollectPaymentClicked { get; set; }
+    [Parameter] public EventCallback OnEmailClicked { get; set; }
+    [Parameter] public EventCallback OnShareClicked { get; set; }
+    [Parameter] public EventCallback OnPrintClicked { get; set; }
+    [Parameter] public string Message { get; set; } = "Today Sales Captured successfully";
+    [Parameter] public string Header { get; set; } = "Order";
+
+    private void CollectPayment()
+    {
+        OnCollectPaymentClicked.InvokeAsync();
+    }
+    private void SendEmail()
+    {
+        OnEmailClicked.InvokeAsync();
+    }
+    private void Share()
+    {
+        OnShareClicked.InvokeAsync();
+    }
+    private void Print()
+    {
+        OnPrintClicked.InvokeAsync();
+    }
+    private void Close()
+    {
+        OnClose.InvokeAsync();
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        LoadResources(null, _languageService.SelectedCulture);
+    }
+}

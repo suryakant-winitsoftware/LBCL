@@ -1,0 +1,20 @@
+﻿<div class='@(IsForSearch? "cls_serch_product_details_no_bg" : "cls_serch_product_details")'>
+    <div class="cls_search_desk">
+        <input @ref="_inputElement" value="@GetValue" @oninput="DebouncedInputValueChanged" placeholder="@Placeholder"
+                maxlength="@MaxLength" type="@GetTypeAttribute(KeyboardType)"
+        @attributes="GetInputAttributes()" disabled=@Disabled />
+
+        @if (!string.IsNullOrEmpty(Value) && !IsHideClearButton)
+        {
+            @* <button @onclick="ClearInput" class="clear-button">
+                X <!-- Your clear icon -->
+            </button> *@
+            <span @onclick="ClearInput"><img class="cls_img_top" draggable="false" src="Images/clear.png"></span>
+        }
+        else if (IsForSearch)
+        {
+            <span><img class="cls_img_top" draggable="false" src="Images/search_icon.png"></span>
+        }
+    </div>
+
+</div>

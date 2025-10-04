@@ -1,0 +1,113 @@
+﻿@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.Extensions.Localization
+@using Winit.UIComponents.Common.LanguageResources.Web
+@inject Winit.UIComponents.Common.Language.ILanguageService _languageService
+@inject IStringLocalizer<LanguageKeys> Localizer
+@if (isLoad)
+{
+    <div style="width:100%;float:left;margin:30px 0px;">
+        <div class="row">
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="cls_main_sign_input_new1">
+                    <p>@Localizer["document_type"]</p>
+                    
+                        <button class="form-control" @onclick=@(()=>IsDocumentVisible=!IsDocumentVisible)>
+                        @StoreDocument.DocumentLabel
+                        </button>
+                    
+                    @if (IsDocumentVisible)
+                    {
+                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="DocumentList" _SelectionMode=Winit.Shared.Models.Enums.SelectionMode.Single ShowPopUp=true OnSelect="@OnDropDownSelected" />
+                    }
+                   
+                </div>
+
+
+            </div>
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="cls_main_sign_input_new1">
+                    <p>@Localizer["document_number"]</p>
+                    <input type="text" @bind="@StoreDocument.DocumentNo" placeholder=@Localizer["enter_document_number"] />
+
+                </div>
+
+
+            </div>
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="cls_main_sign_input_new1">
+                    <p>@Localizer["valid_from"]</p>
+                     <InputDate @bind-Value="@StoreDocument.ValidFrom"></InputDate>
+                </div>
+
+
+            </div>
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="cls_main_sign_input_new1">
+                    <p>@Localizer["valid_upto"]</p>
+                    <InputDate @bind-Value="@StoreDocument.ValidUpTo"></InputDate>
+                </div>
+
+
+            </div>
+
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="cls_main_sign_input_new1">
+                    <p>@Localizer["documents"]</p>
+
+                    @if (showHideFileUploader)
+                    {
+                        <Winit.UIComponents.Common.FileUploader.FileUploader @ref=fileUploader FileExtension=".jpg,.jpeg,.pdf,.png,.doc"
+                                                                             RelativePath="@FilePath"
+                                                                             FileSize="500000"
+                                                                             AllowMultipleFiles=true
+                                                                             FileSysList=DisplayFileSysList
+                                                                             LinkedItemType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.StoreDocument"
+                                                                             LinkedItemUID="@StoreDocument.UID"
+                                                                             FileSysType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.StoreDocument"
+                                                                             FileType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.StoreDocument"
+                                                                             IsDirectory="false"
+                                                                             UploadEventCallBack="GetFilesysList" DeleteEventCallBack="AfterDeleteImage" />
+                    }
+                </div>
+
+            </div>
+
+        </div>
+        <div style="align-content:center;"> <button class="btn btn-secondary" @onclick="SaveOrUpdate" style="margin-left: 50%;">@Localizer["save"]</button></div>
+
+        @if (StoreDocuments?.Count > 0)
+        {
+            <Winit.UIComponents.Web.Table.TableGridView  DataSource="StoreDocuments" Columns="dataGridColumns"/>
+
+            @* <div>
+                <table class="table">
+                    <thead>
+                        <th>Document Type</th>
+                        <th>Document Number</th>
+                        <th>Valid From</th>
+                        <th>Valid UpTo</th>
+                        <th>Action</th>
+
+                    </thead>
+                    <tbody>
+                        @foreach (var item in StoreDocuments)
+                        {
+                            <tr>
+                                <td>@item.DocumentType</td>
+                                <td>@item.DocumentNo</td>
+                                <td>@item.ValidFrom</td>
+                                <td>@item.ValidUpTo</td>
+                                <td>
+                                    <button @onclick="@(()=>EditDocs(item))">Edit</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div> *@
+        }
+
+
+    </div>
+}

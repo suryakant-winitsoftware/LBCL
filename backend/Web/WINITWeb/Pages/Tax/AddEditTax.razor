@@ -1,0 +1,96 @@
+﻿@page "/AddEditTax"
+@using Winit.UIComponents.Web.Table
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.Tax.BL.UIInterfaces.ITaxViewModel _taxViewModel
+
+
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" />
+@if (IsInitialized)
+{
+    <div class="cls_section" >
+        <div class="cls_container_div1">
+            <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label">
+                <span class="cls_section_div_purchase2_span">*</span>@Localizer["name"]
+            </label>
+            <input class="cls_select2_button" placeholder="Name" type="text" @bind-value="Tax.Name">
+        </div>
+            <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label">
+                <span class="cls_section_div_purchase2_span">*</span>@Localizer["legal_name"]
+            </label>
+            <input class="cls_select2_button" placeholder="Legal name" type="text" @bind-value="Tax.LegalName">
+        </div>
+            <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label">
+                <span class="cls_section_div_purchase2_span">*</span>@Localizer["code"]
+            </label>
+            <input class="cls_select2_button" disabled="@IsEditMode" placeholder="Code" type="text" @bind-value="Tax.Code">
+        </div>
+            <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label">
+                <span class="cls_section_div_purchase2_span">*</span>@Localizer["applicable_at"]
+            </label>
+            <Winit.UIComponents.Common.CustomControls.DropDown UniqueUID="applicableat" DataSource="ApplicableAtSelectionItems" IsButtonVisible="true" IsSearchable="false" Title="Applicable At"
+                                                               _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single"
+                                                               OnSelect="(e) => {Tax.ApplicableAt = e?.SelectionItems?.FirstOrDefault()?.Label;  } " />
+        </div>
+            <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label">
+                <span class="cls_section_div_purchase2_span">*</span>@Localizer["status"]
+            </label>
+            <Winit.UIComponents.Common.CustomControls.DropDown UniqueUID="Status" DataSource="StatusSelectionItems" IsButtonVisible="true" IsSearchable="false" Title="Status"
+                                                               _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single"
+                                                               OnSelect="(e) => {Tax.Status = e?.SelectionItems?.FirstOrDefault()?.Label;  }" />
+        </div>
+    </div>
+        <div class="cls_section_div_sku">
+            <label class="cls_section_div_purchase2_label">
+                <span class="cls_section_div_purchase2_span">*</span>@Localizer["valid_from"]
+            </label>
+            <input class="cls_select_date" type="date" @bind-value="Tax.ValidFrom" />
+        </div>
+        <div class="cls_section_div_sku">
+            <label class="cls_section_div_purchase2_label">
+                <span class="cls_section_div_purchase2_span">*</span>@Localizer["valid_to"]
+            </label>
+            <input class="cls_select_date" type="date" @bind-value="Tax.ValidUpto" />
+        </div>
+        <div class="cls_section_div_sku">
+            <label class="cls_section_div_purchase2_label">
+                <span class="cls_section_div_purchase2_span">*</span>@Localizer["calculation_type"]
+            </label>
+            <Winit.UIComponents.Common.CustomControls.DropDown UniqueUID="calculationtype" DataSource="CalculationTypeSelectionItems"
+                                                               IsButtonVisible="true" IsSearchable="false" Title=@Localizer["calculation_type"]
+                                                               _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single"
+                                                               OnSelect="(e) => {Tax.TaxCalculationType = e?.SelectionItems?.FirstOrDefault()?.Label;  }" />
+            @* <button class="form-control" @onclick="() =>IsCalculationDDPUOpen = true">@(string.IsNullOrEmpty(Tax.TaxCalculationType) ? "Select Calculation Type" : Tax.TaxCalculationType)</button> *@
+        </div>
+        <div class="cls_section_div_sku">
+            <label class="cls_section_div_purchase2_label">
+                <span class="cls_section_div_purchase2_span">*</span>@Localizer["basetax_rate"]
+            </label>
+            <input class="cls_select2_button" type="number" min="0" @bind-value="Tax.BaseTaxRate" />
+        </div>
+    </div>
+
+    <div class="cls_container_div4">
+    <h4 class="cls_container_p_full">@Localizer["sku_mapping"]</h4>
+
+        <div class="cls_container_div4">
+    <Winit.UIComponents.Common.DialogBoxes.AddProductDialogBox SKUAttributesDataSource="_taxViewModel.SkuAttributesList"
+                                                               SKUDataSource="_taxViewModel.SKUList" GetSelectedSKU="SelectedSKus" />
+        
+        <button class="cls_add_new_sec" @onclick="DeleteCheckedTaxSKUMaps">@Localizer["delete_checked"]</button>
+    
+    <TableGridView DataSource="_taxViewModel.TaxSKUMapItemViews?.Where(e => e.ActionType!=Winit.Shared.Models.Enums.ActionType.Delete)?.ToList()" Columns="TaxSKuMapGridColumns"
+                   IsFirstColumnCheckbox="true" AfterCheckBoxSelection="Product_AfterCheckBoxSelection" />
+
+        </div>
+    </div>
+
+    <div class="cls_button_bottom_purchase">
+        <button class="cls_button_blue " @onclick="OnSaveClick">@(IsEditMode ? @Localizer["update"] : @Localizer["save"])</button>
+    </div>
+}
+

@@ -1,0 +1,52 @@
+﻿@page "/cashdiscountexclude"
+@using Winit.Modules.Scheme.BL.Interfaces
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject IJSRuntime JSRuntime
+@inject ISchemeExcludeMappingViewModel _schemeExcludeMappingViewModel
+
+
+<PageHeaderAndFilter IDataBreadcrumbService="DataService" IsShowFilter="true" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+                     OnFilterApplied="@OnFilterApply" />
+
+<div class="col-12 d-flex flex-column">
+    <div class="cls_container_div1">
+        <div class="cls_file_upload_qps1">
+            <label class="cls_file_upload_label"><span class="cls_section_div_purchase2_span">*</span> Upload File</label>
+            <InputFile @key=fileId OnChange="HandleFileSelected" />
+            <button style="padding:10px 30px;" class="cls_file_upload_button" @onclick="OnFileUpload">Upload</button>
+            <a href="#" class="cls_hyperlink" style="width:41%;" @onclick="DownloadEmptyTemplate" @onclick:preventDefault>Download Template</a>
+        </div>
+        <button style="padding:10px 30px;float:right;" class="cls_file_upload_button" @onclick="DownloadSchemeExcludeDetails">Export To Excel</button>
+    </div>
+    <div>
+        @if (ShowErrorMessage)
+        {
+            <div style="text-align:center;color:red;">
+                <div>
+                    @(SuccessRecordsCount + " record(s) Inserted successfully out of " + FailedRecordsCount + " record(s).")
+                </div>
+                <div>
+                    <a href="#" style="text-decoration: underline;" onclick="@(() => DownloadErrorDetails())" @onclick:preventDefault>Click Here</a> to Download Error Details
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="d-flex flex-row">
+    <div style="color:black;font-size: smaller;margin-left: 15px;">
+        Note :-
+    </div>
+    <div style="color: red;font-size: smaller;margin-left: 10px;">
+        When You Update an Existing Customer Record, the Previous Record Will Be Automatically Marked as <b>INACTIVE</b>, and Only the Latest Record Will Remain <b>ACTIVE</b>.
+    </div>
+</div>
+
+
+
+
+
+<TableGridView DataSource="_schemeExcludeMappingViewModel.SchemeExcludeGridViewRecords" Columns="DataGridColumns"
+               ShowRecordsCount="true" PageNumber="_schemeExcludeMappingViewModel.PageNumber" PageSize="_schemeExcludeMappingViewModel.PageSize"
+               TotalItemsCount="_schemeExcludeMappingViewModel.TotalItemsCount" OnSort="OnSortClick"></TableGridView>
+<Winit.UIComponents.Web.Paging.Paging CurrentPage="_schemeExcludeMappingViewModel.PageNumber" OnPageChange="PageIndexChanged" PageSize="_schemeExcludeMappingViewModel.PageSize" TotalItems="_schemeExcludeMappingViewModel.TotalItemsCount" />

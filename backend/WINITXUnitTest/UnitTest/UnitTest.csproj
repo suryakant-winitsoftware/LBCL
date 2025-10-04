@@ -1,0 +1,223 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Modules\Route\DL.Tests\**" />
+    <EmbeddedResource Remove="Modules\Route\DL.Tests\**" />
+    <None Remove="Modules\Route\DL.Tests\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Controllers\Commission\CommissionControllerTests.cs" />
+    <Compile Remove="Controllers\Currency\CurrencyControllerTests.cs" />
+    <Compile Remove="Controllers\Customer\CustomerControllerTests.cs" />
+    <Compile Remove="Controllers\Holiday\HolidayControllerTests.cs" />
+    <Compile Remove="Controllers\ImageUpload\ImageUploadControllerTests.cs" />
+    <Compile Remove="Controllers\Invoice\InvoiceControllerTests.cs" />
+    <Compile Remove="Controllers\Org\OrgControllerTests.cs" />
+    <Compile Remove="Controllers\Product\ProductsControllerTests.cs" />
+    <Compile Remove="Controllers\PurchaseOrder\PurchaseOrderControllerTests.cs" />
+    <Compile Remove="Controllers\Route\RouteControllerTests.cs" />
+    <Compile Remove="Controllers\RuleEngine\RuleEngineControllerTests.cs" />
+    <Compile Remove="Controllers\SalesOrder\SalesOrderControllerTests.cs" />
+    <Compile Remove="Controllers\Setting\SettingControllerTests.cs" />
+    <Compile Remove="Modules\Store\BL.Tests\StoreBLTests.cs" />
+    <Compile Remove="Modules\Store\DL.Tests\StoreDLTests.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+    <PackageReference Include="Moq" Version="4.20.72" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Controllers\Commission\" />
+    <Folder Include="Controllers\Currency\" />
+    <Folder Include="Controllers\Customer\" />
+    <Folder Include="Controllers\Holiday\" />
+    <Folder Include="Controllers\ImageUpload\" />
+    <Folder Include="Controllers\Invoice\" />
+    <Folder Include="Controllers\Org\" />
+    <Folder Include="Controllers\Product\" />
+    <Folder Include="Controllers\PurchaseOrder\" />
+    <Folder Include="Controllers\Route\" />
+    <Folder Include="Controllers\RuleEngine\" />
+    <Folder Include="Controllers\SalesOrder\" />
+    <Folder Include="Controllers\Setting\" />
+    <Folder Include="Infrastructure\Repository.Tests\" />
+    <Folder Include="Infrastructure\Services.Tests\" />
+    <Folder Include="Modules\Address\BL.Tests\" />
+    <Folder Include="Modules\Address\DL.Tests\" />
+    <Folder Include="Modules\ApprovalEngine\BL.Tests\" />
+    <Folder Include="Modules\ApprovalEngine\DL.Tests\" />
+    <Folder Include="Modules\AuditTrail\BL.Tests\" />
+    <Folder Include="Modules\AuditTrail\DL.Tests\" />
+    <Folder Include="Modules\Auth\BL.Tests\" />
+    <Folder Include="Modules\Auth\DL.Tests\" />
+    <Folder Include="Modules\AwayPeriod\BL.Tests\" />
+    <Folder Include="Modules\AwayPeriod\DL.Tests\" />
+    <Folder Include="Modules\Bank\BL.Tests\" />
+    <Folder Include="Modules\Bank\DL.Tests\" />
+    <Folder Include="Modules\Base\BL.Tests\" />
+    <Folder Include="Modules\Base\DL.Tests\" />
+    <Folder Include="Modules\BroadClassification\BL.Tests\" />
+    <Folder Include="Modules\BroadClassification\DL.Tests\" />
+    <Folder Include="Modules\Calender\BL.Tests\" />
+    <Folder Include="Modules\Calender\DL.Tests\" />
+    <Folder Include="Modules\Charts\BL.Tests\" />
+    <Folder Include="Modules\Charts\DL.Tests\" />
+    <Folder Include="Modules\CollectionModule\BL.Tests\" />
+    <Folder Include="Modules\CollectionModule\DL.Tests\" />
+    <Folder Include="Modules\Common\BL.Tests\" />
+    <Folder Include="Modules\Common\DL.Tests\" />
+    <Folder Include="Modules\Contact\BL.Tests\" />
+    <Folder Include="Modules\Contact\DL.Tests\" />
+    <Folder Include="Modules\CreditLimit\BL.Tests\" />
+    <Folder Include="Modules\CreditLimit\DL.Tests\" />
+    <Folder Include="Modules\Currency\BL.Tests\" />
+    <Folder Include="Modules\Currency\DL.Tests\" />
+    <Folder Include="Modules\Customer\BL.Tests\" />
+    <Folder Include="Modules\Customer\DL.Tests\" />
+    <Folder Include="Modules\CustomSKUFields\BL.Tests\" />
+    <Folder Include="Modules\CustomSKUFields\DL.Tests\" />
+    <Folder Include="Modules\DashBoard\BL.Tests\" />
+    <Folder Include="Modules\DashBoard\DL.Tests\" />
+    <Folder Include="Modules\Distributor\BL.Tests\" />
+    <Folder Include="Modules\Distributor\DL.Tests\" />
+    <Folder Include="Modules\DropDowns\BL.Tests\" />
+    <Folder Include="Modules\DropDowns\DL.Tests\" />
+    <Folder Include="Modules\Email\BL.Tests\" />
+    <Folder Include="Modules\Email\DL.Tests\" />
+    <Folder Include="Modules\Emp\BL.Tests\" />
+    <Folder Include="Modules\Emp\DL.Tests\" />
+    <Folder Include="Modules\ErrorHandling\BL.Tests\" />
+    <Folder Include="Modules\ErrorHandling\DL.Tests\" />
+    <Folder Include="Modules\ETL\BL.Tests\" />
+    <Folder Include="Modules\ETL\DL.Tests\" />
+    <Folder Include="Modules\ExchangeOrder\BL.Tests\" />
+    <Folder Include="Modules\ExchangeOrder\DL.Tests\" />
+    <Folder Include="Modules\FileSys\BL.Tests\" />
+    <Folder Include="Modules\FileSys\DL.Tests\" />
+    <Folder Include="Modules\FirebaseReport\BL.Tests\" />
+    <Folder Include="Modules\FirebaseReport\DL.Tests\" />
+    <Folder Include="Modules\Holiday\BL.Tests\" />
+    <Folder Include="Modules\Holiday\DL.Tests\" />
+    <Folder Include="Modules\Int_CommonMethods\BL.Tests\" />
+    <Folder Include="Modules\Int_CommonMethods\DL.Tests\" />
+    <Folder Include="Modules\Int_CustomerMasterPush\BL.Tests\" />
+    <Folder Include="Modules\Int_CustomerMasterPush\DL.Tests\" />
+    <Folder Include="Modules\Int_InsertDataInQueue\BL.Tests\" />
+    <Folder Include="Modules\Int_InsertDataInQueue\DL.Tests\" />
+    <Folder Include="Modules\Int_PurchaseOrderPush\BL.Tests\" />
+    <Folder Include="Modules\Int_PurchaseOrderPush\DL.Tests\" />
+    <Folder Include="Modules\Invoice\BL.Tests\" />
+    <Folder Include="Modules\Invoice\DL.Tests\" />
+    <Folder Include="Modules\JobPosition\BL.Tests\" />
+    <Folder Include="Modules\JobPosition\DL.Tests\" />
+    <Folder Include="Modules\JourneyPlan\BL.Tests\" />
+    <Folder Include="Modules\JourneyPlan\DL.Tests\" />
+    <Folder Include="Modules\ListHeader\BL.Tests\" />
+    <Folder Include="Modules\ListHeader\DL.Tests\" />
+    <Folder Include="Modules\Location\BL.Tests\" />
+    <Folder Include="Modules\Location\DL.Tests\" />
+    <Folder Include="Modules\Mapping\BL.Tests\" />
+    <Folder Include="Modules\Mapping\DL.Tests\" />
+    <Folder Include="Modules\MobileApp\BL.Tests\" />
+    <Folder Include="Modules\MobileApp\DL.Tests\" />
+    <Folder Include="Modules\NewsActivity\BL.Tests\" />
+    <Folder Include="Modules\NewsActivity\DL.Tests\" />
+    <Folder Include="Modules\Notification\BL.Tests\" />
+    <Folder Include="Modules\Notification\DL.Tests\" />
+    <Folder Include="Modules\Org\BL.Tests\" />
+    <Folder Include="Modules\Org\DL.Tests\" />
+    <Folder Include="Modules\PriceLadder\BL.Tests\" />
+    <Folder Include="Modules\PriceLadder\DL.Tests\" />
+    <Folder Include="Modules\Printing\BL.Tests\" />
+    <Folder Include="Modules\Printing\DL.Tests\" />
+    <Folder Include="Modules\Product\BL.Tests\" />
+    <Folder Include="Modules\Product\DL.Tests\" />
+    <Folder Include="Modules\Promotion\BL.Tests\" />
+    <Folder Include="Modules\Promotion\DL.Tests\" />
+    <Folder Include="Modules\ProvisionComparisonReport\BL.Tests\" />
+    <Folder Include="Modules\ProvisionComparisonReport\DL.Tests\" />
+    <Folder Include="Modules\Provisioning\BL.Tests\" />
+    <Folder Include="Modules\Provisioning\DL.Tests\" />
+    <Folder Include="Modules\PurchaseOrder\BL.Tests\" />
+    <Folder Include="Modules\PurchaseOrder\DL.Tests\" />
+    <Folder Include="Modules\RabbitMQQueue\BL.Tests\" />
+    <Folder Include="Modules\RabbitMQQueue\DL.Tests\" />
+    <Folder Include="Modules\ReturnOrder\BL.Tests\" />
+    <Folder Include="Modules\ReturnOrder\DL.Tests\" />
+    <Folder Include="Modules\Role\BL.Tests\" />
+    <Folder Include="Modules\Role\DL.Tests\" />
+    <Folder Include="Modules\Route\BL.Tests\" />
+    <Folder Include="Modules\RSSMailQueue\BL.Tests\" />
+    <Folder Include="Modules\RSSMailQueue\DL.Tests\" />
+    <Folder Include="Modules\SalesOrder\BL.Tests\" />
+    <Folder Include="Modules\SalesOrder\DL.Tests\" />
+    <Folder Include="Modules\Scheme\BL.Tests\" />
+    <Folder Include="Modules\Scheme\DL.Tests\" />
+    <Folder Include="Modules\SequenceNumber\BL.Tests\" />
+    <Folder Include="Modules\SequenceNumber\DL.Tests\" />
+    <Folder Include="Modules\ServiceAndCallRegistration\BL.Tests\" />
+    <Folder Include="Modules\ServiceAndCallRegistration\DL.Tests\" />
+    <Folder Include="Modules\Settings\BL.Tests\" />
+    <Folder Include="Modules\Settings\DL.Tests\" />
+    <Folder Include="Modules\SKUClass\BL.Tests\" />
+    <Folder Include="Modules\SKUClass\DL.Tests\" />
+    <Folder Include="Modules\SMS\BL.Tests\" />
+    <Folder Include="Modules\SMS\DL.Tests\" />
+    <Folder Include="Modules\StockAudit\BL.Tests\" />
+    <Folder Include="Modules\StockAudit\DL.Tests\" />
+    <Folder Include="Modules\StockUpdater\BL.Tests\" />
+    <Folder Include="Modules\StockUpdater\DL.Tests\" />
+    <Folder Include="Modules\StoreActivity\BL.Tests\" />
+    <Folder Include="Modules\StoreActivity\DL.Tests\" />
+    <Folder Include="Modules\StoreCheck\BL.Tests\" />
+    <Folder Include="Modules\StoreCheck\DL.Tests\" />
+    <Folder Include="Modules\StoreDocument\BL.Tests\" />
+    <Folder Include="Modules\StoreDocument\DL.Tests\" />
+    <Folder Include="Modules\Store\BL.Tests\" />
+    <Folder Include="Modules\Store\DL.Tests\" />
+    <Folder Include="Modules\Syncing\BL.Tests\" />
+    <Folder Include="Modules\Syncing\DL.Tests\" />
+    <Folder Include="Modules\Tally\BL.Tests\" />
+    <Folder Include="Modules\Tally\DL.Tests\" />
+    <Folder Include="Modules\Tax\BL.Tests\" />
+    <Folder Include="Modules\Tax\DL.Tests\" />
+    <Folder Include="Modules\UOM\BL.Tests\" />
+    <Folder Include="Modules\UOM\DL.Tests\" />
+    <Folder Include="Modules\User\BL.Tests\" />
+    <Folder Include="Modules\User\DL.Tests\" />
+    <Folder Include="Modules\Vehicle\BL.Tests\" />
+    <Folder Include="Modules\Vehicle\DL.Tests\" />
+    <Folder Include="Modules\WHStock\BL.Tests\" />
+    <Folder Include="Modules\WHStock\DL.Tests\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Modules\PriceLadder\Winit.Modules.PriceLadder.BL\Winit.Modules.PriceLadder.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\SKUClass\Winit.Modules.SKUClass.BL\Winit.Modules.SKUClass.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\SKU\Winit.Modules.SKU.BL\Winit.Modules.SKU.BL.csproj" />
+    <ProjectReference Include="..\..\WINITAPI\WINITAPI.csproj" />
+  </ItemGroup>
+
+</Project>

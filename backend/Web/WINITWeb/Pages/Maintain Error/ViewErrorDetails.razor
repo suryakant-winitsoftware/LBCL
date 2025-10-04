@@ -1,0 +1,35 @@
+﻿@page "/ViewErrorDetails"
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize]
+@using System.ComponentModel.DataAnnotations
+@using System.Linq
+@using Winit.Shared.Models.Common
+@using Winit.UIComponents.Common.CustomControles
+@using Winit.Modules.Org.Model.Interfaces;
+@inject Winit.UIComponents.Common.IAlertService _AlertMessgae;
+@inject Winit.Modules.ErrorHandling.BL.Interfaces.IAddEditMaintainErrorViewModel _addEditMaintainErrorViewModel;
+@inject Winit.Modules.ErrorHandling.BL.Interfaces.IViewErrorDetailsViewModel _ViewErrorDetailsViewModel;
+@using Newtonsoft.Json;
+@using Winit.UIComponents.Web.Filter
+@using Winit.UIModels.Common.Filter
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+
+
+
+@if (IsInitialized)
+{
+    <div>
+
+        <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@FilterColumns" IsSearchCriteriaNeeded="true"
+                             OnFilterApplied="@OnFilterApply" />
+    </div>
+
+    <div class="storeupper">
+       
+        <div >
+            <button class="cls_add_new_sec" @onclick="AddNewError">@Localizer["add_error"]</button>
+        </div>
+        <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" OnSort="OnSortApply" DataSource="_ViewErrorDetailsViewModel.ErrorDetailsList" />
+    </div>
+}

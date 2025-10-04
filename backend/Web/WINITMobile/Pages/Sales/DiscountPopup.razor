@@ -1,0 +1,77 @@
+﻿@using Winit.Shared.CommonUtilities.Common;
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+
+@if (IsOpen)
+{
+    <div class="overlay"></div>
+    <div cclass="alert alert-dismissible fade show">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h5 class="modal-title" style="font-size: 16px; flex: 1;">@Localizer["cash_discount"]</h5>
+                <button type="button" class="close w-16 h-16" @onclick="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="custom-dialog-content">
+                <div class="custom-dialog-body cls_content_alert">
+                    <p style="margin-bottom: 10px;margin: 0px;padding: 0px;font-size: 13px;">@Localizer["enter_discount_amount"]</p>
+                    <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder=@Localizer["search_here..."]
+                                                                           MaxLength="5" DebounceInterval="500" 
+                                                                           OnDebounceIntervalElapsed="WinitTextBox_OnSearch"
+                                                                           KeyboardType="Winit.Shared.Models.Enums.InputType.Numeric"
+                                                                           Value="@_discountAmount" />
+                </div>
+            </div>
+            <div class="custom-dialog-footer cls_fil_footer">
+                <div class="cls_log_main66">
+                    <div style="float:left">
+                        <button class="cls_btn_primary" @onclick="Apply">@Localizer["apply"]</button>
+                    </div>
+                </div>
+                @*<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Apply" FullWidth="true">Proceed</MudButton>*@
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private string _discountAmount { get; set; }
+    public bool IsOpen { get; set; }
+    [Parameter] public decimal DiscountAmount { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public EventCallback<decimal> OnApply { get; set; }
+    private string _discountInput { get; set; }
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+    public void Show()
+    {
+        IsOpen = true;
+        _discountAmount = DiscountAmount == 0 ? "" : CommonFunctions.GetStringValue(DiscountAmount);
+    }
+    public void Hide()
+    {
+        IsOpen = false;
+    }
+    private void Apply()
+    {        
+        OnApply.InvokeAsync(CommonFunctions.GetDecimalValue(_discountAmount));
+    }
+    private void Close()
+    {
+        OnClose.InvokeAsync();
+    }
+    private void Reset()
+    {
+        _discountAmount = "";
+    }
+    public async Task WinitTextBox_OnSearch(string searchStringFromComponent)
+    {        
+        _discountAmount = searchStringFromComponent;
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        LoadResources(null, _languageService.SelectedCulture);
+    }
+}

@@ -1,0 +1,133 @@
+@page "/rota"
+@page "/rota/{EmpUID}"
+@page "/rota/{EmpUID}/{JobPositionUID}"
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+
+<div class="rota-container">
+    <h3>ROTA Schedule</h3>
+
+    @if (isLoading)
+    {
+        <div class="loading">
+            <span>Loading schedule...</span>
+        </div>
+    }
+    else if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="error-message">
+            <span>@errorMessage</span>
+            <button class="btn btn-primary mt-2" @onclick="RefreshSchedule">Retry</button>
+        </div>
+    }
+    else
+    {
+        <div class="week-info mb-3 dn" style="display:none !important;">
+            <span>Week: @startOfWeek.ToString("dd MMM") - @endOfWeek.ToString("dd MMM yyyy")</span>
+            <button class="btn btn-sm btn-outline-primary ml-2" @onclick="RefreshSchedule">
+                <i class="fas fa-sync"></i> Refresh
+            </button>
+        </div>
+
+        <div class="schedule-grid">
+            @foreach (var schedule in weekSchedule)
+            {
+                <div class="schedule-item @(schedule.Date.Date == DateTime.Now.Date ? "today" : "")">
+                    <div class="date">
+                        <span class="day">@schedule.Date.ToString("ddd")</span>
+                        <span class="date-number">@schedule.Date.ToString("dd MMM")</span>
+                    </div>
+                    <div class="activity @GetActivityClass(schedule.ActivityType)">
+                        @schedule.ActivityType
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private string GetActivityClass(string activityType)
+    {
+        return activityType?.ToLower() switch
+        {
+            "week off" => "activity-off",
+            "no activity" => "activity-none",
+            _ => "activity-general"
+        };
+    }
+}
+
+<style>
+    .rota-container {
+        padding: 15px;
+    }
+
+    .loading, .error-message {
+        text-align: center;
+        padding: 20px;
+    }
+
+    .week-info {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .schedule-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .schedule-item {
+        display: flex;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+    }
+
+    .schedule-item.today {
+        border: 2px solid #007bff;
+    }
+
+    .date {
+        display: flex;
+        flex-direction: column;
+        min-width: 100px;
+    }
+
+    .day {
+        font-weight: bold;
+        color: #495057;
+    }
+
+    .date-number {
+        color: #6c757d;
+        font-size: 0.9em;
+    }
+
+    .activity {
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+        padding: 0 15px;
+        border-radius: 4px;
+        margin-left: 10px;
+    }
+
+    .activity-off {
+        background-color: #ffc107;
+        color: #000;
+    }
+
+    .activity-none {
+        background-color: #e9ecef;
+        color: #6c757d;
+    }
+
+    .activity-general {
+        background-color: #28a745;
+        color: white;
+    }
+</style> 

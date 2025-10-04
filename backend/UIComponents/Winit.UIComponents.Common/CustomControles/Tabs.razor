@@ -1,0 +1,50 @@
+﻿@page "/Tabs"
+<div class="cls_container_div1" >
+
+    <div class="div_section" >
+
+        <div class="div_section_select">
+                
+                    @foreach (var tab in TabItems)
+                    {
+                
+                <a class="div_section_select_label  @(tab.IsSelected? "active" : "")"
+                           @onclick="() => OnTabSelect.InvokeAsync(tab)">@tab.Label @(IsCountRequired ? $"({((Winit.Shared.Models.Common.SelectionItemTab)tab).Count})" : "")</a>
+                    }
+
+        </div>
+
+
+            @* <!-- For small screens (mobile), use scrollable tabs -->
+            <div class="d-sm-block d-lg-none">
+                <div class="overflow-auto">
+                    <div class="cls_mobile_tabs">
+                        <div class="cls_mobile_tabs_inner">
+                            @foreach (var tab in TabItems)
+                            {
+                                <a class="cls_mobile_tabs_inner_a @(tab.IsSelected? "active" : "")"
+                                   @onclick="() => OnTabSelect.InvokeAsync(tab)">@tab.Label @(IsCountRequired ? $"({((Winit.Shared.Models.Common.SelectionItemTab)tab).Count})" :"")</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+ *@
+            <!-- For larger screens (desktop), use fixed tabs -->
+            @* <div class="d-none d-lg-block">
+                <div class="cls_desk_tabs">
+                    <div class="cls_desk_tabs_inner">
+                        @foreach (var tab in TabItems)
+                        {
+                            <a class="cls_desk_tabs_inner_a @(tab.IsSelected? "active" : "")"
+                               @onclick="() => OnTabSelect.InvokeAsync(tab)">@tab.Label @(IsCountRequired ? $"({((Winit.Shared.Models.Common.SelectionItemTab)tab).Count})" : "")</a>
+                        }
+                    </div>
+                </div>
+            </div> *@
+
+
+
+        </div>
+   
+</div>

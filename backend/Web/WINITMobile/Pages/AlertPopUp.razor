@@ -1,0 +1,28 @@
+﻿
+<div class="modal-backdrop fade show"></div>
+<div class="modal fade show" tabindex="-1" style="display: block; ">
+    <div class="modal-dialog" style="top:30%;max-width:800px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@Title</h5>
+            </div>
+            <div class="modal-body">
+                @ChildContent
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" @onclick="()=>{OnOkClick.InvokeAsync();}">@OkbtnText</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Title { get; set; }
+    [Parameter]
+    public EventCallback OnOkClick { get; set; }
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+    [Parameter]
+    public string OkbtnText{ get; set; }
+}

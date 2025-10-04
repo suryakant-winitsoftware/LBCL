@@ -1,0 +1,52 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.6" />
+    <PackageReference Include="Moq" Version="4.20.70" />
+    <PackageReference Include="FluentAssertions" Version="6.12.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+    <PackageReference Include="Serilog" Version="2.12.0" />
+    <PackageReference Include="Serilog.Extensions.Hosting" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\WINITAPI\WINITAPI.csproj" />
+    <ProjectReference Include="..\..\Modules\SKU\Winit.Modules.SKU.BL\Winit.Modules.SKU.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\SKU\Winit.Modules.SKU.Model\Winit.Modules.SKU.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\Base\Winit.Modules.Base.BL\Winit.Modules.Base.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\PriceLadder\Winit.Modules.PriceLadder.BL\Winit.Modules.PriceLadder.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\SKUClass\Winit.Modules.SKUClass.BL\Winit.Modules.SKUClass.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Store\Winit.Modules.Store.BL\Winit.Modules.Store.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\DropDowns\Winit.Modules.DropDowns.BL\Winit.Modules.DropDowns.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Promotion\Winit.Modules.Promotion.BL\Winit.Modules.Promotion.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Location\Winit.Modules.Location.BL\Winit.Modules.Location.BL.csproj" />
+    <ProjectReference Include="..\..\SharedObjects\Winit.Shared.Models\Winit.Shared.Models.csproj" />
+    <ProjectReference Include="..\..\WINITServices\WINITServices.csproj" />
+    <ProjectReference Include="..\..\WINITSharedObjects\WINITSharedObjects.csproj" />
+  </ItemGroup>
+
+</Project>

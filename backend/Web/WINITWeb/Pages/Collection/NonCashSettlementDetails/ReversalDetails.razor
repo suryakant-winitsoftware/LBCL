@@ -1,0 +1,125 @@
+﻿@page "/revers"
+@using System.Net.Http.Json;
+
+@inject HttpClient httpClient;
+@using Newtonsoft.Json;
+@inject IJSRuntime JSRuntime;
+@inject NavigationManager _NavigationManager;
+@inject Winit.Modules.CollectionModule.BL.Interfaces.ICashSettlementViewModel _cashSettlementViewModel;
+@inject Winit.Modules.CollectionModule.BL.Interfaces.ICreatePaymentViewModel _createPaymentViewModel;
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+
+
+@if (ShowModalPopUp)
+{
+    <div class="modal fade show" tabindex="-1" style="display: block;">
+        <div class="modal-dialog" style="top:30%;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">@Localizer["confirm"]</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @Localizer["are_you_sure_?"]
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" @onclick="Reverse">@Localizer["yes"]</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="Close">@Localizer["no"]</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+    <div class="cls_section" >
+
+        <div class="cls_state_section_div2">
+            <label class="cls_section_div_purchase2_label">
+                @Localizer["customer_name"]
+            </label>
+            <label class="cls_credit_label1">
+                @Customer
+            </label>
+        </div>
+        <div class="cls_state_section_div2">
+            <label class="cls_section_div_purchase2_label">
+                @Localizer["receiptnumber"]
+            </label>
+            <label class="cls_credit_label1">
+                @CustomerName
+            </label>
+        </div>
+
+        <div class="cls_state_section_div2">
+            <label class="cls_section_div_purchase2_label">
+                @Localizer["amount"]
+            </label>
+            <label class="cls_credit_label1">
+                @Amount
+            </label>
+        </div>
+
+        <div class="cls_state_section_div2">
+            <label class="cls_section_div_purchase2_label">
+                @Localizer["date"]
+            </label>
+            <label class="cls_credit_label1">
+                @Winit.Shared.CommonUtilities.Common.CommonFunctions.GetDateTimeInFormat(Winit.Shared.CommonUtilities.Common.CommonFunctions.GetDate(Date))
+            </label>
+        </div>
+
+       
+        <div class="cls_state_section_div2">
+        <label class="cls_section_div_purchase2_label">
+                @Localizer["status"]
+            </label>
+            @if (Button1 != null)
+            {
+                <label class="cls_credit_label1">
+                    @Button1
+                </label>
+            }
+        </div>
+        @if (Button1 != "Reversed" && Button1 != "Voided")
+        {
+            <div class="cls_state_section_div2">
+                <label class="cls_section_div_purchase2_label">
+                @Localizer["comments"]<span class="cls_section_div_purchase2_span">*</span>
+                </label>
+
+            <input type="text" @bind="@ReasonforCancelation" class="cls_select2_button" placeholder="Enter Here" />
+                
+            </div>
+        }
+        else
+        {
+            <div class="cls_state_section_div2">
+                <label class="cls_section_div_purchase2_label">
+                    @Localizer["reason"]
+                </label>
+                <label class="cls_credit_label1">
+                    @(ReasonforCancelation == "" || ReasonforCancelation == null ? "N/A" : ReasonforCancelation)
+                </label>
+            </div>
+        }
+    </div>
+
+
+
+
+@if (Button ==Reversal || Button == Void)
+{
+    <div class="cls_button_bottom_purchase">
+        <button class="cls_button_blue"  @onclick="(() => Clicked(Button))">@Button</button>
+    </div>
+}
+
+
+@code {
+
+}
+
+

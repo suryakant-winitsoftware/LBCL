@@ -1,0 +1,145 @@
+﻿@page "/StoreCheckReport"
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize]
+@using Winit.Shared.Models.Common
+@using Winit.UIComponents.Common.CustomControles
+@using Winit.Modules.Store.Model.Interfaces
+@inject Winit.Modules.Store.BL.Interfaces.IStoreCheckReportViewModel _storeCheckReportViewModel;
+<PageTitle>Store Check Report</PageTitle>
+@using Winit.UIComponents.Web.Filter
+@using Winit.UIModels.Common.Filter
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+<div>
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+                         OnFilterApplied="@OnFilterApply" />
+</div>
+
+@if (IsLoaded)
+{
+    <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" DataSource="_storeCheckReportViewModel.StoreCheckReports" OnSort="OnSortApply"
+                                                PageNumber="_storeCheckReportViewModel.PageNumber" PageSize="_storeCheckReportViewModel.PageSize"
+                                                TotalItemsCount="_storeCheckReportViewModel.TotalItemsCount" ShowRecordsCount="true" />
+
+    <Winit.UIComponents.Web.Paging.Paging CurrentPage="_storeCheckReportViewModel.PageNumber"
+                                          OnPageChange="_storeCheckReportViewModel.PageIndexChanged" PageSize="_storeCheckReportViewModel.PageSize"
+                                          TotalItems="_storeCheckReportViewModel.TotalItemsCount" />
+}
+
+@if (showPopup)
+{
+    <div class="modal show d-block" tabindex="-1" style="background:rgba(0,0,0,0.3);z-index:1050;">
+        <div class="modal-dialog" style="max-width:1200px;">
+            <div class="modal-content" style="height:auto; min-height:180px; max-height:600px; overflow:hidden; display:flex; flex-direction:column;">
+                <div class="modal-header" style="background:#f5f5f5;">
+                    <h5 class="modal-title" style="font-weight:bold;">Store Check Item Popup</h5>
+                    <button type="button" class="btn-close" @onclick="ClosePopup"></button>
+                </div>
+                <div class="modal-body" style="flex:1 1 auto; overflow-y:auto; width:100%; padding:1.5rem;">
+                    <!-- Header Info -->
+                    <div class="row mb-3" style="font-size:1rem;">
+                        <div class="col-3">
+                            <div><span style="font-size:0.95rem;">Route</span></div>
+                            <div class="fw-bold">@(!string.IsNullOrEmpty(PopupReport?.RouteCode) ? PopupReport.RouteCode : "N/A")</div>
+                        </div>
+                        <div class="col-3">
+                            <div><span style="font-size:0.95rem;">Salesman</span></div>
+                            <div class="fw-bold">@(!string.IsNullOrEmpty(PopupReport?.SalesmanCode) ? PopupReport.SalesmanCode : "N/A")</div>
+                        </div>
+                        <div class="col-3">
+                            <div><span style="font-size:0.95rem;">Customer</span></div>
+                            <div class="fw-bold">@(!string.IsNullOrEmpty(PopupReport?.CustomerCode) ? PopupReport.CustomerCode : "N/A")</div>
+                        </div>
+                        <div class="col-3">
+                            <div><span style="font-size:0.95rem;">Date</span></div>
+                            <div class="fw-bold">@((PopupReport?.Date != null) ? PopupReport.Date.ToString("dd MMM, yyyy HH:mm") : "N/A")</div>
+                        </div>
+                    </div>
+                  @*   <div class="row mb-3" style="font-size:1rem;">
+                        <div class="col-3">
+                            <div><span style="font-size:0.95rem;">Image</span></div>
+                            <div class="fw-bold">@(!string.IsNullOrEmpty(PopupReport?.ImagePath) ? PopupReport.ImagePath : "N/A")</div>
+                        </div>
+                    </div> *@
+                    <div class="col-3">
+                        <div><span style="font-size:0.95rem;">Image</span></div>
+                        <div class="fw-bold">
+                            @if (!string.IsNullOrEmpty(PopupReport?.ImagePath))
+                            {
+                                var imgUrl = PopupReport.ImagePath.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+                                ? PopupReport.ImagePath
+                                : _appConfigs.ApiDataBaseUrl.TrimEnd('/') + "/" + PopupReport.ImagePath.TrimStart('/');
+                                <img src="@imgUrl" alt="Image" style="max-width:100px;max-height:100px;" />
+                            }
+                            else
+                            {
+                                <span>N/A</span>
+                            }
+                        </div>
+                    </div>
+                    <!-- Search Row -->
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <div class="d-flex align-items-center">
+                                <label class="mb-0 me-2">Search</label>
+                                <input type="text" class="form-control" style="width:250px;"
+                                       placeholder="Textbox Search By SKU Code/Name"
+                                       value="@PopupSearchText"
+                                       @oninput="@(e => { PopupSearchText = e.Value?.ToString(); StateHasChanged(); })" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Table -->
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped align-middle mb-0" style="font-size:0.98rem;">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>SKU</th>
+                                    <th>UOM</th>
+                                    <th>Suggested Qty</th>
+                                    <th>Store Qty</th>
+                                    <th>Backstore Qty</th>
+                                    <th>To Fill Qty</th>
+                                    <th>Is Available</th>
+                                    <th>Is DRE Selected</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (FilteredStoreCheckReportItems != null && FilteredStoreCheckReportItems.Any())
+                                {
+                                    foreach (var item in FilteredStoreCheckReportItems)
+                                    {
+                                        <tr>
+                                            <td>@item.SKU</td>
+                                            <td>@item.UOM</td>
+                                            <td>@item.SuggestedQty</td>
+                                            <td>@item.StoreQty</td>
+                                            <td>@item.BackstoreQty</td>
+                                            <td>@item.ToFillQty</td>
+                                            <td>@item.IsAvailable</td>
+                                            <td>@item.IsDRESelected</td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="8" class="text-center text-danger fw-bold">No data found.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer" style="justify-content:center;">
+                    <button class="btn btn-secondary" @onclick="ClosePopup">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+
+}

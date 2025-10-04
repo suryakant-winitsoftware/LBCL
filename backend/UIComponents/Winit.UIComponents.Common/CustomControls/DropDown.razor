@@ -1,0 +1,116 @@
+﻿@using Microsoft.Extensions.Localization
+@using Winit.UIComponents.Common.LanguageResources.Mobile
+@inject IStringLocalizer<LanguageKeys> Localizer
+@inject Winit.UIComponents.Common.Language.ILanguageService _languageService
+
+<style>
+    .selected {
+    background-color: #1B478A; /* Blue background for selected item */
+    color: #FFFFFF; /* White text color for better contrast */
+}
+</style>
+
+@if (ShowPopUp)
+{
+    <div class="modal-backdrop fade show" @onclick="CloseWithoutUpdating"></div>
+    <div class="modal fade show" tabindex="-1" style="display: block; overflow:auto; ">
+        <div>
+            <div class="modal-content cls_dropbown_popup">
+                <div class="modal-header cls_popup_header">
+                    <h5 class="modal-title cls_popup_header_title">@Title  </h5>
+                    <span class="close cls_close_btn" @onclick="CloseWithoutUpdating">&times;</span>
+                </div>
+                @if (IsView)
+                {
+                    <div class="cls_dropdown_scroll">
+                        <ul style="width:100%;height:auto;margin-top:24px;padding:0px 2%;"
+                            class="list-group scrole cls_list_group">
+
+                            @foreach (var item in selectionManager!.GetSelectedSelectionItems())
+                            {
+                                <button class="cls_dropdown_item ">
+                                    @item.Label
+                                </button>
+                            }
+                        </ul>
+                    </div>
+                }
+                else
+                {
+                    <div class="modal-body">
+                        @if (_SelectionMode == Winit.Shared.Models.Enums.SelectionMode.Multiple)
+                        {
+                            <button disabled="@Disabled" class="cls_popup_check_btn"
+                                    @onclick="@(() => CheckORUncheckAll(true))">Check all
+                            </button>
+                            <button disabled="@Disabled" class="cls_popup_check_btn"
+                                    @onclick="@(() => CheckORUncheckAll(false))">Uncheck all
+                            </button>
+                        }
+
+                        @if (IsSearchable)
+                        {
+                            <div class="cls_serch_product_details">
+                            <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder="Search here..."
+                                                                                   MaxLength="200"
+                                                                                   DebounceInterval="500"
+                                                                                   OnDebounceIntervalElapsed="Search"
+                                                                                   KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+                                                                                   IsForSearch="true"/></div>
+                        }
+
+                        <div class="cls_dropdown_scroll">
+                            <ul style="width:100%;height:auto;" class="list-group scrole cls_list_group">
+
+                                @foreach (var item in SearchedItems)
+                                {
+
+                                    <button disabled="@Disabled"
+                                            style='@(item.ExtData != null ? $"background-color:{item.ExtData};" : null)'
+                                            class="cls_dropdown_item  @((@item.IsSelected) ? "selected" : "")"
+                                            @onclick="@(async () => {await OnSelectionChange(item);})">
+                                        @item.Label
+                                    </button>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                    @if (_SelectionMode == Winit.Shared.Models.Enums.SelectionMode.Multiple)
+                    {
+                        <div class="modal-footer">
+                            <button type="button" class="cls_button_blue" @onclick="GetMultipleSelectedItems">Ok
+                            </button>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+}
+@if (IsButtonVisible)
+{
+    <button class="cls_select2" @onclick="@(() => ShowPopup_ButtonClick())"
+            disabled="@(Disabled && (_SelectionMode == Shared.Models.Enums.SelectionMode.Single))">
+        <label class="cls_select2_label1"> @Label</label>
+        @if (IsVewOptionVisible)
+        {
+            <a @onclick=@(() => {
+                            IsView = true;
+                            ShowPopUp = true;
+                        })>
+                <img alt="view" src="./Images/view.png" class="cls_dropdown_view_img"/>
+            </a>
+        }
+        <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1"/>
+
+    </button>
+
+    @* <button @onclick="ShowPopup_ButtonClick" disabled="@Disabled" class="cls_qps_button1">
+        
+    @Label
+    </button> *@
+}
+
+
+
+            

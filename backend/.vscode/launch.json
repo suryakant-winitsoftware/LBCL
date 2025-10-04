@@ -1,0 +1,90 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch WINITAPI",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build WINITAPI",
+            "program": "${workspaceFolder}/WINITAPI/bin/Debug/net8.0/WINITAPI.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/WINITAPI",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+                "uriFormat": "%s/swagger"
+            }
+        },
+        {
+            "name": "Launch WINITAPI (Attach)",
+            "type": "coreclr",
+            "request": "attach",
+            "processId": "${command:pickProcess}"
+        },
+        {
+            "name": "Launch SMSApp",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build SMSApp",
+            "program": "${workspaceFolder}/SMSApp/bin/Debug/net8.0/SMSApp.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/SMSApp",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Launch WINITSyncManager",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build WINITSyncManager",
+            "program": "${workspaceFolder}/WINITSyncManager/bin/Debug/net8.0/WINITSyncManager.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/WINITSyncManager",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Launch TestApp",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build TestApp",
+            "program": "${workspaceFolder}/ConsoleApplications/TestApp/bin/Debug/net8.0/TestApp.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/ConsoleApplications/TestApp",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Launch WorkerServices",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build WorkerServices",
+            "program": "${workspaceFolder}/WorkerServices/bin/Debug/net8.0/WorkerServices.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/WorkerServices",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Launch WinIT.RuleEngine.UI",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build WinIT.RuleEngine.UI",
+            "program": "${workspaceFolder}/WinIT.RuleEngine.UI/bin/Debug/net8.0/WinIT.RuleEngine.UI.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/WinIT.RuleEngine.UI",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+                "uriFormat": "%s"
+            }
+        }
+    ]
+}

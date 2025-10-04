@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\UIComponents\Winit.UIComponents.Common\Winit.UIComponents.Common.csproj" />
+    <ProjectReference Include="..\..\Base\Winit.Modules.Base.BL\Winit.Modules.Base.BL.csproj" />
+    <ProjectReference Include="..\..\Common\Winit.Modules.Common.BL\Winit.Modules.Common.BL.csproj" />
+    <ProjectReference Include="..\..\Common\Winit.Modules.Common.Model\Winit.Modules.Common.Model.csproj" />
+    <ProjectReference Include="..\..\CustomSKUFields\Winit.Modules.CustomSKUFields.Model\Winit.Modules.CustomSKUFields.Model.csproj" />
+    <ProjectReference Include="..\..\FileSys\Winit.Modules.FileSys.Model\Winit.Modules.FileSys.Model.csproj" />
+    <ProjectReference Include="..\..\ListHeader\Winit.Modules.ListHeader.Model\Winit.Modules.ListHeader.Model.csproj" />
+    <ProjectReference Include="..\..\Org\Winit.Modules.Org.Model\Winit.Modules.Org.Model.csproj" />
+    <ProjectReference Include="..\..\Settings\Winit.Modules.Settings.BL\Winit.Modules.Setting.BL.csproj" />
+    <ProjectReference Include="..\..\Store\Winit.Modules.Store.Model\Winit.Modules.Store.Model.csproj" />
+    <ProjectReference Include="..\..\UOM\Winit.Modules.UOM.Model\Winit.Modules.UOM.Model.csproj" />
+    <ProjectReference Include="..\Winit.Modules.SKU.DL\Winit.Modules.SKU.DL.csproj" />
+    <ProjectReference Include="..\Winit.Modules.SKU.Model\Winit.Modules.SKU.Model.csproj" />
+  </ItemGroup>
+</Project>

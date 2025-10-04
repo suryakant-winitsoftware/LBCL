@@ -1,0 +1,596 @@
+﻿@inherits WinIt.Pages.Base.BaseComponentBase
+
+<div style="width:100%;float:left;margin:0px 0px;">
+    @if (!string.IsNullOrWhiteSpace(ValidationMessage))
+    {
+        <div class="alert alert-danger">
+            <div class="col-md-12">
+                <div style="color: red;">@ValidationMessage</div>
+            </div>
+        </div>
+    }
+    @if (Isinitialized)
+    {
+
+        <div class="card shadow-box">
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="cls_cust_information">
+                        <div class="row">
+                            <div class="col-12 col-sm-12 col-md-12 col-lg-12 mb-12">
+                                <h6>Expected T/O with CMI(Rs in Lakhs)</h6>
+                            </div>
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                                <label>Type</label>
+                                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="AooaTypeselectionItems"
+                                                                                   IsButtonVisible="true"
+                                                                                   Title="Type"
+                                                                                   OnSelect="OnAooaTypeSelection"
+                                                                                   IsSearchable="true" />
+                            </div>
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+
+                                <div>
+                                    <label style="font-weight: bold;" for="mcmeOptions">Category</label>
+                                    <div id="mcmeOptions" style="float:left;">
+                                        <div class="cls_btn_y_n">
+                                            <input type="radio" id="Replacement" name="Replacement" value="Replacement"
+                                                   @onchange='(e) => OnCategoryChange(e, "Replacement")'
+                                                   checked='@_onBoardCustomerDTO?.StoreAdditionalInfoCMI?.AooaCategory?.Equals("Replacement")' />
+                                            <label for="mcmeYes">Replacement</label>
+                                        </div>
+                                        <div class="cls_btn_y_n">
+                                            <input type="radio" id="NetworkExpansion" name="NetworkExpansion" value="Network Expansion"
+                                                   @onchange='(e) => OnCategoryChange(e, "Network Expansion")'
+                                                   checked='@_onBoardCustomerDTO?.StoreAdditionalInfoCMI?.AooaCategory?.Equals("Network Expansion")' />
+                                            <label for="mcmeNo">Network Expansion</label>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                                <label>Asp to be Closed</label>
+                                <input autocomplete="off" class="form-control" type="text" placeholder="Enter here" @bind="_onBoardCustomerDTO.StoreAdditionalInfoCMI.AooaAspToClose" />
+                            </div>
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                                <label>Code<i class="cls_section_div_purchase2_span">*</i></label>
+                                <input autocomplete="off" class="form-control" type="text" placeholder="Enter here" @bind="_onBoardCustomerDTO.StoreAdditionalInfoCMI.AooaCode" />
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <div>
+                                <label style="font-weight: bold;" for="mcmeOptions">Product</label>
+                                <div id="mcmeOptions" style="float:left;">
+                                    <div class="cls_btn_y_n">
+                                        @* <input class=""
+                                    type="radio" name="VRF" id="RACid" value="RAC"
+                                    @onchange="OnProductChange"
+                                    checked="@_onBoardCustomerDTO.StoreAdditionalInfoCMI.AooaProduct" /> *@
+                                        <input type="radio" id="RAC" name="bank" value="RAC"
+                                               @onchange='(e) => OnProductChange(e, "RAC")'
+                                               checked='@_onBoardCustomerDTO?.StoreAdditionalInfoCMI?.AooaProduct?.Equals("RAC")' />
+                                        <label for="mcmeYes">RAC</label>
+                                    </div>
+                                    <div class="cls_btn_y_n">
+                                        <input type="radio" id="LC" name="LC" value="LC"
+                                               @onchange='(e) => OnProductChange(e, "LC")'
+                                               checked='@_onBoardCustomerDTO?.StoreAdditionalInfoCMI?.AooaProduct?.Equals("LC")' />
+                                        <label for="mcmeNo">LC</label>
+                                    </div>
+                                    <div class="cls_btn_y_n">
+                                        <input type="radio" id="VRF" name="VRF" value="VRF"
+                                               @onchange='(e) => OnProductChange(e, "VRF")'
+                                               checked='@_onBoardCustomerDTO?.StoreAdditionalInfoCMI?.AooaProduct?.Equals("VRF")' />
+                                        <label for="mcmeNo">VRF</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @*  </div>
+        <div class="card shadow-box"> *@
+            <div class="cls_cust_information">
+                <div class="col-12 col-sm-12 col-md-12 col-lg-12 mb-12">
+                    <h6>Evaluation by Branch Sales/Service Manager</h6>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="cls_cust_information">
+                        <div class="row">
+                            @foreach (var category in RadioCategorys)
+                            {
+                                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                                    <label>@category.Label</label>
+                                    <div class="cls_btn_y_n">
+                                        <input type="radio" id="@category.IdYes" name="@category.Name" value="yes" @onchange="() => OnRadioChanged1(category.Key, true)" checked="@category.IsYesChecked" />
+                                        <label for="@category.IdYes" class="mr-2">Yes</label>
+                                    </div>
+                                    <div class="cls_btn_y_n">
+                                        <input type="radio" id="@category.IdNo" name="@category.Name" value="no" @onchange="() => OnRadioChanged1(category.Key, false)" checked="@category.IsNoChecked" />
+                                        <label for="@category.IdNo">No</label>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    @*             </div>
+                </div>
+                </div> *@
+
+                    <div class="cls_cust_information">
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-12 mb-12">
+                            <h6>
+                                Appraisal Points (Good-3, Average-2, Poor-1)
+                            </h6>
+                        </div>
+                        <div class="div2">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Criteria</th>
+                                        <AuthorizeView Roles="BM,ASM,Admin">
+                                            <th class="div2_color">BM/BSM</th>
+                                        </AuthorizeView>
+                                        <AuthorizeView Roles="Admin">
+                                            <th class="div2_color">AVERAGE SCORE</th>
+                                        </AuthorizeView>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="cls_table_container">
+                                                Technical Competency / service Experience
+                                            </div>
+                                        </td>
+                                        <AuthorizeView Roles="BM,ASM,Admin">
+                                            <td class="div2_color">
+                                                <div class="cls_table_container">
+                                                    <div class="cls_table_div1">
+                                                        <input type="radio" name="bm1" class="cls_table_div_input" value="Good" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.AooaApTechnicalCompLevel1 == 3:_onBoardCustomerDTO.StoreAdditionalInfoCMI.AooaApTechnicalCompLevel1.ToString() == "bm1")" @onchange="@((e) => HandleRadioChange(e, "bm1"))" />
+                                                        <label class="cls_table_div_label">Good</label>
+                                                    </div>
+                                                    <div class="cls_table_div">
+                                                        <input type="radio" name="bm1" class="cls_table_div_input" value="Average" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.AooaApTechnicalCompLevel1 ==2:_onBoardCustomerDTO.StoreAdditionalInfoCMI.AooaApTechnicalCompLevel1.ToString() == "bm1")" @onchange="@((e) => HandleRadioChange(e, "bm1"))" />
+                                                        <label class="cls_table_div_label">Average</label>
+                                                    </div>
+                                                    <div class="cls_table_div2">
+                                                        <input type="radio" name="bm1" class="cls_table_div_input" value="Poor" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.AooaApTechnicalCompLevel1==1:_onBoardCustomerDTO.StoreAdditionalInfoCMI.AooaApTechnicalCompLevel1.ToString() == "bm1")" @onchange="@((e) => HandleRadioChange(e, "bm1"))" />
+                                                        <label class="cls_table_div_label">Poor</label>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </AuthorizeView>
+                                        @* <td class="div2_color">
+                                    <div class="cls_table_container">
+                                    <div class="cls_table_div1">
+                                    <input type="radio" name="fsm1" class="cls_table_div_input" value="Good" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.AooaApTechnicalCompLevel2==3:_onBoardCustomerDTO.StoreAdditionalInfoCMI.AooaApTechnicalCompLevel2.ToString() == "fsm1")" @onchange="@((e) => HandleRadioChange(e, "fsm1"))" />
+                                    <label class="cls_table_div_label">Good</label>
+                                    </div>
+                                    <div class="cls_table_div">
+                                    <input type="radio" name="fsm1" class="cls_table_div_input" value="Average" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.AooaApTechnicalCompLevel2==2:_onBoardCustomerDTO.StoreAdditionalInfoCMI.AooaApTechnicalCompLevel2.ToString() == "fsm1")" @onchange="@((e) => HandleRadioChange(e, "fsm1"))" />
+                                    <label class="cls_table_div_label">Average</label>
+                                    </div>
+                                    <div class="cls_table_div2">
+                                    <input type="radio" name="fsm1" class="cls_table_div_input" value="Poor" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.AooaApTechnicalCompLevel2==1:_onBoardCustomerDTO.StoreAdditionalInfoCMI.AooaApTechnicalCompLevel2.ToString() == "fsm1")" @onchange="@((e) => HandleRadioChange(e, "fsm1"))" />
+                                    <label class="cls_table_div_label">Poor</label>
+                                    </div>
+                                    </div>
+                                    </td> *@
+                                        <AuthorizeView Roles="Admin">
+                                            <td class="div2_color">
+                                                <div class="cls_table_container">
+                                                    <label>@_onBoardCustomerDTO.StoreAdditionalInfoCMI.AooaApTechnicalCompAverage</label>
+                                                </div>
+                                            </td>
+                                        </AuthorizeView>
+                                    </tr>
+
+                                    <tr>
+                                        <td>
+                                            <div class="cls_table_container">
+                                                Manpower Available
+                                            </div>
+                                        </td>
+                                        <AuthorizeView Roles="BM,ASM,Admin">
+                                            <td class="div2_color">
+                                                <div class="cls_table_container">
+                                                    <div class="cls_table_div1">
+                                                        <input type="radio" name="bm2" class="cls_table_div_input" value="Good" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApManpowerLevel1==3:_onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApManpowerLevel1.ToString() == "bm2")" @onchange="@((e) => HandleRadioChange(e, "bm2"))" />
+                                                        <label class="cls_table_div_label">Good</label>
+                                                    </div>
+                                                    <div class="cls_table_div">
+                                                        <input type="radio" name="bm2" class="cls_table_div_input" value="Average" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApManpowerLevel1==2:_onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApManpowerLevel1.ToString() == "bm2")" @onchange="@((e) => HandleRadioChange(e, "bm2"))" />
+                                                        <label class="cls_table_div_label">Average</label>
+                                                    </div>
+                                                    <div class="cls_table_div2">
+                                                        <input type="radio" name="bm2" class="cls_table_div_input" value="Poor" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApManpowerLevel1==1:_onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApManpowerLevel1.ToString() == "bm2")" @onchange="@((e) => HandleRadioChange(e, "bm2"))" />
+                                                        <label class="cls_table_div_label">Poor</label>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </AuthorizeView>
+                                        @* <td class="div2_color">
+                                    <div class="cls_table_container">
+                                    <div class="cls_table_div1">
+                                    <input type="radio" name="fsm2" class="cls_table_div_input" value="Good" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApManpowerLevel2==3:_onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApManpowerLevel2.ToString() == "fsm2")" @onchange="@((e) => HandleRadioChange(e, "fsm2"))" />
+                                    <label class="cls_table_div_label">Good</label>
+                                    </div>
+                                    <div class="cls_table_div">
+                                    <input type="radio" name="fsm2" class="cls_table_div_input" value="Average" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApManpowerLevel2==2:_onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApManpowerLevel2.ToString() == "fsm2")" @onchange="@((e) => HandleRadioChange(e, "fsm2"))" />
+                                    <label class="cls_table_div_label">Average</label>
+                                    </div>
+                                    <div class="cls_table_div2">
+                                    <input type="radio" name="fsm2" class="cls_table_div_input" value="Poor" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApManpowerLevel2==1:_onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApManpowerLevel2.ToString() == "fsm2")" @onchange="@((e) => HandleRadioChange(e, "fsm2"))" />
+                                    <label class="cls_table_div_label">Poor</label>
+                                    </div>
+                                    </div>
+                                    </td> *@
+                                        <AuthorizeView Roles="Admin">
+                                            <td class="div2_color">
+                                                <div class="cls_table_container">
+                                                    <label>@_onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApManpowerAverage</label>
+                                                </div>
+                                            </td>
+                                        </AuthorizeView>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="cls_table_container">
+                                                Workshop
+                                            </div>
+                                        </td>
+                                        <AuthorizeView Roles="BM,ASM,Admin">
+                                            <td class="div2_color">
+                                                <div class="cls_table_container">
+                                                    <div class="cls_table_div1">
+                                                        <input type="radio" name="bm3" class="cls_table_div_input" value="Good" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApWorkshopLevel1==3:_onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApWorkshopLevel1.ToString() == "bm3")" @onchange="@((e) => HandleRadioChange(e, "bm3"))" />
+                                                        <label class="cls_table_div_label">Good</label>
+                                                    </div>
+                                                    <div class="cls_table_div">
+                                                        <input type="radio" name="bm3" class="cls_table_div_input" value="Average" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApWorkshopLevel1==2:_onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApWorkshopLevel1.ToString() == "bm3")" @onchange="@((e) => HandleRadioChange(e, "bm3"))" />
+                                                        <label class="cls_table_div_label">Average</label>
+                                                    </div>
+                                                    <div class="cls_table_div2">
+                                                        <input type="radio" name="bm3" class="cls_table_div_input" value="Poor" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApWorkshopLevel1==1:_onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApWorkshopLevel1.ToString() == "bm3")" @onchange="@((e) => HandleRadioChange(e, "bm3"))" />
+                                                        <label class="cls_table_div_label">Poor</label>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </AuthorizeView>
+                                        @* <td class="div2_color">
+                                    <div class="cls_table_container">
+                                    <div class="cls_table_div1">
+                                    <input type="radio" name="fsm3" class="cls_table_div_input" value="Good" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApWorkshopLevel2==3:_onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApWorkshopLevel2.ToString() == "fsm3")" @onchange="@((e) => HandleRadioChange(e, "fsm3"))" />
+                                    <label class="cls_table_div_label">Good</label>
+                                    </div>
+                                    <div class="cls_table_div">
+                                    <input type="radio" name="fsm3" class="cls_table_div_input" value="Average" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApWorkshopLevel2==2:_onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApWorkshopLevel2.ToString() == "fsm3")" @onchange="@((e) => HandleRadioChange(e, "fsm3"))" />
+                                    <label class="cls_table_div_label">Average</label>
+                                    </div>
+                                    <div class="cls_table_div2">
+                                    <input type="radio" name="fsm3" class="cls_table_div_input" value="Poor" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApWorkshopLevel2==1:_onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApWorkshopLevel2.ToString() == "fsm3")" @onchange="@((e) => HandleRadioChange(e, "fsm3"))" />
+                                    <label class="cls_table_div_label">Poor</label>
+                                    </div>
+                                    </div>
+                                    </td> *@
+                                        <AuthorizeView Roles="Admin">
+                                            <td class="div2_color">
+                                                <div class="cls_table_container">
+                                                    <label>@_onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApWorkshopAverage</label>
+                                                </div>
+                                            </td>
+                                        </AuthorizeView>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="cls_table_container">
+                                                Tools & Equipment
+                                            </div>
+                                        </td>
+                                        <AuthorizeView Roles="BM,ASM,Admin">
+                                            <td class="div2_color">
+                                                <div class="cls_table_container">
+                                                    <div class="cls_table_div1">
+                                                        <input type="radio" name="bm4" class="cls_table_div_input" value="Good" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApToolsLevel1==3:_onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApToolsLevel1.ToString() == "bm4")" @onchange="@((e) => HandleRadioChange(e, "bm4"))" />
+                                                        <label class="cls_table_div_label">Good</label>
+                                                    </div>
+                                                    <div class="cls_table_div">
+                                                        <input type="radio" name="bm4" class="cls_table_div_input" value="Average" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApToolsLevel1==2:_onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApToolsLevel1.ToString() == "bm4")" @onchange="@((e) => HandleRadioChange(e, "bm4"))" />
+                                                        <label class="cls_table_div_label">Average</label>
+                                                    </div>
+                                                    <div class="cls_table_div2">
+                                                        <input type="radio" name="bm4" class="cls_table_div_input" value="Poor" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApToolsLevel1==1:_onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApToolsLevel1.ToString() == "bm4")" @onchange="@((e) => HandleRadioChange(e, "bm4"))" />
+                                                        <label class="cls_table_div_label">Poor</label>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </AuthorizeView>
+                                        @*  <td class="div2_color">
+                                    <div class="cls_table_container">
+                                    <div class="cls_table_div1">
+                                    <input type="radio" name="fsm4" class="cls_table_div_input" value="Good" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApToolsLevel2==3:_onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApToolsLevel2.ToString() == "fsm4")" @onchange="@((e) => HandleRadioChange(e, "fsm4"))" />
+                                    <label class="cls_table_div_label">Good</label>
+                                    </div>
+                                    <div class="cls_table_div">
+                                    <input type="radio" name="fsm4" class="cls_table_div_input" value="Average" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApToolsLevel2==2:_onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApToolsLevel2.ToString() == "fsm4")" @onchange="@((e) => HandleRadioChange(e, "fsm4"))" />
+                                    <label class="cls_table_div_label">Average</label>
+                                    </div>
+                                    <div class="cls_table_div2">
+                                    <input type="radio" name="fsm4" class="cls_table_div_input" value="Poor" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApToolsLevel2==1:_onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApToolsLevel2.ToString() == "fsm4")" @onchange="@((e) => HandleRadioChange(e, "fsm4"))" />
+                                    <label class="cls_table_div_label">Poor</label>
+                                    </div>
+                                    </div>
+                                    </td> *@
+                                        <AuthorizeView Roles="Admin">
+                                            <td class="div2_color">
+                                                <div class="cls_table_container">
+                                                    <label>@_onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApToolsAverage</label>
+                                                </div>
+                                            </td>
+                                        </AuthorizeView>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="cls_table_container">
+                                                Telephone, Computer & Internet
+                                            </div>
+                                        </td>
+                                        <AuthorizeView Roles="BM,ASM,Admin">
+                                            <td class="div2_color">
+                                                <div class="cls_table_container">
+                                                    <div class="cls_table_div1">
+                                                        <input type="radio" name="bm5" class="cls_table_div_input" value="Good" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApComputerLevel1==3: _onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApComputerLevel1.ToString() == "bm5")" @onchange="@((e) => HandleRadioChange(e, "bm5"))" />
+                                                        <label class="cls_table_div_label">Good</label>
+                                                    </div>
+                                                    <div class="cls_table_div">
+                                                        <input type="radio" name="bm5" class="cls_table_div_input" value="Average" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApComputerLevel1==2:_onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApComputerLevel1.ToString() == "bm5")" @onchange="@((e) => HandleRadioChange(e, "bm5"))" />
+                                                        <label class="cls_table_div_label">Average</label>
+                                                    </div>
+                                                    <div class="cls_table_div2">
+                                                        <input type="radio" name="bm5" class="cls_table_div_input" value="Poor" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApComputerLevel1==1:_onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApComputerLevel1.ToString() == "bm5")" @onchange="@((e) => HandleRadioChange(e, "bm5"))" />
+                                                        <label class="cls_table_div_label">Poor</label>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </AuthorizeView>
+                                        @* <td class="div2_color">
+                                    <div class="cls_table_container">
+                                    <div class="cls_table_div1">
+                                    <input type="radio" name="fsm5" class="cls_table_div_input" value="Good" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApComputerLevel2 ==3: _onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApComputerLevel2.ToString() == "fsm5")" @onchange="@((e) => HandleRadioChange(e, "fsm5"))" />
+                                    <label class="cls_table_div_label">Good</label>
+                                    </div>
+                                    <div class="cls_table_div">
+                                    <input type="radio" name="fsm5" class="cls_table_div_input" value="Average" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApComputerLevel2==2 :_onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApComputerLevel2.ToString() == "fsm5")" @onchange="@((e) => HandleRadioChange(e, "fsm5"))" />
+                                    <label class="cls_table_div_label">Average</label>
+                                    </div>
+                                    <div class="cls_table_div2">
+                                    <input type="radio" name="fsm5" class="cls_table_div_input" value="Poor" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApComputerLevel2 ==1: _onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApComputerLevel2.ToString() == "fsm5")" @onchange="@((e) => HandleRadioChange(e, "fsm5"))" />
+                                    <label class="cls_table_div_label">Poor</label>
+                                    </div>
+                                    </div>
+                                    </td> *@
+                                        <AuthorizeView Roles="Admin">
+                                            <td class="div2_color">
+                                                <div class="cls_table_container">
+                                                    <label>@_onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApComputerAverage</label>
+                                                </div>
+                                            </td>
+                                        </AuthorizeView>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="cls_table_container">
+                                                Financial Strength
+                                            </div>
+                                        </td>
+                                        <AuthorizeView Roles="BM,ASM,Admin">
+                                            <td class="div2_color">
+                                                <div class="cls_table_container">
+                                                    <div class="cls_table_div1">
+                                                        <input type="radio" name="bm6" class="cls_table_div_input" value="Good" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApFinancialStrengthLevel1==3: _onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApFinancialStrengthLevel1.ToString() == "bm6")" @onchange="@((e) => HandleRadioChange(e, "bm6"))" />
+                                                        <label class="cls_table_div_label">Good</label>
+                                                    </div>
+                                                    <div class="cls_table_div">
+                                                        <input type="radio" name="bm6" class="cls_table_div_input" value="Average" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApFinancialStrengthLevel1==2:_onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApFinancialStrengthLevel1.ToString() == "bm6")" @onchange="@((e) => HandleRadioChange(e, "bm6"))" />
+                                                        <label class="cls_table_div_label">Average</label>
+                                                    </div>
+                                                    <div class="cls_table_div2">
+                                                        <input type="radio" name="bm6" class="cls_table_div_input" value="Poor" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApFinancialStrengthLevel1==1:_onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApFinancialStrengthLevel1.ToString() == "bm6")" @onchange="@((e) => HandleRadioChange(e, "bm6"))" />
+                                                        <label class="cls_table_div_label">Poor</label>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </AuthorizeView>
+                                        @* <td class="div2_color">
+                                    <div class="cls_table_container">
+                                    <div class="cls_table_div1">
+                                    <input type="radio" name="fsm6" class="cls_table_div_input" value="Good" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApFinancialStrengthLevel2 ==3: _onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApFinancialStrengthLevel2.ToString() == "fsm6")" @onchange="@((e) => HandleRadioChange(e, "fsm6"))" />
+                                    <label class="cls_table_div_label">Good</label>
+                                    </div>
+                                    <div class="cls_table_div">
+                                    <input type="radio" name="fsm6" class="cls_table_div_input" value="Average" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApFinancialStrengthLevel2==2 :_onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApFinancialStrengthLevel2.ToString() == "fsm6")" @onchange="@((e) => HandleRadioChange(e, "fsm6"))" />
+                                    <label class="cls_table_div_label">Average</label>
+                                    </div>
+                                    <div class="cls_table_div2">
+                                    <input type="radio" name="fsm6" class="cls_table_div_input" value="Poor" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApFinancialStrengthLevel2 ==1: _onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApFinancialStrengthLevel2.ToString() == "fsm6")" @onchange="@((e) => HandleRadioChange(e, "fsm6"))" />
+                                    <label class="cls_table_div_label">Poor</label>
+                                    </div>
+                                    </div>
+                                    </td> *@
+                                        <AuthorizeView Roles="Admin">
+                                            <td class="div2_color">
+                                                <div class="cls_table_container">
+                                                    <label>@_onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaApFinancialStrengthAverage</label>
+                                                </div>
+                                            </td>
+                                        </AuthorizeView>
+                                    </tr>
+                                    <tr class="div2_color">
+                                        <AuthorizeView Roles="BM,ASM,Admin">
+                                            <td></td>
+                                        </AuthorizeView>
+                                        <AuthorizeView Roles="BM,ASM,Admin">
+                                            <td><label style="float:right">Total Score</label></td>
+                                        </AuthorizeView>
+                                        <AuthorizeView Roles="Admin">
+                                            <td>@(TotalAverageScore())</td>
+                                        </AuthorizeView>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-12 mb-12">
+                            <div class="cls_customer_box">
+                                I @GSTINDetailsModel.TradeName, Confirms that in top of email confirmation, I have contacted the supplier  ------- via a dual way (more than one way )
+                                to confirm with Supplier on bank Account information which will be maintained in CMI supplier management system, and CMI will pay
+                                to such back account.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="cls_cust_information">
+                                <h6>Communication - Confirmation</h6>
+                                <div class="row">
+                                    <div class="col-12 col-sm-12 col-md-12 col-lg-12 mb-12">
+                                        <h6>First Confirmation - Email Communication</h6>
+                                    </div>
+                                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                                        <label>Contact Person<i class="cls_section_div_purchase2_span">*</i></label>
+                                        <input autocomplete="off" class="form-control" type="text" placeholder="Enter here" @bind="_onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaCcFcContactPerson" />
+                                    </div>
+                                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                                        <label style="font-weight: bold;">Sent Date & Time</label>
+                                        <input class="form-control" type="date" placeholder="Select here" @bind="_onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaCcFcSentTime">
+                                    </div>
+                                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                                        <label>Reply Received by<i class="cls_section_div_purchase2_span">*</i></label>
+                                        <input autocomplete="off" class="form-control" type="text" placeholder="Enter here" @bind="_onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaCcFcReplyReceivedBy" />
+                                    </div>
+                                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                                        <label style="font-weight: bold;">Upload Evidence Attachement</label>
+                                        <Winit.UIComponents.Common.FileUploader.FileUploader @ref=fileUploaderEvidence1 FileExtension=".jpg,.jpeg,.pdf,.png,.doc"
+                                                                                             RelativePath="@FilePath" FileSize="500000" AllowMultipleFiles="true" FileSysList=fileSysListEvidence1
+                                                                                             LinkedItemUID="@LinkedItemUID"
+                                                                                             LinkedItemType="store" UploadEventCallBack="GetSavedImagePathEvidence1" DeleteEventCallBack="AfterDeleteImage"
+                                                                                             FileSysType="@Winit.Modules.Store.Model.Constants.FileSysTypeConstants.AreaOfOperationEvidence1"
+                                                                                             FileType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.Image" />
+                                        <label class="cls_customer_label">(Please attach email file saved as .msg or .ems, the email sender’s suffix address is the same as the company’s official website, or contact info on the website. Print screen, or forward by CMI colleagues then save are not acceptable)</label>
+
+                                    </div>
+                                </div>
+                                <div class="cls_container_div1" style="margin-top:-69px;">
+                                    <div class="row">
+
+                                        <h6>Second Confirmation</h6>
+                                        <div class="row">
+                                            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                                                <label>Select way of Communication</label>
+                                                <div class="flex-grow-1">
+                                                    <!-- Wrap the custom dropdown in a container div -->
+                                                    <div class="">
+                                                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="DummyData"
+                                                                                                           IsButtonVisible="true"
+                                                                                                           Title="Way of Communication"
+                                                                                                           OnSelect="OnWayOfSelectionSelection"
+                                                                                                           IsSearchable="true" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                                        <label>Contact Person</label>
+                                        <input autocomplete="off" class="form-control" type="text" placeholder="Enter here" @bind="_onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaCcSecContactPerson" />
+                                    </div>
+                                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                                        <label style="font-weight: bold;">Sent Date & Time</label>
+                                        <input class="form-control" type="date" placeholder="Select here" @bind="_onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaCcSecSentTime">
+                                    </div>
+                                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                                        <label>Reply Received by</label>
+                                        <input autocomplete="off" class="form-control" type="text" placeholder="Enter here" @bind="_onBoardCustomerDTO.StoreAdditionalInfoCMI.AoaaCcSecReplyReceivedBy" />
+                                    </div>
+                                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                                        <label style="font-weight: bold;">Upload Evidence Attachement</label>
+                                        <Winit.UIComponents.Common.FileUploader.FileUploader @ref=fileUploaderEvidence2 FileExtension=".jpg,.jpeg,.pdf,.png,.doc"
+                                                                                             RelativePath="@FilePath" FileSize="500000" AllowMultipleFiles="true" FileSysList=fileSysListEvidence2
+                                                                                             LinkedItemUID="@LinkedItemUID"
+                                                                                             LinkedItemType="store" UploadEventCallBack="GetSavedImagePathEvidence2" DeleteEventCallBack="AfterDeleteImage"
+                                                                                             FileSysType="@Winit.Modules.Store.Model.Constants.FileSysTypeConstants.AreaOfOperationEvidence2"
+                                                                                             FileType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.Image" />
+                                        <label class="cls_customer_label"> This second confirmation is via a non-regular communication as usual</label>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-12 d-flex justify-content-center mt-1">
+                            <button class="cls_comman_sec_btn mr-2" type="button">Clear</button>
+
+
+                            <button class="cls_comman_btn" type="submit" @onclick="@SaveOrUpdate">@ButtonName</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<style>
+    .card.shadow-box {
+        border: 1px solid #ddd;
+        border-radius: 0.25rem;
+        background-color: #fff;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .header-row {
+        background-color: #f8f9fa;
+        font-weight: bold;
+    }
+
+    .data-row .card-body {
+        background-color: #f1f1f1;
+    }
+
+    .total-score-row .card-body {
+        background-color: #e9ecef;
+    }
+
+    .card-title {
+        margin-bottom: 0;
+    }
+
+    .mb-4 {
+        margin-bottom: 1.5rem;
+    }
+
+    .p-3 {
+        padding: 1rem;
+    }
+</style>
+
+@code {
+
+}

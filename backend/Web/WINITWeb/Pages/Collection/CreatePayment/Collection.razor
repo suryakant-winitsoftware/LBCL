@@ -1,0 +1,303 @@
+﻿@page "/collection"
+@using System.Web;
+@using Newtonsoft.Json;
+@using Winit.Modules.CollectionModule.Model.Classes;
+@using Winit.Modules.CollectionModule.Model.Interfaces;
+@inject HttpClient http;
+@inject NavigationManager NavigationManager;
+@inject IJSRuntime JSRuntime;
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+@inject Winit.Modules.CollectionModule.BL.Interfaces.ICreatePaymentViewModel _createPaymentViewModel;
+
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="false" />
+
+<MultiCurrencyPopUp @ref="multi" OnSubmitAmount="OnSubmitAmount" IsShow="IsShow" Closebtn="@(() => OpenCloseMultiCurrency(""))"></MultiCurrencyPopUp>
+
+
+
+<div class="cls_section">
+
+    <div class="cls_account_sec_left">
+
+        <!-- First Row -->
+        <!-- Customer Selection -->
+        <div class="cls_account_div">
+
+            <label class="cls_section_div_purchase2_label">@Localizer["customer_name"]<span class="cls_section_div_purchase2_span">*</span></label>
+            @if (ShowFeilds)
+            {
+                @if (ShowCustomers)
+                {
+                    <Winit.UIComponents.Common.CustomControls.DropDown DataSource="customerData" ShowPopUp=@ShowCustomers Title="Select Customer" OnSelect="@((e)=>OnSelected(e,"CustomerType"))" />
+                }
+                else
+                {
+                    <button class="cls_select2" @onclick="@(()=>ShowCustomers = !ShowCustomers)">
+                        <label class="cls_select2_label1"> @selectedValueText </label>
+                        <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+
+                    </button>
+                }
+            }
+            @* <small class="form-text text-muted" style="margin-left: -30px;font-weight:600;font-size:14px;"></small> *@
+            <label class="cls_credit_label1">@("(" + _iAppUser.Emp.Code + ")" + _iAppUser.Emp.AliasName)</label>
+        </div>
+
+        <!-- Payment Mode -->
+        <div class="cls_account_div">
+
+            <label class="cls_section_div_purchase2_label">@Localizer["payment_mode"]</label>
+            <Winit.UIComponents.Common.CustomControles.MultiSelect @ref='_multi' data="paymentModes" OnSelect="GetPaymentModes"></Winit.UIComponents.Common.CustomControles.MultiSelect>
+
+        </div>
+
+        <!-- Collection Date -->
+        <div class="cls_account_div">
+
+            <label class="cls_section_div_purchase2_label">@Localizer["collectiondate"]</label>
+            <input type="date" class="cls_select_date" style="font-weight:600;font-size:15px;" min="@_date" @bind="@selectedDate" />
+
+        </div>
+
+        <!-- Document Mode -->
+        <div class="cls_account_div">
+
+            @if (ShowFeilds)
+            {
+
+                <label class="cls_section_div_purchase2_label">@Localizer["documentmode"]</label>
+                <select class="cls_select2" @onchange="((ChangeEventArgs e)=>Currency(e.Value.ToString(),e.Value.ToString()))">
+                    <option>--@Localizer["select_documenttype"]--</option>
+                    @foreach (var item in states)
+                    {
+                        <option value="@($"{item.TargetUID}|{item.TargetType}")">@item.TargetUID</option>
+                    }
+                </select>
+
+            }
+            else
+            {
+
+                <label class="cls_section_div_purchase2_label">Total Pending Invoices</label>
+                <label class="cls_credit_label1">@ResponseDaystabList.Where(p => p.SourceType.Contains("INVOICE")).Count()</label>
+
+            }
+        </div>
+
+        <!-- Collected By -->
+        <div class="cls_account_div">
+
+            @if (ShowFeilds)
+            {
+
+                <label class="cls_section_div_purchase2_label">@Localizer["collected_by"]</label>
+                <input type="text" class="cls_select2_button" placeholder="Enter Here" disabled value="@(_iAppUser.Emp.Code ?? "")" />
+
+            }
+            else
+            {
+
+                <label class="cls_section_div_purchase2_label">Total Overdue Invoices</label>
+                <label class="cls_credit_label1">@(ResponseDaystabList.Where(p => p.SourceType.Contains("INVOICE")).Count(p => p.DueDate <= DateTime.Today))</label>
+
+            }
+        </div>
+
+        <!-- Total Amount -->
+        <div class="cls_account_div">
+
+            <label class="cls_section_div_purchase2_label">Total Pending Amount</label>
+            <label class="cls_credit_label1">@(FormatNumberInIndianStyle(CommonFunctions.RoundForSystem(ResponseDaystabList.Where(p => p.SourceType.Contains("INVOICE")).Sum(p => p.BalanceAmount))))</label>
+
+        </div>
+
+        <!-- Auto Allocate Checkbox -->
+        <div class="cls_account_div">
+
+            <label class="cls_section_div_purchase2_label">Total OverDue Amount</label>
+            <label class="cls_credit_label1">@(FormatNumberInIndianStyle(CommonFunctions.RoundForSystem(ResponseDaystabList.Where(p => p.DueDate <= DateTime.Today).Sum(p => p.BalanceAmount))))</label>
+
+        </div>
+
+        <div class="cls_account_div">
+
+            <label class="cls_section_div_purchase2_label">@Localizer["total_amount"]</label>
+            <input type="text" placeholder="Enter Amount" class="cls_select2_button" @bind="_createPaymentViewModel.collectionAmount.TotalAmount" @oninput="(e)=>ConvertingToDefaultAmount(e.Value.ToString())" style="font-weight:600;font-size:15px;background:#fff !important;" />
+
+        </div>
+
+        <div class="cls_account_div">
+            <div class="cls_btn_radio">
+                <input type="checkbox" class="cls_btn_radio_input" @bind="@Dense_CheckBox" @oninput="HandleCheckBoxChange" />
+                <label class="cls_btn_radio_label">Is Auto Allocate</label>
+
+            </div>
+        </div>
+
+
+
+        @if (Dense_CheckBox)
+        {
+            <div class="cls_container_div4"><label class="cls_alert_msg"> @Localizer["note:_credit_notes_won't_apply_in_auto-allocation"].</label></div>
+        }
+        <div class="cls_container_div1">
+            <div class="div1" style="background-color:#F4F4F4;width:auto;cursor:pointer;border:1px solid #848484;">
+                <table>
+                    <tbody>
+                        <tr @onclick="() =>showUnsettled(_bankPop)">
+                            <td style="color: #013799;font-size:14px;font-weight:500;">
+                                <strong>@Localizer["unsettled_amount"]</strong>
+                            </td>
+                            <td style="color:red;font-size:14px;font-weight:500;">
+                                <strong>@_unsettleAmount</strong>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+    <div class="cls_account_sec_right">
+        <div class="div1">
+            <table>
+                <thead>
+                    <tr style="cursor:pointer;" @onclick="() => RowClicked(allotment,_allRecords)">
+                        <th style="padding:13px 5px;">@Localizer["total_outstanding_balance"] [@_count1]</th>
+                        <th style="padding:13px 5px;">@(FormatNumberInIndianStyle(CommonFunctions.RoundForSystem(TotalTableAmt)))</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var (index, ageGroup) in ResponseDaystab.Select((value, index) => (index, value)))
+                    {
+                        <tr style="cursor:pointer;" @onclick="() => RowClicked(ageGroup,empty)">
+                            @if (ageGroup.Balance == 0)
+                            {
+                                <td style="padding:13px 5px;">@($"{ageGroup.DelayTime} [0]")</td>
+                            }
+                            else
+                            {
+                                <td style="padding:13px 5px;">@($"{ageGroup.DelayTime} [{ageGroup.Count}]")</td>
+                            }
+                            <td style="padding:13px 5px;">
+                                @(FormatNumberInIndianStyle(CommonFunctions.RoundForSystem(ageGroup.Balance)))
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="div1" style="box-shadow:none;background-color:inherit;">
+            <table>
+                <tbody>
+                    <tr>
+                        <td style="color: #013799;font-weight:500;">
+                            <strong>@range</strong>
+                        </td>
+                        <td>
+                            @Localizer["number_of_documents"]
+                        </td>
+                        <td style="color: #013799;font-size:14px;font-weight:500;">
+                            <strong>
+                                @_count
+                            </strong>
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+
+</div>
+
+<div class="cls_section">
+
+    @if (ShowCashfields)
+    {
+
+
+
+        <h5 class="cls_container_p_full">@Localizer["cash_details"]</h5>
+        <div class="cls_container_div4">
+
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">@Localizer["cash_amount"]: </label>
+
+                @if (true)//!_iAppUser.IsMultiCurrency
+                {
+                    <input @bind="_createPaymentViewModel.collectionAmount.CashAmount" type="text" class="cls_select2_button" />
+                }
+                else
+                {
+                    <button class="cls_select2" @onclick="@(() => OpenCloseMultiCurrency("Cash"))">
+
+                        <label class="cls_select2_label1"> @CommonFunctions.RoundForSystem(_createPaymentViewModel.collectionAmount.CashAmount)</label>
+                        <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+                    </button>
+                }
+
+            </div>
+        </div>
+
+
+
+
+    }
+
+    @if (@IsParentInitialised)
+    {
+        <div id="foc" class="cls_container_div1">
+            <Receipt _collection="@this" @ref=receipt IsAutoAllocate="_createPaymentViewModel.collectionAmount.Dense_CheckBox" TotalAmt="_createPaymentViewModel.collectionAmount.TotalAmount" CashAmt="_createPaymentViewModel.collectionAmount.CashAmount" SelectedPaymentMode="payments" _collectedDate="@selectedDate" UserReceipt="@StoreUID" PaymentMode="@PaymentMode" PaymentUID="@PaymentUID" DocumentType="@DocumentType" ResponseDaystabList="ResponseDaystabList" Columns="customerColumns"></Receipt>
+        </div>
+    }
+</div>
+
+
+@if (bankPop)
+{
+    <div class="overlay"></div>
+    <div class="alert alert-Error alert-dismissible fade show" role="alert">
+
+        <div class="modal-container">
+            <div class="modal_header">
+
+                <h5 class="modal_title" style="color:bg-warning"> @Localizer["un_setteled_details"]</h5>
+                <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close" @onclick="Close">x</button>
+
+            </div>
+            <div class="cls_content_alert">
+                @if (bankList.Any())
+                {
+                    <Winit.UIComponents.Web.Table.TableGridView DataSource="bankList" Columns="bankColumns"></Winit.UIComponents.Web.Table.TableGridView>
+                }
+                else
+                {
+                    <p style="color:red;">@Localizer["no_records_found."]</p>
+                }
+            </div>
+            <div class="cls_fil_footer">
+
+                <div class="cls_btn_new">
+                    <button type="button" class="btn  btn-primary cls_button_blue" data-bs-dismiss="modal" @onclick="Close">@Localizer["ok"]</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+}
+
+
+
+
+
+@if (showAlert)
+{
+    <Winit.UIComponents.Common.CustomControles.SessionMessage EventCallbackPopup="Close" _popmessage="@AlertMessage" />
+}
+
+
+

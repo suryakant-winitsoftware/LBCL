@@ -1,0 +1,54 @@
+﻿@using Winit.Modules.Invoice.Model.Interfaces
+<PopUp Title="Select Invoice" OkbtnText="Submit" CancelbtnText="Close"
+       OnOkClick="async () => await OnInvoiceSelect.InvokeAsync(SelectedInvoice)"
+       OnCloseClick="OnCloseClick">
+    <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder="Search by Invoice Number"
+                                                           MaxLength="200" DebounceInterval="500"
+                                                           OnDebounceIntervalElapsed="e => InvoiceSearchString = e"
+                                                           KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+                                                           Value="@InvoiceSearchString"
+                                                           IsForSearch="true"/>
+    <div class="div1">
+        <table>
+            <thead>
+            <tr>
+                <th></th>
+                <th>
+                    Invoice Number
+                </th>
+                <th>
+                    Date
+                </th>
+                <th>
+                    Total Invoice Qty
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            @if (Invoices != null && Invoices.Any())
+            {
+                @foreach (IInvoiceView invoice in Invoices)
+                {
+                    <tr @onclick="() => SelectedInvoice = invoice.UID">
+                        <td>
+                            <input type="radio" name="store"
+                                   checked="@(SelectedInvoice == invoice.UID)" id="@invoice.UID"/>
+                        </td>
+                        <td>@(invoice.InvoiceNumber ?? "N/A")</td>
+                        <td>@(CommonFunctions.GetDateTimeInFormat(invoice.InvoiceDate))</td>
+                        <td>@(invoice.AvailableQty)</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4" style="text-align: center; font-weight:700;font-size:14px; color:red;">
+                        No Records Found..
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</PopUp>

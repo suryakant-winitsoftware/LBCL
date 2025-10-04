@@ -1,0 +1,79 @@
+﻿@page "/ListOfDeliverySummaryItems"
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+
+<div class="container m-0 p-0">
+    <div class="cls_customer_call_procedure">
+    <Virtualize Items="Data" Context="item" OverscanCount="10">
+            <div class="cls_customer_call_procedure_rep" @onclick='() => Item_Click(item)'>
+                    @*<div class="position-absolute top-0 start-0 px-1 @(item.IsPosted ? "bg-success" : "bg-danger") rounded-start h-100"></div>*@
+
+                <div class="cls_customer_call_procedure_rep1">
+                    <div class="cls_customer_call_procedure_rep1_left">
+                        <h3>@item.OrderNumber</h3>
+                        <p>[@item.StoreCode] @item.StoreName</p>
+                        <label>@Winit.Shared.CommonUtilities.Common.CommonFunctions.GetDateTimeInFormat(item.OrderDate, "dd MMM, yyyy HH:mm")</label>
+                        <div style="width:100%;float:left">
+                            <span style="float:left;">Total Value: ₹@item.OrderAmount</span>
+@*                             <span class="@(item.IsPosted ? "text-success" : "text-danger")"> @(item.IsPosted ? "" : @Localizer["not"]) @Localizer["delivered"] </span>
+ *@                        </div>
+                    </div>
+                    <div class="cls_customer_call_procedure_rep1_right dn">
+                        @* <p>Rupees</p> *@
+                        <label>@item.CurrencyLabel</label>
+                        
+                    </div>
+
+                </div>
+                <div class="cls_customer_call_procedure_rep2 dn"> 
+                    <p>@item.StoreName</p>
+                    <span></span>
+                </div>
+                        <div class="d-flex justify-content-end">
+                            <p>
+                             
+                              
+                            </p>
+                        </div>
+                        <div class="position-absolute top-0 start-0 p-1 pl-3">
+                            <p>
+                                <span class="text-primary fw-bold"></span>&nbsp; &nbsp;
+                                <br />
+                                <span class="text-secondary text-muted fs-6" style="font-size:15px"></span><br>
+                                <span class="text-primary fw-bolder"></span><br />
+                                <span class="text-secondary text-muted" style="font-size:15px"></span>
+                               
+                            </p>
+                        </div>
+                  
+       
+        </div>
+    </Virtualize>
+    </div>
+</div>
+
+
+@code {
+
+    [Parameter]
+    public List<Winit.Modules.SalesOrder.Model.UIInterfaces.ISalesSummaryItemView> Data { get; set; } = new List<Winit.Modules.SalesOrder.Model.UIInterfaces.ISalesSummaryItemView>();
+    [Parameter]
+    public EventCallback<Winit.Modules.SalesOrder.Model.UIInterfaces.ISalesSummaryItemView> OnItemSelected { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Instead of calling GetProducts, set the ProductList property with sample data
+        //serviceModel.ProductList = SampleData.GetSampleProducts();
+        LoadResources(null, _languageService.SelectedCulture);
+
+    }
+
+    // private void Item_Click(Winit.Modules.SalesOrder.Model.UIInterfaces.ISalesSummaryItemView salesSummaryItemView)
+    // {
+    //     OnItemSelected.InvokeAsync(salesSummaryItemView);
+    // }
+    private void Item_Click(Winit.Modules.SalesOrder.Model.UIInterfaces.ISalesSummaryItemView salesSummaryItemView)
+    {
+        OnItemSelected.InvokeAsync(salesSummaryItemView);
+       // _navigationManager.NavigateTo($"productdetail/{salesSummaryItemView.OrderNumber}"); 
+    }
+}

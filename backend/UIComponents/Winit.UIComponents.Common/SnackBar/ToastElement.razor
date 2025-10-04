@@ -1,0 +1,26 @@
+﻿@namespace Winit.UIComponents.SnackBar
+@using Winit.UIComponents.SnackBar.Extensions;
+@Css
+<div @attributes="@UserAttributes" class="@ToastClass" style="@AnimationStyle; position: relative; z-index: 1050; flex-basis:0px;" @onclick="@ToastClicked">
+    <div class="toast-header">
+        @if(!HideIcon)
+        {
+            <Winit.UIComponents.SnackBar.Internal.BSIcon Icon="@Icon" Color="@IconColor" Size="@IconSize" />
+        }
+        <strong class="ms-2 me-auto">@Message?.ComponentParameters["Title"]</strong>
+        @if (ShowCloseIcon)
+        {
+            <button class="btn btn-sm btn-close" type="button" @onclick="@CloseIconClicked"></button>
+        }
+    </div>
+    <div class="toast-body">
+        @if (Message?.ComponentType != null)
+        {
+            <DynamicComponent Type="Message.ComponentType" Parameters="Message.ComponentParameters" />
+        }
+        @if (ShowActionButton)
+        {
+            <button class="@($"btn btn-{ActionVariant.ToDescriptionString()} btn-{ActionColor.ToDescriptionString()} ms-auto")" @onclick="@ActionClicked">@Action</button>
+        }
+    </div>
+</div>

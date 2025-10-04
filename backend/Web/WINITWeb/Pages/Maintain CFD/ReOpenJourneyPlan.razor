@@ -1,0 +1,15 @@
+﻿@page "/ReOpenJourneyPlan"
+@inherits WinIt.Pages.Base.BaseComponentBase;
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize]
+@using Winit.Shared.Models.Common
+@using Winit.UIComponents.Common.CustomControles
+<PageTitle>Re Open Journey Plan</PageTitle>
+@inject Winit.Modules.JourneyPlan.BL.Interfaces.IReOpenJourneyPlanViewModel _reOpenJourneyPlanViewModel;
+
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" />
+@if (IsLoaded)
+{
+    <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" DataSource="_reOpenJourneyPlanViewModel.userJourneyList" />
+@*     <Winit.UIComponents.Web.Paging.Paging CurrentPage="_warehouseViewModel.PageNumber" OnPageChange="_warehouseViewModel.PageIndexChanged" PageSize="_warehouseViewModel.PageSize" TotalItems="_warehouseViewModel.TotalItemsCount" />
+ *@}

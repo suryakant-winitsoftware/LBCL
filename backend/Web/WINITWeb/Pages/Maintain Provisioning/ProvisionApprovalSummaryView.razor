@@ -1,0 +1,40 @@
+﻿@page "/provisionapprovalsummary"
+@using Winit.Modules.Provisioning.Model.Classes;
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.Provisioning.BL.Interfaces.IProvisioningHeaderViewViewModel provisioningHeaderViewModel;
+@inject IJSRuntime JSRuntime
+
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+                     OnFilterApplied="@OnFilterApply" />
+<div class="cls_header_right" style="width:auto;">
+    @if (TabName == ProvisionConstants.Pending)
+    {
+        <button class="cls_comman_sec_btn mr-2" type="button" @onclick="RedemptionBtnClicked">Request for Redemption</button>
+    }
+    <button class="cls_button_blue" @onclick="ExportToExcel">
+        Export to Excel
+    </button>
+</div>
+
+<Winit.UIComponents.Common.CustomControles.Tabs TabItems="TabItems" OnTabSelect="OnTabSelect" />
+
+<Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" DataSource="provisioningHeaderViewModel.SummaryViewDetails" ShowRecordsCount="false" IsFirstColumnCheckbox="@IsFirstColumnCheckbox" AfterCheckBoxSelection="OnGridCheckBoxSelection" />
+<Winit.UIComponents.Web.Paging.Paging CurrentPage="provisioningHeaderViewModel.PageNumber" OnPageChange="PageIndexChanged" PageSize="provisioningHeaderViewModel.PageSize" TotalItems="provisioningHeaderViewModel.TotalItemsCount" />
+
+
+@if (ViewPopUp)
+{
+    <PopUp Title="Details" OkbtnText="Ok" CancelbtnText="Close"
+           OnOkClick="() => ViewPopUp = false"
+           OnCloseClick="() => ViewPopUp = false">
+        <Winit.UIComponents.Web.Table.TableGridView Columns="ViewPopUpDataGridColumns" DataSource="provisioningHeaderViewModel.ProvisionRequestHistoryDetails" />
+    </PopUp>
+}
+@if (IsShowInfo)
+{
+    <PopUp Title="Details" OkbtnText="Ok" CancelbtnText="Close"
+           OnOkClick="() => IsShowInfo = false"
+           OnCloseClick="() => IsShowInfo = false">
+        <Winit.UIComponents.Web.Table.TableGridView Columns="InfoDataGridColumns" DataSource="InfoSelectedProvisions" />
+    </PopUp>
+}

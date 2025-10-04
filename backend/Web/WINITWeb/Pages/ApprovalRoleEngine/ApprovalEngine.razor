@@ -1,0 +1,416 @@
+﻿@using Winit.Modules.ApprovalEngine.Model.Classes
+@using Winit.UIModels.Common;
+@using Winit.Modules.ApprovalEngine.Model.Constants
+@inject Winit.UIComponents.Common.IAlertService _AlertMessgae;
+@inject HttpClient Http
+@inject Winit.Modules.ApprovalEngine.BL.Interfaces.IApprovalEngineView _approvalEngine;
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+
+@if (ShowApprovalEngine)
+{
+    @if (RequestId != "0")
+    {
+
+        @if (_approvalEngine.ApprovalHierarchyData?.approvalStatus != null && _approvalEngine.ApprovalHierarchyData.approvalStatus.All(item => item.Status != ApprovalConst.Rejected))
+        {
+            <div>
+
+                @if (Loading)
+                {
+                    <p>Loading...</p>
+                }
+                else if (Error)
+                {
+                    <p>Error: @ErrorMessage</p>
+                }
+                else
+                {
+                    <div class="cls_container_div1" style="margin:20px 0px;">
+                        <div class="cls_section_level3">
+
+                            @* Dynamically render column headers *@
+                            @if (_approvalEngine.ApprovalHierarchyData != null)
+                            {
+                                IsFirstExecute = true;
+                                var properties = typeof(ApprovalStatusResponse).GetProperties();
+                                foreach (var property in properties)
+                                {
+                                    @if (property.Name != "ApproverType"  && property.Name != "RoleName")
+                                    {
+                                        @if (property.Name != "Remarks" && property.Name != "Status")
+                                        {
+                                           
+                                                @if (property.Name == "ApproverId")
+                                                {
+                                                    <div class="cls_section_level2_div">
+                                                    <label class="cls_level_sec_label1">Approver Name</label>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="cls_section_level2_div4">
+                                                    <label class="cls_level_sec_label1">
+                                                        @if (property.Name == "ApproverLevel")
+                                                        {
+                                                            @("Approver Level")
+                                                        }
+                                                        else
+                                                        {
+                                                            @property.Name
+                                                        }
+                                                    </label>
+                                                    </div>
+
+                                                }
+
+                                           
+                                        }
+                                        else if (IsFirstExecute)
+                                        {
+                                            <div class="cls_section_level2_div1">
+                                                <label class="cls_level_sec_label1">Action</label>
+
+                                            </div>
+                                            IsFirstExecute = false;
+                                        }
+                                        @if (property.Name == "Status")
+                                        {
+                                            <div class="cls_section_level2_div2">
+                                                <label class="cls_level_sec_label1">@property.Name</label>
+                                            </div>
+                                        }
+                                        @if (property.Name == "Remarks")
+                                        {
+                                            <div class="cls_section_level2_div3">
+                                                <label class="cls_level_sec_label1">@property.Name</label>
+                                            </div>
+                                        }
+                                    }
+                                }
+                            }
+
+
+                        </div>
+
+
+                        @if (_approvalEngine.ApprovalHierarchyData?.approvalStatus != null)
+                        {
+                            @foreach (var item in _approvalEngine.ApprovalHierarchyData.approvalStatus)
+                            {
+                                if (string.IsNullOrEmpty(PendingLevel) && item.Status == ApprovalConst.Pending)
+                                {
+                                    PendingLevel = item.ApproverId;
+                                    var PendingAppLevel = item.ApproverLevel;
+                                    OnApprovalTracker.InvokeAsync(_approvalEngine.ApprovalHierarchyData.approvalStatus);
+                                }
+
+                                <div class="cls_section_level2">
+                                    @* Dynamically render each cell based on property *@
+                                    @foreach (var property in typeof(ApprovalStatusResponse).GetProperties())
+                                    {
+                                        // Exclude ApproverType property
+                                        if (property.Name != "ApproverType"  && property.Name != "RoleName")
+                                        {
+                                            // Handle other columns except Remarks and Status
+                                            if (property.Name != "Remarks" && property.Name != "Status")
+                                            {
+                                                
+                                                    @* Use the RoleCode_NameKVP lookup for ApproverId *@
+                                                    @if (property.Name == "ApproverId")
+                                                    {
+
+
+                                                        @* var code = property.GetValue(item)?.ToString(); // Ensure it's a string (or match type)
+                                                        var label = _approvalEngine.RoleCode_NameKVP.FirstOrDefault(x => x.Code == code)?.Label;
+
+                                                        @if (!string.IsNullOrEmpty(label))
+                                                        { *@
+                                                        <div class="cls_section_level2_div">
+
+                                                        <label class="cls_section_level_label"> @item.RoleName </label>
+                                                            <div class="cls_container_div1">
+                                                                <button type="button" class="btn btn-link cls_approval_btn" @onclick="() => ShowAuthorizeApprovers(item)">Show approvers</button>
+                                                            </div>
+                                                        </div>
+
+                                                       @*  }
+                                                        else
+                                                        {
+                                                            <label class="cls_section_level_label"> code </label>
+                                                        } *@
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="cls_section_level2_div4">
+                                                        <label class="cls_section_level_label">
+
+                                                            @property.GetValue(item)
+                                                        </label>
+                                                       
+                                                        </div>
+                                                    //This is Approver Row
+                                                    }
+                                                
+                                            }
+
+                                            
+                                            if (property.Name == "Status")
+                                            {
+                                                if (item.Status == ApprovalConst.Pending &&
+                                                IsReassignedDone == false &&
+                                                ((item.ApproverId == _iAppUser.Emp.Code && item.ApproverType == "user") ||
+                                                (item.ApproverId == _iAppUser.Role.Code && item.ApproverType == "role")) &&
+                                                item.ApproverId == PendingLevel &&
+                                                ApprovalRoles.Contains(_iAppUser.Emp.Code))
+                                                {
+                                                    <div class="cls_section_level2_div1">
+                                                        @if (item.ApproverLevel != 1)
+                                                        {
+                                                            <button style='display:@(IsReassignButtonNeeded ? "" : "none")'
+                                                                    class="cls_level_btn_light"
+                                                                    @onclick='() => ShowReassignPopup(ApprovalConst.Reassign, item.ApproverType, item.ApproverLevel)'>
+                                                                Reassign for correction
+                                                            </button>
+                                                        }
+
+                                                        @if(IsRejectButtonNeeded)
+                                                        {
+                                                            <button class="cls_level_btn_light" @onclick='() => ShowRejectPopup("Reject", item.ApproverLevel)'>Reject</button>
+                                                        }
+                                                        <button class="cls_level_btn_blue" @onclick='() => ShowPopup("Approve")'>Approve</button>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="cls_section_level2_div1"> <label class="cls_section_level_label">NA</label>  </div>
+                                                }
+                                            }
+
+                                            // Render Status column
+                                            if (property.Name == "Status")
+                                            {
+                                                <div class="cls_section_level2_div2">
+                                                    @if (item.Status == ApprovalConst.Approved)
+                                                    {
+                                                        <label class="cls_section_level_label"> @item.Status</label>
+                                                    }
+                                                    else if (item.Status == ApprovalConst.Rejected)
+                                                    {
+                                                        <label class="cls_section_level_label"> @item.Status</label>
+                                                    }
+                                                    else if (item.Status == "Skipped")
+                                                    {
+                                                        <label class="cls_section_level_label"> @item.Status</label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <label class="cls_section_level_label">Pending at @string.Join(", ", PendingLevel) level</label>
+                                                    }
+                                                </div>
+                                            }
+
+                                            // Render Remarks column
+                                            if (property.Name == "Remarks")
+                                            {
+                                                @* Show Remark if available *@
+                                                @if (_approvalEngine.ApprovalHierarchyData.approvalLog != null)
+                                                {
+                                                    var filteredLogs = _approvalEngine.ApprovalHierarchyData.approvalLog
+                                                    .Where(e => e.Level == item.ApproverLevel || (e.ReassignTo == item.ApproverLevel.ToString()))
+                                                    .ToList();
+
+                                                    if (filteredLogs.Any())
+                                                    {
+                                                        var lastRemark = filteredLogs.Last().Status;  // Assuming `Comments` is the Remark field
+                                                        
+                                                        <div class="cls_section_level2_div3">
+                                                            <label class="cls_section_level_label">
+                                                                @lastRemark by @(filteredLogs.Last().ModifiedBy) @(filteredLogs.Last().CreatedOn)
+                                                            </label>
+                                                            <div class="cls_container_div1">
+                                                                <a class="cls_section_level2_a" @onclick="() => ShowLog(item)">See more</a>
+                                                            </div>
+                                                        </div>
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="cls_section_level2_div3">
+                                                            <label class="cls_section_level_label">No remarks available.</label>
+                                                        </div>
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                </div>
+                            }
+                        }
+                    </div>
+
+
+
+
+
+                }
+            </div>
+
+            @if (IsModalVisible)
+            {
+                <div class="modal-backdrop fade show"></div>
+                <div class="modal fade show" tabindex="-1" style="display: block;overflow:auto;" role="dialog">
+                    <div class="modal-dialog cls_pop_up_style1" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">@Popuptype</h5>
+                                <span aria-hidden="true" class="close" aria-label="Close" @onclick="() => { Remark = null;SelectedOption=null; ClosePopup(); }">&times;</span>
+
+                            </div>
+                            <div class="modal-body">
+                                @if (Popuptype == ApprovalConst.Reassign)
+                                {
+                                    <div class="cls_section_div_purchase4">
+                                        <label class="cls_section_div_purchase2_label" for="dropdown">Select Level:<span class="cls_section_div_purchase2_span">*</span></label>
+                                        <select id="dropdown" class="cls_select2" @bind="SelectedOption" style="font-size:13px;font-weight:600;">
+                                            <option class="cls_section_level_label" value="0">Select Level</option>
+                                            @foreach (var option in _approvalEngine.ReAssignOptions)
+                                            {
+                                                if (_approvalEngine.UserLevelRoleMap.ContainsKey(option))
+                                                {
+                                                    <option value="@option">@_approvalEngine.UserLevelRoleMap[option]</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                }
+                                <div class="cls_section_textarea">
+                                    <label class="cls_section_div_purchase2_label" for="Remark">Remark:<label class="cls_section_div_purchase2_span">*</label></label>
+                                    <div class="cls_select_text1">
+                                        <textarea id="Remark" class="form-control  ng-pristine ng-valid" @bind="Remark" required></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <div style="float:left;">
+                                    <button type="button" class="cls_comman_sec_btn cls_mar_right_10px" @onclick="() => { Remark = null;SelectedOption=null; ClosePopup(); }">Close</button>
+                                    @if (Popuptype == ApprovalConst.Reassign)
+                                    {
+                                        <button type="button" class="cls_comman_btn " @onclick='() => OpenConfirmation(ApprovalConst.Reassign)'>Reassign</button>
+                                    }
+                                    else if (Popuptype == "Approve")
+                                    {
+                                        <button class="cls_comman_btn" @onclick='() => OpenConfirmation(ApprovalConst.Approved)'>Approve</button>
+                                    }
+                                    else if (Popuptype == "Reject")
+                                    {
+                                        <button class="cls_comman_btn " @onclick='() => OpenConfirmation(ApprovalConst.Rejected)'>Reject</button>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            }
+
+            @if (IsConfirmationVisible)
+            {
+                <div class="overlay"></div>
+                <div class="modal fade show" tabindex="-1" role="dialog" style="display:block;">
+                    <div class="alert alert-Warning alert-dismissible fade show" role="dialog">
+                        <div class="modal-container">
+                            <div class="modal_header">
+                                <h5 class="modal-title" style="color:alert-danger">Confirmation</h5>
+                                <span class="close" aria-label="Close" aria-hidden="true" @onclick="CloseConfirmation">
+                                    &times;
+                                </span>
+                            </div>
+                            <div class="cls_content_alert">
+                                <p>
+                                    Are you sure you want to @(
+                    ActionToConfirm == ApprovalConst.Reassign ? "reassign" :
+                    ActionToConfirm == ApprovalConst.Approved ? "approve" :
+                    ActionToConfirm == ApprovalConst.Rejected ? "reject" : "perform this action"
+                                        )?
+                                </p>
+
+                            </div>
+                            <div class="cls_fil_footer">
+                                <div class="cls_btn_new">
+                                    <button type="button" class="btn btn-secondary cls_button_light1" @onclick="CloseConfirmation">No</button>
+                                    <button type="button" class="btn btn-primary cls_button_blue" @onclick="ConfirmAction">Yes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            }
+            @if (IsEmptyVar)
+            {
+                <div class="overlay"></div>
+                <div class="modal fade show" tabindex="-1" role="dialog" style="display:block;">
+                    <div class="alert alert-Warning alert-dismissible fade show" role="dialog">
+                        <div class="modal-container">
+                            <div class="modal_header">
+                                <h5 class="modal-title" style="color:alert-danger">Alert</h5>
+
+                            </div>
+                            <div class="cls_content_alert">
+                                <p>@EmptyVarMessage</p>
+                            </div>
+                            <div class="cls_fil_footer">
+                                <div class="cls_btn_new">
+                                    <button type="button" class="btn btn-primary cls_button_blue" @onclick="CloseEmptyValidationModal">OK</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            }
+            @if (AuthorizeApproverDetailClicked)
+            {
+                <div class="overlay"></div>
+                <div class="modal fade show" tabindex="-1" role="dialog" style="display:block;">
+                    <div class="alert alert-Warning alert-dismissible fade show" role="dialog">
+                        <div class="modal-container">
+                            <div class="modal_header">
+                                <h5 class="modal-title" style="color:alert-danger">Authorize approvers</h5>
+                                <span aria-hidden="true" class="close" aria-label="Close" @onclick="() => { AuthorizeApproverDetailClicked = false;ClickedRoleIds= new List<EmployeeDetail>(); }">&times;</span>
+                            </div>
+                            <div class="cls_content_alert">
+
+                                <ul>
+                                    @foreach (var roleId in ClickedRoleIds)
+                                    {
+                                        <li>[@roleId.EmpCode] @roleId.EmpName</li>
+                                    }
+                                </ul>
+                            </div>
+                            <div class="cls_fil_footer">
+                                <div class="cls_btn_new">
+                                    <button type="button" class="btn btn-primary cls_button_blue" @onclick="() => { AuthorizeApproverDetailClicked = false;ClickedRoleIds= new List<EmployeeDetail>(); }">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            #region Approvallogpage;
+            @if (IsLogViewing)
+            {
+                <UserApprovalLog UserLevelCodeMap="_approvalEngine.UserLevelRoleMap" ApprovalLogs="ApprovalData" OnCloseLog="OnCloseLog" CurrentUser="CurrentApprovalLevel"></UserApprovalLog>
+            }
+            #endregion
+        }
+    }
+}
+@code {
+
+
+}

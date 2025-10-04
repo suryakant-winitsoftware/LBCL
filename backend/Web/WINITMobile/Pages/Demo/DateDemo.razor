@@ -1,0 +1,36 @@
+﻿@page "/date-example"
+
+<h3>Date Examples</h3>
+
+<div class="form-group">
+    <label for="pastDate">1.Future Date Disabled: </label>
+    <InputDate id="pastDate" class="form-control w-25" @bind-Value="pastDate" max="@currentDate.ToString("yyyy-MM-dd")"></InputDate>
+</div>
+
+<div class="form-group">
+    <label for="futureDate">2. Past Date Disabled:</label>
+    <InputDate id="futureDate" class="form-control w-25" @bind-Value="futureDate" min="@currentDate.ToString("yyyy-MM-dd")"></InputDate>
+</div>
+
+<div class="form-group">
+    <label for="presentDate">3. Both Future and Past Dates Disabled (Only Present Date):</label>
+    <InputDate id="presentDate" class="form-control w-25" @bind-Value="presentDate" min="@currentDate.ToString("yyyy-MM-dd")" max="@currentDate.ToString("yyyy-MM-dd")"></InputDate>
+</div>
+
+<div class="form-group">
+    <label for="defaultPresentDate">4. Default Present Date:</label>
+    <InputDate id="defaultPresentDate" class="form-control w-25" @bind-Value="defaultPresentDate"></InputDate>
+</div>
+<div class="form-group">
+    <label for="readOnlyDate">5. Disabled (Read-only) Date:</label>
+    <InputDate id="readOnlyDate" class="form-control w-25" @bind-Value="readOnlyDate" readonly="true"></InputDate>
+</div>
+@code {
+    DateTime currentDate = DateTime.Now;
+
+    DateTime pastDate { get; set; } = DateTime.Now;
+    DateTime futureDate { get; set; } = DateTime.Now;
+    DateTime presentDate { get; set; } = DateTime.Now;
+    DateTime defaultPresentDate { get; set; } = DateTime.Now;
+    DateTime readOnlyDate { get; set; } = DateTime.Now;
+}

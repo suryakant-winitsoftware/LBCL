@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "831139944887",
+    "project_id": "winitmobile-a9033",
+    "storage_bucket": "winitmobile-a9033.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:831139944887:android:c4fe5d15f0bcd3c34f7032",
+        "android_client_info": {
+          "package_name": "com.winit.winitmobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAhPqkO2ywds2YpWsfnL11CqFxkW7SP1qA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

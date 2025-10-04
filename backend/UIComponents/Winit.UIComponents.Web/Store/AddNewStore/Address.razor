@@ -1,0 +1,149 @@
+﻿@page "/"
+@using Microsoft.Extensions.Localization
+@using Winit.UIComponents.Common.LanguageResources.Web
+@inject Winit.UIComponents.Common.Language.ILanguageService _languageService
+@inject IStringLocalizer<LanguageKeys> Localizer
+
+<div class="cls_sales_container_outline">
+    <div class="cls_container_div1">
+        <div class="cls_section_div_purchase4">
+            <label class="cls_section_div_purchase2_label">@Localizer["addressline1"]<span class="cls_section_div_purchase2_span">*</span></label>
+            <div class="cls_select">
+                
+                <input type="text" @oninput="ChangeIsEditedOrNot" @bind="@_Address.Line1" placeholder=@Localizer["enter_address_line1"] maxlength="40" />
+            </div>
+
+
+        </div>
+        <div class="cls_section_div_purchase4">
+            <label class="cls_section_div_purchase2_label">@Localizer["address_line_2"]</label>
+            <div class="cls_select">
+               
+                <input type="text" @oninput="ChangeIsEditedOrNot" @bind="@_Address.Line2" placeholder=@Localizer["enter_address_line2"] maxlength="40" />
+            </div>
+
+
+        </div>
+        <div class="cls_section_div_purchase4">
+            <label class="cls_section_div_purchase2_label">@Localizer["address_line_3"]</label>
+            <div class="cls_select">
+               
+                <input type="text" @oninput="ChangeIsEditedOrNot" @bind="@_Address.Line3" placeholder=@Localizer["enter_address_line3"] maxlength="40" />
+            </div>
+
+
+        </div>
+        <div class="cls_section_div_purchase4">
+            <label class="cls_section_div_purchase2_label">@Localizer["address_line_4"]</label>
+            <div class="cls_select">
+               
+                <input type="text" @oninput="ChangeIsEditedOrNot" @bind="@_Address.Line4" placeholder=@Localizer["enter_address_line4"] maxlength="40" />
+            </div>
+
+        </div>
+    </div>
+    <div class="cls_container_div4">
+        <div class="cls_section_div_purchase4">
+            <label class="cls_section_div_purchase2_label">@Localizer["postal_code"]<span class="cls_section_div_purchase2_span">*</span></label>
+            <div class="cls_select">
+                
+                <input type="number" max="6" @bind="@_Address.ZipCode" placeholder=@Localizer["postal_code"] />
+            </div>
+
+
+        </div>
+    
+        <div class="cls_section_div_purchase4">
+            <label class="cls_section_div_purchase2_label">@Localizer["email"]</label>
+            <div class="cls_select">
+                
+                <input type="text" @oninput="ChangeIsEditedOrNot" @bind="@_Address.Email" placeholder=@Localizer["enter_email"] />
+            </div>
+
+
+        </div>
+        <div class="cls_section_div_purchase4">
+            <label class="cls_section_div_purchase2_label">@Localizer["landline_no"]</label>
+            <div class="cls_select">
+                
+                <input type="number" @oninput="ChangeIsEditedOrNot" @bind="@_Address.Phone" placeholder=@Localizer["enter_landline_no"] />
+            </div>
+
+
+        </div>
+
+        <div class="cls_section_div_purchase4">
+            <label class="cls_section_div_purchase2_label">@Localizer["additional_mobile_number"]</label>
+            <div class="cls_select">
+                
+                <input type="number" @oninput="ChangeIsEditedOrNot" _ @bind="@_Address.Mobile1" placeholder=@Localizer["enter_additional_mobile_number"] />
+            </div>
+
+
+        </div>
+    </div>
+    <div class="cls_container_div4">
+        <div class="cls_section_div_purchase4">
+            <label class="cls_section_div_purchase2_label">@Localizer["fax_number"]</label>
+            <div class="cls_select">
+               
+                <input type="number" @oninput="ChangeIsEditedOrNot" _ @bind="@_Address.Fax" placeholder=@Localizer["enter_fax_number"] />
+            </div>
+
+
+        </div>
+
+    
+       
+        <div class="cls_section_div_purchase1 margin_right">
+            <label class="cls_section_div_purchase2_label">@_appSettings.LocationLevel <span class="cls_section_div_purchase2_span">*</span></label>
+            
+                
+                <button class="cls_select2" @onclick="@(()=>ViewLocation = !ViewLocation)">
+                    
+
+                <label class="cls_select2_label1">@(string.IsNullOrEmpty(_Address.LocationLabel) ? $"Select {_appSettings.LocationLevel}" : _Address.LocationLabel) </label><!--!-->
+                <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1">
+
+                </button>
+                @if (ViewLocation)
+                {
+                    <Winit.UIComponents.Web.Location.LocationMaster ShowPopUp="ViewLocation"
+                                                                    OnLocationSelected="OnLocationChange"
+                                                                    IsLocationHierarchyData="true"
+                                                                    SelectedLocationOrStoreGroupUID="@_Address.LocationUID"
+                                                                    OnClose="@(()=>ViewLocation=false)" />
+                }
+            
+
+
+        </div>
+
+        @if (_Address.LocationMasters != null)
+        {
+            foreach (var item in _Address.LocationMasters)
+            {
+                if (item.Level != _Address.LocationMasters.Count)
+                {
+                    <div class="cls_section_div_purchase1 margin_right">
+
+
+                        <label class="cls_section_div_purchase2_label">@($"{item.LocationTypeName} :")</label>
+                        <div class="cls_main_sign_input_new1 margin_top"></div>
+                        <label class="cls_section_div_purchase2_label">@($"{item.Label}")</label>
+                    </div>
+
+                    @* <div class="cls_section_div_purchase4">
+                        <label class="cls_section_div_purchase2_label">Country : </label><!--!-->
+                        <div class="cls_main_sign_input_new1">[IN] India</div>
+                    </div> *@
+
+                }
+            }
+        }
+
+    </div>
+
+</div>
+
+

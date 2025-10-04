@@ -1,0 +1,25 @@
+﻿
+@using WINITMobile.Shared
+@using Winit.UIModels.Common
+@page "/bargraph"
+<WINITMobile.Shared.BarChart DataSource="data" />
+
+
+
+
+@code
+{
+    public List<BarGraphModel> data = new List<BarGraphModel>();
+    protected override async Task OnInitializedAsync()
+    {
+        data = new List<BarGraphModel>()
+        {
+            new BarGraphModel { Label = "Sales", Target = 458, Ach =110  },
+            new BarGraphModel { Label = "Collection", Target = 744, Ach = 281 },
+            new BarGraphModel { Label = "Perfect Point", Target = 75, Ach = 58 },
+            new BarGraphModel { Label = "Return", Target = 175, Ach = 15 },
+        };
+    }
+    
+   
+}

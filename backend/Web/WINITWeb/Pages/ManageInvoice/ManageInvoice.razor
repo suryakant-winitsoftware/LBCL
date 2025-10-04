@@ -1,0 +1,20 @@
+﻿@page "/manageinvoice"
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.Invoice.BL.Interfaces.IInvoiceViewModel _viewModel
+<PageTitle>Manage Invoices</PageTitle>
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" 
+                     IsSearchCriteriaNeeded="true"
+                     ColumnsForFilter="FilterColumns"
+                     IsShowFilter="true" OnFilterApplied="OnFilterClick"></PageHeaderAndFilter>
+
+@if (_viewModel.InvoiceHeaderViews != null && GridColumns != null)
+{
+    <TableGridView Columns="GridColumns"
+                   DataSource="_viewModel.InvoiceHeaderViews"
+                   OnSort="OnSortClick" />
+    <Winit.UIComponents.Web.Paging.Paging CurrentPage="_viewModel.PageNumber"
+                                          OnPageChange="OnPageIndexChange"
+                                          PageSize="_viewModel.PageSize"
+                                          TotalItems="_viewModel.TotalCount" />
+
+}

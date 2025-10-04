@@ -1,0 +1,165 @@
+﻿@inject Winit.Modules.Distributor.BL.Interfaces.ICreateDistributorBaseViewModel _distributorBaseViewModel
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+<div class="row mt-3" style="width:100%;margin-bottom:15px;">
+    <div class="col-12 d-flex justify-content-start">
+        <div class="form-check d-flex align-items-center">
+            <input type="checkbox" checked="@_onBoardCustomerDTO?.StoreAdditionalInfoCMI?.IsTcAgreed" disabled="@isDisabled" @onchange="OnCheckboxChanged" style="width:auto;" />
+            <label for="termsCheckbox" class="form-check-label mb-0" style="font-size:15px;font-weight:700;margin-left:8px;">
+               I Agrees to the <button type="button" class="btn btn-link p-0 text-decoration-underline text-primary"  style="font-size:15px;font-weight:700;" @onclick="OpenPopup">  Terms & Conditions Privacy Policy</button>.
+            </label>
+        </div>
+    </div>
+</div>
+@if (IsAddPopUp)
+{
+    <PopUp Title="Terms & Conditions Agreements Details" DisableOkBtn DisableCancelBtn>
+
+
+    <div class="card">
+        <div class="card-body">
+            <p class="fw-bold">Dealership Terms & Conditions</p>
+            
+            <p class="fw-bold">1. TERM:</p>
+            <p>The Dealership shall remain valid unless terminated by either party in accordance with the clause of this General Terms & Conditions.</p>
+
+            <p class="fw-bold">2. PURPOSE:</p>
+                <ul class="list-unstyled">
+                    <li>2.1 Authorizes Dealer to sell and service products manufactured, imported or assembled by Carrier Midea India (P) Ltd. ("Company") viz., air-conditioners, or such other products as may be introduced from time to time ("Products");</li>
+                    <li>2.2 States the terms under which Company and Dealer agree to do business together;</li>
+                    <li>2.3 States the responsibilities of Company and Dealer to each other and to customers.</li>
+                </ul>
+
+            <p class="fw-bold">3. PRIMARY SALES AND SERVICE AREA:</p>
+            <p>The Dealer is responsible for effectively selling, servicing and or otherwise, representing Company's products in the specified area as mutually agreed and mentioned in the letter of appointment, unless otherwise specifically agreed upon in writing by the parties hereto. The Company reserves the right to revise the Dealer's primary sales and service area at its sole discretion.</p>
+
+            <p class="fw-bold">4. NON-EXCLUSIVITY:</p>
+            <p>The Dealer is appointed on a non-exclusive basis and the Company reserves the right to appoint additional dealer(s) in the same area for the same products.</p>
+
+            <p class="fw-bold">5. ORDER PLACEMENT:</p>
+            <ul class="list-unstyled">
+                <li>5.1 The Dealer shall submit online PO (Sales/Service Team to explain procedure).</li>
+                <li>5.2 Purchase order once accepted by the Company shall be binding on the Dealer.</li>
+                <li>5.3 Any purchase order, or other selling or purchasing form used in connection with the sale and purchase of products or spare parts, shall be subject to the provisions of this General Terms and Conditions, and any terms thereof which are inconsistent with the provisions of this General Terms and Conditions, shall be null and void and shall have no force and effect whatsoever, unless otherwise specifically agreed upon in writing by the parties hereto.</li>
+            </ul>
+
+            <p class="fw-bold">6. DELIVERY/DISPATCH:</p>
+           <ul class="list-unstyled">
+                <li>6.1 Order will be accepted by the Company subject to availability of stocks. Should there be a delay in delivery of the product for any reasons whatsoever, the Company will not be liable to compensate the Dealer/Dealer's customer for any loss, cost or damage associated therewith.</li>
+                <li>6.2 The Dealer shall accept delivery of the consignment(s) as and when received and shall not refuse to accept delivery of goods or any installment thereof or return any installment already delivered on the ground of delay in delivery/dispatch.</li>
+                <li>6.3 The Dealer shall inspect the goods immediately on arrival and shall within 7 days from the date of delivery give notice to the Company of any matter or thing by reason whereof the Dealer may allege that the goods are not in accordance with the contract. If the Dealer fails to give such notice, the goods will be deemed to have been accepted and the Dealer shall not be entitled thereafter to lodge any claim against the Company.</li>
+            </ul>
+            <p class="fw-bold">7. PRICE/PAYMENT:</p>
+           <ul class="list-unstyled">
+                <li>7.1 Prices are based on Company's ruling prices and are subject to adjustment up to the time of delivery and the order is, therefore, accepted on the clear understanding that Dealer agrees to pay on demand the enhanced price as aforesaid.</li>
+                <li>7.2 Payments are overdue from the date of invoice unless agreed to the contrary in writing. Payment against invoice is payable through A/c Payee Draft / Cheque/RTGS/ECMS in favor of M/s. Carrier Midea India (P) Ltd. at Gurgaon.</li>
+                <li>7.3 If the Dealer fails to clear outstanding dues within the due date mentioned in the invoice, then the Dealer shall be liable to pay interest of 12% on such outstanding dues from the date of invoice till the date of actual payment.</li>
+            </ul>
+
+            <p class="fw-bold">8. PRODUCT NON-TAMPERING:</p>
+            <p>Dealer will sell the products in the same conditions as they are received from Company and shall not alter, remove or in any other way tamper with any of the trader's mark or any marks/numbers on the products.</p>
+
+            <p class="fw-bold">9. AFTER SALES SERVICE:</p>
+           <ul class="list-unstyled">
+                <li>9.1 Dealer agrees to maximize customer satisfaction by providing courteous, convenient, prompt, efficient and quality service to owners of Company products. All service will be performed and administered in a professional manner and in accordance with all applicable laws and regulations, this Dealership, and the Service Policies and Procedures Manual of the Company, as amended from time to time.</li>
+                <li>9.2 Dealer shall maintain proper stock of spare parts and have an adequate number of trained personnel to service Company products and/or satisfy and resolve customer queries and complaints.</li>
+                <li>9.3 To build and maintain consumer confidence and satisfaction, Dealer will comply with Company procedures for investigation and resolution of product-related customer complaints.</li>
+                <li>9.4 During warranty period, the Dealer shall be liable to extend free service to the customers. In consideration for such free service to customers, the Company shall pay commission as may be communicated by the Company from time to time. However, after the expiry of the warranty period, the Dealer can charge the customers for the services rendered as per the rates fixed by the Company from time to time.</li>
+                <li>9.5 Replacement of defective parts/components during the warranty period will be free of cost. Beyond the warranty period, the Dealer can procure fresh parts/components from the Company on a chargeable basis and charge the customer accordingly.</li>
+                <li>9.6 Company shall give free training to Dealer's service engineers for a period of four weeks. Expenses relating to travel, boarding and lodging will be borne by the Dealer.</li>
+            </ul>
+
+            <p class="fw-bold">10. OBLIGATIONS OF DEALER:</p>
+           <ul class="list-unstyled">
+                <li>10.1 The Dealer shall be responsible for providing its personnel with adequate equipment and training, so as to enable them to provide effective Services.</li>
+                <li>10.2 The Dealer shall be responsible and liable for compliance with all statutory obligations in respect of each of its personnel, deputed for the purposes of servicing Company products and for any other purposes falling within the ambit of this General Terms and Conditions.</li>
+                <li>10.3 The Dealer shall comply with all applicable laws/rules/guidelines etc. The Dealer shall also ensure that all such personnel of the Dealer are in proper uniform and display their identity cards at all times while dealing with the customers in any manner.</li>
+                <li>10.4 The Dealer shall maintain all requisite records, registers, account books etc. which are obligatory under applicable law in connection with the sales and service of Company products.</li>
+                <li>10.5 The Dealer shall be solely responsible for the acts/omissions of its personnel. It shall be the responsibility of the Dealer to ensure that:
+                    <ol type="a">
+                        <li>i.Its personnel are at all times, at their best behavior and adhere to the policies and procedures of the Company;</li>
+                        <li>ii.The personnel wear proper uniforms and carry valid identity cards, both of which shall be issued by the Dealer;</li>
+                        <li>iii.The personnel do not have any past police record.</li>
+                    </ol>
+                </li>
+                <li>10.6 The Dealer shall ensure that its personnel do not indulge in unlawful activities. In case of any loss/damage (direct, indirect or consequential) caused to the Company, due to any unlawful activity of the Dealer and/or its personnel, then without prejudice to any rights and remedies available to the Company under any Law, the Dealer shall be liable to make good such loss/damage.</li>
+                <li>10.7 The Dealer shall perform all its obligations and the Services, as per the directions enumerated herein and in accordance with such directions issued by the Company, from time to time.</li>
+                <li>10.8 The Dealer shall at all times maintain a proper record of name and address of each purchaser of the product, date of purchase, serial number of equipment, amount received from the customer, amount due and payable to Company, amount paid to Company, all the data pertaining to third-party sales; and data pertaining to statutory forms collections and outstanding.</li>
+            </ul>
+                <p class="font-weight-bold">11. NATURE OF RELATIONSHIP:</p>
+                <p>Nothing in this General Terms and Conditions shall create or be deemed to create the relationship of principal-agent, master-servant, employer-employee, or any other similar relationship between Company and the Dealer or any personnel of the Dealer. In case of an accident of any Personnel of the Dealer while on duty, such Personnel shall be deemed to be on duty of the Dealer, and Company shall not be liable or responsible in any manner nor be liable to pay any monetary compensation in the event of death, or any disability whether temporary or permanent, in the event of any injury sustained by the Personnel of the Dealer during the performance of their functions or rendering Services under this General Terms and Conditions.</p>
+
+                <p class="fw-bold">12. PROPRIETARY OR CONFIDENTIAL INFORMATION:</p>
+                <p>The Dealer shall not, at any time after execution of this dealership, divulge any information in relation to the Company's affairs or business and other records furnished by the Company to the Dealer for its use, which will always be kept confidential by the Dealer at all times and shall be returned to the Company upon termination or earlier determination of the Dealership. Dealer shall ensure that such information is adequately protected and is not subjected to misuse and is not available to any third party without Company's explicit permission in writing.</p>
+
+                <p class="fw-bold">13. WARRANTY:</p>
+                <p>Company makes no representations or warranties, expressed or implied, with respect to the Products or parts to be sold except as provided in its terms and conditions of sale and in Company's standard printed warranty certificates. The Dealer shall adhere to Company's written policies as issued from time to time relating to product warranties and service and to Company's rules for returning any Product or part for repair or service. The Dealer agrees to indemnify, defend, and hold harmless Company to the extent the Dealer offers any additional warranty or makes statements or representations that create any liability beyond Company's Limited Warranty. The Dealer hereby acknowledges that the Dealer is in receipt of the current policy on warranty obligation and the said policy forms part and parcel of this General Terms and Conditions.</p>
+
+                <p class="fw-bold">14. INTELLECTUAL PROPERTY RIGHTS:</p>
+                <p>Dealers will have no right in trademark or trade names of the Company or any of its affiliates, subsidiary, or group companies and shall not use such trademarks except as approved by Company.</p>
+
+                <p class="fw-bold">15. INTERNATIONAL TRADE COMPLIANCE & CODE OF ETHICS:</p>
+               <ul class="list-unstyled">
+                    <li>15.1 The Dealer acknowledges that the Company has granted this Dealership in good faith and in full reliance upon the representations made by the Dealer, more particularly the representation that it is not named in any of the watch lists issued by the various countries around the world and that the Dealer has no commercial dealings, relations, contracts, or interests in any of the Prohibited/sanctioned Countries viz., Sudan, Cuba, Iran, Crimea, covered regions of Ukraine, North Korea & Syria (the US sanctioned countries the list of which may be updated by the US government from time to time). In case these representations are found to be breached, Company shall have the right to immediately terminate the Dealership with no further liabilities or obligations on the Agreement.</li>
+                    <li>15.2 The Dealer hereby agrees to unconditionally adhere to the Code of Ethics and Conduct of Company which is annexed herewith as Annexure 1. By accepting this General Terms and Conditions, the Dealer agrees to render the Services as contemplated herein in a manner consistent with both Law and good business ethics. The Code of Ethics and Conduct of Company is available at http://www.carriermideaindia.com www.carriermideaindia.com.</li>
+                    <li>15.3 The Dealer warrants that it shall not give nor promise to give any sum of money, gift, or any material favor or consideration to any official or employee of Company for the purpose of winning the award of this Dealership.</li>
+                    <li>15.4 In case any employee of Company demands any bribe/kickback in kind or cash, or indulges in any other unethical conduct, the Dealer shall immediately inform Company BPO at mailto:p.balaji@carriermidea.com p.balaji@carriermidea.com or Company Legal Head at mailto:atul.sharma@carriermidea.com atul.sharma@carriermidea.com.</li>
+                    <li>15.5 The failure of the Dealer to abide by the provisions of this clause on Ethics shall be deemed an incurable material breach of this General Terms and Conditions. Company may, in such case, notwithstanding any other clause or provision, terminate the Dealership immediately at its sole discretion without judicial resolution by written notice to the Dealer without prejudice to any other remedies that may be available to Company.</li>
+                </ul>
+
+                <p class="fw-bold">16. INDEMNITY:</p>
+                
+                    <li>
+                        The Dealer shall defend, indemnify and hold harmless Company from and against any and all liabilities, obligations, claims, demands, causes of action, expenses, damages, losses including special, incidental or consequential damages or losses, fines, judgments, settlements and penalties, including, without limitation, costs, expenses and attorneys' fees incident thereto, arising out of, based upon, or occasioned by or in connection with:
+                        <ul class="list-unstyled">>
+                            <li>16.1 Violation of any laws or any negligence, gross negligence or willful misconduct by the Dealer;</li>
+                            <li>16.2 A breach of this General Terms and Conditions by the Dealer;</li>
+                            <li>16.3 Damages or losses to persons or property, injury to persons including death, or any liability arising out of any contract or written guarantees by the dealer, arising from the purchase, use, sale, installation and commissioning (wherever applicable and carried out by the Dealer) or services by dealer of Company Products and parts furnished by Company;</li>
+                            <li>16.4 Any claims by government regulators or agencies for fines, penalties, sanctions, underpayments or other remedies to the extent such fines, penalties, sanctions, underpayments or other remedies relate to Dealer's failure to perform its responsibilities under this General Terms and Conditions;</li>
+                            <li>16.5 Liability of any nature including tax liability.</li>
+                        </ul>
+                    </li>
+                
+
+                <p class="fw-bold">17. TERMINATION OF DEALERSHIP:</p>
+                <ul class="list-unstyled">
+                    <li>17.1 Either party shall be free to terminate the Dealership without assigning any reason, by serving a written notice of 30 days on the other Party.</li>
+                    <li>17.2  Company shall have the right to terminate the Dealership forthwith in any of the following events:
+                        <ol type="a">
+                            <li>i.If the Dealer defaults in making timely payments, commits a breach of the confidentiality clause and the intellectual property clause.</li>
+                            <li>ii.If the Dealer becomes bankrupt or insolvent.</li>
+                        </ol>
+                    </li>
+                    <li>17.3 Upon termination, howsoever occasioned, the Dealer shall, at the request of Company return to it, without cost, all information or records requested by the Company relating to the business of the Dealer for the products of the Company. The Dealer shall also forthwith cease to represent the Company in any manner whatsoever whether in its advertisements or otherwise. Upon such termination, the Dealer shall forthwith make the payment of all outstanding dues to the Company as per the statement of account forwarded to it by the Company.</li>
+                    <li>17.4 The termination of the Dealership shall not discharge, affect or otherwise modify the rights and obligations of the parties established or incurred prior to the termination thereof.</li>
+                </ul>
+
+                <p class="fw-bold">18. ARBITRATION:</p>
+               <ul class="list-unstyled">
+                    <li>18.1 All disputes between the Parties shall be decided by way of Arbitration in accordance with the Provisions of the Arbitration and Conciliation Act 1996.</li>
+                    <li>18.2 The arbitration proceeding shall be held at Delhi in English language and the arbitral award shall be final and binding upon the Parties. The seat of arbitration shall be Delhi, and for the purpose of this clause, the Courts of Delhi shall have the exclusive jurisdiction.</li>
+                </ul>
+
+                <p class="fw-bold">19. MISCELLANEOUS</p>
+                <ul class="list-unstyled">
+                    <li>19.1 <strong>Force Majeure:</strong> Neither Party shall be liable for any failure or delay in its performance due to circumstances beyond its reasonable control, provided that it notifies the other party as soon as practicable and uses its best efforts to resume performance.</li>
+                    <li>19.2 <strong>Jurisdiction:</strong> This General Terms and Conditions shall be governed and construed by and in accordance with the laws of India and subject to the exclusive jurisdictions of the courts of Gurugram.</li>
+                    <li>19.3 
+                        <strong>Consent under Digital Personal Data Protection Act, 2023:</strong> Act"): The Application form shall amount to the Notice and Consent Form under DPDP Act.
+                        The signing of the Application form shall act as consent under DPDP Act for the purposes specified therein.
+                    </li>
+                   
+                </ul>
+           </div>
+        <div class="col-12 d-flex justify-content-center mt-4">
+        <button class="cls_comman_sec_btn mr-2" type="button" @onclick="OnCancelTermsConditions">Cancel</button>
+            <button class="cls_comman_btn mr-2" type="submit" @onclick="SaveOrUpdate">I Agree</button>
+        </div>
+    </div>
+
+    </PopUp>
+}
+
+@code {
+    
+}

@@ -1,0 +1,579 @@
+﻿@page "/addroute"
+@using System.Collections.Generic
+@using Winit.Modules.Route.Model.Classes
+@using System.Threading.Tasks
+@namespace WinIt.Pages.RouteManagementMaster
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.Route.BL.Interfaces.IRouteManagement _routeManagement;
+@using Winit.UIComponents
+@using Winit.UIComponents.Common.CustomControls
+
+
+
+
+@if (IsLoaded)
+{
+    @if (isRouteDetailsPopupVisible && IsShowPreviousRouteDeatails)
+    {
+    <div class="modal fade show" tabindex="-1" style="display: block;" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                     <h5 class="modal-title">@Localizer["route_details"]</h5>
+                     <span class="close" @onclick="CloseRouteDetailsPopup">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="col-md-9 ">
+                        <div class="d-flex flex-row justify-content-between">
+                            <div class="form-group">
+                                <label for="checkactive" class="form-label">@Localizer["is_active"]</label>
+                                <InputCheckbox @bind-Value="_routeManagement.Route.IsActive" id="checkactive" disabled></InputCheckbox>
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-row justify-content-between">
+                            <div class="form-group w-25">
+                                <label for="txtrcode" class="form-label">@Localizer["route_code"]</label>
+                                <InputText @bind-Value="_routeManagement.Route.Code" id="txtrcode" class="form-control" disabled></InputText>
+                            </div>
+
+                            <div class="form-group w-25">
+                                <label for="txtname" class="form-label">@Localizer["route_name"]</label>
+                                <input @bind="_routeManagement.Route.Name" id="txtname" type="text" class="form-control" disabled="@IsEditMode"/>
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-row justify-content-between">
+                            <div class="form-group w-25">
+                                <label for="txtfdate" class="form-label">@Localizer["from_date"]</label>
+                                <InputDate @bind-Value="_routeManagement.Route.ValidFrom" id="txtfdate" class="form-control" disabled></InputDate>
+                            </div>
+
+                            <div class="form-group w-25">
+                                <label for="txttdate" class="form-label">@Localizer["to_date"]</label>
+                                <InputDate @bind-Value="_routeManagement.Route.ValidUpto" id="txttdate" class="form-control" disabled></InputDate>
+                            </div>
+                            </div>
+                             <div class="d-flex flex-row justify-content-between">
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" checked="@_routeManagement.Route.PrintStanding" id="PrintStandingFWD" disabled>
+                          <label class="form-check-label" for="PrintStandingFWD">
+                            @Localizer["print_standing"]
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" checked="@_routeManagement.Route.PrintForward" id="PrintTopup" disabled>
+                          <label class="form-check-label" for="PrintTopup">
+                           @Localizer["forprint_forward"]
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" checked="@_routeManagement.Route.PrintTopup" id="PrintTopup" disabled>
+                          <label class="form-check-label" for="PrintTopup">
+                          @Localizer["forprint_topup"] 
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" checked="@_routeManagement.Route.PrintOrderSummary" id="PrintOrderSummary" disabled>
+                          <label class="form-check-label" for="PrintOrderSummary">
+                           @Localizer["print_order_summary"]
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" checked="@_routeManagement.Route.AutoFreezeJP" id="AutoFreezeJP" disabled>
+                          <label class="form-check-label" for="AutoFreezeJP">
+                           @Localizer["auto_cut_off_time"]
+                          </label>
+                        </div>
+                        </div>
+                        @* <div class="form-group">
+                            <div>
+                                <label for="ForPrintStanding" class="form-label">Print Standing</label>
+                                <InputCheckbox @bind-Value="_routeManagement.Route.PrintStandingFWD" id="ForPrintStanding" disabled>1</InputCheckbox>
+                                <label for="ForPrintForward" class="form-label">ForPrint Forward</label>
+                                <InputCheckbox @bind-Value="_routeManagement.Route.PrintTopup" id="ForPrintForward">2</InputCheckbox>
+                                <label for="ForPrintTopUp" class="form-label">ForPrint TopUp</label>
+                                <InputCheckbox @bind-Value="_routeManagement.Route.PrintOrderSummary" id="ForPrintTopUp">3</InputCheckbox>
+                                <label for="ForPrintOrderSummary" class="form-label">Print OrderSummary</label>
+                                <InputCheckbox @bind-Value="_routeManagement.Route.AutoFreezeJP" id="ForPrintOrderSummary">4</InputCheckbox>
+                            </div>
+                        </div> *@
+
+                        <div class="d-flex flex-row justify-content-between">
+                            <div class="form-group w-25">
+                                <label for="dropware" class="form-label">@Localizer["wrhouse"]</label>
+                                 <input id="dropware" class="form-select" disabled type="text"
+                                 value="@(_routeManagement?.WareHouseSelectionItems?.Find(e => e.UID== _routeManagement?.Route?.WHOrgUID)?.Label ?? "N/A")"/>
+                                @* <InputSelect @bind-Value="_routeManagement.route.WHOrgUID" id="dropware" class="form-control" disabled>
+               <option value="_routeManagement.route.WHOrgUID">_routeManagement.route.WHOrgUID</option>
+                                </InputSelect> *@
+                            </div>
+                            </div>
+
+
+                        <div class="d-flex flex-row justify-content-between">
+                            <div class="form-group w-25">
+                                <label for="dropuser" class="form-label">@Localizer["default_user"]  </label>
+                               
+                                <input id="dropuser" class="form-select" disabled
+                                value="@(_routeManagement?.UserSelectionItems?.Find(e => e.UID== _routeManagement.Route.JobPositionUID)?.Label ?? "N/A")"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group w-25">
+                            <label for="dropvalue" class="form-label" >@Localizer["vehicle"]</label>
+                            <input class="form-select" id="dropvalue"  disabled
+                            value="@(_routeManagement?.VehicleSelectionItems?.Find(e => e.UID== _routeManagement.Route.VehicleUID)?.Label ?? "N/A")"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+    <EditForm Model="_routeManagement?.RouteChangeLog" OnValidSubmit="ValidateRoute">
+        <DataAnnotationsValidator />
+        <div class="row">
+            <div class="col-md-9 shadow">
+                @if (IsEditMode)
+                {
+                <span style="color:red;">*@Localizer["any_changes_will_reflect_from_next_day."]</span>
+                }
+                <div class="d-flex flex-row justify-content-between">
+                    <h4>@Localizer["route_details"]</h4>
+
+                   @if(IsShowPreviousRouteDeatails) {<p @onclick="ToggleRouteDetailsPopup" class="ml-5">@Localizer["view_today's_route_details"]</p>}
+                    <div class="form-group">
+
+                        <label for="checkactive">@Localizer["is_active"]</label>
+                        <InputCheckbox @bind-Value="@_routeManagement.RouteChangeLog.IsActive" id="checkactive"></InputCheckbox>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-row justify-content-between">
+                    <div class="form-group w-25">
+                        <label for="txtrcode"><span style="color:red;">*</span>@Localizer["route_code"]</label>
+                        <InputText @bind-Value="_routeManagement.RouteChangeLog.Code" id="txtrcode" class="form-control" disabled="@(IsEditMode)"></InputText>
+                    </div>
+
+                    <div class="form-group w-25">
+                        <label for="txtname"><span style="color:red;">*</span>@Localizer["route_name"]</label>
+                        <InputText @bind-Value="_routeManagement.RouteChangeLog.Name" id="txtname" class="form-control" disabled="@(IsEditMode)"></InputText>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-row justify-content-between">
+                    <div class="form-group w-25">
+                        <label for="txtfdate"><span style="color:red;">*</span>@Localizer["from_date"]</label>
+                        <InputDate @bind-Value="_routeManagement.RouteChangeLog.ValidFrom" id="txtfdate" class="form-control"></InputDate>
+                    </div>
+                    
+                    <div class="form-group w-25">
+                        <label for="txttdate"><span style="color:red;">*</span>@Localizer["to_date"]</label>
+                        <InputDate @bind-Value="_routeManagement.RouteChangeLog.ValidUpto" id="txttdate" class="form-control"></InputDate>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div>
+                            
+                       <div class="d-flex flex-row justify-content-between">
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" @bind="@_routeManagement.RouteChangeLog.PrintStanding" id="PrintStandingFWDog" >
+                          <label class="form-check-label" for="PrintStandingFWDog">
+                           @Localizer["print_standing"] 
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" @bind="@_routeManagement.RouteChangeLog.PrintForward" id="PrintTopupog" >
+                          <label class="form-check-label" for="PrintTopupog">
+                            @Localizer["print_forward"]
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" @bind="@_routeManagement.RouteChangeLog.PrintTopup" id="PrintTopupog" >
+                          <label class="form-check-label" for="PrintTopupog">
+                           @Localizer["print_topup"] 
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" @bind="@_routeManagement.RouteChangeLog.PrintOrderSummary" id="PrintOrderSummaryog" >
+                          <label class="form-check-label" for="PrintOrderSummaryog">
+                            @Localizer["print_order_summary"]
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" @bind="@_routeManagement.RouteChangeLog.AutoFreezeJP" id="AutoFreezeJPog" >
+                          <label class="form-check-label" for="AutoFreezeJPog">
+                           @Localizer["auto_cut_off_time"] 
+                          </label>
+                        </div>
+                        </div>       
+                        @if (_routeManagement.RouteChangeLog.AutoFreezeJP)
+                        {
+                            <div class="form-control w-25">
+                                <input type="time" @bind="_routeManagement.AutoFreezRunTime" id="AutoFreezeRunTime" />
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                
+             <div>
+                <div class="row">
+                    <div class="form-group w-25">
+                            <label class="form-label">@Localizer["role"]<span style="color:red;">*</span></label>                        
+                            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_routeManagement.RoleSelectionItems"
+                                                                                OnSelect="HandleRoleSelection"
+                                                                                UniqueUID="Roles"
+                                                                                Title="Role" 
+                                                                                _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single" 
+                                                                                IsButtonVisible="true" />
+                    </div>
+                    <div class="form-group w-25">
+                            <label class="form-label">@Localizer["user"]<span style="color:red;">*</span></label>                        
+                            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_routeManagement.UserSelectionItems"
+                                                                                OnSelect="HandleUserSelection"
+                                                                                UniqueUID="userDropDown"
+                                                                                Title="User" 
+                                                                                _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single" 
+                                                                                IsButtonVisible="true" @ref="UserDDRef"/>
+                                                                                <div class="form-group w-25">
+                    <label class="form-label">@Localizer["other_user"]<span style="color:red;">*</span></label>
+                            <Winit.UIComponents.Common.CustomControls.DropDown 
+                                                             DataSource="_routeManagement.OtherUserSelectionItems"
+                                                             OnSelect="HandleUserOtherSelection"
+                                                             UniqueUID="userDropDowns"
+                                                             Title="Other User"  
+                                                             _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Multiple" 
+                                                             IsButtonVisible="true"@ref="OtherUserDDRef"/>
+                    </div>
+                    </div>
+
+                        @if(_routeManagement.SelectedRole !=null)
+                        {
+                            @if (_routeManagement.SelectedRole.HaveVehicle)
+                            {
+                                <div class="form-group w-25 @(!_routeManagement.SelectedRole.HaveVehicle? "dn" : "")">
+                        <label class="form-label">@Localizer["vehicle"]<span style="color:red;">*</span></label>                            
+                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_routeManagement.VehicleSelectionItems"
+                                                                                
+                                                                                OnSelect="HandleVehicleSelection"
+                                                                                UniqueUID="vehicleDropDown"
+                                                                                
+                                                                                Title="Vehicle" 
+                                                                                IsButtonVisible="true" @ref="VehicleDDRef"/>
+                    </div>
+                            }
+                                <div class="form-group w-25 @(!_routeManagement.SelectedRole.HaveWarehouse? "dn" : "")">
+                                    <label class="form-label ">@Localizer["warehouse"]<span style="color:red;">*</span></label>
+                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_routeManagement.WareHouseSelectionItems"
+                                                                            OnSelect="HandleWarehouseSelection"
+                                                                            UniqueUID="WareHousesDropDown"
+                                                                             IsButtonVisible="true"
+                                                                            Title="WareHouse"@ref="WareHouseDDRef" />
+                </div> 
+                        } 
+                    </div>
+
+                 
+            </div>
+
+            <div class="col-md-3 shadow">
+                <div>
+                    <label>@Localizer["visit_frequency"]</label>
+                    @* <div>
+                        <input type="radio" id="daily" name="scheduleType" value="Daily" checked="@(_routeManagement.RouteSchedule.Type == "Daily")" @onchange='(() => _routeManagement.RouteSchedule.Type = "Daily")' @onclick="CheckAllDays" disabled="@(IsEditMode && _routeManagement.RouteSchedule.Type != "Daily")" /> Daily
+                        <input type="radio" id="MultiplePerWeeks" value="MultiplePerWeeks" name="scheduleType" checked="@(_routeManagement.RouteSchedule.Type == "MultiplePerWeeks")" @onchange='(() => _routeManagement.RouteSchedule.Type = "MultiplePerWeeks")' @onclick="UncheckAllDays" disabled="@(IsEditMode && _routeManagement.RouteSchedule.Type!= "MultiplesPerWeek")" /> MultiplesPerWeek
+                        <input type="radio" id="weekly" name="scheduleType" value="Weekly" checked="@(_routeManagement.RouteSchedule.Type == "Weekly")" @onchange='(() => _routeManagement.RouteSchedule.Type = "Weekly")' @onclick="UncheckAllDays" disabled="@(IsEditMode && _routeManagement.RouteSchedule.Type != "Weekly")" /> Weekly
+                        <input type="radio" id="monthly" name="scheduleType" value="Monthly" checked="@(_routeManagement.RouteSchedule.Type == "Monthly")" @onchange='(() => _routeManagement.RouteSchedule.Type = "Monthly")' disabled="@(IsEditMode && _routeManagement.RouteSchedule.Type != "Monthly")" @onclick="UncheckAllDays"/> Monthly
+                        <input type="radio" id="fortnightly" name="scheduleType" value="Fortnightly" checked="@(_routeManagement.RouteSchedule.Type == "Fortnightly")" @onchange='(() => _routeManagement.RouteSchedule.Type = "Fortnightly")' disabled="@(IsEditMode && _routeManagement.RouteSchedule.Type != "Fortnightlyy")"  @onclick="UncheckAllDays"/> Fortnightly
+                    </div> *@
+                    <div>
+                        <input disabled="@IsEditMode" type="radio" id="daily" name="scheduleType" value="Daily" checked="@(_routeManagement.RouteSchedule.Type == "Daily")" @onchange='(() => _routeManagement.RouteSchedule.Type = "Daily")' @onclick="CheckAllDays"/>@Localizer["daily"] 
+                        <input disabled="@IsEditMode" type="radio" id="MultiplePerWeeks" value="MultiplePerWeeks" name="scheduleType" checked="@(_routeManagement.RouteSchedule.Type == "MultiplePerWeeks")" @onchange='(() => _routeManagement.RouteSchedule.Type = "MultiplePerWeeks")' @onclick="UncheckAllDays"  /> @Localizer["multiples_per_week"]
+                        <input disabled="@IsEditMode" type="radio" id="weekly" name="scheduleType" value="Weekly" checked="@(_routeManagement.RouteSchedule.Type == "Weekly")" @onchange='(() => _routeManagement.RouteSchedule.Type = "Weekly")' @onclick="UncheckAllDays"  />@Localizer["weekly"] 
+                        <input disabled="@IsEditMode" type="radio" id="monthly" name="scheduleType" value="Monthly" checked="@(_routeManagement.RouteSchedule.Type == "Monthly")" @onchange='(() => _routeManagement.RouteSchedule.Type = "Monthly")'  @onclick="UncheckAllDays"/>@Localizer["monthly"] 
+                        <input disabled="@IsEditMode" type="radio" id="fortnightly" name="scheduleType" value="Fortnightly" checked="@(_routeManagement.RouteSchedule.Type == "Fortnightly")" @onchange='(() => _routeManagement.RouteSchedule.Type = "Fortnightly")'  @onclick="UncheckAllDays"/>@Localizer["fortnightly"] 
+                    </div>
+                </div>
+                @if (_routeManagement.RouteSchedule.Type == "Daily")
+                {
+                    <div>
+                        <label>@Localizer["select_days:"]</label>
+                        <div>
+                            @foreach (var day in DaysOfWeek)
+                            {
+                                <input type="checkbox" id="@day"  checked="@(_routeManagement.RouteScheduleDaywise != null && _routeManagement.RouteScheduleDaywise.GetType().GetProperty(day)?.GetValue(_routeManagement.RouteScheduleDaywise) as int? == 1)" @onchange="@(e => UpdateSelectedDays(day))"  />
+                                <label for="@day">@day</label>
+                            }
+                        </div>
+                    </div>
+                }
+                else if (_routeManagement.RouteSchedule.Type == "Weekly" || _routeManagement.RouteSchedule.Type == "MultiplePerWeeks")
+                {
+                    <div>
+                        <label>@Localizer["select_days:"]</label>
+                        <div>
+                            @foreach (var day in DaysOfWeek)
+                            {
+                                <input type="checkbox" id="@day"  checked="@(_routeManagement.RouteScheduleDaywise != null && _routeManagement.RouteScheduleDaywise.GetType().GetProperty(day)?.GetValue(_routeManagement.RouteScheduleDaywise) as int? == 1)" @onchange="@(e => UpdateSelectedDays(day))"  />
+                                <label for="@day">@day</label>
+                            }
+                        </div>
+                    </div>
+                }
+               
+               
+
+                else if (_routeManagement.RouteSchedule.Type == "Monthly")
+                {
+                    <div>
+                        <label>@Localizer["select_days:"]</label>
+                        <div>
+                            @for (int i = 1; i <= 31; i++)
+                            {
+                                var day = i; 
+                                <div style="display: inline-block; margin-right: 10px;">
+                                    <input type="checkbox" id="@i"  checked="@IsDaySelected(day)" @onchange="@(e => UpdateMonthlyDays(day))"  />
+                                    <label for="@i">@i</label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+
+                else if (_routeManagement.RouteSchedule.Type == "Fortnightly")
+                {
+                  //logic for fornightly 
+
+                  <div>
+                        <label>@Localizer["1st_fortnight_(1st_&_3rd_week)"]</label>
+
+                        <div>
+                            @foreach (var day in DaysOfWeek)
+                            {
+                                <input type="checkbox" id="@day"  checked="@(_routeManagement.RouteScheduleFortnight != null && _routeManagement.RouteScheduleFortnight.GetType().GetProperty(day)?.GetValue(_routeManagement.RouteScheduleFortnight) as int? == 1)" @onchange="@(e => UpdateSelectedFortnights(day))" />
+                                <label for="@day">@day</label>
+                            }
+                        </div>
+                        <label> @Localizer["2nd_fortnight_(2nd_&_4th_week)"]</label>
+                        <div>
+                            @foreach (var day in DaysOfWeekFN)
+                            {
+                                <input type="checkbox" id="@day"  checked="@(_routeManagement.RouteScheduleFortnight != null && _routeManagement.RouteScheduleFortnight.GetType().GetProperty(day)?.GetValue(_routeManagement.RouteScheduleFortnight) as int? == 1)" @onchange="@(e => UpdateSelectedFortnights(day))" />
+                                <label for="@day">@day</label>
+                            }
+                        </div>
+
+
+                      </div>
+                
+                }
+
+            </div>
+
+          
+            <!-- IntegratedComponent.razor -->
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h4 class="card-title">@Localizer["add_new_customer_by_number"]</h4>
+
+                    <!-- Add new customer input -->
+                    <div class="row">
+                        <div class="d-flex flex-row col-md-8">
+                            <div class="form-group mr-2">
+                                <label for="newCustomerNumber">@Localizer["select_customer"]</label>
+                                <input class="form-control "  placeholder=@Localizer["add_by_customer_code/number/name"] @bind="CustomertxtInput" type="text" />
+                            </div>
+                            <div class="cls_export_main">
+                                    <button class="cls_add_new_sec" @onclick="AddTxtEnteredCustomerToGrid">@Localizer["add"]</button> 
+                            </div>
+                        </div>
+                        <div class="col-md-4 d-flex flex-row">
+                            <div class="cls_export_main">
+                                <button class="cls_add_new_sec" @onclick="ShowCustomerListPopup">@Localizer["customer_list"]</button> 
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Add Customers With Times -->
+                    <div class="row mt-3">
+                        <div class="col-md-2">@Localizer["add_customers_with_times"] :</div>
+                        <div class="col-md-1">
+                            <div class="form-check">
+                                <input name="time" type="radio" class="form-check-input"   checked="@_routeManagement.RouteChangeLog.IsCustomerWithTime"
+                                @onclick="@(() => {_routeManagement.RouteChangeLog.IsCustomerWithTime = true; StateHasChanged();})" >
+                                <label class="form-check-label mr-3">@Localizer["yes"]</label>
+                            </div>
+
+                        </div>
+                        <div class="col-md-1">
+                            <div class="form-check">
+                                <input name="time" type="radio" value="No" class="form-check-input"  checked="@(!_routeManagement.RouteChangeLog.IsCustomerWithTime)"
+                                @onclick="(()=> {_routeManagement.RouteChangeLog.IsCustomerWithTime = false; StateHasChanged();} )">
+                                <label class="form-check-label mr-3">@Localizer["no"]</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        @if (_routeManagement.RouteChangeLog.IsCustomerWithTime)
+                        {
+                            <div class="d-flex">
+                                <div class=" w-25">
+                                    <label class="form-label">@Localizer["day_starts:"]</label>
+                                    <input class="form-control" type="time" @bind="DayStarts"/>
+                                </div>
+                                <div class=" w-25">
+                                    <label class="form-label">@Localizer["day_ends:"]</label>
+                                    <input class="form-control" type="time" @bind="DayEnds"  />
+                                </div>
+                               <div class="cls_export_main">
+                                    <button class="cls_add_new_sec" @onclick="ApplyTimes"> @Localizer["apply_times"]</button> 
+                                </div>
+                            </div>
+                            <div class="d-flex">
+                                <div class=" w-25">
+                                    <label class="form-label">@Localizer["duration:"]</label>
+                                    <input class="form-control" type="number" @bind="Duration" />
+                                </div>
+                                <div class=" w-25">
+                                    <label class="form-label">@Localizer["travel_time:"]</label>
+                                    <input class="form-control" type="number"  @bind="TravelTime"/>
+                                </div>
+                                <div class="cls_export_main">
+                                    <button class="cls_add_new_sec" @onclick="ApplyDuratinonAndTravelTime">@Localizer["apply_duration"] </button> 
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <!-- Add more input fields (e.g., search box) -->
+                    <div class="row mt-3">
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label for="searchCustomer">@Localizer["search_customer_from_route"]</label>
+                                @* <input class="form-control" placeholder="Search customer from route" type="text" /> *@
+                                <WinitTextBox Placeholder="Search customer from route.."
+                                                                   MaxLength="200" DebounceInterval="500" 
+                                                                   OnDebounceIntervalElapsed="WinitTextBox_OnSearch"
+                                                                   KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+                                                                   />
+                            </div>
+                        </div>
+                        <div class="col-md-4 dn">
+                            <button class="btn btn-primary mb-3" @onclick="ShowErrorPopforTest">@Localizer["search"]</button>
+                            <a class="btn btn-secondary cls_add_new_sec_Excel mb-3 ml-2">Export To Excel</a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+
+        </div>
+        @if (showCustomerListpopup)
+        {
+            <CustomerListPopup IsVisible="IsVisible"
+                               CustomerList="_routeManagement.StoreCustomers"
+                               SelectedCustomersChanged="HandleSelectedCustomers" IsVisibleChanged="HandlePopupVisibilityChange" />
+        }
+
+        
+            <!-- Customer List -->
+            <div class="mt-3">
+                <h4>@Localizer["customer_list"]</h4>
+                <!-- Add table to display customer list -->
+                 <div class="div1">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col"></th>
+                            <th scope="col">@Localizer["sl_n0"]</th>
+                            <th scope="col">@Localizer["customer_number"]</th>
+                            <th scope="col">@Localizer["customer_name"]</th>
+                            <th scope="col">@Localizer["address"]</th>
+                            <!-- Add more columns as needed -->
+                            @if (_routeManagement.RouteChangeLog.IsCustomerWithTime)
+                            {
+                                 <th scope="col">@Localizer["start_time"]</th> 
+                                 <th scope="col">@Localizer["from_date"]Duration</th> 
+                                 <th scope="col">@Localizer["end_time"]</th>
+                                 <th scope="col">@Localizer["from_date"] Travel Time</th>
+                            }
+                    </tr>
+                    </thead>
+                    @if (_routeManagement.DisplayRouteCustomerItemViews != null && _routeManagement.DisplayRouteCustomerItemViews.Any())
+                    {
+                     @* <tbody>
+                        <!-- Use a loop to dynamically populate the customer list -->
+                        @foreach (var customer in CustomersListPOPUpDataSource)
+                        {
+                            
+                            <tr style='@(customer.IsDeleted ? "background-color: red;" : "")'>
+                                <td class="d-flex">
+                                    <input type="checkbox" @onclick="() => ToggleCustomerSelection(customer.UID)"
+                                    checked="@customer.IsDeleted" disabled="@customer.IsDeleted" />
+                                    <input type="text" style="margin:10px" class="form-control"
+                           @bind="customer.SeqNo"
+                           @onblur="() => HandleBlur(customer)"
+                           @oninput="() => CurrentValue(customer)"
+                           onkeydown="return event.key === 'Backspace' || event.key === 'Delete' || (event.key >= '0' && event.key <= '9') || event.key === '.'"
+                           inputmode="numeric"
+                           pattern="[0-9]*" />
+                                </td>                           
+                      
+                        <td>@customer.Code</td>
+                        <td>@customer.Label</td>
+                        <td>N/A</td>
+                        <!-- Add more columns as needed -->
+                    </tr>
+                        }
+                    </tbody> *@
+                    <tbody>
+                        @foreach (var customer in _routeManagement.DisplayRouteCustomerItemViews)
+                        {
+                            @if (customer.IsDeleted)
+                            {
+                                // Set IsSelected to true for deleted customers
+                                customer.IsSelected = true;
+                            }
+
+                            <tr style='@(customer.IsDeleted ? "background-color: red;" : "")'>
+                                <td>
+                                    <input type="checkbox" @bind="@customer.IsSelected" disabled="@customer.IsDeleted" />
+                                </td>
+                                <td>@customer.SeqNo</td>
+                                <td>@customer.StoreCode</td>
+                                <td>@customer.StoreLabel</td>
+                                <td>@(customer.Address ?? "N/A")</td>
+                                @if (_routeManagement.RouteChangeLog.IsCustomerWithTime)
+                                {
+                                     <td><input type="time" disabled  value='@(customer.VisitTime == default ? null : customer.VisitTime)'/></td>
+                                     <td><input type="number" min="0" value='@customer.VisitDuration'  @oninput="(e) => {SelectedRouteCustomer = customer;
+Winit.Shared.CommonUtilities.Common.CommonFunctions.Debounce<string>(OnDurationChange, e?.Value?.ToString(), TimeSpan.FromMilliseconds(300));}"/></td>
+                                     <td><input type="time" disabled value='@(customer.EndTime == default ? null : customer.EndTime)'/></td>
+                                     <td><input type="number" min="0" value='@customer.TravelTime' @oninput="(e) => {SelectedRouteCustomer = customer;
+Winit.Shared.CommonUtilities.Common.CommonFunctions.Debounce<string>(OnTravelTimeChange, e?.Value?.ToString(), TimeSpan.FromMilliseconds(300));}"/></td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                }
+                else
+                {
+                    <tr>No data</tr>
+                }
+            </table>
+            </div> </div>
+        <div class="form-group">
+       
+            <button type="button" class="btn btn-outline-primary" @onclick="Delete">@Localizer["delete_from_the_list"]</button>
+            <button type="button" class="btn btn-secondary" @onclick="Back">@Localizer["back"]</button>
+            <button type="submit" class="btn btn-primary" @onclick="async () => {if(IsEditMode) await Update() ; else await Save();}">@(IsEditMode? @Localizer["update"]:@Localizer["save"])</button>
+        </div>
+    
+    </div>
+    </EditForm>
+}
+

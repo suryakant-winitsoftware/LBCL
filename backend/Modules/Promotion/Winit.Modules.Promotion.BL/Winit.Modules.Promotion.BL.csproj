@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\UIComponents\Winit.UIComponents.Web\Winit.UIComponents.Web.csproj" />
+    <ProjectReference Include="..\..\..\WINITSharedObjects\WINITSharedObjects.csproj" />
+    <ProjectReference Include="..\..\Base\Winit.Modules.Base.BL\Winit.Modules.Base.BL.csproj" />
+    <ProjectReference Include="..\..\Common\Winit.Modules.Common.BL\Winit.Modules.Common.BL.csproj" />
+    <ProjectReference Include="..\..\Common\Winit.Modules.Common.Model\Winit.Modules.Common.Model.csproj" />
+    <ProjectReference Include="..\..\ListHeader\Winit.Modules.ListHeader.Model\Winit.Modules.ListHeader.Model.csproj" />
+    <ProjectReference Include="..\..\SKU\Winit.Modules.SKU.BL\Winit.Modules.SKU.BL.csproj" />
+    <ProjectReference Include="..\Winit.Modules.Promotion.DL\Winit.Modules.Promotion.DL.csproj" />
+    <ProjectReference Include="..\Winit.Modules.Promotion.Model\Winit.Modules.Promotion.Model.csproj" />
+  </ItemGroup>
+</Project>

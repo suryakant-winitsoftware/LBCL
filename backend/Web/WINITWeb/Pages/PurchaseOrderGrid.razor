@@ -1,0 +1,172 @@
+﻿@using System.ComponentModel.DataAnnotations
+@using iTextSharp.text.pdf
+@using System.Linq
+@inherits WinIt.Pages.Base.BaseComponentBase
+@using WinIt.Pages.PurchaseOrder
+<div class="div1 cls_div1_table">
+    <table>
+        <!-- Table header content -->
+        <thead>
+        <tr>
+            @if (IsNewOrder)
+            {
+                <th data-column="checkbox">
+                    <input type="checkbox" @onchange="HandleRowSelectAll" checked="@IsSelectAll"/>
+                </th>
+            }
+            <th data-column="S.No">S.No</th>
+            <th data-column="Item Code">Item Code</th>
+            <th data-column="Model Description / Name" style="@(DisplayBilledAndCancelledQty ? "" : "width:37%;")">Model
+                Description / Name
+            </th>
+            @if (IsForApproval)
+            {
+                <th data-column="Order Qty">
+                    Requested Qty
+                </th>
+            }
+            <th data-column="Order Qty">
+                @(IsForApproval ? "Approved" : "Order") Qty
+            </th>
+            <th data-column="Dealer Price">Dealer Price</th>
+            <th data-column="Approved Price (L)" style="word-break:break-word;width:7%;text-align:center;">Approved
+                Price (L)
+            </th>
+            <th data-column="Unit Discount" style="word-break:break-word;text-align:center;width:7%;">Unit Discount</th>
+            <th data-column="Billing Price" style="word-break:break-word;width:7%;text-align:center;">Billing Price</th>
+            <th data-column="Total Amount">Total Amount</th>
+            @if (DisplayBilledAndCancelledQty)
+            {
+                <th data-column="Billed Qty" style="text-align:center;">Billed Qty</th>
+                <th data-column="Cancelled Qty" style="text-align:center;">Cancelled Qty</th>
+            }
+            @if (_iAppUser.Role.HasP1Access || _iAppUser.Role.HasP2Access || _iAppUser.Role.HasP3Access)
+            {
+                <th data-column="action">
+                    Action
+                </th>
+            }
+        </tr>
+        </thead>
+
+        <!-- Table row template -->
+        <tbody class="cls_td_blue">
+        @if (DisplayedSKUList != null && DisplayedSKUList.Any())
+        {
+            @foreach (var item in DisplayedSKUList)
+            {
+                <tr class="@(IsForApproval && item.MarginUnitValue < 0 ? "cls_tr_red" : "")">
+                    @if (IsNewOrder)
+                    {
+                        <td data-column="checkbox">
+                            <input type="checkbox" @bind="@item.IsSelected"/>
+                        </td>
+                    }
+                    <td data-column="S.No">
+                        @item.LineNumber
+                    </td>
+                    <td data-column="Item Code">
+                        <label style="margin-bottom:0px;"> @item.SKUCode </label>
+                    </td>
+                    <td data-column="Model Description / Name"
+                        style="@(DisplayBilledAndCancelledQty ? "" : "width:37%;")">
+                        <label style="margin:0px;">
+                            <span class="cls_div1_table_span">@item.L2</span><br/>
+                            [@item.ModelCode] @item.SKUName
+                        </label>
+                    </td>
+                    @if (IsForApproval)
+                    {
+                        <td data-column="Order Qty">
+                            @CommonFunctions.RoundForSystem(item.RequestedQty, 0)
+                        </td>
+                    }
+                    <td data-column="Order Qty">
+                        @* <NumberInput *@
+                        @*     @bind-Value="@item.inputQty" *@
+                        @*     Max="@(IsForApproval ? (int)item.RequestedQty : int.MaxValue)" *@
+                        @*     Min="0" *@
+                        @*     class="cls_select2_button" *@
+                        @*     Disabled="@DisableQtyField" *@
+                        @*     AfterQtyChanged="(e) => {SelectedProduct = item; OnQtyChange(e);}"/> *@
+                        <NumberInput
+                            Value="@item.inputQty"
+                            ValueExpression="@(() => item.inputQty)"
+                            Max="@(IsForApproval ? (int)item.RequestedQty : int.MaxValue)"
+                            Min="0"
+                            class="cls_select2_button"
+                            Disabled="@DisableQtyField"
+                            AfterQtyChanged="(e) => {SelectedProduct = item; OnQtyChange(e);}"/>
+
+                    </td>
+                    <td data-column="Dealer Price" style="word-break:break-all;">
+                        @CommonFunctions.FormatNumberInIndianStyle(item.DpPrice, 0)
+                    </td>
+                    <td data-column="Approved Price (L)" style="word-break:break-all;text-align:center;">
+                        @CommonFunctions.FormatNumberInIndianStyle(item.UnitPrice, _appSetting.RoundOffDecimal)
+                    </td>
+                    <td data-column="Unit Discount" style="word-break:break-all;text-align:center;">
+                        @CommonFunctions.FormatNumberInIndianStyle(item.UnitDiscount, _appSetting.RoundOffDecimal)
+                    </td>
+                    <td data-column="Billing Price" style="word-break:break-all;text-align:center;">
+                        @CommonFunctions.FormatNumberInIndianStyle(item.EffectiveUnitPrice, _appSetting.RoundOffDecimal)
+                    </td>
+                    <td data-column="Total Amount" style="word-break:break-all;text-align:center;">
+                        @CommonFunctions.FormatNumberInIndianStyle(item.NetAmount, _appSetting.RoundOffDecimal)
+
+                    </td>
+                    @if (DisplayBilledAndCancelledQty)
+                    {
+                        <td data-column="Billed Qty" style="word-break:break-all;text-align:center;">
+                            @CommonFunctions.RoundForSystemWithoutZero(item.BilledQty, 0)
+                        </td>
+                        <td data-column="Cancelled Qty" style="word-break:break-all;text-align:center;">
+                            @CommonFunctions.RoundForSystemWithoutZero(item.CancelledQty, 0)
+                        </td>
+                    }
+                    @if (_iAppUser.Role.HasP1Access || _iAppUser.Role.HasP2Access || _iAppUser.Role.HasP3Access)
+                    {
+                        <td data-column="action">
+                            <img alt="view" src="Images/view.png"
+                                 @onclick="() => {SelectedProduct = item; ShowProvisioningPopUp = true;}">
+                        </td>
+                    }
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="14" style="text-align: center; font-weight:600;color:red;font-size:15px;">No Records
+                    Found
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+@if (IsDDLOpen)
+{
+    <Winit.UIComponents.Common.CustomControls.DropDown UniqueUID="@SelectedProduct?.UID" DataSource="UOMselectionItems"
+                                                       IsButtonVisible="false" IsSearchable="false"
+                                                       Title=@Localizer["uom"] OnSelect="OnUOMSelection"/>
+}
+@if (IsCloneItemOpen)
+{
+    <Winit.UIComponents.Common.CustomControls.DropDown UniqueUID="@SelectedProduct?.UID"
+                                                       DataSource="UOMCloneselectionItems" IsButtonVisible="false"
+                                                       IsSearchable="false" Title=@Localizer["uom"]
+                                                       OnSelect="SelectedAddUOMType"/>
+}
+@if (ShowProvisioningPopUp)
+{
+    <ProvisioningDetailsPopUp
+        OnCloseClick="() => ShowProvisioningPopUp = false"
+        OnUpdateClick="OnProvisionPopUpUpdateClick"
+        PurchaseOrderLineProvisions="SelectedProduct.PurchaseOrderLineProvisions"
+        Margin="SelectedProduct.MarginUnitValue"
+        EffectiveUnitPrice="SelectedProduct.EffectiveUnitPrice"
+        MinSellingPrice="SelectedProduct.MinSellingPrice"
+        DisableFields="DisableQtyField"
+        Qty="SelectedProduct.FinalQty"/>
+}

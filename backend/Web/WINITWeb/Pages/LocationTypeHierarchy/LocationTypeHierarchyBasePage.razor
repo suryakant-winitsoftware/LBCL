@@ -1,0 +1,45 @@
+﻿@page "/LocationTypeHierarchy"
+@inherits WinIt.Pages.Base.BaseComponentBase;
+@inject Winit.Modules.Location.BL.Interfaces.ILocationTypeViewModel _LocationTypeViewModel
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@FilterColumns" IsSearchCriteriaNeeded="true"
+                     OnFilterApplied="@OnFilterApply" />
+
+
+<button class="cls_add_new_sec" @onclick="() => {Context = new Winit.Modules.Location.Model.Classes.LocationTypeItemView(); Context.LevelNo=1; IsAddLocationType = !IsAddLocationType; } ">@Localizer["add_new"]</button>
+
+<div class="div1 cls_Hierarchy_1">
+   
+    <table style="table-layout:fixed;">
+        <thead>
+            <tr>
+                <th style="width:20%;"></th>
+
+                <th style="width:20%;">
+                <span >@Localizer["code_&_name"]</span>
+            </th>
+                <th style="width:20%;">
+                <span >@Localizer["level"]</span>
+                </th>
+                <th style="width:20%;">
+                <span >@Localizer["parent"]</span>
+                </th>
+                <th style="width:20%;">
+                <span >@Localizer["action"]</span>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+        <LocationTypeHierarchy HierarchyGrids="@_LocationTypeViewModel.LocationTypeItemViews" OnBtnExpandClick="GetChildGrid"
+                               OnCreateClick="CreateLocationType" OnDeleteLocationType="DeleteLocationType"
+                                   OnCreateClone="getClonedILocationTypeItemView" OnUpdateClick="UpdateLocationType"></LocationTypeHierarchy>
+        </tbody>
+    </table>
+
+</div>
+@if (IsAddLocationType)
+{
+    <AddUpdateLocationTypePopUp CancelbtnText=@Localizer["cancel"] OkBtnText=@Localizer["create"] Context="Context" IsAddPopUp="true"
+                            OnCloseClick="AddLocationTypePOPupClosed" OnOkClick="CreateClickedFromHome"
+                                title=@Localizer["add_locationtype_hierarchy"] />
+}
+

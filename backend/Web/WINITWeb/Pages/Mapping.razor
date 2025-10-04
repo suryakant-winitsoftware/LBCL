@@ -1,0 +1,99 @@
+﻿@page "/PropMap1"
+<style>
+    .w-35{
+        width:45%;
+    }
+
+    .h-10 {
+        height: 10px;
+    }
+
+    .h-30 {
+        height: 30px;
+    }
+
+    .table-no-tbody tbody {
+        border: none;
+    }
+
+    .w-80{
+        width:90%;
+    }
+</style>
+<div class="w-80 ml-10 mt-10">
+    <h3>Promotion Mapping</h3>
+    <table class="table rounded-3">
+        <thead>
+            <tr>
+                <th scope="col" class="w-25">Location Mapping </th>
+                <th scope="col" class="w-25">Sales Mapping </th>
+                <th scope="col" class="w-25">Customer Mapping </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="h-30 ">
+                <td class="ml-10 ">
+                    <DropDownComponent onDropDown="CountryHandler" @ref="CountryDD"  Text="Country" Items="CountryList" Id="country"></DropDownComponent>
+                </td>
+                <td>
+                    <DropDownComponent onDropDown="TeamHandler"  @ref="TeamDD" Text="Team" Items="SalesTeamList" Id="team"></DropDownComponent>
+                </td>
+                <td>
+                    <DropDownComponent @ref="ChannelDD" Text="Channel" Id="channel" Items="ChannelList" onDropDown="ChannelHandler"></DropDownComponent>
+                </td>
+            </tr>
+            <tr class="h-30 ">
+                <td>
+                    <DropDownComponent @ref="RegionDD" onDropDown="RegionHandler" Text="Region" Items="RegionList" Id="Region"></DropDownComponent>
+                </td>
+                <td>
+                    <DropDownComponent @ref="RouteDD" onDropDown="RouteHandler" Text="Route" Items="RouteList" Id="Region"></DropDownComponent>
+                </td>
+                <td>
+                    <DropDownComponent @ref="SubChannelDD" Text="SubChannel" Id="Subchannel" onDropDown="SubChannelHandler" Items="SubChannelList"></DropDownComponent>
+                </td>
+            </tr>
+            <tr class="h-30 ">
+                <td>
+                    <DropDownComponent  @ref="StateDD" onDropDown="StateHandler" Text="State" Items="StateList" Id="State"></DropDownComponent>
+                </td>
+                <td>
+
+                </td>
+                <td>
+                    <DropDownComponent @ref="SubSubChannelDD" Text="SubSubChannel" Id="SubSubChannel"  Items="SubSubChannelList" onDropDown="SubSubChannelHandler"></DropDownComponent>
+                </td>
+            </tr>
+            <tr class="h-30 ">
+                <td>
+                    <DropDownComponent Text="Depot" @ref="DepotDD" Id="Depot" Items="DepotList" onDropDown="DepotHandler"></DropDownComponent>
+                </td>
+                <td>
+                </td>
+                <td>
+                    <DropDownComponent Text="CustomerGroupChannel" @ref="CustomerGroupDD" Id="CustomerGroup" Items="CustomerGroupList" onDropDown="CustomerGroupHandler"></DropDownComponent>
+                </td>
+            </tr>
+            <tr class="h-30 ">
+                <td>
+                    <DropDownComponent Text="Area" @ref="AreaDD" Id="Depot" Items="AreaList" onDropDown="AreaHandler"></DropDownComponent>
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <MudButton OnClick="SaveClick" Color="Color.Primary"> Save</MudButton>
+</div>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="@(()=>snackbarclick("snack clicked",Defaults.Classes.Position.BottomRight))">
+    Open Snackbar
+</MudButton>
+@code{
+    private void snackbarclick(string message, string position)
+    {
+        Snackbar.Configuration.PositionClass = position;
+        Snackbar.Add(message, Severity.Normal);
+    }
+}

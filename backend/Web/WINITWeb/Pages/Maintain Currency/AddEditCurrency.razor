@@ -1,0 +1,51 @@
+﻿@page "/AddEditCurrency"
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize]
+@using System.ComponentModel.DataAnnotations;
+@using System.Linq
+@using Winit.Modules.Org.Model.Interfaces;
+@inject Winit.Modules.Currency.BL.Interfaces.IMaintainCurrencyViewModel _imaintainCurrencyViewModel;
+@using Newtonsoft.Json;
+@inherits WinIt.Pages.Base.BaseComponentBase
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" />
+
+
+@if (IsIntialized)
+{
+
+    <div class="cls_section">
+        
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span">*</span>@Localizer["code"]</label>
+                <input class="cls_select2_button" placeholder="Enter Here" @bind="_imaintainCurrencyViewModel.ViewCurrencyDetails.Code" type="text" disabled="@(!IsAddNewDetails)">
+            </div>
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span">*</span>@Localizer["name"]</label>
+                <input class="cls_select2_button" placeholder="Enter Here" disabled="@(IsEditCurrencyDetails)" @bind-value="_imaintainCurrencyViewModel.ViewCurrencyDetails.Name" type="text">
+            </div>
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span">*</span> @Localizer["symbol"]</label>
+                <input class="cls_select2_button" placeholder="Enter Here" disabled="@(IsEditCurrencyDetails)" @bind-value="_imaintainCurrencyViewModel.ViewCurrencyDetails.Symbol" type="text">
+            </div>
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">@Localizer["no_of_decimals"]</label>
+                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_imaintainCurrencyViewModel.DigitsSelectionItems" Title="Decimels" IsButtonVisible="true" OnSelect="OnDigitsSelection" IsSearchable="false" />
+            </div>
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span">*</span>@Localizer["fraction_name"]</label>
+                <input class="cls_select2_button" placeholder="Enter Here" disabled="@(IsEditCurrencyDetails)" @bind-value="_imaintainCurrencyViewModel.ViewCurrencyDetails.FractionName" type="text">
+            </div>
+        
+       
+    </div>
+    <div class="cls_button_bottom_purchase">
+
+        <button class="cls_button_light" style="margin-right:5px;" @onclick="BackBtnClicked">@Localizer["back"]</button>
+            @if (Operation != "View")
+            {
+            <button class="cls_button_blue" @onclick="() =>SaveCurrency()">@(IsAddNewDetails ? @Localizer["save"] : @Localizer["update"])</button>
+            }
+        
+    </div>
+
+}

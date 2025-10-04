@@ -1,0 +1,104 @@
+﻿@page "/viewinvoice/{InvoiceUID}"
+@using Winit.Shared.CommonUtilities.Common
+@inject Winit.Modules.Invoice.BL.Interfaces.IInvoiceViewModel _viewModel
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+
+<PageTitle>View Invoice</PageTitle>
+
+<div class="cls_main1">
+
+    <div class="cls_section">
+        <div class="cls_container_div1 cls_flex_column cls_flex cls_flex_row_gap_14px">
+
+            <div class="cls_container_div1 ">
+                <label class="cls_section_div_purchase2_label">Channel Partner Code & Name</label>
+                <label
+                    class="cls_credit_label2">[@_viewModel.InvoiceMaster?.Invoiceheader?.OrgCode]@_viewModel.InvoiceMaster?.Invoiceheader?.OrgName</label>
+            </div>
+
+            <div class="cls_container_div1">
+                <label class="cls_section_div_purchase2_label">Oracle PO No</label>
+                 @* <a class="cls_credit_label2"
+                   @onclick='() =>  _navigationManager.NavigateTo($"purchaseorder/{_viewModel.InvoiceMaster?.Invoiceheader?.POUID}")'>@(_viewModel.InvoiceMaster?.Invoiceheader?.OraclePONumber ?? "N/A") </a> *@
+                <label class="cls_credit_label2">@(_viewModel.InvoiceMaster?.Invoiceheader?.OraclePONumber ?? "N/A")</label>
+            </div>
+            <div class="cls_container_div1">
+                <label class="cls_section_div_purchase2_label">Delivery No</label>
+                <label class="cls_credit_label2">@(_viewModel.InvoiceMaster?.Invoiceheader?.InvoiceNo ?? "N/A")</label>
+            </div>
+            <div class="cls_container_div1">
+                <label class="cls_section_div_purchase2_label">AR No</label>
+                <label class="cls_credit_label2">@(_viewModel.InvoiceMaster?.Invoiceheader?.ARNumber ?? "N/A")</label>
+            </div>
+
+            <div class="cls_container_div1">
+                <label class="cls_section_div_purchase2_label">GST Invoice No</label>
+                <label
+                    class="cls_credit_label2">@(_viewModel.InvoiceMaster?.Invoiceheader?.GSTInvoiceNo ?? "N/A")</label>
+            </div>
+            
+            <div class="cls_container_div1">
+                <label class="cls_section_div_purchase2_label">GL Date</label>
+                <label
+                    class="cls_credit_label2">@(CommonFunctions.GetDateTimeInFormat(_viewModel.InvoiceMaster?.Invoiceheader?.InvoiceDate))</label>
+            </div>
+
+            <div class="cls_container_div1">
+                <label class="cls_section_div_purchase2_label">Total Amount</label>
+                <label
+                    class="cls_credit_label2">@(CommonFunctions.RoundForSystemWithoutZero(_viewModel.InvoiceMaster?.Invoiceheader?.TotalAmount, _appSetting.RoundOffDecimal))</label>
+            </div>
+            <div class="cls_container_div1 dn">
+                <label class="cls_section_div_purchase2_label">Total Tax</label>
+                <label
+                    class="cls_credit_label2">@(CommonFunctions.RoundForSystemWithoutZero(_viewModel.InvoiceMaster?.Invoiceheader?.TotalTax, _appSetting.RoundOffDecimal))</label>
+            </div>
+            <div class="cls_container_div1">
+                <label class="cls_section_div_purchase2_label">Net Amount</label>
+                <label
+                    class="cls_credit_label2">@(CommonFunctions.RoundForSystemWithoutZero(_viewModel.InvoiceMaster?.Invoiceheader?.NetAmount, _appSetting.RoundOffDecimal))</label>
+            </div>
+            <div class="cls_button_bottom_purchase">
+                <a class="cls_button_blue" style="cursor:pointer;text-decoration:none;" @onclick="OnDownloadClick">Download</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (_viewModel.InvoiceMaster?.InvoiceLines != null && GridColumns != null)
+{
+    <TableGridView Columns="GridColumns"
+                   DataSource="_viewModel.InvoiceMaster.InvoiceLines"/>
+}
+
+@if (IsShowSerialPopUP)
+{
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show" tabindex="-1" style="display: block; overflow:auto; ">
+        <div class="modal-dialog cls_pop_up_style1">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Serial No</h5>
+                    <span class="close" @onclick='() => IsShowSerialPopUP = false'>&times;</span>
+                </div>
+                <div class="modal-body">
+
+                    @if (SelectedItem.SerialNo != null && SelectedItem.SerialNo.Any())
+                    {
+                        foreach (var item in SelectedItem.SerialNo)
+                        {
+                            <label class="cls_credit_label">@item</label>
+                        }
+                    }
+                    else
+                    {
+                        <label class="cls_credit_label">No Items</label>
+                    }
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+}

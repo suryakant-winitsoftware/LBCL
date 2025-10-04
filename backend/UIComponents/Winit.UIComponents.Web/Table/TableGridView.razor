@@ -1,0 +1,161 @@
+﻿<div class="cls_container_div1">
+    <div class="col-md-12 d-flex justify-content-end cls_padding_0px">
+        @if (ShowRecordsCount && !string.IsNullOrEmpty(ViewingMessage))
+        {
+            <p class="cls_table_page_split_count">@ViewingMessage</p>
+        }
+    </div>
+</div>
+
+<div class="div1">
+    <table>
+        <thead>
+            <tr>
+                @if (IsFirstColumnCheckbox)
+                {
+                    <th>
+                        <input type="checkbox" @onclick="() => ToggleAllCheckboxes()" />
+                    </th>
+                }
+                @foreach (var column in Columns)
+                {
+                    <th @onclick="() => SortColumn(column)" class="@(column.IsSortable ? "sortable" : "")" data-column="@((MarkupString)column.Header)">
+                        <div style="@column.Style">
+                            @if (column.IsSortable)
+                            {
+                                @((MarkupString)column.Header)
+
+                                @if (currentSortField == column.SortField)
+                                {
+                                    <span>@(isAscending ? "▲" : "▼")</span>
+                                }
+                            }
+                            else
+                            {
+
+                                @((MarkupString)column.Header)
+                            }
+                        </div>
+
+                    </th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @if (DataSource != null && DataSource.Count > 0)
+            {
+
+                @foreach (var item in DataSource)
+                {
+                    <tr>
+                        @if (IsFirstColumnCheckbox)
+                        {
+                            <td>
+                                <input type="checkbox" @onclick="() => ToggleSelection(item)"
+                                       checked="@SelectedItems.Contains(item)" />
+                            </td>
+                        }
+                        @foreach (var column in Columns)
+                        {
+                            <td class="@column.Class">
+                                @if (column.ColumnType == Shared.Models.Common.ColumnTypes.Image)
+                                {
+                                    var imgUrl = column.GetValue(item)?.ToString();
+                                    if (!string.IsNullOrEmpty(imgUrl))
+                                    {
+                                        <a @onclick=@(()=>{IsShowImageInPopup=true;ImageURL=column.GetValue(item)?.ToString();})>
+                                            <img src="@imgUrl" alt="Image" style="max-width:60px;max-height:60px;" />
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span>N/A</span>
+                                    }
+                                }
+                                else if (column.IsButtonColumn)
+                                {
+                                    foreach (var buttonAction in column.ButtonActions)
+                                    {
+                                        if (buttonAction.IsVisible || buttonAction.ConditionalVisibility(item))
+                                        {
+                                            if (buttonAction.ButtonType == Shared.Models.Common.ButtonTypes.Image)
+                                            {
+                                                <button @onclick="() => buttonAction.Action(item)"
+                                                        style="text-decoration:underline;cursor:pointer;margin-right:5px;border:none;">
+                                                    <img src="@buttonAction.URL" style="width: 17px; pointer-events: auto;" />
+                                                </button>
+                                            }
+                                            else if (buttonAction.ButtonType == Shared.Models.Common.ButtonTypes.Url)
+                                            {
+                                                <a @onclick="() => buttonAction.Action(item)"
+                                                   style="text-decoration:underline;cursor:pointer;margin-right:5px;">
+                                                    @buttonAction.GetValue(item)
+                                                </a>
+                                            }
+                                            else if (buttonAction.ButtonType == Shared.Models.Common.ButtonTypes.CheckBox)
+                                            {
+                                                <input type="checkbox" checked="@CommonFunctions.GetBooleanValue(buttonAction.GetValue(item))"
+                                                       @onclick="() => buttonAction.Action(item)" disabled="@buttonAction.IsDisabled" />
+                                            }
+                                            else
+                                            {
+                                                <button @onclick="() => buttonAction.Action(item)"
+                                                        style="text-decoration:underline;cursor:pointer;margin-right:5px;">
+                                                    @buttonAction.Text
+                                                </button>
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    @column.GetValue(item)
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+            }
+            else
+            {
+
+                <tr>
+                    <td colspan="@Columns.Count" style="text-align: center;color:red">No Record Found</td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+</div>
+
+@if (IsPaginationRequired)
+{
+    <div class="cls_padding">
+        <button @onclick="FirstPage" disabled="@IsFirstPage" class="@(IsFirstPage ? "inactive" : "")">&lt;&lt;</button>
+        <button @onclick="PreviousPage" disabled="@IsFirstPage" class="@(IsFirstPage ? "inactive" : "")">&lt;</button>
+        @for (int i = StartPage; i <= EndPage; i++)
+        {
+            int pageNumber = i; // Capture the loop variable in a local variable
+            <button @onclick="() => ChangePage(pageNumber)" class="@(pageNumber == _currentPage ? "active" : "")">@i</button>
+        }
+        <button @onclick="NextPage" disabled="@IsLastPage" class="@(IsLastPage ? "inactive" : "")">&gt;</button>
+        <button @onclick="LastPage" disabled="@IsLastPage" class="@(IsLastPage ? "inactive" : "")">&gt;&gt;</button>
+    </div>
+}
+
+
+@if (IsShowImageInPopup)
+{
+
+    <Winit.UIComponents.Web.DialogBox.PopUp DisableOkBtn=true
+                                            OnCloseClick="@(()=> IsShowImageInPopup=false)">
+     <img  src="@ImageURL"/>
+    </Winit.UIComponents.Web.DialogBox.PopUp>
+}
+
+<style>
+    .sortable {
+        text-decoration: underline;
+        cursor: pointer;
+    }
+</style>

@@ -1,0 +1,7 @@
+﻿@page "/disputedetails"
+@inject Winit.Modules.CollectionModule.BL.Interfaces.IBalanceConfirmationViewModel _balanceConfirmationViewmodel
+
+<PageHeaderAndFilter IDataBreadcrumbService="iDataBreadcrumbService"></PageHeaderAndFilter>
+<Winit.UIComponents.Common.CustomControles.Tabs TabItems="TabItems" OnTabSelect="OnTabSelect"></Winit.UIComponents.Common.CustomControles.Tabs>
+
+<TableGridView DataSource="PendingDisputes.Where(p => p.TotalDisputeAmount != 0).ToList()" Columns="PendingDisputeColumns"></TableGridView>

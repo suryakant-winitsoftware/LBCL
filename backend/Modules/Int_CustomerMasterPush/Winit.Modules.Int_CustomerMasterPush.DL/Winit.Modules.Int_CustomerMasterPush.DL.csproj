@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\WINITSyncManager\SyncManagerDL\SyncManagerDL\SyncManagerDL.csproj" />
+    <ProjectReference Include="..\..\Int_CommonMethods\Wint.Modules.Int_CommonMethods.Model\Winit.Modules.Int_CommonMethods.Model.csproj" />
+    <ProjectReference Include="..\Winit.Modules.Int_CustomerMasterPush.Model\Winit.Modules.Int_CustomerMasterPush.Model.csproj" />
+  </ItemGroup>
+
+</Project>

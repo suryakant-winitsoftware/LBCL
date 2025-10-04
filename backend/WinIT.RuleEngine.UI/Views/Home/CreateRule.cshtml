@@ -1,0 +1,379 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+   // List<string> classProperties = ViewBag.ClassProperties;
+    List<string> classPropertiesWithTypes = ViewBag.ClassPropertiesWithTypes;
+    @model RuleViewModel
+}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<div class="d-flex align-items-start">
+    <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical" style="text-align:left">
+        <button class="nav-link active" id="v-pills-home-tab" data-bs-toggle="pill" data-bs-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home" aria-selected="true">Rule Information</button>
+        <button class="nav-link disabled" id="v-pills-profile-tab" data-bs-toggle="pill" data-bs-target="#v-pills-profile" type="button" role="tab" aria-controls="v-pills-profile" aria-selected="false">Parameters</button>
+        <button class="nav-link disabled" id="v-pills-messages-tab" data-bs-toggle="pill" data-bs-target="#v-pills-messages" type="button" role="tab" aria-controls="v-pills-messages" aria-selected="false">Conditions</button>
+        <button class="nav-link disabled" id="v-pills-Actions-tab" data-bs-toggle="pill" data-bs-target="#v-pills-Actions" type="button" role="tab" aria-controls="v-pills-Actions" aria-selected="false">Actions</button>
+        <button class="nav-link disabled" id="v-pills-Approval-tab" data-bs-toggle="pill" data-bs-target="#v-pills-Approval" type="button" role="tab" aria-controls="v-pills-Approval" aria-selected="false">Approval Hierarchy</button>
+        <button class="nav-link disabled" id="v-pills-Preview-tab" data-bs-toggle="pill" data-bs-target="#v-pills-Preview" type="button" role="tab" aria-controls="v-pills-Preview" aria-selected="false">Preview & Confirm</button>
+    </div>
+    <div class="tab-content" id="v-pills-tabContent">
+        @if (@ViewBag.error != null)
+        {
+            <div class="alert alert-danger alert-dismissable" style="margin: 0; padding: 5px 25px 5px 10px;margin:5px 0;">
+                <button type="button" class="close close-msg" aria-hidden="true">&times;</button>
+                <strong>@ViewBag.error</strong>
+            </div>
+        }
+        <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
+            @*@Html.PartialAsync("_Create", Model.ruleMaster)*@
+            <form method="post" id="createRuleForm">
+                <div class="mb-3">
+                    <label class="form-label">Rule Name</label>
+                    @Html.TextBoxFor(m => m.ruleMaster.Name, "", new { @placeholder = "Enter Here", @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.ruleMaster.Name, "", new { @class = "error", @style = "color:red" })
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    @Html.TextAreaFor(m => m.ruleMaster.Description, new { @placeholder = "Enter Here", @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.ruleMaster.Description, "", new { @class = "error", @style = "color:red" })
+                </div>
+                <button type="submit" class="btn btn-primary">Proceed</button>
+                <input type="hidden" asp-for="ruleMaster.Id" />
+            </form>
+        </div>
+        <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+            <form method="post" id="createParameterForm">
+                <div class="mb-3">
+                    <label class="form-label">Parameter Name</label>
+                    @Html.TextBoxFor(m => m.editRuleParameter.Name, "", new { @placeholder = "Enter Here", @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.editRuleParameter.Name, "", new { @class = "error", @style = "color:red" })
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Type</label>
+                    <select asp-for="editRuleParameter.DataType" class="form-control">
+                        @foreach (var classProperty in classPropertiesWithTypes)
+                        {
+                            <option value="@classProperty">@classProperty</option>
+                        }
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    @Html.TextAreaFor(m => m.editRuleParameter.Description, new { @placeholder = "Enter Here", @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.editRuleParameter.Description, "", new { @class = "error", @style = "color:red" })
+                </div>
+                <input type="hidden" asp-for="ruleMaster.Id" />
+                <button type="submit" class="btn btn-primary">Add</button>
+            </form>
+            <div class="row" id="lstParameters" style="padding-top:25px;">
+                <div class="col-md-3">Name</div>
+                <div class="col-md-3">DataType</div>
+                <div class="col-md-3">Descriptions</div>
+                <div class="col-md-3">Action</div>
+                @await Html.PartialAsync("~/Views/Shared/_parameters.cshtml", Model.ruleParameters)
+            </div>
+            <br />
+            <button type="button" id="btnProceedParameter" class="btn btn-primary">Proceed</button>
+
+        </div>
+        <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">
+            <form id="createConditionForm">
+                <div class="mb-3">
+                    <label class="form-label">Parameter Name</label>
+                    <select asp-for="editRuleCondition.ParameterId"  class="form-control">
+                        <option value="0">Select One</option>
+                    </select>
+                    <input type="hidden" asp-for="editRuleCondition.ParameterName" value="" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Option</label>
+                   
+                    <select asp-for="editRuleCondition.Operator"
+                            asp-items="@(new SelectList(ViewBag.EnumList, "Key", "Value"))">
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Value</label>
+                    @Html.TextBoxFor(m => m.editRuleCondition.Value, "", new { @placeholder = "Enter Here", @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.editRuleCondition.Value, "", new { @class = "error", @style = "color:red" })
+                </div>
+                <input type="hidden" asp-for="ruleMaster.Id" />
+                <button type="submit" class="btn btn-primary">Add</button>
+            </form>
+            <div class="row" id="lstConditions" style="padding-top:25px;">
+                <div class="col-md-3">Name</div>
+                <div class="col-md-3">Operator</div>
+                <div class="col-md-3">Value</div>
+                <div class="col-md-3">Action</div>
+                @await Html.PartialAsync("~/Views/Shared/_conditions.cshtml", Model.ruleConditions)
+            </div>
+            <br />
+            <button type="button" id="btnProceedConditions" class="btn btn-primary">Proceed</button>
+        </div>
+
+        <div class="tab-pane fade" id="v-pills-Actions" role="tabpanel" aria-labelledby="v-pills-Actions-tab">
+            <form id="insertFormAction">
+                <div class="form-group">
+                    <label class="form-label">Type</label>
+                    <select asp-for="editRuleAction.ActionType" class="form-control">
+                        <option value="0">Please select one</option>
+                        <option value="Notification">Notification</option>
+                        <option value="Email">Email</option>
+                        <option value="SMS">SMS</option>
+                    </select>
+                    <span asp-validation-for="editRuleAction.ActionType" class="text-danger"></span>
+                </div>
+                @*<div class="form-group">
+                    <label for="conditionId">Condition Id:</label>
+                    <input type="number" class="form-control" id="conditionId" name="ConditionId" required>
+                </div>*@
+                @*<div class="form-group">
+                    <label for="actionId">Action Id:</label>
+                    <input type="number" class="form-control" id="actionId" name="ActionId" required>
+                </div>*@
+                <div class="form-group">
+                    <label class="form-label">Template</label>
+                    @Html.TextAreaFor(m => m.editRuleAction.Template, new { @placeholder = "Enter Here", @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.editRuleAction.Template, "", new { @class = "error", @style = "color:red" })
+                </div>
+                <input type="hidden" asp-for="ruleMaster.Id" />
+                <button type="submit" class="btn btn-primary">Proceed</button>
+            </form>
+        </div>
+        <div class="tab-pane fade" id="v-pills-Approval" role="tabpanel" aria-labelledby="v-pills-Approval-tab">
+
+            <h2>Create Approval Hierarchy</h2>
+
+            <form id="approvalForm">
+
+                <div class="form-group">
+                    <label class="form-label">Approver ID</label>
+                    @*@Html.TextBoxFor(m => m.editApprovalHierarchy.ApproverId, "", new { @placeholder = "Enter Here", @class = "form-control" })*@
+                    <select asp-for="editApprovalHierarchy.ApproverId"
+                            asp-items="@ViewBag.Users">
+                    </select>
+                    @Html.ValidationMessageFor(m => m.editApprovalHierarchy.ApproverId, "", new { @class = "error", @style = "color:red" })
+                </div>
+                <div class="form-group">
+                    <label for="Level" class="form-label">Level</label>
+                    @Html.TextBoxFor(m => m.editApprovalHierarchy.Level, "", new { @placeholder = "Enter Here", @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.editApprovalHierarchy.Level, "", new { @class = "error", @style = "color:red" })
+                </div>
+                @*<div class="form-group">
+                    <label for="NextApproverId" class="form-label">Next Approver ID</label>
+                    @Html.TextBoxFor(m => m.editApprovalHierarchy.NextApproverId, "", new { @placeholder = "Enter Here", @class = "form-control" })
+                </div>*@
+                <input type="hidden" asp-for="ruleMaster.Id" />
+                <button type="submit" class="btn btn-primary">Add</button>
+            </form>
+            <div class="row" id="lstApprovalHierarchies" style="padding-top:25px;">
+                <div class="col-md-4">ApproverId</div>
+                <div class="col-md-4">Level</div>
+                @*<div class="col-md-3">NextApproverId</div>*@
+                <div class="col-md-4">Action</div>
+                @await Html.PartialAsync("~/Views/Shared/_approvers.cshtml", Model.approvalHierarchies)
+            </div>
+            <br />
+            <button type="button" id="btnProceedApp" class="btn btn-primary">Proceed</button>
+
+        </div>
+        <div class="tab-pane fade" id="v-pills-Preview" role="tabpanel" aria-labelledby="v-pills-Preview-tab">
+            <div class="row" id="lstApprovalPreview" style="padding-top:25px;">
+                @await Html.PartialAsync("~/Views/Shared/_preview.cshtml", Model)
+            </div>
+            <form method="post" action="/Home/Confirm">
+                <button type="submit" class="btn btn-primary">Confirm</button>
+            </form>
+        </div>
+    </div>
+ </div>
+    @section scripts {
+        <script src="https://cdn.jsdelivr.net/npm/@@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
+        <script>
+            $(function () {
+                $('#editRuleCondition_ParameterId').bind('change', function () {
+                    var selectedText = $(this).find('option:selected').text();
+                    $('#editRuleCondition_ParameterName').val(selectedText);
+                });
+            $('#createRuleForm').submit(function (event) {
+                event.preventDefault();
+                var formData = $(this).serialize();
+                $.ajax({
+                    url: '@Url.Action("createRule", "Home")',
+                    type: 'POST',
+                    data: formData,
+                    success: function (response) {
+                        if (response.success != false) {
+                            var triggerEl = document.querySelector('#v-pills-tab button[data-bs-target="#v-pills-profile"]');
+                            triggerEl.classList.remove("disabled");
+                            var tab = new bootstrap.Tab(triggerEl);
+                            tab.show();
+                        }
+                        else { }
+                        console.log(response);
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle the error response here
+                        console.log(xhr.responseText);
+                    }
+                });
+            });
+
+            $('#btnProceedParameter').click(() => {
+                bindDropdown();
+                var triggerEl = document.querySelector('#v-pills-tab button[data-bs-target="#v-pills-messages"]');
+                 triggerEl.classList.remove("disabled");
+                var tab = new bootstrap.Tab(triggerEl);
+                tab.show();
+            });
+            $('#btnProceedConditions').click(() => {
+                var triggerEl = document.querySelector('#v-pills-tab button[data-bs-target="#v-pills-Actions"]');
+                 triggerEl.classList.remove("disabled");
+                var tab = new bootstrap.Tab(triggerEl);
+                tab.show();
+            });
+            $('#btnProceedApp').click(() => {
+                 $.ajax({
+                    url: '@Url.Action("getSummery", "Home")',
+                    type: 'POST',
+                    data: null,
+                     success: function (response) {
+                         $('#lstApprovalPreview').html(response);
+                             var triggerEl = document.querySelector('#v-pills-tab button[data-bs-target="#v-pills-Preview"]');
+                             triggerEl.classList.remove("disabled");
+                             var tab = new bootstrap.Tab(triggerEl);
+                             tab.show();
+
+                        console.log(response);
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle the error response here
+                        console.log(xhr.responseText);
+                    }
+                });
+            });
+
+
+            });
+        $('#createParameterForm').submit(function (e) {
+            e.preventDefault();
+            var formData = $(this).serialize();
+
+            $.ajax({
+                url: '@Url.Action("CreateRuleParameter", "Home")',
+                type: 'POST',
+                data: formData,
+                success: function (response) {
+                    if (response.success != false) {
+                        $('#lstParameters').append(response);
+                    }
+                    else { }
+                    console.log(response);
+                },
+                error: function (xhr, status, error) {
+                    // Handle error response
+                    console.error(xhr.responseText);
+                }
+            });
+        });
+            function bindDropdown() {
+                var dropdownElement = document.getElementById('editRuleCondition_ParameterId');
+
+                // Make an AJAX request to retrieve the dropdown data
+                fetch('/Home/GetRuleParameterDropdownData')
+                    .then(response => response.json())
+                    .then(data => {
+                        // Clear the existing dropdown options
+                        dropdownElement.innerHTML = '';
+                        var optionElement = document.createElement('option');
+                        optionElement.value = "0";
+                        optionElement.text = "Select One";
+                        dropdownElement.appendChild(optionElement);
+                        // Iterate over the received data and add options to the dropdown
+                        data.forEach(option => {
+                            optionElement = document.createElement('option');
+                            optionElement.value = option.Value;
+                            optionElement.text = option.Text;
+                            dropdownElement.appendChild(optionElement);
+                        });
+                    });
+            }
+
+            $('#createConditionForm').submit(function (e) {
+            e.preventDefault();
+            var formData = $(this).serialize();
+
+            $.ajax({
+                url: '@Url.Action("CreateCondition", "Home")',
+                type: 'POST',
+                data: formData,
+                success: function (response) {
+                    if (response.success != false) {
+                        $('#lstConditions').append(response);
+                    }
+                    else { }
+                    console.log(response);
+                },
+                error: function (xhr, status, error) {
+                    // Handle error response
+                    console.error(xhr.responseText);
+                }
+            });
+            });
+              $('#approvalForm').submit(function (e) {
+                    e.preventDefault();
+
+                    var formData = $(this).serialize();
+
+                    $.ajax({
+                        url: '/Home/CreateApprovalHierarchy',
+                        type: 'POST',
+                        data: formData,
+                        success: function (response) {
+                            if (response.success != false) {
+                                $('#lstApprovalHierarchies').append(response);
+                            }
+                            else { }
+                            console.log(response);
+                        },
+                        error: function (xhr, status, error) {
+                            // Handle error response, if needed
+                            console.error(xhr.responseText);
+                        }
+                    });
+                });
+
+           $('#insertFormAction').submit(function (e) {
+            e.preventDefault(); // Prevent normal form submission
+            var form = $(this);
+            var url = '@Url.Action("InsertRuleAction", "Home")'; // Replace with the actual URL of the Insert action
+
+            $.ajax({
+                url: url,
+                method: 'POST',
+                data: form.serialize(),
+                success: function (response) {
+                    if (response.success) {
+                        var triggerEl = document.querySelector('#v-pills-tab button[data-bs-target="#v-pills-Approval"]');
+                         triggerEl.classList.remove("disabled");
+                        var tab = new bootstrap.Tab(triggerEl);
+                        tab.show();
+                    } else {
+                        // Handle insertion failure, e.g., display an error message
+                        alert('Failed to insert rule action.');
+                    }
+                },
+                error: function () {
+                    // Handle server-side error, e.g., display an error message
+                    alert('An error occurred during the insertion process.');
+                }
+            });
+        });
+       function handleSuccess(response) {
+                // Handle the success event, such as displaying a success message or redirecting to another page
+                console.log(response);
+            }
+
+        </script>
+
+
+    }

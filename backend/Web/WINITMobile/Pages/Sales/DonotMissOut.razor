@@ -1,0 +1,61 @@
+﻿@inherits WINITMobile.Pages.Base.BaseComponentBase
+
+
+<div class="modal-backdrop fade show"></div>
+<div class="modal fade show" tabindex="-1" style="display: block; ">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>@Localizer["don’t_miss_out!"] </h5>
+                <button type="button" @onclick="() => OnCloseClick.InvokeAsync()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="padding:7px 2%;">
+                <div class="cls_dont_miss_out_main">
+                    @foreach (var sku in Headers)
+                    {
+                        <div class="cls_dont_miss_out">
+                            <div class="cls_dont_miss_out_left">
+                                <img style="width:30px;" src="@(sku.ExtData!=null? Path.Combine(_appConfigs.ApiDataBaseUrl,sku.ExtData.ToString()):string.Empty)">
+                            </div>
+                            <div class="cls_dont_miss_out_right">
+                                <p>
+                                    [@sku.Code]@sku.Label
+                                </p>
+                            </div>
+                        </div>
+                        <div class="cls_dont_miss_out1">
+
+                            @if (HeaderDetails != null && HeaderDetails.ContainsKey(sku.UID))
+                            {
+                                @foreach (var promo in HeaderDetails[sku.UID])
+                                {
+                                    <div class="cls_dont_miss_out1_rep">
+                                        <div class="cls_dont_miss_out1_rep_left"> <img style="width:20px;" src="/Images/promo.png"></div>
+                                        <div class="cls_dont_miss_out1_rep_right">
+                                            <p>
+                                                @promo.Label
+                                            </p>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    }
+                </div>
+                <div class="cls_dont_miss_out2">
+                    <p>@Localizer["are_you_sure_you_want_to_continue_without_taking_advantage_of_the_promotion?"]</p>
+                </div>
+            </div>
+            <div class="modal-footer" style="padding: 0px;border: 0px;">
+                <div class="cls_btn_new">
+                    <button type="button" class="cls_btn_new1" style="width:50%" @onclick="() => OnSkipClick.InvokeAsync()">
+                        @Localizer["yes"]
+                    </button>
+                    <button type="button" class="cls_btn_new2" style="width:50%" @onclick="Handle_ProceedClick">
+                        @Localizer["modify_order"]
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

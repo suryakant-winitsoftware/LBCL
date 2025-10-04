@@ -1,0 +1,23 @@
+.overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+}
+
+.date-time,
+.address {
+    margin-bottom: 5px;
+}
+
+.address {
+    font-size: 12px;
+}
+
+.card-body {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}

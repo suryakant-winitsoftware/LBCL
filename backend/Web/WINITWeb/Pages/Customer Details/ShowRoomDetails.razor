@@ -1,0 +1,257 @@
+﻿@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.UIComponents.Common.IAlertService _AlertMessgae;
+@inject IJSRuntime JSRuntime
+
+<div>
+    @if (!string.IsNullOrWhiteSpace(ValidationMessage))
+    {
+        <div class="d-flex flex-row">
+
+            <div class="alert alert-danger">
+                <div class="col-md-12">
+                    <div style="color: red;">@ValidationMessage</div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<div class="card">
+    <div class="card-body">
+        <div class="cls_cust_information">
+            <div class="row">
+                <div class="col-12 col-sm-12 col-md-12 col-lg-12 mb-12 mb-2">
+                    <div>
+                        <label class="fw-bold mb-1">Total Number of Stores</label>
+                        <span class="d-block" style="color: #19298B;">@TotalStoreCount</span>
+                    </div>
+                    <div style="float: right;margin-top: -20px;">
+                        <button class="cls_comman_sec_btn mr-2" type="submit" @onclick="ImportShowroomDetails">Upload using Excels</button>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-12 col-md-12 col-lg-12 mb-12 mb-2">
+                    <div class="cls_copy_adress">
+                        <input type="checkbox" class="" @bind="IsChecked">
+                        <span>Same as Ship To Address</span>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-6 col-lg-6 mb-4">
+                    <label style="font-weight: bold;">Address 1<i class="cls_section_div_purchase2_span">*</i></label>
+                    <textarea @ref="StoreInput" autocomplete="off" class="form-control" @bind="SelectedShowroom.Address1" placeholder="Enter here" rows="3"></textarea>
+                </div>
+                <div class="col-12 col-sm-6 col-md-6 col-lg-6 mb-4">
+                    <label style="font-weight: bold;">Address 2</label>
+                    <textarea autocomplete="off" class="form-control" @bind="SelectedShowroom.Address2" placeholder="Enter here" rows="3"></textarea>
+                </div>@* 
+                <div class="col-12 col-sm-6 col-md-6 col-lg-6 mb-4">
+                    <label style="font-weight: bold;">Address 3</label>
+                    <textarea autocomplete="off" class="form-control" @bind="SelectedShowroom.Address3" placeholder="Enter here" rows="3"></textarea>
+                </div> *@
+                <div class="col-12 col-sm-6 col-md-6 col-lg-6 mb-4">
+                    <label style="font-weight: bold;">Landmark</label>
+                    <textarea autocomplete="off" class="form-control" @bind="SelectedShowroom.Landmark" placeholder="Enter here" rows="3"></textarea>
+                </div>
+
+                <div class="col-12 col-sm-6 col-md-3 col-lg-3 mb-4">
+                    <label style="font-weight: bold;">Mobile Number 1<i class="cls_section_div_purchase2_span">*</i></label>
+                    <input autocomplete="off" class="form-control" @bind="SelectedShowroom.Mobile1" type="text" placeholder="Enter here" @oninput="ValidateMobileNumber" />
+                    <div class="invalid-feedback" style="display: @(string.IsNullOrEmpty(MobilevalidationMessage) ? "none" : "block")">
+                        @MobilevalidationMessage
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-3 col-lg-3 mb-4">
+                    <label style="font-weight: bold;">Mobile Number 2</label>
+                    <input autocomplete="off" class="form-control" @bind="SelectedShowroom.Mobile2" type="text" placeholder="Enter here" />
+                </div>
+                <div class="col-12 col-sm-6 col-md-3 col-lg-3 mb-4">
+                    <label style="font-weight: bold;">Email<i class="cls_section_div_purchase2_span">*</i></label>
+                    <input autocomplete="off" class="form-control" @bind="SelectedShowroom.Email" type="text" placeholder="Enter here" />
+                </div>
+                @*  <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <label style="font-weight: bold;">States<i class="cls_section_div_purchase2_span">*</i></label>
+                    <Winit.UIComponents.Common.CustomControls.DropDown DataSource="StateselectionItems.OrderBy(item => item.Label.ToLower()).ToList()" IsButtonVisible="true" Title="States" IsSearchable="true" OnSelect="StateSelection" />
+                </div> *@
+                @* <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <label style="font-weight: bold;">City<i class="cls_section_div_purchase2_span">*</i></label>
+                    <Winit.UIComponents.Common.CustomControls.DropDown DataSource="CityselectionItems.OrderBy(item => item.Label.ToLower()).ToList()" IsButtonVisible="true" Title="City" IsSearchable="true" OnSelect="CitySelection" />
+                </div> *@
+                <div class="col-12 col-sm-6 col-md-3 col-lg-3 mb-4">
+                    <label style="font-weight: bold;">City<i class="cls_section_div_purchase2_span">*</i></label>
+                    <input autocomplete="off" class="form-control" @bind="SelectedShowroom.City" type="text" placeholder="Enter here" />
+                </div>
+                @* <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <label style="font-weight: bold;">Locality<i class="cls_section_div_purchase2_span">*</i></label>
+                    <Winit.UIComponents.Common.CustomControls.DropDown DataSource="LocalityselectionItems.OrderBy(item => item.Label.ToLower()).ToList()" IsButtonVisible="true" Title="Locality" IsSearchable="true" OnSelect="LocalitySelection" />
+                </div> *@
+                <div class="col-12 col-sm-6 col-md-3 col-lg-3 mb-4">
+                    <label style="font-weight: bold;">PinCode<i class="cls_section_div_purchase2_span">*</i></label>
+                    <input autocomplete="off" class="form-control" @bind="SelectedShowroom.PinCode" type="text" placeholder="Enter here" />
+                </div>
+                @* <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <label style="font-weight: bold;">PinCode<i class="cls_section_div_purchase2_span">*</i></label>
+                    <Winit.UIComponents.Common.CustomControls.DropDown DataSource="PinCodeselectionItems.OrderBy(item => item.Label.ToLower()).ToList()" IsButtonVisible="true" Title="PinCode" IsSearchable="true" OnSelect="PinCodeSelection" />
+                </div> *@
+
+                @* <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <label style="font-weight: bold;">Branch<i class="cls_section_div_purchase2_span">*</i></label>
+                    <Winit.UIComponents.Common.CustomControls.DropDown DataSource="BranchselectionItems.OrderBy(item => item.Label.ToLower()).ToList()" IsButtonVisible="true" Title="Branch" IsSearchable="true" OnSelect="BranchSelection" />
+                </div> *@
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div style="width:100%;float:left;margin:10px 0px;">
+    <div class="col-12 d-flex justify-content-center">
+        <button class="cls_comman_sec_btn mr-2" type="submit" @onclick="OnClean">Clear</button>
+        <button class="cls_comman_btn mr-2" style="@(IsExcelUpload ? "background-color: lightgray;color: gray;border: 1px solid lightgray;" : "")" type="submit" @onclick="AddShowroomDetails" disabled="@IsExcelUpload">Add</button>
+
+       
+
+        @if (showPopup)
+        {
+            <div class="popup-overlay">
+                <div class="popup-content">
+                    <p>Please add showroom details first before saving or updating.</p>
+                    <button @onclick="ClosePopup">OK</button>
+                </div>
+            </div>
+        }
+        
+    </div>
+</div>
+<div style="width:100%;float:left;margin:10px 0px;">
+    <div class="card">
+        <div class="card-body">
+            <div class="">
+                <button class="cls_comman_btn" style="margin-bottom:15px;" type="submit" @onclick="GetAllShowRoomDetails">Show All Showroom Addresses</button>
+
+                @if (IsShowAllShowroom)
+                {
+                    <button class="cls_comman_sec_btn" type="submit" @onclick="@(() => ExportToExcel(new()))" style="float:right;">Export</button>
+                    <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" DataSource="ShowroomDetails" />
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<button class="cls_comman_btn mr-2" type="submit" @onclick="SaveOrUpdate" style="margin-left:700px;margin-bottom:10px;">
+    @ButtonName
+</button>
+@if (IsAddPopUp)
+{
+    <PopUp Title="Upload Showroom Details" OkbtnText="Upload" CancelbtnText="Cancel" OnOkClick="UploadShowroomDetails" OnCloseClick="CancelShowroomDetails">
+        <div class="cls_container_div1">
+            <!-- Upload Files Section -->
+            <div class="cls_file_upload_qps">
+                <InputFile OnChange="HandleFileSelected" class="cls_file_upload_input" />
+            </div>
+
+
+            <!-- Validation Errors Section -->
+            @if (!string.IsNullOrEmpty(Message))
+            {
+                <div class="col-12 mt-3">
+                    <div class="alert alert-danger" role="alert" style="display: @(validationResult == null ? "none" : "block")">
+                        <strong>Errors:</strong>
+                        <ul>
+                            @if (validationResult != null)
+                            {
+                                if (validationResult.ColumnStatuses.Count > 0)
+                                {
+                                    @foreach (var column in validationResult.ColumnStatuses)
+                                    {
+                                        <li style="color:@(column.Value ? "blue" : "red")">@column.Key - @(column.Value ? "Filled" : "Not Filled")</li>
+                                    }
+                                }
+                                else
+                                {
+                                    <li style="color:red;">@Message</li>
+                                    <button class="cls_comman_sec_btn" type="submit" @onclick="@(() => ExportToExcel(ShowroomDetailsErrorList))">DownloadErrorFile</button>
+
+                                }
+
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+
+            <!-- Download Sample Files Section -->
+
+            <div class="cls_button_bottom_purchase">
+                <Winit.UIComponents.Web.ExportToExcel.ExportToExcel ColumnHeaders="@DataGridColumnsForExport" ButtonName="Download Sample File" DataSource="ShowroomDetails" FileName="ShowroomDetails" />
+            </div>
+
+        </div>
+    </PopUp>
+}
+@if (IsNoPrimaryAddressPopupVisible)
+{
+    <div class="modal fade show" style="display: block;" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">No Primary Address</h5>
+                    <button type="button" class="btn-close" aria-label="Close" @onclick="OnPrimaryAddressClosePopup"></button>
+                </div>
+                <div class="modal-body">
+                    <p>No address is marked as primary. Please mark at least one address as primary.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="OnPrimaryAddressClosePopup">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<style>
+    .popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7); /* Darker overlay for better focus */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .popup-content {
+        background: #f9f9f9; /* Light gray background */
+        padding: 30px; /* More padding for a spacious look */
+        border-radius: 10px; /* Softer, rounded corners */
+        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3); /* Subtle shadow for depth */
+        text-align: center;
+        max-width: 400px; /* Limit width for better readability */
+        width: 90%; /* Responsive width */
+    }
+
+        .popup-content p {
+            font-size: 16px; /* Slightly larger font size */
+            color: #333; /* Dark gray text */
+            margin-bottom: 20px; /* Space below the text */
+        }
+
+        .popup-content button {
+            background-color: #007bff; /* Blue background */
+            color: white; /* White text */
+            border: none;
+            padding: 10px 20px; /* Adequate padding */
+            border-radius: 5px; /* Rounded button */
+            font-size: 16px; /* Readable font size */
+            cursor: pointer; /* Pointer cursor for better UX */
+            transition: background-color 0.3s ease; /* Smooth hover effect */
+        }
+
+            .popup-content button:hover {
+                background-color: #0056b3; /* Darker blue on hover */
+            }
+
+    }
+</style>
+@code {
+
+}

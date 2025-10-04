@@ -1,0 +1,165 @@
+﻿@using WinIt.Pages.DialogBoxes
+@typeparam T
+<div style="display:@Display">
+    <PopUp Title=@Title OkbtnText="Add" CancelbtnText="Close" OnOkClick="HandleOkClick"
+           OnCloseClick="() => OnCancelClick.InvokeAsync()">
+        @if (IsFilterOpen)
+        {
+            <div>
+                <div class="row" style="padding: 0px;">
+                    @if (DropDownDataSource != null && DropDownDataSource.Any())
+                    {
+                        @foreach (var dropdown in DropDownDataSource)
+                        {
+                            <div class="col-md-4 cls_padd_l_b">
+                                <label class="cls_new_lab">
+                                    <span style="color:red;">*</span> @dropdown.DropDownTitle
+                                </label>
+                                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="dropdown.DropDownDataSource"
+                                                                                   Title="@dropdown.DropDownTitle"
+                                                                                   IsButtonVisible="true"
+                                                                                   OnSelect="(e) => OnDropDownSelect(dropdown,e)"
+                                                                                   IsSearchable="true"
+                                                                                   _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Multiple" />
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+            @* <button type="button"  class="cls_comman_sec_btn" @onclick="OnClearFilterBtnClick">Clear</button> *@
+
+        }
+
+        <div class="cls_container_div1">
+            <div class="cls_Purchase_popup_search">
+
+
+                <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder="Search by Model Code / Name "
+                                                                       MaxLength="200" DebounceInterval="500"
+                                                                       OnDebounceIntervalElapsed="e => {
+                                                                                SearchString = e;
+                                                                                ApplySearch();
+                                                                            }"
+                                                                       KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+                                                                       Value="@SearchString" IsForSearch="true" />
+
+            </div>
+            <button type="button" style="display:@(DropDownDataSource==null || DropDownDataSource.Count==0?"none":"block")" class="cls_comman_btn cls_mr5" @onclick="()=> IsFilterOpen = !IsFilterOpen">Filter</button>
+            @if(IsFilterOpen){
+                <button type="button" class="cls_comman_sec_btn" @onclick="OnClearFilterBtnClick">Reset</button>
+            }
+            
+
+        </div>
+        <div class="div1">
+            <table style="table-layout:fixed;">
+                <thead>
+                    <tr>
+                        <th style="width:3%">
+                            <input type="checkbox" checked="@IsAllSelected" @onchange="OnSelectAllClick" />
+                        </th>
+                        @if (SKUImage != null)
+                        {
+                            <th style="width:5%">
+                                <span style="cursor:default;"> Image</span>
+                            </th>
+                        }
+                        <th style="width:13%" class="dn">
+                            <span style="cursor:default;"> Organization Unit</span>
+                        </th>
+                        <th style="width:8%">
+                            <span style="cursor:default;"> Division</span>
+                        </th>
+                        <th style="width:8%">
+                            <span style="cursor:default;"> Category</span>
+                        </th>
+                        <th style="width:8%">
+                            <span style="cursor:default;"> Type</span>
+                        </th>
+                        <th style="width:9%">
+                            <span style="cursor:default;"> Star Rating</span>
+                        </th>
+                        <th style="width:10%">
+                            <span style="cursor:default;"> Series</span>
+                        </th>
+                        <th style="width:17%">
+                            <span style="cursor:default;"> Model Number</span>
+                        </th>
+                        <th style="width:24%">
+                            <span style="cursor:default;"> Model Name</span>
+                        </th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (DisplayedItems != null && DisplayedItems.Any())
+                    {
+                        <Virtualize Items="@DisplayedItems.ToArray()" OverscanCount="10" TItem="T">
+                            <ItemContent Context="item">
+                                <tr>
+                                    <td>
+                                        <input id="@UID?.Invoke(item)" type="checkbox" @onchange="(e) => OnItemSelect(item,e)"
+                                               checked="@(SelectedItems.Contains(item))" />
+                                    </td>
+                                    @if (SKUImage != null)
+                                    {
+                                        <td>
+                                            <div class="image-container">
+                                                <img style="width:50px" src='@Path.Combine(_appConfigs.ApiDataBaseUrl, SKUImage.Invoke(item) ?? "no_image_available.jpg")' onerror="this.src='Images/no_image_available.jpg'" />
+                                            </div>
+                                        </td>
+                                    }
+                                    <td class="dn">
+                                        <label for="@UID?.Invoke(item)">@(L1?.Invoke(item) ?? "N/A")</label>
+                                    </td>
+                                    <td>
+                                        <label for="@UID?.Invoke(item)">
+                                            @(L2?.Invoke(item) ?? "N/A")
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <label for="@UID?.Invoke(item)">
+                                            @(L3?.Invoke(item) ?? "N/A")
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <label for="@UID?.Invoke(item)">
+                                            @(L4?.Invoke(item) ?? "N/A")
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <label for="@UID?.Invoke(item)">
+                                            @(L5?.Invoke(item) ?? "N/A")
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <label for="@UID?.Invoke(item)">
+                                            @(L6?.Invoke(item) ?? "N/A")
+                                        </label>
+                                    </td>
+                                    <td style="word-break:break-all;">
+                                        <label for="@UID?.Invoke(item)">
+                                            @(L7?.Invoke(item) ?? "N/A")
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <label for="@UID?.Invoke(item)">
+                                            @(L8?.Invoke(item) ?? "N/A")
+                                        </label>
+                                    </td>
+                                </tr>
+                            </ItemContent>
+                            <Placeholder> Loading... </Placeholder>
+                        </Virtualize>
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="12" style="text-align: center; font-weight:700;font-size:14px; color:red;">No Items</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </PopUp>
+</div>

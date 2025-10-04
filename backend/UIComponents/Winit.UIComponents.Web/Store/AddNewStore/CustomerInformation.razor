@@ -1,0 +1,433 @@
+﻿@using Microsoft.AspNetCore.Components.Forms
+@using Winit.Modules.Store.Model.Constants
+@inject Winit.Shared.Models.Common.IAppConfig _appConfigs
+@inject Winit.UIComponents.Common.IAlertService _alertService
+@inject Winit.Modules.Base.BL.ApiService _apiService
+@using Microsoft.Extensions.Localization
+@using System.Globalization
+@using Winit.UIComponents.Common.LanguageResources.Web
+@inject Winit.UIComponents.Common.Language.ILanguageService _languageService
+@inject IStringLocalizer<LanguageKeys> Localizer
+@typeparam T
+@if (isLoad)
+{
+    <div class="cls_sales_container_outline">
+        <div class="cls_container_div1">
+            <div class="cls_section_div_purchase4">
+               <label class="cls_section_div_purchase2_label">@Localizer["customer_code"]  <span class="cls_section_div_purchase2_span">*</span></label>
+                <div class="cls_select">
+                    
+                    <input type="text" @oninput="ChangeIsEditedOrNot" @bind="@_CustomerInformation.Code" placeholder="Enter Here"/>
+
+
+                </div>
+            </div>
+
+            <div class="cls_section_div_purchase4">
+                
+                   <label class="cls_section_div_purchase2_label">@Localizer["customer_number"] <span class="cls_section_div_purchase2_span">*</span></label>
+                <div class="cls_select">
+                    <input type="text" @oninput="ChangeIsEditedOrNot" @bind="@_CustomerInformation.Number" placeholder="Enter Here" />
+
+                </div>
+
+            </div>
+            <div class="cls_section_div_purchase4">
+                
+                   <label class="cls_section_div_purchase2_label">@Localizer["customer_name"] <span class="cls_section_div_purchase2_span">*</span></label>
+                <div class="cls_select">
+                    <input type="text" @oninput="ChangeIsEditedOrNot" @bind="@_CustomerInformation.Name" placeholder=@Localizer["enter_customer_name"] />
+
+                </div>
+
+            </div>
+            <div class="cls_section_div_purchase4">
+               
+                   <label class="cls_section_div_purchase2_label">@Localizer["customer_name2"] <span class="cls_section_div_purchase2_span">*</span></label>
+                <div class="cls_select">
+                    <input type="text" @oninput="ChangeIsEditedOrNot" @bind="@_CustomerInformation.AliasName" placeholder=@Localizer["enter_customer_name2"] />
+
+                </div>
+
+            </div>
+        </div>
+        <div class="cls_container_div4">
+            <div class="cls_section_div_purchase4">
+               
+                   <label class="cls_section_div_purchase2_label">@Localizer["customer_arabic_name"]<span class="cls_section_div_purchase2_span">*</span></label>
+                <div class="cls_select">
+                    <input type="text" @oninput="ChangeIsEditedOrNot" @bind="@_CustomerInformation.ArabicName" placeholder=@Localizer["enter_customer_arabic_name"] />
+
+                </div>
+
+            </div>
+         
+
+
+            <div class="cls_section_div_purchase4">
+               
+                   <label class="cls_section_div_purchase2_label">@Localizer["legal_name"]<span class="cls_section_div_purchase2_span">*</span></label>
+                <div class="cls_select">
+                    <input type="text" @oninput="ChangeIsEditedOrNot" @bind="@_CustomerInformation.LegalName" placeholder=@Localizer["enter_legal_name"] />
+                </div>
+
+            </div>
+            <div class="cls_section_div_purchase4">
+                
+                   <label class="cls_section_div_purchase2_label">@Localizer["outlet_name"]<span class="cls_section_div_purchase2_span">*</span></label>
+                <div class="cls_select">
+                    <input type="text" @oninput="ChangeIsEditedOrNot" @bind="@_CustomerInformation.OutletName" placeholder=@Localizer["enter_outlet_name"] />
+                </div>
+
+            </div>
+            <div class="cls_section_div_purchase4">
+                
+                   <label class="cls_section_div_purchase2_label">@Localizer["customer_type"]<span class="cls_section_div_purchase2_span">*</span></label>
+                
+
+                    @if (ShowCustomertype)
+                    {
+                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_customerType" ShowPopUp=@ShowCustomertype Title=@Localizer["customer_type"] OnSelect="@((e)=>OnSelected(e,"CustomerType"))" />
+                    }
+                    else
+                    {
+                    <button class="cls_select2" @onclick="@(()=>ShowCustomertype = !ShowCustomertype)">
+                        
+                        <label class="cls_select2_label1"> @CustomerTypelabel</label>
+                        <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+                    </button>
+                    }
+
+                    @* <select id="selectCustomer" name="selectCustomer" @onchange="@((ChangeEventArgs e) =>ChangeSelection(e,"CustomerType") )">
+                @foreach (var item in listItems)
+                {
+                if (item.Code == "CustomerType")
+                {
+                <option value="item1" selected="@(()=>_CustomerInformation.Type==item.UID?true:false)">@item.Name</option>
+                }
+                }
+
+                </select> *@
+                
+
+            </div>
+        </div>
+        <div class="cls_container_div4">
+            @*    <div class="cls_section_div_purchase2">
+        <div class="cls_main_sign_input_new1">
+       <label class="cls_section_div_purchase2_label">Price Type<span class="cls_section_div_purchase2_span">*</span></label>
+
+        @if (ShowPricetype)
+        {
+        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_priceType" ShowPopUp=ShowPricetype OnSelect="@((e)=>OnSelected(e,"PriceType"))" />
+        }
+        else
+        {
+        <button class="form-select" @onclick="@(()=>ShowPricetype = !ShowPricetype)">@Pricelabel</button>
+        }
+        </div>
+        @* <label for="selectPrice">Select an Item:</label>
+
+        </div> *@
+
+            <div class="cls_section_div_purchase4">
+                
+                   <label class="cls_section_div_purchase2_label">@Localizer["is_blocked"]</label>
+                <div class="cls_main_sign_input_new1">
+                    <div class="cls_main_check_radio">
+                        <input type="radio" @oninput="ChangeIsEditedOrNot" name="IsBlocked" value="true" id="IsBlocked1" checked="@_CustomerInformation.IsBlocked" @onclick="(()=>_CustomerInformation.IsBlocked=true)">
+                        <label for="IsBlocked1">@Localizer["yes"]</label>
+                        <input type="radio" @oninput="ChangeIsEditedOrNot" name="IsBlocked" value="false" id="IsBlocked2" checked="@(!_CustomerInformation.IsBlocked)" @onclick="(()=>_CustomerInformation.IsBlocked=false)">
+                        <label for="IsBlocked2">@Localizer["no"]</label>
+                    </div>
+                </div>
+
+            </div>
+            @if (_CustomerInformation.IsBlocked)
+            {
+                <div style="display:none" class="cls_section_div_purchase4">
+                   
+                       <label class="cls_section_div_purchase2_label">@Localizer["blocked_by"]<span class="cls_section_div_purchase2_span">*</span></label>
+                    <div class="cls_main_sign_input_new1">
+                        @if (!ShowBlockedBy)
+                        {
+                            <button class="form-select" @onclick="@(()=>ShowBlockedBy = !ShowBlockedBy)">@BlockedByLabel</button>
+                        }
+                        else
+                        {
+                            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_blockedBy" ShowPopUp=true OnSelect="@((e)=>OnSelected(e,"BlockedBy"))" />
+
+                        }
+                    </div>
+
+                </div>
+                <div class="cls_section_div_purchase4">
+                    
+                       <label class="cls_section_div_purchase2_label">@Localizer["blocked_reason"]<span class="cls_section_div_purchase2_span">*</span></label>
+                    <div class="cls_select">
+                        <input type="text" @oninput="ChangeIsEditedOrNot" @bind="@_CustomerInformation.BlockedReasonDescription" placeholder=@Localizer["enter_blocked_reason"] />
+                    </div>
+
+                </div>
+            }
+            <div class="cls_section_div_purchase4">
+               
+                   <label class="cls_section_div_purchase2_label">@Localizer["customer_status"]<span class="cls_section_div_purchase2_span">*</span></label>
+                <div class="cls_main_sign_input_new1">
+                    <div class="cls_main_check_radio">
+                        <input type="radio" @oninput="ChangeIsEditedOrNot" name="CustomerStatus" value="true" id="option1" checked="@(CommonFunctions.GetBooleanValue(_CustomerInformation?.IsActive))" @onclick="(()=>_CustomerInformation.IsActive=true)">
+                        <label for="option1">@Localizer["active"]</label>
+                        <input type="radio" @oninput="ChangeIsEditedOrNot" name="CustomerStatus" value="false" id="option2" checked="@(!CommonFunctions.GetBooleanValue(_CustomerInformation?.IsActive))" @onclick="(()=>_CustomerInformation.IsActive=false)">
+                        <label for="option2">@Localizer["inactive"]</label>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="cls_container_div4">
+
+
+            <div class="cls_section_div_purchase4">
+               
+                   <label class="cls_section_div_purchase2_label">@Localizer["is_tax_applicable"]<span class="cls_section_div_purchase2_span">*</span></label>
+                <div class="cls_main_sign_input_new1">
+                    <div class="cls_main_check_radio">
+                        <input type="radio" @oninput="@(()=>IsTaxApplicable(true))" name="IsTaxApplicable" value="true" id="IsTaxApplicable1" checked="@_CustomerInformation.IsTaxApplicable" @onclick="@(()=>_CustomerInformation.IsTaxApplicable=true)">
+                        <label for="IsTaxApplicable1">@Localizer["yes"]</label>
+                        <input type="radio" @oninput="@(()=>IsTaxApplicable(true))" name="IsTaxApplicable" value="false" id="IsTaxApplicable2" checked="@(!_CustomerInformation.IsTaxApplicable)" @onclick="@(()=>_CustomerInformation.IsTaxApplicable=false)">
+                        <label for="IsTaxApplicable2">@Localizer["no"]</label>
+                    </div>
+                </div>
+            </div>
+            @if (_CustomerInformation.IsTaxApplicable)
+            {
+                <div class="cls_section_div_purchase4">
+                    
+                       <label class="cls_section_div_purchase2_label">@Localizer["tax_type"]<span class="cls_section_div_purchase2_span">*</span></label>
+                    <div class="cls_main_sign_input_new1">
+                        <div class="cls_main_check_radio">
+                            <input type="radio" @oninput="ChangeIsEditedOrNot" name="VatOrGst" value="VatOrGst1" id="VatOrGst1" checked="@(StoreConstants.Vat.Equals(_CustomerInformation.TaxType))" @onclick="@(()=>_CustomerInformation.TaxType=StoreConstants.Vat)">
+                            <label for="VatOrGst1">@Localizer["vat"]</label>
+                            <input type="radio" @oninput="ChangeIsEditedOrNot" name="VatOrGst" value="VatOrGst2" id="VatOrGst2" checked="@(StoreConstants.GST.Equals(_CustomerInformation.TaxType))" @onclick="@(()=>_CustomerInformation.TaxType=StoreConstants.GST)">
+                            <label for="VatOrGst2">@Localizer["gst"]</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cls_section_div_purchase4">
+                    
+                       <label class="cls_section_div_purchase2_label">@(_CustomerInformation.TaxType) @Localizer["number"]  <span class="cls_section_div_purchase2_span">*</span></label>
+                    <div class="cls_select">
+                        <input type="text" @oninput="ChangeIsEditedOrNot" @bind="@_CustomerInformation.TaxDocNumber" placeholder="@($"{@Localizer["enter"]} {_CustomerInformation.TaxType}{@Localizer["number"]} ")" />
+                    </div>
+
+                </div>
+                <div class="cls_section_div_purchase4">
+                   
+                       <label class="cls_section_div_purchase2_label">@Localizer["tax_key_field"]</label>
+                    <div class="cls_select">
+                        <input type="text" @oninput="ChangeIsEditedOrNot" @bind="@_CustomerInformation.TaxKeyField" placeholder=@Localizer["enter_tax_key_field"] />
+                    </div>
+
+                </div>
+            }
+
+
+            @* <div class="cls_section_div_purchase2">
+        <div class="cls_main_sign_input_new1">
+       <label class="cls_section_div_purchase2_label">Is Warehouse OR School <span class="cls_section_div_purchase2_span">*</span></label>
+        <div class="cls_main_check_radio">
+        <input type="radio" @oninput="ChangeIsEditedOrNot" name="IsWarehouse" value="IsWarehouse1" id="IsWarehouse1" checked="@(StoreConstants.WareHouse.Equals(_CustomerInformation.SchoolWarehouse))" @onclick="@(()=>_CustomerInformation.SchoolWarehouse=StoreConstants.WareHouse)">
+        <label for="IsWarehouse1">Warehouse</label>
+        <input type="radio" @oninput="ChangeIsEditedOrNot" name="IsWarehouse" value="IsWarehouse2" id="IsWarehouse2" checked="@(StoreConstants.School.Equals(_CustomerInformation.SchoolWarehouse))" @onclick="@(()=>_CustomerInformation.SchoolWarehouse=StoreConstants.School)">
+        <label for="IsWarehouse2">School</label>
+        </div>
+        </div>
+
+        </div> *@
+
+            @* <div class="cls_section_div_purchase2">
+        <div class="cls_main_sign_input_new1">
+       <label class="cls_section_div_purchase2_label">Is School</label>
+        <div class="cls_main_check_radio">
+        <input  type="radio" @oninput="ChangeIsEditedOrNot" name="IsSchool" value="option1" id="option1" @onclick="@(()=>customer.StoreAdditionalInfo.SchoolWarehouse="School")">
+        <label for="option1">Yes</label>
+        <input  type="radio" @oninput="ChangeIsEditedOrNot" name="IsSchool" value="option2" id="option2" @onclick="@(()=>customer.StoreAdditionalInfo.SchoolWarehouse="")">
+        <label for="option2">No</label></div>
+        </div>
+
+        </div>*@
+            @*  <div class="cls_section_div_purchase2">
+        <div class="cls_main_sign_input_new1">
+       <label class="cls_section_div_purchase2_label">Special Day <span class="cls_section_div_purchase2_span">*</span></label>
+        <input type="text" @oninput="ChangeIsEditedOrNot" @bind="@_CustomerInformation.DayType" placeholder="Enter Sepcial day" />
+        </div>
+
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+        <div class="cls_main_sign_input_new1">
+       <label class="cls_section_div_purchase2_label">Special Day Date <span class="cls_section_div_purchase2_span">*</span></label>
+        <input type="date" @bind="@_CustomerInformation.SpecialDay" @oninput="ChangeIsEditedOrNot" />
+        </div>
+
+        </div> *@
+
+
+
+            @*  <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+        <div class="cls_main_sign_input_new1">
+       <label class="cls_section_div_purchase2_label">Default Route <span class="cls_section_div_purchase2_span">*</span></label>
+        @if (!ShowRoutetype)
+        {
+        <button class="form-select" @onclick="@(()=>ShowRoutetype = !ShowRoutetype)">@RouteTypelabel</button>
+        }
+        else
+        {
+        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_routeType" ShowPopUp=true OnSelect="@((e)=>OnSelected(e,"RouteType"))" />
+        }
+
+
+        @*
+        <select id="selectRoute" name="selectRoute" @onchange="@((ChangeEventArgs e)=>ChangeSelection(e,"RouteType"))">
+        @* @onchange="@((ChangeEventArgs e) => _CustomerInformation.RouteType = e.Value.ToString())"*@
+            @*  @foreach (var item in listItems.Where(person => person.Code == "RouteType").ToList())
+        {
+        if (item.Code == "RouteType")
+        {
+        <option value="item1" selected="@(()=>_CustomerInformation.Type==item.UID?true:false)">@item.Name</option>
+        }
+        }
+        </select>
+        </div>
+
+        @* <label for="selectRoute">Select an Item:</label>
+        </div> *@
+            @* <div class="cls_section_div_purchase2">
+                
+                   <label class="cls_section_div_purchase2_label">@Localizer["store_size"] @Localizer["(sq._meter)"] <span class="cls_section_div_purchase2_span">*</span></label>
+                <div class="cls_select">
+                    <input type="number"  min="0" value="@CommonFunctions.FormatNumber(_CustomerInformation.StoreSize)" @oninput="StoreSize" />
+                     <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder=@Localizer["search_here..."]
+                                                                           MaxLength="200"
+                                                                           DebounceInterval="500" OnDebounceIntervalElapsed="StoreSize"
+                                                                           KeyboardType="Winit.Shared.Models.Enums.InputType.Numeric"
+                                                                           Value="@CommonFunctions.FormatNumber(_CustomerInformation.StoreSize)" /> 
+
+                </div>
+
+            </div> *@
+
+        </div>
+        <div class="cls_container_div4">
+
+            @* Location *@
+            <div class="cls_section_div_purchase4">
+                
+                   <label class="cls_section_div_purchase2_label">@_appSettings.LocationLevel</label>
+
+                <button class="cls_select2" @onclick="@(()=>ViewLocation = !ViewLocation)">
+
+                    <label class="cls_select2_label1">  @_CustomerInformation.LocationLabel</label>
+                    <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+                </button>
+                    
+                    @if (ViewLocation)
+                    {
+                        <Winit.UIComponents.Web.Location.LocationMaster ShowPopUp="ViewLocation"
+                                                                        OnLocationSelected="OnLocationChange"
+                                                                        IsLocationHierarchyData="true"
+                                                                        SelectedLocationOrStoreGroupUID="@_CustomerInformation.LocationUID"
+                                                                        OnClose="@(()=>ViewLocation=false)" />
+                    }
+
+                
+            </div>
+
+            @if (LocationMasters != null)
+            {
+                foreach (var item in LocationMasters)
+                {
+                    if (item.Level != LocationMasters.Count)
+                    {
+                        <div class="cls_section_div_purchase4">
+                            
+                           
+                                <label class="cls_section_div_purchase2_label">@($"{item.LocationTypeName} : ")</label>
+                            <div class="cls_main_sign_input_new1">@($"{item.Label}")</div>
+                           
+                        </div>
+                    }
+                }
+            }
+
+        </div>
+        <div class="cls_container_div4">
+
+            <div class="cls_section_div_purchase4">
+               
+                   <label class="cls_section_div_purchase2_label">@Localizer["bdm"]</label>
+                
+
+                    @if (ShowBDM)
+                    {
+                        <Winit.UIComponents.Common.CustomControls.DropDown ShowPopUp=@ShowBDM DataSource="_bDM" OnSelect="@((e)=>OnSelected(e,"BDM"))" />
+                    }
+                    else
+                    {
+                        <button class="cls_select2" @onclick="@(()=>ShowBDM = !ShowBDM)">
+
+                            <label class="cls_select2_label1"> @BDMlabel</label>
+                            <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+                            </button>
+                    }
+               
+
+            </div>
+
+            <div class="cls_section_div_purchase4">
+
+                <label class="cls_section_div_purchase2_label">@Localizer["store_size"] @Localizer["(sq._meter)"] <span class="cls_section_div_purchase2_span">*</span></label>
+                <div class="cls_select">
+                    <input type="number" min="0" value="@CommonFunctions.FormatNumber(_CustomerInformation.StoreSize)" @oninput="StoreSize" />
+                    @* <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder=@Localizer["search_here..."]
+                MaxLength="200"
+                DebounceInterval="500" OnDebounceIntervalElapsed="StoreSize"
+                KeyboardType="Winit.Shared.Models.Enums.InputType.Numeric"
+                Value="@CommonFunctions.FormatNumber(_CustomerInformation.StoreSize)" /> *@
+
+                </div>
+
+            </div>
+
+            <div class="cls_section_attach">
+                
+                   <label class="cls_section_div_purchase2_label">@Localizer["outlet_image"]</label>
+                <div class="cls_main_sign_input_new1">
+                    <Winit.UIComponents.Common.FileUploader.FileUploader @ref=fileUploader 
+                                                                            RelativePath="@FilePath"
+                                                                         FileSysList="FileSysList"
+                                                                            LinkedItemType="store" 
+                                                                            LinkedItemUID="@_CustomerInformation.UID"
+                                                                            FileExtension=".jpg,.jpeg,.png" UploadEventCallBack="OnFilesUpload" />
+                </div>
+
+            </div>
+            <div class="cls_section_div_purchase4">
+                
+                   <label class="cls_section_div_purchase2_label">@Localizer["is_vat_qr_capture_mandatory"]</label>
+                <div class="cls_main_sign_input_new1">
+                    <div class="cls_main_check_radio">
+                        <input type="radio" @oninput="ChangeIsEditedOrNot" name="IsVATQRCaptureMAndatory" value="IsVATQRCaptureMAndatory1" id="IsVATQRCaptureMAndatory1" checked="@_CustomerInformation.IsVATQRCaptureMandatory" @onclick="(()=>_CustomerInformation.IsVATQRCaptureMandatory=true)">
+                        <label for="IsVATQRCaptureMAndatory1">@Localizer["yes"]</label>
+                        <input type="radio" @oninput="ChangeIsEditedOrNot" name="IsVATQRCaptureMAndatory" value="IsVATQRCaptureMAndatory2" id="IsVATQRCaptureMAndatory2" checked="@(!_CustomerInformation.IsVATQRCaptureMandatory)" @onclick="(()=>_CustomerInformation.IsVATQRCaptureMandatory=false)">
+                        <label for="IsVATQRCaptureMAndatory2">@Localizer["no"]</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+

@@ -1,0 +1,150 @@
+﻿@page "/newsboard"
+@using Winit.Modules.Common.Model.Constants
+@using Winit.Modules.NewsActivity.BL.Interfaces
+@using Winit.Modules.NewsActivity.Models.Constants
+@inject IManageNewsActivityViewModel _viewModel
+@inherits Base.BaseComponentBase
+<div class="cls_container_div4" style="margin-top:34px;">
+    <Winit.UIComponents.Common.CustomControles.Tabs TabItems="_viewModel.TabItems" OnTabSelect="OnTabSelect">
+
+    </Winit.UIComponents.Common.CustomControles.Tabs>
+</div>
+
+@if (NewsActivityConstants.news.Equals(_viewModel.SelectedTab.Code))
+{
+    <div class="cls_container_div4">
+        <div class="cls_reg_heading">
+            <div class="cls_border"></div>
+            <label class="cls_reg_heading_label">The Legacy of Innovation and Expertise</label>
+            <div class="cls_border"></div>
+        </div>
+
+        <p style="text-align:center;padding:0px 8%; ">Carrier Midea India (CMI) takes pride in delivering innovative and industry-leading products. It is honored to have received recognition and appreciation from various media outlets, and is delighted to share these accomplishments with the customers.</p>
+        <p style="text-align:center">CMI believes in maintaining transparency and keeping our customers informed about our brand and products. This page serves as a platform to showcase the accomplishments and share the news with the customers. Explore below to stay up-to-date with the latest happenings.</p>
+
+    </div>
+    <div class="cls_container_div4">
+        <div class="cls_news_outline">
+            @foreach (var item in _viewModel.NewsActivities)
+            {
+                string url = GetImageURL(item.FilesysList);
+                <div class="cls_news_div" @onclick="@(() => OnImageClick(url))">
+                    <img src=@url alt="" class="cls_news_img">
+                    <div class="cls_news_container">
+                        <label for="" class="cls_news_label">@item.Description</label>
+                        <label for="" class="cls_news_label1">@CommonFunctions.GetDateTimeInFormat(item.PublishDate)</label>
+                        @*<label for="" class="cls_news_label2"><span class="cls_news_span">New Delhi:</span> Air-conditioner seller Carrier Midea India Pvt. Ltd. has launched its first store Midea Cooling Solutions ProShop in Gurugram, a press release said on Tuesday. The new store features a variety of split air conditioners, alongside ducted units, cassette units, tower units, and a complete range of VRF (Variable Refrigerant Flow) systems for residential as well as commercial purposes.</label>*@
+                    </div>
+
+                </div>
+            }
+        </div>
+    </div>
+}
+else if (NewsActivityConstants.advertisement.Equals(_viewModel.SelectedTab.Code))
+{
+    <div class="cls_container_div4">
+        <div class="cls_reg_heading">
+            <div class="cls_border"></div>
+            <label class="cls_reg_heading_label">The Legacy of Innovation and Expertise</label>
+            <div class="cls_border"></div>
+        </div>
+
+        <p style="text-align:center; padding:0px 8%;">Carrier Midea India (CMI) takes pride in delivering innovative and industry-leading products. It is honored to have received recognition and appreciation from various media outlets, and is delighted to share these accomplishments with the customers.</p>
+        <p style="text-align:center">CMI believes in maintaining transparency and keeping our customers informed about our brand and products. This page serves as a platform to showcase the accomplishments and share the news with the customers. Explore below to stay up-to-date with the latest happenings.</p>
+
+    </div>
+    <div class="cls_container_div4">
+        <div class="cls_news_outline">
+            @foreach (var item in _viewModel.NewsActivities)
+            {
+                var img = GetImageOrVedioAndURL(item);
+                if (img.Item1 == FileTypeConstants.Vedio)
+                {
+                    <div class="cls_news_div" @onclick="(() => OnVideoClick(img.Item2))">
+                        <!-- <img src="./Images/cmi_news1.jpg" alt=""  class="cls_news_img"> -->
+                        <video controls="" width="100%" height="100%">
+                            <source src="@img.Item2" type="video/mp4">
+                        </video>
+                        <div class="cls_news_container">
+
+                            <label for="" class="cls_news_label1">@CommonFunctions.GetDateTimeInFormat(item.PublishDate)</label>
+                        </div>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="cls_news_div" @onclick="@(() => OnImageClick(GetImageURL(item.FilesysList)))">
+                        <img src=@GetImageURL(item.FilesysList) alt="" class="cls_news_img">
+                        <div class="cls_news_container">
+                            <label for="" class="cls_news_label">@item.Description</label>
+                            <label for="" class="cls_news_label1">@CommonFunctions.GetDateTimeInFormat(item.PublishDate)</label>
+                            @*<label for="" class="cls_news_label2"><span class="cls_news_span">New Delhi:</span> Air-conditioner seller Carrier Midea India Pvt. Ltd. has launched its first store Midea Cooling Solutions ProShop in Gurugram, a press release said on Tuesday. The new store features a variety of split air conditioners, alongside ducted units, cassette units, tower units, and a complete range of VRF (Variable Refrigerant Flow) systems for residential as well as commercial purposes.</label>*@
+                        </div>
+
+                    </div>
+                }
+            }
+        </div>
+
+    </div>
+}
+else
+{
+    <div class="cls_container_div4">
+        <div class="cls_reg_heading">
+            <div class="cls_border"></div>
+            <label class="cls_reg_heading_label">The Legacy of Innovation and Expertise</label>
+            <div class="cls_border"></div>
+        </div>
+
+        <p style="text-align:center;padding:0px 8%; ">Carrier Midea India (CMI) takes pride in delivering innovative and industry-leading products. It is honored to have received recognition and appreciation from various media outlets, and is delighted to share these accomplishments with the customers.</p>
+        <p style="text-align:center">CMI believes in maintaining transparency and keeping our customers informed about our brand and products. This page serves as a platform to showcase the accomplishments and share the news with the customers. Explore below to stay up-to-date with the latest happenings.</p>
+
+    </div>
+    <div class="cls_container_div4">
+        <div class="cls_news_outline">
+            @foreach (var item in _viewModel.NewsActivities)
+            {
+                <div class="cls_news_div" @onclick="@(() => OnImageClick(GetImageURL(item.FilesysList)))">
+                    <img src=@GetImageURL(item.FilesysList) alt="" class="cls_news_img">
+                    <div class="cls_news_container">
+                        <label for="" class="cls_news_label">@item.Description</label>
+                        <label for="" class="cls_news_label1">@CommonFunctions.GetDateTimeInFormat(item.PublishDate)</label>
+                        @*<label for="" class="cls_news_label2"><span class="cls_news_span">New Delhi:</span> Air-conditioner seller Carrier Midea India Pvt. Ltd. has launched its first store Midea Cooling Solutions ProShop in Gurugram, a press release said on Tuesday. The new store features a variety of split air conditioners, alongside ducted units, cassette units, tower units, and a complete range of VRF (Variable Refrigerant Flow) systems for residential as well as commercial purposes.</label>*@
+                    </div>
+
+                </div>
+            }
+        </div>
+    </div>
+}
+
+<Winit.UIComponents.Web.Paging.Paging TotalItems=@_viewModel.TotalItems 
+                                       PageSize="_viewModel.PageSize" 
+                                       CurrentPage="_viewModel.CurrentPage" 
+                                       OnPageChange="OnPageChange" />
+
+
+@if (ShowPopUp)
+{
+    <PopUp Title="@Title" OkbtnText="Ok" DisableCancelBtn="true"
+           OnOkClick="() => ShowPopUp = false"
+           OnCloseClick="() => ShowPopUp = false">
+        @if (IsImgTag)
+        {
+            <div class="cls_news_popup">
+                <img src="@ImageSrc" alt="" class="cls_news_popup_img" />
+            </div>
+        }
+        else
+        {
+            <div class="cls_news_popup">
+                <video controls="" width="100%" height="100%">
+                    <source src="@VideoSrc" type="video/mp4">
+                </video>
+            </div>
+        }
+    </PopUp>
+}

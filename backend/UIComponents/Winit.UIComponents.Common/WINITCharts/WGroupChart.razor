@@ -1,0 +1,17 @@
+﻿<div class="chart-container">
+    <EBar @ref="chart" Option="@ChartOption" Class="chart-fill" EventTypes="EventTypes" 
+    OnEventCallback="@OnEchartsEvent"></EBar>
+</div>
+
+<style>
+    .chart-container {
+        width: 100%;
+        overflow-x: auto; /* Allow horizontal scrolling */
+        white-space: nowrap;
+    }
+
+    .chart-fill {
+        min-width: 1500px; /* Ensure the chart is wider than its container */
+    }
+
+</style>

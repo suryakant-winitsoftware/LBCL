@@ -1,0 +1,53 @@
+﻿@page "/MaintainWebMenu"
+@layout MainLayout
+
+<PageTitle>Web Menu</PageTitle>
+@using Winit.Modules.Role.BL.Interfaces
+@inject IMaintainWebMenuBaseViewModel _maintainMenu
+
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+@if (_maintainMenu.IsLoad)
+{
+    <PageHeaderAndFilter IDataBreadcrumbService="iDataBreadcrumbService"></PageHeaderAndFilter>
+    <div class="cls_container_div1">
+        <div class="cls_container_div1">
+            <div class="cls_container_div1">
+                
+                <button class="cls_add_new_sec" @onclick="@_maintainMenu.SavePermissions">
+                    @Localizer["save"]
+                </button>
+                <button class="cls_add_new_sec" @onclick="@(()=>_navigationManager.NavigateTo("maintainUserRole"))">
+                    @Localizer["back"]
+                </button>
+            </div>
+            <label class="cls_mobMenu_check_label">Selected Role :@_maintainMenu.RoleName</label>
+        </div>
+
+        @foreach (var item in _maintainMenu.ModuleMasters)
+        {
+            @if (item.Module != null && item.Module.SerialNo != 1)
+            {
+                <div class="cls_container_div1">
+                    <div class="cls_container_div4">
+                        @if (item.Module != null)
+                        {
+                            <label class="cls_container_p_half">@item.Module.ModuleNameEn</label>
+                            @*   <input type="checkbox" name="@item.Module.module_name_en" checked="@item.Module.show_in_menu" @onclick=@(()=>item.Module.show_in_menu=!item.Module.show_in_menu) />
+            <label @onclick=@(()=>item.Module.show_in_menu=!item.Module.show_in_menu) for="@item.Module.module_name_en">View In Menu</label> *@
+                        }
+                    
+                    <div class="cls_webMenu_check_label">
+                        @Localizer["check_all"]  <input type="checkbox" checked="@IsCheckAll" @onclick=@(()=>OnCheckUncheckAll(item)) />
+                    </div>
+                    </div>
+
+                    <Menu IsCheckAll="IsCheckAll" SubModules=@item UID="@item?.Module?.UID" />
+                </div>
+            }
+        }
+        <div class="cls_button_bottom_purchase">
+            <button class="cls_button_blue" @onclick=_maintainMenu.SavePermissions>@Localizer["save"]</button>
+        </div>
+    </div>
+}

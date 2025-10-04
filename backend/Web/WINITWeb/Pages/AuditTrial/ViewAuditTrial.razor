@@ -1,0 +1,24 @@
+﻿@page "/viewaudittrial"
+@using Winit.Shared.Models.Common
+@using Winit.UIComponents.Common.CustomControles
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize]
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.UIComponents.Common.IAlertService _AlertMessgae
+@inject Winit.Modules.AuditTrail.BL.Interfaces.IAuditTrailView _viewModel
+
+
+
+@if (!IsPageLoading)
+{
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true"
+                         ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true" OnFilterApplied="@OnFilterApply" />
+    <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns"
+       DataSource="_viewModel.AuditTrailEntry" OnSort="OnSortApply" PageNumber="_viewModel.PageNumber"
+                                                PageSize="_viewModel.PageSize" TotalItemsCount="_viewModel.TotalAuditTrailItems" ShowRecordsCount="true"
+                                                />
+    <Winit.UIComponents.Web.Paging.Paging CurrentPage="_viewModel.PageNumber" 
+      OnPageChange="_viewModel.PageIndexChanged" PageSize="_viewModel.PageSize"
+                                          TotalItems="_viewModel.TotalAuditTrailItems" />
+
+}

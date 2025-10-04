@@ -1,0 +1,93 @@
+﻿@inherits WINITMobile.Pages.Base.BaseComponentBase
+<head>
+    <!-- Other head elements -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<div style="width:100%;float:left;margin:0px 0px;">
+        @if (!string.IsNullOrWhiteSpace(ValidationMessage))
+        {
+            <div class="alert alert-danger">
+                <div class="col-md-12">
+                    <div style="color: red;">@ValidationMessage</div>
+                </div>
+            </div>
+        }
+ <div class="card">
+        <div class="card-body">
+    <div class="cls_cust_information">
+<div class="row">
+                <div class="col-12 col-md-12 col-lg-12 mb-12">
+                        <h6 class="cls_copy_adress_span">Brands Dealing in & Brand Wise T/O (Rs in Lacs)</h6>
+                </div>
+    @foreach (var brandInfo in brandInfos)
+    {
+        <div class="col-12 col-md-6 col-lg-4 mb-4">
+            <label class="cls_customer_label">Brand</label>
+                            <input autocomplete="off" class="cls_select2_button" type="text" placeholder="Enter here" @bind="brandInfo.Brand" />
+        </div>
+        <div class="col-12 col-md-6 col-lg-4 mb-4">
+            <label class="cls_customer_label">Rs T/O (Rs in Lacs)</label>
+                            <input autocomplete="off" class="cls_select2_button" type="text" placeholder="Enter here" @bind="brandInfo.RsTo" />
+        </div>
+        <div class="col-12 col-md-6 col-lg-4 mb-4 d-flex align-items-end">
+            @if (brandInfo == brandInfos.Last())
+            {
+                            <button style="margin-top: 17px;" class="btn btn-primary mb-2" @onclick="AddRow"><i class="fas fa-plus"></i></button>
+            }
+            else
+            {
+                            <button style="margin-top: 17px;" class="btn btn-danger mb-2" @onclick="() => RemoveRow(brandInfo)"><i class="fas fa-minus"></i></button>
+            }
+        </div>
+    }
+</div>
+
+<div class="row">
+    <div class="col-12 col-md-6 mb-4">
+                        <label class="cls_customer_label">Products Dealing in<i class="cls_section_div_purchase2_span">*</i></label>
+        <textarea autocomplete="off" class="cls_news_textarea" placeholder="Enter here" @bind="storeAdditionalInfoCMI.ProductDealingIn"></textarea>
+    </div>
+    <div class="col-12 col-md-6 mb-4">
+                        <label class="cls_customer_label">Area of Operation<i class="cls_section_div_purchase2_span">*</i></label>
+        <textarea autocomplete="off" class="cls_news_textarea" placeholder="Enter here" @bind="storeAdditionalInfoCMI.AreaOfOperation"></textarea>
+    </div>
+</div>
+
+<div class="row">
+                <div class="col-12 col-sm-12 col-md-12 col-lg-12 mb-1">
+                        <h6 class="cls_copy_adress_span">Detail of Present Operation - Distribution</h6>
+       
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 col-md-6 mb-4">
+                        <label class="cls_customer_label">Products<i class="cls_section_div_purchase2_span">*</i></label>
+        <textarea autocomplete="off" class="cls_news_textarea" placeholder="Enter here" @bind="storeAdditionalInfoCMI.DistProducts"></textarea>
+    </div>
+    <div class="col-12 col-md-6 mb-4">
+                        <label class="cls_customer_label">Area of Operation<i class="cls_section_div_purchase2_span">*</i></label>
+        <textarea autocomplete="off" class="cls_news_textarea" placeholder="Enter here" @bind="storeAdditionalInfoCMI.DistAreaOfOperation"></textarea>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 col-md-6 mb-4">
+        <label class="cls_customer_label">Brands (Dealing with Major Customer List(In Case of SSD))</label>
+        <textarea autocomplete="off" class="cls_news_textarea" placeholder="Enter here" @bind="storeAdditionalInfoCMI.DistBrands"></textarea>
+    </div>
+    <div class="col-12 col-md-6 mb-4">
+        <label class="cls_customer_label">Monthly Sales(in Nos) - HVAC only</label>
+        <textarea autocomplete="off" class="cls_news_textarea" placeholder="Enter here" @bind="storeAdditionalInfoCMI.DistMonthlySales"></textarea>
+    </div>
+</div>
+        </div>
+        </div>
+</div>
+</div>
+<div class="cls_button_bottom_purchase"
+        <button class="cls_button_light" type="submit" @onclick="OnClean">Clear</button>
+        <button class="cls_button_blue" type="submit" @onclick="SaveBusinessDetails">@ButtonName</button>
+</div>
+
+@code {
+    
+}

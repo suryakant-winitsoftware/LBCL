@@ -1,0 +1,51 @@
+bin/
+obj/
+.vs/ 
+
+# Ignore bin and obj folders from all projects
+**/bin/
+**/obj/
+
+# Ignore user-specific files
+.vs/
+*.csproj.user
+# Ignore all appsettings files
+*.user
+*.suo
+
+# Ignore output and debug files
+*.dll
+*.exe
+*.pdb
+*.obj
+*.cache
+*.log
+/Scripts
+/Documentation
+/.vs
+
+# Ignore appsettings and launch settings
+**/appsettings.json
+**/appsettings.*.json
+**/launchSettings.json
+/.cursor/rules/winit-product-project-structure.mdc
+/WINITAPI/Data/Sqlite/User/2025/6
+/WINITAPI/Data/SqliteLog/2025/6
+/WINITAPI/Properties/PublishProfiles
+/WINITAPI/WINITAPI.csproj.user
+/Web/WINITWeb/WinIt.csproj.user
+/Web/WINITWeb/Properties/PublishProfiles
+/APIs/SyncAPI/Properties/PublishProfiles
+/Consumer/Sync/SyncConsumer/Properties/PublishProfiles
+/Consumer/Sync/SyncConsumer/Properties/PublishProfiles/FolderProfile.pubxml
+/WINITAPI/Data/SyncLog/2025/6/12/8c437976-5422-4a51-8ab7-c607c7962caf
+/WINITAPI/Data/SyncLog/2025/6/9/8c437976-5422-4a51-8ab7-c607c7962caf
+/WINITAPI/Data/SyncLog/2025/6/16/8c437976-5422-4a51-8ab7-c607c7962caf
+/WINITAPI/Data/SyncLog/2025/6/17/8c437976-5422-4a51-8ab7-c607c7962caf
+/WINITAPI/Data/SyncLog/2025/6
+/Web/WINITMobile/WINITMobile.csproj.user
+/Web/WINITMobile/WINITMobile.csproj.user
+/WINITAPI/Data/Planogram/2025/6/30
+
+WINITAPI/C:/Logs/
+C:/Logs/

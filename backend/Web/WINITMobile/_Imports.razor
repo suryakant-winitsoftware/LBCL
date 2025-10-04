@@ -1,0 +1,29 @@
+﻿@using System.Net.Http
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.JSInterop
+@using WINITMobile
+@using WINITMobile.Services
+@using WINITMobile.Shared
+@using WINITMobile.State
+@using Winit.Modules.Common.Model.Interfaces;
+@using Winit.Shared.CommonUtilities.Extensions
+@using Winit.Modules.SalesOrder.Model.UIInterfaces
+@inject IJSRuntime _jSRuntime
+@inject IServiceProvider _serviceProvider
+@inject Winit.Shared.CommonUtilities.Common.CommonFunctions _commonFunctions
+@inject Winit.Shared.Models.Common.IAppConfig _appConfigs
+@inject Winit.Modules.Common.BL.Interfaces.IAppUser _appUser
+@inject Winit.Modules.Setting.BL.Interfaces.IAppSetting _appSetting
+@using WINITMobile.Data;
+@inject Winit.UIComponents.Common.Services.ILoadingService _loadingService
+@inject NavigationManager _navigationManager
+@inject Winit.UIComponents.Common.IAlertService _alertService
+@inject IDataManager _dataManager
+@inject Winit.UIComponents.Common.Services.IDropDownService _dropdownService
+@inject Winit.Modules.Common.BL.Interfaces.IAndroidBlazorCommunicationBridge _androidBlazorCommunicationBridge
+@inject Winit.UIComponents.Common.Language.ILanguageService _languageService
+@inject SecureStorageHelper _storageHelper
+@inject WINITMobile.State.IBackButtonHandler _backbuttonhandler

@@ -1,0 +1,210 @@
+﻿@page "/upload"
+@using System;
+@using System.IO;
+@using System.Net.Http;
+@using System.Net.Http.Headers;
+@using System.Threading.Tasks;
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.JSInterop
+@using Newtonsoft.Json
+@using Winit.Shared.Models.Common
+@using System.Globalization;
+@using System.Resources;
+@using Winit.UIComponents.Common.Language;
+@using Microsoft.Extensions.Localization
+@using Winit.UIComponents.Common.LanguageResources.Web
+@inject Winit.UIComponents.Common.Language.ILanguageService _languageService
+@inject NavigationManager _navigationManager
+@inject IAppConfig _appConfig
+@inject IFileUploaderBaseViewModel _FileUploaderBaseViewModel
+@using System.Diagnostics;
+@inject IStringLocalizer<LanguageKeys> Localizer
+@inject IJSRuntime JSRuntime
+@*
+<input type="file" multiple  @onchange="@(e => HandleMultipleFileSelected(e))" /> *@
+@if (AllowMultipleFiles)
+{
+    <InputFile class="cls_inputt1 cls_file_upload_input" @ref="inputFile" id="FileInput" multiple OnChange="_FileUploaderBaseViewModel.HandleFileSelected" />
+}
+else
+{
+    <InputFile class="cls_inputt2 cls_file_upload_input" id="FileInput" OnChange="_FileUploaderBaseViewModel.HandleFileSelected" />
+}
+
+
+
+@if (ShowImageInPopup)
+{
+    <div class="modal-backdrop fade show" b-odaaqfzh40=""></div>
+    <div class="modal fade show" tabindex="-1" style="display: block; ">
+        <div class="modal-content cls_dropbown_popup">
+
+            <div class="modal-header">
+                <span class="close" @onclick="@(()=>ShowImageInPopup=false)">&times;</span>
+            </div>
+            <div class="modal-body">
+                <img src="@PopUpImagePath" style="max-width: 100%; max-height: 100%;" />
+            </div>
+
+        </div>
+    </div>
+
+
+}
+
+<button class="cls_comman_btn cls_file_upload_button" style="padding: 10px 7px;margin-left:5px;font-size:12px" @onclick="@UploadFile">@Localizer["upload_file"]</button>
+
+@if (_FileUploaderBaseViewModel.AllImages != null && _FileUploaderBaseViewModel.AllImages.Count > 0)
+{
+    <div class="cls_upload_div">
+        @foreach (Modules.FileSys.Model.Classes.FileSys fileSys in _FileUploaderBaseViewModel.AllImages)
+        {
+            <div class="cls_upload_sec">
+                <a @onclick="@(()=>OnImageOrPdfClick(fileSys))">
+                    @if (fileSys.Id == 0)
+                    {
+                        <img class="cls_upload_sec_img" src="@(fileSys.FileType==Winit.Modules.Common.Model.Constants.FileTypeConstants.Image?$"{_appConfig.ApiDataBaseUrl}{fileSys.TempPath}/{fileSys.FileName}":$"Images/{fileSys.FileType}.png")" alt="@fileSys.DisplayName" />
+                    }
+                    else
+                    {
+                        <img class="cls_upload_sec_img" src="@(fileSys.FileType==Winit.Modules.Common.Model.Constants.FileTypeConstants.Image?$"{_appConfig.ApiDataBaseUrl}{fileSys.RelativePath}/{fileSys.FileName}":$"Images/{fileSys.FileType}.png")" alt="@fileSys.DisplayName" />
+                    }
+                </a>
+                <span class="cls_upload_sec_span" @onclick=@(()=>DeleteFile(fileSys))>x</span>
+            </div>
+        }
+    </div>
+
+}
+
+
+@code {
+    [Parameter]
+    public string RelativePath { get; set; } = "Images";
+    [Parameter]
+    public bool AllowMultipleFiles { get; set; }
+    [Parameter]
+    public List<Winit.Modules.FileSys.Model.Interfaces.IFileSys> FileSysList { get; set; }
+    [Parameter] public string LinkedItemType { get; set; }
+    [Parameter] public string LinkedItemUID { get; set; }
+    [Parameter] public string FileSysType { get; set; }
+    [Parameter] public string FileType { get; set; }
+    [Parameter] public bool IsDirectory { get; set; }
+    [Parameter] public string FileExtension { get; set; }
+    [Parameter] public long FileSize { get; set; }
+    [Parameter] public string ErrorMessage { get; set; }
+
+    [Parameter]
+    public EventCallback<List<Winit.Modules.FileSys.Model.Interfaces.IFileSys>> UploadEventCallBack { get; set; }
+    [Parameter]
+    public EventCallback<string> DeleteEventCallBack { get; set; }
+
+    bool ShowImageInPopup { get; set; }
+    string PopUpImagePath { get; set; }
+    InputFile inputFile;
+    bool isInitialized { get; set; }
+    protected override void OnInitialized()
+    {
+        LoadResources(null, _languageService.SelectedCulture);
+        _FileUploaderBaseViewModel.AllImages = FileSysList;
+        _FileUploaderBaseViewModel.PopulateViewModel(RelativePath, FileExtension, FileSize, ErrorMessage);
+        base.OnInitialized();
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (FileSysList != null && FileSysList?.Count > 0)
+        {
+            _FileUploaderBaseViewModel.AllImages = FileSysList;
+            _FileUploaderBaseViewModel.PopulateWhenParameterChanged();
+        }
+        base.OnInitialized();
+    }
+    protected void LoadResources(object sender, string culture)
+    {
+        CultureInfo cultureInfo = new CultureInfo(culture);
+        ResourceManager resourceManager = new ResourceManager("Winit.UIComponents.Common.LanguageResources.Web.LanguageKeys", typeof(Winit.UIComponents.Common.LanguageResources.Web.LanguageKeys).Assembly);
+        Localizer = new CustomStringLocalizer<LanguageKeys>(resourceManager, cultureInfo);
+    }
+    public async Task<ApiResponse<string>> MoveFiles()
+    {
+        return await _FileUploaderBaseViewModel.MoveFiles(RelativePath);
+    }
+
+    private async Task OnImageOrPdfClick(Modules.FileSys.Model.Classes.FileSys fileSys)
+    {
+        PopUpImagePath = fileSys.Id == 0 ? $"{_appConfig.ApiDataBaseUrl}{fileSys.TempPath}/{fileSys.FileName}" : $"{_appConfig.ApiDataBaseUrl}{fileSys.RelativePath}/{fileSys.FileName}";
+        if (fileSys.FileSysFileType == Modules.FileSys.Model.Classes.FileType.Image)
+        {
+            ShowImageInPopup = true;
+        }
+        else if (fileSys.FileSysFileType == Modules.FileSys.Model.Classes.FileType.Pdf)
+        {
+            await JSRuntime.InvokeVoidAsync("openPdfInNewTab", PopUpImagePath);
+
+        }
+
+
+    }
+    public async Task DeleteFile(Modules.FileSys.Model.Classes.FileSys fileSys)
+    {
+        if(await _FileUploaderBaseViewModel.DeleteFile(fileSys))
+        {
+            await DeleteEventCallBack.InvokeAsync(fileSys.UID);
+        }
+    }
+    public async Task UploadFile()
+    {
+        bool isUploaded = await _FileUploaderBaseViewModel.UploadFile(linkedItemType: LinkedItemType, LinkedItemUID, FileType, FileSysType, RelativePath, IsDirectory);
+        if (isUploaded)
+        {
+            await JSRuntime.InvokeVoidAsync("resetFileInput", "FileInput");
+            await UploadEventCallBack.InvokeAsync(_FileUploaderBaseViewModel?.AllImages?.Where(p => p.Id == 0).ToList());
+            StateHasChanged();
+        }
+    }
+
+}
+
+<script type="text/javascript">
+    //added script
+    // function toggleUploadDiv() {
+    //     var uploadDiv = document.querySelector('.cls_upload_div');
+    //     if (uploadDiv) {
+    //         if (uploadDiv.style.display === "none" || uploadDiv.style.display === "") {
+    //             uploadDiv.style.display = "block";
+    //         } else {
+    //             uploadDiv.style.display = "none";
+    //         }
+    //     }
+    // }
+
+    // // Attach the click event to the button without interfering with Blazor's
+    // document.addEventListener('DOMContentLoaded', function () {
+    //     var uploadButton = document.getElementById('uploadButton');
+    //     if (uploadButton) {
+    //         uploadButton.addEventListener('click', function () {
+    //             toggleUploadDiv();
+    //         });
+    //     }
+    // });
+    // //script end
+
+    function openPdfInNewTab(pdfUrl) {
+        window.open(pdfUrl, '_blank');
+    }
+
+    function openPdfInNewTab(pdfUrl) {
+        window.open(pdfUrl, '_blank');
+    }
+
+    window.resetFileInput = function (id) {
+        var fileInput = document.getElementById(id);
+        fileInput.value = null;
+    };
+
+    window.setFiles = function (id, formData) {
+        var fileInput = document.getElementById(id);
+        fileInput.files = formData.getAll("files");
+    };
+</script>

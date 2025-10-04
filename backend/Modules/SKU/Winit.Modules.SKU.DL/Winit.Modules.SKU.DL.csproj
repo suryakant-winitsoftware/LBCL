@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Base\Winit.Modules.Base.DL\Winit.Modules.Base.DL.csproj" />
+    <ProjectReference Include="..\..\CustomSKUFields\Winit.Modules.CustomSKUFields.Model\Winit.Modules.CustomSKUFields.Model.csproj" />
+    <ProjectReference Include="..\..\FileSys\Winit.Modules.FileSys.Model\Winit.Modules.FileSys.Model.csproj" />
+    <ProjectReference Include="..\..\Store\Winit.Modules.Store.Model\Winit.Modules.Store.Model.csproj" />
+    <ProjectReference Include="..\Winit.Modules.SKU.Model\Winit.Modules.SKU.Model.csproj" />
+  </ItemGroup>
+</Project>

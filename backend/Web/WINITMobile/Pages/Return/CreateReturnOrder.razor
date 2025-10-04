@@ -1,0 +1,137 @@
+﻿@page "/createreturnorder"
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+@inject PageState _PageState
+@inject Winit.Modules.ReturnOrder.BL.Interfaces.IReturnOrderViewModelFactory _viewModelFactory;
+@using WINITMobile.Pages.DialogBoxes;
+<div>
+    <h3>Return<label> @(IsWithInvoice ? " With" : " ") Invoice</label></h3>
+</div>
+<br />
+@{
+    var viewModelWithInvoice = _returnOrderViewModel as Winit.Modules.ReturnOrder.BL.Interfaces.IReturnOrderWithInvoiceViewModel;
+}
+@if (_returnOrderViewModel != null && IsWithInvoice && viewModelWithInvoice?.SelectedInvoice != null)
+{
+    <div>
+        <div class="container">
+            <div class="invoice-card">
+
+                <div class="invoice-details">
+                    <div class="font-weight-bold">
+                        Inv No: @viewModelWithInvoice?.SelectedInvoice?.SalesOrderNumber
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <div>Date</div>
+                        <div>Total Qty</div>
+                        <div>Avl Qty</div>
+                    </div>
+                    <div class="d-flex justify-content-between font-weight-bold" style="color: #1B478A;">
+                        <div>
+                            @(Winit.Shared.CommonUtilities.Common.CommonFunctions
+                                    .GetDateTimeInFormat(viewModelWithInvoice?.SelectedInvoice?.DeliveryDate))
+                        </div>
+                        <div>
+                            @viewModelWithInvoice?.SelectedInvoice?.TotalQuantity
+                        </div>
+                        <div>
+                            @viewModelWithInvoice?.SelectedInvoice?.AvailableQty
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if(_returnOrderViewModel != null)
+{
+    <AddProductDialogBox T="Winit.Modules.ReturnOrder.Model.Interfaces.IReturnOrderItemView"
+                         DataSource="_returnOrderViewModel?.ReturnOrderItemViewsRawdata"
+                         FilterAction="_returnOrderViewModel.FilterAction"
+                         SKUCode="@(e => e.SKUCode )"
+                         SKUHeader="@(e => e.SKUName)"
+                         ImageUrl="@(e => e.SKUImage)"
+                         OnCancelClick="CancelClickOnAddProductPopUp"
+                         OnOkClick="AddProductClick"
+                         FilterDataList="_returnOrderViewModel?.FilterDataList"
+                         @ref="AddProductDialogBox" />
+}
+
+
+@if (IsLoaded)
+{
+    <div class="cls_delivary_date_main_left">
+        <button class="cls_btn_primary_note" @onclick="() => AddProductDialogBox.OnOpenClick()">@Localizer["add_items"]</button>
+        <button class="cls_btn_primary_note" @onclick="OnPreviewBtnClick">@Localizer["preview"]</button>
+    </div>
+    <div class="cls_serch_nn" style="margin-top:5px;">
+        <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder=@Localizer["search_by_item_code_/_description"] MaxLength="200" DebounceInterval="500" OnDebounceIntervalElapsed="ItemSearch"
+                                                               KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+                                                               Value="" IsForSearch="true" />
+    </div>
+    <ReturnOrderListView DisplayReturnOrderItemViews="_returnOrderViewModel.DisplayedReturnOrderItemViews"
+                         UOMSelectionItems="UOMSelectionItems" OnUOMDDClick="UOMDDClicked"
+                         DropDownSelection_OnSingleSelect="DropDownSelection_OnSingleSelect"
+                         OnQtyChanged="QtyChanged" OnResonTypeChange="ReasonTypeChanged"
+                         OnDelete="DeleteItem"
+                         ImgFolderPath="@(((Winit.Modules.ReturnOrder.BL.Classes.ReturnOrderAppViewModel)
+                    _returnOrderViewModel).ImageFolderPath)" OnImageCapture="OnImageCapture" OnImageDeleteClick="OnImageDeleteClick" IsWithInvoice="@IsWithInvoice" />
+}
+
+@if (IsPreviewPage)
+{
+    <ReturnOrderPreviewList DisplayReturnOrderItemViews="_returnOrderViewModel.DisplayedReturnOrderItemViews.Where(i => i.IsSelected).ToList()"></ReturnOrderPreviewList>
+}
+<style>
+
+</style>
+@if (IsInvoiceList)
+{
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show" tabindex="-1" style="display: block;">
+        <div style="margin-top:0%">
+            <div class="modal-content" style="width: 100%;margin-left: 0%;border-radius: 10px 10px 0px 0px;">
+                <div class="modal-header">
+                    <h5 class="modal-title">Select Inovice</h5>
+                    <button type="button" class="close" @onclick="OnInvoiceSelction">
+                        <span style="color:black; padding:10px;width:100%">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="padding:0px;">
+                    <div class="container overflow-auto" style="height:400px;">
+                        @foreach (var invoice in (_returnOrderViewModel as Winit.Modules.ReturnOrder.BL.Interfaces.IReturnOrderWithInvoiceViewModel).SalesOrdersInvoices)
+                        {
+                            <div class="invoice-card" @onclick="() => (_returnOrderViewModel as Winit.Modules.ReturnOrder.BL.Interfaces.IReturnOrderWithInvoiceViewModel).SelectedInvoice = invoice">
+                                <div class="invoice-icon">
+                                    <input type="radio" name="invoice_selection" />
+                                </div>
+                                <div class="invoice-details">
+                                    <div class="font-weight-bold">Inv No: @invoice.SalesOrderNumber</div>
+                                    <div class="d-flex justify-content-between">
+                                        <div>Date</div>
+                                        <div>Total Qty</div>
+                                        <div>Avl Qty</div>
+                                    </div>
+                                    <div class="d-flex justify-content-between font-weight-bold" style="color: #1B478A;">
+                                        <div>@(Winit.Shared.CommonUtilities.Common.CommonFunctions.GetDateTimeInFormat(invoice.DeliveryDate))</div>
+                                        <div>@(invoice.TotalQuantity)</div>
+                                        <div>@(invoice.AvailableQty)</div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div style="width:100%;float:left">
+                    <div class="modal-footer" style="padding: 0px;border: 0px;">
+                        <div class="cls_btn_new">
+                            <button type="button" class="cls_btn_langu" style="width:100%" @onclick="OnInvoiceSelction">
+                                Proceed
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

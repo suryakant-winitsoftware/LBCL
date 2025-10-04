@@ -1,0 +1,182 @@
+﻿@using Winit.Modules.StoreCheck.Model.Interfaces;
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+
+
+
+<div class="modal fade show" style="display: block;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img src="@DataSource" alt="@DataSource.ItemCode" style="width:18px; margin-right: 10px;">
+                <h5 class="modal-title">@DataSource.SKUName</h5>
+                @* <button type="button" class="close" @onclick="() => DataSource = null">
+                    <span aria-hidden="true">&times;</span>
+                </button> *@
+            </div>
+            <div class="modal-body">
+                <div style="background-color: #003898; color: white; padding: 5px;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <div>@Localizer["uom"]</div>
+                        <div>@Localizer["qty"]</div>
+                    </div>
+                </div>
+                <div style="padding: 5px;">
+                    <div style="display: flex; justify-content: space-between;">
+                       
+                        <div>@DataSource.StoreCheckOuterQtyDetails.UOM</div>
+                       @* // <div>@DataSource.AllowedUOMs[0].Code</div> *@
+                        @if (!DataSource.IsBackStoreBtnClick)
+                        {
+                            <input type="number" class="form-control" value="@DataSource.StoreCheckOuterQtyDetails.StoreQty" style="color: black; border-color:  #cccccc; background-color: #ffffff; width: 70px; height: 32px;" @onchange="(e)=>onOuterStoreRowDataChange(e)" />
+                        }
+                        else
+                        {
+                            <input type="number" class="form-control" value="@DataSource.StoreCheckOuterQtyDetails.BackStoreQty" style="color: black; border-color:  #cccccc; background-color: #ffffff; width: 70px; height: 32px;" @onchange="(e)=>onOuterBackStoreRowDataChange(e)" />
+                        } 
+                    </div>
+                    <hr style="border-top: 1px solid black; margin-top: 5px; margin-bottom: 5px;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <div>@DataSource.StoreCheckBaseQtyDetails.UOM</div>
+                        @if (!DataSource.IsBackStoreBtnClick)
+                        {
+                            <input type="number" class="form-control" value="@DataSource.StoreCheckBaseQtyDetails.StoreQty" style="color: black; border-color:  #cccccc; background-color: #ffffff; width: 70px; height: 32px;" @onchange="(e)=>onBaseStoreRowDataChange(e)" />
+                        }
+                        else
+                        {
+                            <input type="number" class="form-control" value="@DataSource.StoreCheckBaseQtyDetails.BackStoreQty" style="color: black; border-color:  #cccccc; background-color: #ffffff; width: 70px; height: 32px;" @onchange="(e)=>onBaseBackStoreRowDataChange(e)" />
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-secondary" style="background-color: #003898; color: white; width:100%;" @onclick="() => OnSubmit(DataSource)">@Localizer["done"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-backdrop fade show"></div>
+
+
+
+
+@code {
+
+    [Parameter]
+    public IStoreCheckItemHistoryViewList  DataSource { get; set; }
+
+    [Parameter]
+    public EventCallback<IStoreCheckItemHistoryViewList> AfterModificationDone { get; set; }
+
+    protected override void OnInitialized()
+    {
+        LoadResources(null, _languageService.SelectedCulture);
+        base.OnInitialized();
+    }
+
+    public async Task OnSubmit(IStoreCheckItemHistoryViewList rowDataSource)
+    {
+        if (!rowDataSource.IsBackStoreBtnClick)
+        {
+            // int.TryParse(rowDataSource.StoreQty.pcQty, out pcQty);
+            // int.TryParse(rowDataSource.StoreQty.CaseQty, out caseQty);
+            // int totalQty = pcQty + caseQty;
+            rowDataSource.StoreCheckBaseQtyDetails.StoreQtyBu = rowDataSource.StoreCheckBaseQtyDetails.StoreQty  * rowDataSource.StoreCheckBaseQtyDetails.UomMultiplier;
+            rowDataSource.StoreCheckOuterQtyDetails.StoreQtyBu = rowDataSource.StoreCheckOuterQtyDetails.StoreQty * rowDataSource.StoreCheckOuterQtyDetails.UomMultiplier;
+            rowDataSource.StoreQty = (rowDataSource.StoreCheckOuterQtyDetails.StoreQtyBu ?? 0) + (rowDataSource.StoreCheckBaseQtyDetails.StoreQtyBu ?? 0);
+        }
+        else
+        {
+            // int.TryParse(rowDataSource.BackStoreQty.pcQty, out pcQty);
+            // int.TryParse(rowDataSource.BackStoreQty.CaseQty, out caseQty);
+            // int totalQty = pcQty + (caseQty * rowDataSource.AllowedUOMs[0].Multiplier);
+            rowDataSource.StoreCheckBaseQtyDetails.BackStoreQtyBu = rowDataSource.StoreCheckBaseQtyDetails.BackStoreQty * rowDataSource.StoreCheckBaseQtyDetails.UomMultiplier;
+            rowDataSource.StoreCheckOuterQtyDetails.BackStoreQtyBu = rowDataSource.StoreCheckOuterQtyDetails.BackStoreQty * rowDataSource.StoreCheckOuterQtyDetails.UomMultiplier;
+            rowDataSource.BackStoreQty = (rowDataSource.StoreCheckBaseQtyDetails.BackStoreQtyBu ?? 0) + (rowDataSource.StoreCheckOuterQtyDetails.BackStoreQtyBu ?? 0);
+
+        }
+        rowDataSource.ToFillQty = rowDataSource.SuggestedQty  - rowDataSource.BackStoreQty  - rowDataSource.StoreQty ;
+
+        await AfterModificationDone.InvokeAsync(rowDataSource);
+    }
+
+    private void onOuterStoreRowDataChange(ChangeEventArgs e)
+    {
+        if (e.Value is IConvertible)
+        {
+            DataSource.StoreCheckOuterQtyDetails.StoreQty = Convert.ToDecimal(e.Value);
+        }
+        else
+        {
+            DataSource.StoreCheckOuterQtyDetails.StoreQty = 0; // or any default value
+        }
+        DataSource.StoreCheckOuterQtyDetails = TimeModifying(DataSource.StoreCheckOuterQtyDetails);
+    }
+    private void onOuterBackStoreRowDataChange(ChangeEventArgs e)
+    {
+        if (e.Value is IConvertible)
+        {
+            DataSource.StoreCheckOuterQtyDetails.BackStoreQty = Convert.ToDecimal(e.Value);
+        }
+        else
+        {
+            DataSource.StoreCheckOuterQtyDetails.BackStoreQty = 0; // or any default value
+        }
+        DataSource.StoreCheckOuterQtyDetails = TimeModifying(DataSource.StoreCheckOuterQtyDetails);
+    }
+    private void onBaseStoreRowDataChange(ChangeEventArgs e)
+    {
+        if (e.Value is IConvertible)
+        {
+            DataSource.StoreCheckBaseQtyDetails.StoreQty = Convert.ToDecimal(e.Value);
+        }
+        else
+        {
+            DataSource.StoreCheckBaseQtyDetails.StoreQty = 0; // or any default value
+        }
+        DataSource.StoreCheckOuterQtyDetails = TimeModifying(DataSource.StoreCheckOuterQtyDetails);
+    }
+    private void onBaseBackStoreRowDataChange(ChangeEventArgs e)
+    {
+        if (e.Value is IConvertible)
+        {
+            DataSource.StoreCheckBaseQtyDetails.BackStoreQty = Convert.ToDecimal(e.Value);
+        }
+        else
+        {
+            DataSource.StoreCheckOuterQtyDetails.BackStoreQty = 0; // or any default value
+        }
+        DataSource.StoreCheckOuterQtyDetails = TimeModifying(DataSource.StoreCheckOuterQtyDetails);
+    }
+    public IStoreCheckItemUomQty TimeModifying(IStoreCheckItemUomQty storeCheckItemExpiryDREHistory)
+    {
+        storeCheckItemExpiryDREHistory.ModifiedTime = DateTime.Now;
+        storeCheckItemExpiryDREHistory.ServerModifiedTime = DateTime.Now;
+        storeCheckItemExpiryDREHistory.IsRowModified = true;
+        return storeCheckItemExpiryDREHistory;
+    }
+
+}
+
+<style>
+    .modal-content {
+        position: fixed;
+        z-index: 1;
+        width: 60%;
+        margin-left: auto;
+        margin-right: auto;
+        left: 0;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        border-radius: 10px;
+    }
+
+    .modal-backdrop {
+        z-index: 1040;
+    }
+
+    .modal {
+        z-index: 1050;
+    }
+</style>                

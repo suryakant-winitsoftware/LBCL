@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Base\Winit.Modules.Base.DL\Winit.Modules.Base.DL.csproj" />
+    <ProjectReference Include="..\..\ProvisionComparisonReport\Winit.Modules.ProvisionComparisonReport.Model\Winit.Modules.ProvisionComparisonReport.Model.csproj" />
+    <ProjectReference Include="..\..\Provisioning\Winit.Modules.Provisioning.Model\Winit.Modules.Provisioning.Model.csproj" />
+    <ProjectReference Include="..\..\Scheme\Winit.Modules.Scheme.DL\Winit.Modules.Scheme.DL.csproj" />
+    <ProjectReference Include="..\..\Scheme\Winit.Modules.Scheme.Model\Winit.Modules.Scheme.Model.csproj" />
+    <ProjectReference Include="..\Winit.Modules.Invoice.Model\Winit.Modules.Invoice.Model.csproj" />
+  </ItemGroup>
+
+</Project>

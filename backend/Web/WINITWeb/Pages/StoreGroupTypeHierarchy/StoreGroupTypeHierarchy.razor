@@ -1,0 +1,51 @@
+﻿@inherits WinIt.Pages.Base.BaseComponentBase
+
+@foreach (Winit.Modules.Store.Model.Interfaces.IStoreGroupTypeItemView grid in HierarchyGrids)
+{
+
+        <tr>
+            <td >
+                @if (grid.ChildGrids != null && grid.ChildGrids.Any())
+                {
+                    <img style="width:30px" @onclick='()=>ToggleCollapse(grid)' src='@(grid.IsOpen ? "Images/hierarchy_minus.svg" : "Images/hierarchy_plus.svg")' />
+                }
+            </td>
+            <td  >[@grid.Code] @grid.Name</td>
+            <td  >@grid.LevelNo</td>
+            <td  >@(string.IsNullOrEmpty(grid.ParentName) ? "N/A" : grid.ParentName)</td>
+            <td  >
+                <img @onclick='() => UpdatePopIconClicked(grid)' src="Images/edit.png" style="width:20px;" />
+                <img @onclick='() => CreatePopIconClicked(grid)' src="Images/hierarchy_plus.svg" style="width:20px;" />
+                <img @onclick='() => DeletePopIconClicked(grid)' src="Images/delete.png" style="width:20px;" />
+            </td>
+        </tr>
+   
+
+    @if (grid.IsCreatePopUpOpen)
+    {
+        <AddUpdateStoreGroupTypePopUp CancelbtnText=@Localizer["close"] OkBtnText=@Localizer["create"] OnOkClick="() => CreateSkuGroup(grid)" storeGroupTypeItemView="grid" Context="Context" title="@title" IsAddPopUp=true OnCloseClick="() => grid.IsCreatePopUpOpen=false" />
+    }
+    @if (grid.IsUpdatePopUpOpen)
+    {
+        <AddUpdateStoreGroupTypePopUp CancelbtnText=@Localizer["cancel"] OkBtnText=@Localizer["update"] OnOkClick="UpdateStoreGroupTypeClick" storeGroupTypeItemView="grid" Context="Context" title="@title" OnCloseClick="() => grid.IsUpdatePopUpOpen=false" />
+    }
+    @if (grid.IsDeletePopUpOpen)
+    {
+        <PopUp Title="@title" OnCloseClick="() => grid.IsDeletePopUpOpen=false" OkbtnText=@Localizer["ok"] CancelbtnText=@Localizer["cancel"] OnOkClick="() => DeleteClicked(grid)">
+            <label>@Localizer["are_you_sure,_you_want_to_delete_this_store_group_type?"]  </label>
+        </PopUp>
+    }
+    @if (grid.IsOpen)
+    {
+        <tr style="padding-left:10px;width:100%;">
+                <td colspan="6">
+                    <table>
+            <StoreGroupTypeHierarchy HierarchyGrids="grid.ChildGrids" OnBtnExpandClick="OnBtnExpandClick" OnCreateClick="OnCreateClick"  OnDeleteStoreGroupType="OnDeleteStoreGroupType" OnCreateClone="OnCreateClone" OnUpdateClick="OnUpdateClick"></StoreGroupTypeHierarchy>
+        </table>
+        </td>
+        </tr>
+    }
+}
+
+
+

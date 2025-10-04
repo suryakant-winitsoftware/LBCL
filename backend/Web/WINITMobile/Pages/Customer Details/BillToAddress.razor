@@ -1,0 +1,306 @@
+﻿@inherits WINITMobile.Pages.Base.BaseComponentBase
+@inject Winit.Modules.Distributor.Model.Interfaces.IDistributorToggle toggle
+
+@if (IsInitialised)
+{
+    <div style="width:100%;float:left;margin:0px 0px;">
+        @if (!string.IsNullOrWhiteSpace(ValidationMessage))
+        {
+            <div class="alert alert-danger">
+                <div class="col-md-12">
+                    <div style="color: red;">@ValidationMessage</div>
+                </div>
+            </div>
+        }
+        <div class="card">
+            <div class="card-body">
+                <div class="cls_cust_information">
+                    <div class="row">
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-2">
+                            <div class="cls_copy_adress">
+                                <input type="checkbox" @bind="IsChecked">
+                                <span style="font-size:14px;font-weight:600;" >Copy Address From GST</span>
+                            </div>
+                        </div>
+                       
+
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-12 mb-12">
+                            <h6 style="font-size:16px;font-weight:700;">Address of Registered office/Firm</h6>
+                        </div>
+
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <label style="font-weight: bold;" class="cls_customer_label">Address 1<i class="cls_section_div_purchase2_span">*</i></label>
+                            <textarea autocomplete="off" class="cls_news_textarea" placeholder="Enter here" @bind="SelectedAddress.Line1" rows="3"></textarea>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <label style="font-weight: bold;" class="cls_customer_label">Address 2</label>
+                            <textarea autocomplete="off" class="cls_news_textarea" placeholder="Enter here" @bind="SelectedAddress.Line2" rows="3"></textarea>
+                        </div>
+                       @*  <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <label style="font-weight: bold;" class="cls_customer_label">Address 3</label>
+                            <textarea autocomplete="off" class="cls_select2_button" placeholder="Enter here" @bind="SelectedAddress.Line3" rows="3"></textarea>
+                        </div> *@
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <label style="font-weight: bold;" class="cls_customer_label">Gender</label>
+                            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="GenderselectionItems"
+                                                                               IsButtonVisible="true"
+                                                                               Title="Gender"
+                                                                               IsSearchable="true" OnSelect="GenderSelection" />
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <label style="font-weight: bold;" class="cls_customer_label"> Name<i class="cls_section_div_purchase2_span">*</i></label>
+                            <input @ref="BillToAddressInput" class="cls_select2_button"
+                                   autocomplete="off"
+                                   type="text"
+                                   placeholder="Enter here"
+                                   @bind="SelectedAddress.Name" />
+                            <div class="invalid-feedback">
+                            </div>
+                        </div>
+                        @if (SelectedAddress.Line4 == "Female")
+                        {
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                                <label style="font-weight: bold;" class="cls_customer_label">Husband Name</label>
+                                <input class="cls_select2_button"
+                                       autocomplete="off"
+                                       type="text"
+                                       placeholder="Enter here"
+                                       @bind="SelectedAddress.HusbandName" />
+
+                            </div>
+                        }
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <label style="font-weight: bold;" class="cls_customer_label">Father Name</label>
+                            <input class="cls_select2_button"
+                                   autocomplete="off"
+                                   type="text"
+                                   placeholder="Enter here"
+                                   @bind="SelectedAddress.FatherName" />
+                            <div class="invalid-feedback">
+                            </div>
+                        </div>
+
+                        @* <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <label style="font-weight: bold;" class="cls_customer_label">Pin Code<i class="cls_section_div_purchase2_span">*</i></label>
+                            <input class="cls_select2_button"
+                                   autocomplete="off"
+                                   type="text"
+                                   placeholder="Enter here"
+                                   @bind="SelectedAddress.ZipCode" />
+                            <div class="invalid-feedback">@PinCodeValidationMessage</div>
+
+
+                        </div> *@
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <label style="font-weight: bold;" class="cls_customer_label">Email<i class="cls_section_div_purchase2_span">*</i></label>
+                            <input class="cls_select2_button "
+                                   autocomplete="off"
+                                   type="text"
+                                   placeholder="Enter here"
+                                   @bind="SelectedAddress.Email" />
+
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <label style="font-weight: bold;" class="cls_customer_label">Mobile Number 1<i class="cls_section_div_purchase2_span">*</i></label>
+                            <input class="cls_select2_button "
+                                   autocomplete="off"
+                                   type="number"
+                                   placeholder="Enter here"
+                                   @bind="SelectedAddress.Mobile1"
+                                   @oninput="ValidateMobileNumber" />
+                            <div class="invalid-feedback" style="display: @(string.IsNullOrEmpty(MobilevalidationMessage) ? "none" : "block")">
+                                @MobilevalidationMessage
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <label style="font-weight: bold;" class="cls_customer_label">Mobile Number 2</label>
+                            <input class="cls_select2_button "
+                                   autocomplete="off"
+                                   type="text"
+                                   placeholder="Enter here"
+                                   @bind="SelectedAddress.Mobile2"
+                                   oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
+
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <label style="font-weight: bold;" class="cls_customer_label">Aadhar Number<i class="cls_section_div_purchase2_span">*</i></label>
+                            <input class="cls_select2_button "
+                                   autocomplete="off"
+                                   type="text"
+                                   placeholder="Enter here"
+                                   @bind="SelectedAddress.AADHAR"
+                                   @oninput="ValidateaadharNumber" />
+                            <div class="invalid-feedback" style="display: @(string.IsNullOrEmpty(AadharNumbervalidationMessage) ? "none" : "block")">
+                                @AadharNumbervalidationMessage
+                            </div>
+                            <div class="invalid-feedback">
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <label style="font-weight: bold;" class="cls_customer_label">GST Number</label>
+                            <input class="cls_select2_button "
+                                   autocomplete="off"
+                                   type="text"
+                                   placeholder="Enter here"
+                                   @bind="SelectedAddress.GSTNo" disabled />
+
+                        </div>
+                        @*  <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <label style="font-weight: bold;" class="cls_customer_label">sales Office</label>
+                    <input class="cls_select2_button "
+                    autocomplete="off"
+                    type="text"
+                    placeholder="Enter here"
+                    @bind="SelectedAddress.SalesOffice" />
+
+                    </div> *@
+                        @*  <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <p>@_appSettings.LocationLevel</p>
+                    <div class="flex-grow-1">
+                    <button class="form-select" @onclick="@(()=>ViewLocation = !ViewLocation)">@_locationInformation.LocationLabel</button>
+                    @if (ViewLocation)
+                    {
+                    <Winit.UIComponents.Web.Location.LocationMaster OnLocationSelected="OnLocationChange" ShowPopUp="ViewLocation"
+                    IsLocationHierarchyData="true"
+                    SelectedLocationOrStoreGroupUID="@_locationInformation.LocationUID" OnClose="@(()=>ViewLocation=false)" />
+                    }
+                    </div>
+
+                    </div>
+                    @if (LocationMasters != null)
+                    {
+                    foreach (var item in LocationMasters)
+                    {
+                    if (item.Level != LocationMasters.Count)
+                    {
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                    <div class="cls_main_sign_input_new1">
+                    <label>@($"{item.LocationTypeName} : {item.Label}")</label>
+                    </div>
+                    </div>
+                    }
+                    }
+                    } *@
+                        @*  <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <label style="font-weight: bold;" class="cls_customer_label">Country</label>
+                    <span></span>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <label style="font-weight: bold;" class="cls_customer_label">State</label>
+                    <span></span>
+                    </div> *@
+                        @*   <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <label style="font-weight: bold;" class="cls_customer_label">Branch</label>
+                    <span></span>
+                    </div> *@
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <label style="font-weight: bold;" class="cls_customer_label">Shop & Est Act / Municipal Act Reg No</label>
+                            <input class="cls_select2_button "
+                                   autocomplete="off"
+                                   type="text"
+                                   placeholder="Enter here"
+                                   @bind="SelectedAddress.MuncipalRegNo" />
+
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <label style="font-weight: bold;" class="cls_customer_label">ESIC Reg No</label>
+                            <input class="cls_select2_button"
+                                   autocomplete="off"
+                                   type="text"
+                                   placeholder="Enter here"
+                                   @bind="SelectedAddress.ESICRegNo" />
+
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <label style="font-weight: bold;" class="cls_customer_label">PF Registration No</label>
+                            <input class="cls_select2_button "
+                                   autocomplete="off"
+                                   type="text"
+                                   placeholder="Enter here"
+                                   @bind="SelectedAddress.PFRegNo" />
+
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <div class="cls_btn_y_n" style="margin-top:30px;">
+                                <input type="checkbox" class="" @bind="SelectedAddress.IsDefault">
+                                <label>IsPrimary</label>
+                            </div>
+                            <div class="invalid-feedback">
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <label style="font-weight: bold;" class="cls_customer_label">States<i class="cls_section_div_purchase2_span">*</i></label>
+                            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="StateselectionItems.OrderBy(item => item.Label.ToLower()).ToList()"
+                                                                               IsButtonVisible="true"
+                                                                               Title="State"
+                                                                               IsSearchable="true" OnSelect="StateSelection" />
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <label style="font-weight: bold;" class="cls_customer_label">City<i class="cls_section_div_purchase2_span">*</i></label>
+                            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="CityselectionItems.OrderBy(item => item.Label.ToLower()).ToList()"
+                                                                               IsButtonVisible="true"
+                                                                               Title="City"
+                                                                               IsSearchable="true" OnSelect="CitySelection" />
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <label style="font-weight: bold;" class="cls_customer_label">Locality<i class="cls_section_div_purchase2_span">*</i></label>
+                            <input class="cls_select2_button "
+                                   autocomplete="off"
+                                   type="text"
+                                   placeholder="Enter Locality here"
+                                   @bind="SelectedAddress.Locality" />
+
+                        </div>
+                        @* <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <label style="font-weight: bold;" class="cls_customer_label">Locality<i class="cls_section_div_purchase2_span">*</i></label>
+                            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="LocalityselectionItems.OrderBy(item => item.Label.ToLower()).ToList()"
+                                                                               IsButtonVisible="true"
+                                                                               Title="Locality"
+                                                                               IsSearchable="true" OnSelect="LocalitySelection" />
+                        </div> *@
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <label style="font-weight: bold;" class="cls_customer_label">Pincode<i class="cls_section_div_purchase2_span">*</i></label>
+                            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="PinCodeselectionItems.OrderBy(item => item.Label.ToLower()).ToList()"
+                                                                               IsButtonVisible="true"
+                                                                               Title="Pincode"
+                                                                               IsSearchable="true" OnSelect="PinCodeSelection" />
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <label style="font-weight: bold;" class="cls_customer_label">Branch<i class="cls_section_div_purchase2_span">*</i></label>
+                            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="BranchselectionItems.OrderBy(item => item.Label.ToLower()).ToList()"
+                                                                               IsButtonVisible="true"
+                                                                               Title="Branch"
+                                                                               IsSearchable="true" OnSelect="BranchSelection" />
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <label style="font-weight: bold;" class="cls_customer_label">Organisation Unit<i class="cls_section_div_purchase2_span">*</i></label>
+                            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="OUselectionItems.OrderBy(item => item.Label.ToLower()).ToList()"
+                                                                               IsButtonVisible="true"
+                                                                               Title="Organisation Unit"
+                                                                               IsSearchable="true" OnSelect="OUSelection" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="cls_button_bottom_purchase">
+                <button class="cls_button_light" type="submit" @onclick="OnClean">Clear</button>
+                <button class="cls_button_blue" type="submit" @onclick="SaveOrUpdate">@ButtonName</button>
+            </div>
+        </div>
+        <div style="width:100%;float:left;margin:10px 0px;">
+            <div class="card">
+                <div class="card-body">
+                    <button class="cls_comman_btn" style="margin-bottom:15px;" type="submit" @onclick="GetAllBillToAddress">Show All Bill To Address</button>
+
+                    @if (IsShowAllBillToAddress && Addresses != null)
+                    {
+                        <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" DataSource="Addresses" />
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@code {
+
+}

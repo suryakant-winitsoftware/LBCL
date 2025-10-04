@@ -1,0 +1,42 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Winit.Modules.Base.Model;
+using Winit.Shared.Models.Enums;
+
+namespace Winit.Modules.Route.Model.Classes
+{
+    public class CommonClassLoadTemplate:BaseModel
+    {
+        public string RouteUID { get; set; }
+        public string TemplateName { get; set; }
+        public string TemplateDescription { get; set; }
+        public string CompanyUID { get; set; }
+        public string OrgUID { get; set; }
+        public bool IsSelected { get; set; } = false;
+        
+        public string RouteLoadTruckTemplateUID { get; set; }
+        public string SKUCode { get; set; }
+        public string UOM { get; set; }
+        public int MondayQty { get; set; }
+        public int MondaySuggestedQty { get; set; }
+        public int TuesdayQty { get; set; }
+        public int TuesdaySuggestedQty { get; set; }
+        public int WednesdayQty { get; set; }
+        public int WednesdaySuggestedQty { get; set; }
+        public int ThursdayQty { get; set; }
+        public int ThursdaySuggestedQty { get; set; }
+        public int FridayQty { get; set; }
+        public int FridaySuggestedQty { get; set; }
+        public int SaturdayQty { get; set; }
+        public int SaturdaySuggestedQty { get; set; }
+        public int SundayQty { get; set; }
+        public int SundaySuggestedQty { get; set; }
+
+       
+
+        public ActionType ActionTypes { get; set; }
+    }
+}

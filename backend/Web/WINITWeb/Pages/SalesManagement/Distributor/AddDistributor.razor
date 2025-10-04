@@ -1,0 +1,561 @@
+﻿@page "/newdistributor"
+@inject Winit.Modules.Distributor.BL.Interfaces.ICreateDistributorBaseViewModel _distributorBaseViewModel
+@inject Winit.Modules.Distributor.Model.Interfaces.IDistributorToggle toggle
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+
+@if (_distributorBaseViewModel.IsLoad)
+{
+    <div class="cls_main_page_style">
+        <!-- #region Distributor Deails -->
+        <div class="cls_sales_container2">
+            <button class="cls_add_cust_drilldown"
+                    @onclick="@(() =>toggle.IsInformation=true)">
+                <span>@Localizer["distributor_details"]</span>
+                <span>
+                    @if (toggle.IsInformation)
+                    {
+                        <i class="cls_arrow_up"></i>
+                    }
+                    else
+                    {
+                        <i class="cls_arrow_down"></i>
+                    }
+                </span>
+            </button>
+            <div class="cls_container_div5" style=" display:@(toggle.IsInformation?"block":"none")">
+                <div class="cls_sales_container_outline">
+                    <div class="cls_container_div1">
+                        <div class="cls_section_div_purchase2">
+                            <label class="cls_section_div_purchase2_label">
+                                @Localizer["distributor_code"]
+                                <span class="cls_section_div_purchase2_span">*</span>
+                            </label>
+                            <div class="cls_select">
+                                <input type="text" @bind="@_distributorBaseViewModel.Distributor.Code" disabled="@(!_distributorBaseViewModel.IsNewDistributor)" />
+                            </div>
+                        </div>
+                        <div class="cls_section_div_purchase2">
+                            <label class="cls_section_div_purchase2_label">
+                                @Localizer["distributor_name"]
+                                <span class="cls_section_div_purchase2_span">*</span>
+                            </label>
+                            <div class="cls_select">
+                                <input autocomplete="off" type="text" @bind="@_distributorBaseViewModel.Distributor.Name" />
+                            </div>
+                        </div>
+                        <div class="cls_section_div_purchase2">
+                            <label class="cls_section_div_purchase2_label">
+                                @Localizer["sequence_code"]
+                                <span class="cls_section_div_purchase2_span">*</span>
+                            </label>
+                            <div class="cls_select">
+                                <input autocomplete="off" type="text" @bind="@_distributorBaseViewModel.Distributor.SequenceCode" />
+                            </div>
+                        </div>
+
+                        <div class="cls_section_div_purchase2">
+                            <label class="cls_section_div_purchase2_label">
+                                @Localizer["open_account_date"]
+                                <span class="cls_section_div_purchase2_span">*</span>
+                            </label>
+                            <input autocomplete="off" class="cls_select_date" type="date" @bind="@_distributorBaseViewModel.Distributor.OpenAccountDate" />
+                        </div>
+
+
+                        <div class="cls_section_div_purchase2">
+                            <label class="cls_section_div_purchase2_label">
+                                @Localizer["status"]
+                            </label>
+                            @if (!_distributorBaseViewModel.IsStatusVisible)
+                            {
+                                @*   <button class="form-select" @onclick=@(()=>_distributorBaseViewModel.IsStatusVisible=!_distributorBaseViewModel.IsStatusVisible)>
+                    @_distributorBaseViewModel.StatusLable
+                </button> *@
+
+                                <button class="cls_select2" @onclick=@(()=>_distributorBaseViewModel.IsStatusVisible=!_distributorBaseViewModel.IsStatusVisible)>
+                                    <label class="cls_select2_label1"> @_distributorBaseViewModel.StatusLable</label>
+                                    <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+
+                                </button>
+
+                            }
+                            else
+                            {
+                                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_distributorBaseViewModel.StatusList" _SelectionMode=Winit.Shared.Models.Enums.SelectionMode.Single ShowPopUp=true OnSelect="@_distributorBaseViewModel.OnStatuseSelected" />
+                            }
+                        </div>
+                    </div>
+                    <div class="cls_container_div4">
+                        <div class="cls_section_div_purchase2">
+                            <label class="cls_section_div_purchase2_label">
+                                @Localizer["tax_group"]
+                            </label>
+                            @if (!_distributorBaseViewModel.IsTaxGroupVisible)
+                            {
+                                <button class="cls_select2" @onclick=@(()=>_distributorBaseViewModel.IsTaxGroupVisible=!_distributorBaseViewModel.IsTaxGroupVisible)>
+
+                                    <label class="cls_select2_label1">@_distributorBaseViewModel.TaxGroupLabel</label>
+                                    <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+                                </button>
+                            }
+                            else
+                            {
+                                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_distributorBaseViewModel.TaxGroupList" _SelectionMode=Winit.Shared.Models.Enums.SelectionMode.Single ShowPopUp=true OnSelect="@_distributorBaseViewModel.OnTaxGroupSelected" />
+                            }
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+            @if (_distributorBaseViewModel.IsShowPopUp)
+            {
+                <div class="modal fade show" tabindex="-1" style="display: block;">
+                    <div>
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">@Localizer["add_contact_details"] </h5>
+                                <span class="close" @onclick="_distributorBaseViewModel.CloseContactTab">&times;</span>
+                            </div>
+                            <div class="modal-body">
+                                <div style="width:100%;float:left;margin:0px 0px;">
+                                    <div class="row">
+                                        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                            <div class="cls_main_sign_input_new1">
+                                                <p>@Localizer["name"] </p>
+                                                <input type="text" @bind="@_distributorBaseViewModel._Contact.Name" />
+
+                                            </div>
+                                        </div>  <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                            <div class="cls_main_sign_input_new1">
+                                                <p>@Localizer["number"]</p>
+                                                <input type="number" @bind="@_distributorBaseViewModel._Contact.Phone" />
+
+                                            </div>
+                                        </div>  <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                            <div class="cls_main_sign_input_new1">
+                                                <p>@Localizer["email"]</p>
+                                                <input type="email" @bind="@_distributorBaseViewModel._Contact.Email" />
+
+                                            </div>
+                                        </div>  <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                            <div class="cls_main_sign_input_new1">
+                                                <p>@Localizer["fax"]</p>
+                                                <input type="text" @bind="@_distributorBaseViewModel._Contact.Fax" />
+
+                                            </div>
+                                        </div>  <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                            <div class="cls_main_sign_input_new1">
+                                                <p>@Localizer["description"]</p>
+                                                <input type="text" @bind="@_distributorBaseViewModel._Contact.Description" />
+
+                                            </div>
+                                            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                                <div class="cls_main_check_radio">
+                                                    <input type="checkbox" id="txtMakeAsDefault" checked="@_distributorBaseViewModel._Contact.IsDefault" @onchange="ChangeDefaultContact">
+                                                    <label for="txtMakeAsDefault">@Localizer["make_as_default"]</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button class="btn btn-primary" @onclick="_distributorBaseViewModel.CloseContactTab">@Localizer["back"]</button>
+                                <button type="button" class="btn btn-secondary" @onclick="_distributorBaseViewModel.AddContact">@Localizer["save"]</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            }
+
+
+
+
+            <!-- #endregion -->
+            <button class="cls_add_cust_drilldown"
+                    @onclick="@(() =>toggle.IsContact=true)">
+                <span>@Localizer["contact_details"]</span>
+                <span>
+                    @if (toggle.IsContact)
+                    {
+                        <i class="cls_arrow_up"></i>
+                    }
+                    else
+                    {
+                        <i class="cls_arrow_down"></i>
+                    }
+                </span>
+            </button>
+            <div class="cls_container_div5" style="display:@(toggle.IsContact?"block":"none")">
+                <div class="cls_sales_container_outline">
+                    <h3 class="cls_container_p_full">@Localizer["contact_details"]</h3>
+                    <div class="cls_container_div4">
+                        <button type="button" class="cls_add_new_sec" @onclick="@(()=>_distributorBaseViewModel.IsShowPopUp=true)">@Localizer["add"]</button>
+                    </div>
+
+                    <div class="div1">
+                        <table class="table">
+                            <thead>
+                            <th> @Localizer["name"]</th>
+                            <th>@Localizer["phone"] </th>
+                            <th>@Localizer["email"]</th>
+                            <th>@Localizer["fax"]</th>
+                            <th>@Localizer["action"]</th>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in _distributorBaseViewModel.DistributorMasterView.Contacts)
+                                {
+                                    <tr>
+                                        <td>@item.Name</td>
+                                        <td>@item.Phone</td>
+                                        <td>@item.Email</td>
+                                        <td>@item.Fax</td>
+                                        <td>
+                                            <button @onclick="@(()=>_distributorBaseViewModel.EditContact(item))">@Localizer["edit"]</button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <button class="cls_add_cust_drilldown"
+                    @onclick="@(() =>toggle.IsAddess=true)">
+                <span>@Localizer["distributor_address"]</span>
+                <span>
+                    @if (toggle.IsAddess)
+                    {
+                        <i class="cls_arrow_up"></i>
+                    }
+                    else
+                    {
+                        <i class="cls_arrow_down"></i>
+                    }
+                </span>
+            </button>
+            <div class="cls_container_div5" style="display:@(toggle.IsAddess?"block":"none")">
+                <div class="cls_sales_container_outline">
+                    <div class="cls_container_div1">
+                        <div class="cls_section_div_purchase2">
+                            <label class="cls_section_div_purchase2_label">@Localizer["description"]</label>
+                            <div class="cls_select">
+
+                                <input type="text" placeholder="Enter Here" @bind="@_distributorBaseViewModel.DistributorMasterView.Address.Info" />
+                            </div>
+
+
+                        </div>
+                        <div class="cls_section_div_purchase2">
+                            <label class="cls_section_div_purchase2_label">@Localizer["level/unit/building"]</label>
+                            <div class="cls_select">
+
+                                <input type="text" placeholder="Enter Here" @bind="@_distributorBaseViewModel.DistributorMasterView.Address.Landmark" />
+                            </div>
+
+
+                        </div>
+                        <div class="cls_section_div_purchase2">
+                            <label class="cls_section_div_purchase2_label">@Localizer["number/street_name1"]</label>
+                            <div class="cls_select">
+
+                                <input type="text" placeholder="Enter Here" @bind="@_distributorBaseViewModel.DistributorMasterView.Address.Line1" />
+                            </div>
+
+
+                        </div>
+                        <div class="cls_section_div_purchase2">
+                            <label class="cls_section_div_purchase2_label">@Localizer["number/street_name2"]</label>
+                            <div class="cls_select">
+
+                                <input type="text" placeholder="Enter Here" @bind="@_distributorBaseViewModel.DistributorMasterView.Address.Line2" />
+                            </div>
+
+                        </div>
+                        <div class="cls_section_div_purchase2">
+                            <label class="cls_section_div_purchase2_label">@Localizer["suburb"]</label>
+                            <div class="cls_select">
+
+                                <input type="text" placeholder="Enter Here" max="6" @bind="@_distributorBaseViewModel.DistributorMasterView.Address.Area" />
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <div class="cls_container_div4">
+                        <div class="cls_section_div_purchase2">
+                            <label class="cls_section_div_purchase2_label">@Localizer["postal_code"]</label>
+                            <div class="cls_select">
+
+                                <input type="text" placeholder="Enter Here" @bind="@_distributorBaseViewModel.DistributorMasterView.Address.ZipCode" />
+                            </div>
+
+
+                        </div>
+                        <div class="cls_section_div_purchase2">
+                            <label class="cls_section_div_purchase2_label">@Localizer["territory"]</label>
+                            <div class="cls_select">
+
+                                <input type="text" placeholder="Enter Here" @bind="@_distributorBaseViewModel.DistributorMasterView.Address.TerritoryCode" />
+                            </div>
+
+
+                        </div>
+
+                        <div class="cls_section_div_purchase2">
+                            <label class="cls_section_div_purchase2_label">@Localizer["email"]</label>
+                            <div class="cls_select">
+
+                                <input type="text" placeholder="Enter Here" _ @bind="@_distributorBaseViewModel.DistributorMasterView.Address.Email" />
+                            </div>
+
+
+                        </div>
+                        <div class="cls_section_div_purchase2">
+                            <label class="cls_section_div_purchase2_label">@Localizer["tele_fax"] </label>
+                            <div class="cls_select">
+
+                                <input type="number" placeholder="Enter Here" @bind="@_distributorBaseViewModel.DistributorMasterView.Address.Fax" />
+                            </div>
+
+
+                        </div>
+                        <div class="cls_section_div_purchase2">
+                            <label class="cls_section_div_purchase2_label">@Localizer["telephone"]</label>
+                            <div class="cls_select">
+
+                                <input type="number" placeholder="Enter Here" @bind="@_distributorBaseViewModel.DistributorMasterView.Address.Phone" />
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <div class="cls_container_div4">
+                        <div class="cls_section_div_purchase2">
+                            <label class="cls_section_div_purchase2_label">@Localizer["mobile_phone"]</label>
+                            <div class="cls_select">
+
+                                <input type="number" placeholder="Enter Here" _ @bind="@_distributorBaseViewModel.DistributorMasterView.Address.Mobile1" />
+                            </div>
+
+
+                        </div>
+                        <div class="cls_section_div_purchase2">
+                            <label class="cls_section_div_purchase2_label">@Localizer["city"]</label>
+                            <div class="cls_select">
+
+                                <input type="text" placeholder="Enter Here" _ @bind="@_distributorBaseViewModel.DistributorMasterView.Address.City" />
+                            </div>
+
+
+                        </div>
+                        <div class="cls_section_div_purchase2">
+                            <label class="cls_section_div_purchase2_label">@Localizer["region"] </label>
+                            <div class="cls_select">
+
+                                <input type="text" placeholder="Enter Here" _ @bind="@_distributorBaseViewModel.DistributorMasterView.Address.RegionCode" />
+                            </div>
+
+
+                        </div>
+
+                        <div class="cls_section_div_purchase2">
+                            <label class="cls_section_div_purchase2_label">@Localizer["country"]</label>
+                            <div class="cls_select">
+
+                                <input type="text" placeholder="Enter Here" _ @bind="@_distributorBaseViewModel.DistributorMasterView.Address.CountryCode" />
+                            </div>
+
+
+                        </div>
+                        <div class="cls_section_div_purchase2">
+                            <label class="cls_section_div_purchase2_label" for="MakeDefault">@Localizer["make_default"]</label>
+
+
+                            <input type="checkbox" class="cls_section_div_purchase2_input" placeholder="Enter Here" name="MakeDefault" checked="@_distributorBaseViewModel.DistributorMasterView.Address.IsDefault" @onclick=@(()=>_distributorBaseViewModel.DistributorMasterView.Address.IsDefault=!_distributorBaseViewModel.DistributorMasterView.Address.IsDefault) />
+
+
+
+
+
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+
+
+            <button class="cls_add_cust_drilldown"
+                    @onclick="@(() =>toggle.IsCurrency=true)">
+                <span>@Localizer["currency"]</span>
+                <span>
+                    @if (toggle.IsCurrency)
+                    {
+                        <i class="cls_arrow_up"></i>
+                    }
+                    else
+                    {
+                        <i class="cls_arrow_down"></i>
+                    }
+                </span>
+            </button>
+            <div style="display:@(toggle.IsCurrency?"block":"none")" class="cls_container_div5">
+                <div class="cls_sales_container_outline">
+                    <button class="cls_add_new_sec" @onclick=@(()=>_distributorBaseViewModel.IsCurrencyVisible = !_distributorBaseViewModel.IsCurrencyVisible)>
+                        @_distributorBaseViewModel.CurrencyLabel
+                    </button>
+                    @if (_distributorBaseViewModel.IsCurrencyVisible)
+                    {
+                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_distributorBaseViewModel.CurrencyList"
+                                                                           _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Multiple"
+                                                                           ShowPopUp="true"
+                                                                           OnSelect="@_distributorBaseViewModel.OnCurrencySelected" />
+                    }
+                    <TableGridView DataSource="@_distributorBaseViewModel.DistributorMasterView.OrgCurrencyList" Columns="_distributorBaseViewModel.Columns" />
+                </div>
+            </div>
+
+            <button class="cls_add_cust_drilldown"
+                    @onclick="@ShowDocuments">
+                <span>@Localizer["documents"]</span>
+                <span>
+                    @if (toggle.IsDocument)
+                    {
+                        <i class="cls_arrow_up"></i>
+                    }
+                    else
+                    {
+                        <i class="cls_arrow_down"></i>
+                    }
+                </span>
+            </button>
+            @if (toggle.IsDocument)
+            {
+                <div class="cls_container_div5">
+                    <div class="cls_sales_container_outline">
+                        <div class="cls_container_div1">
+                            <div class="cls_section_div_purchase2">
+                                <label class="cls_section_div_purchase2_label">@Localizer["document_type"]</label>
+
+
+
+
+
+
+                                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_distributorBaseViewModel.DocumentList"
+                                                                                   _SelectionMode=Winit.Shared.Models.Enums.SelectionMode.Single
+                                                                                   IsButtonVisible=true Title="Document Type"
+                                                                                   OnSelect="@_distributorBaseViewModel.OnDropDownSelected" />
+
+
+
+
+
+                            </div>
+                            <div class="cls_section_div_purchase2">
+                                <label class="cls_section_div_purchase2_label">@Localizer["document_number"]</label>
+                                <div class="cls_select">
+
+                                    <input type="text" @bind="@_distributorBaseViewModel._StoreDocument.DocumentNo" placeholder=@Localizer["enter_document_number"] />
+
+                                </div>
+
+
+                            </div>
+                            <div class="cls_section_div_purchase2">
+                                <label class="cls_section_div_purchase2_label">@Localizer["valid_from"]</label>
+
+
+                                <InputDate @bind-Value="@_distributorBaseViewModel._StoreDocument.ValidFrom" class="cls_select_date"></InputDate>
+
+
+
+                            </div>
+                            <div class="cls_section_div_purchase2">
+                                <label class="cls_section_div_purchase2_label">@Localizer["valid_upto"]</label>
+
+
+                                <InputDate @bind-Value="@_distributorBaseViewModel._StoreDocument.ValidUpTo" class="cls_select_date"></InputDate>
+
+
+
+                            </div>
+                        </div>
+                        <div class="cls_container_div4"></div>
+                        <div class="cls_container_div1">
+                            <span>@Localizer["documents"]</span>
+                            <div class="cls_main_sign_input_new1">
+
+
+                                <Winit.UIComponents.Common.FileUploader.FileUploader @ref=fileUploader FileExtension=".jpg,.jpeg,.pdf,.png,.doc"
+                                                                                     RelativePath="@FilePath"
+                                                                                     FileSize="500000"
+                                                                                     AllowMultipleFiles=true
+                                                                                     FileSysList=_distributorBaseViewModel.DisplayFileSysList
+                                                                                     LinkedItemType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.StoreDocument"
+                                                                                     LinkedItemUID="@_distributorBaseViewModel?._StoreDocument?.UID"
+                                                                                     FileSysType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.StoreDocument"
+                                                                                     FileType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.StoreDocument"
+                                                                                     IsDirectory="false"
+                                                                                     UploadEventCallBack="_distributorBaseViewModel.GetFilesysList" />
+
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="cls_container_div4">
+                            <button type="button" class="cls_add_new_sec" @onclick="@(()=>AddDocument())">@(_distributorBaseViewModel.IsNewDoc ? @Localizer["add_documents"] : @Localizer["update_documents"])</button>
+                        </div>
+                        <div class="div1">
+                            <table class="table">
+                                <thead>
+                                <th>@Localizer["document_type"]</th>
+                                <th>@Localizer["document_number"]</th>
+                                <th>@Localizer["valid_from"]</th>
+                                <th>@Localizer["valid_upto"]</th>
+                                <th>@Localizer["action"]</th>
+                                </thead>
+                                <tbody>
+                                    @if (_distributorBaseViewModel.DistributorMasterView.Documents != null && _distributorBaseViewModel.DistributorMasterView.Documents.Count > 0)
+                                    {
+                                        @foreach (var item in _distributorBaseViewModel.DistributorMasterView.Documents)
+                                        {
+                                            <tr>
+                                                <td>@item.DocumentType</td>
+                                                <td>@item.DocumentNo</td>
+                                                <td>@item.ValidFrom</td>
+                                                <td>@item.ValidUpTo</td>
+                                                <td>
+                                                    <button @onclick="@(()=>EditDocs(item))">@Localizer["edit"]</button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>no records</tr>
+                                    }
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+            <div class="cls_button_bottom_purchase">
+                <button type="button" class="cls_button_blue" @onclick="@(()=>Save())">@Localizer["save"]</button>
+            </div>
+
+        </div>
+    </div>
+}

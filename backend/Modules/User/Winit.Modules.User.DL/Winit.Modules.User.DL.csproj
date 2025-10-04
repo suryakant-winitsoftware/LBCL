@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\SharedObjects\Winit.Shared.Models\Winit.Shared.Models.csproj" />
+    <ProjectReference Include="..\..\ApprovalEngine\Winit.Modules.ApprovalEngine.DL\Winit.Modules.ApprovalEngine.DL.csproj" />
+    <ProjectReference Include="..\..\Base\Winit.Modules.Base.DL\Winit.Modules.Base.DL.csproj" />
+    <ProjectReference Include="..\..\Emp\Winit.Modules.Emp.DL\Winit.Modules.Emp.DL.csproj" />
+    <ProjectReference Include="..\..\Emp\Winit.Modules.Emp.Model\Winit.Modules.Emp.Model.csproj" />
+    <ProjectReference Include="..\..\FileSys\Winit.Modules.FileSys.DL\Winit.Modules.FileSys.DL.csproj" />
+    <ProjectReference Include="..\..\FileSys\Winit.Modules.FileSys.Model\Winit.Modules.FileSys.Model.csproj" />
+    <ProjectReference Include="..\..\JobPosition\Winit.Modules.JobPosition.DL\Winit.Modules.JobPosition.DL.csproj" />
+    <ProjectReference Include="..\..\JobPosition\Winit.Modules.JobPosition.Model\Winit.Modules.JobPosition.Model.csproj" />
+    <ProjectReference Include="..\..\Org\Winit.Modules.Org.Model\Winit.Modules.Org.Model.csproj" />
+    <ProjectReference Include="..\..\Role\Winit.Modules.Role.DL\Winit.Modules.Role.DL.csproj" />
+    <ProjectReference Include="..\..\Role\Winit.Modules.Role.Model\Winit.Modules.Role.Model.csproj" />
+    <ProjectReference Include="..\Winit.Modules.User.Model\Winit.Modules.User.Model.csproj" />
+  </ItemGroup>
+</Project>

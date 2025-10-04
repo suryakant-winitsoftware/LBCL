@@ -1,0 +1,122 @@
+﻿@page "/ReturnOrderPreviewPage"
+@page "/ReturnOrderPreviewPage/{ReturnOrderUID}"
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+@using WINITMobile.Pages.Sales
+@using Winit.Shared.Models.Common
+@inject PageState _PageState
+@inject Winit.Modules.ReturnOrder.BL.Interfaces.IReturnOrderLineBL _ReturnOrderLineBL
+@inject Winit.Modules.ReturnOrder.BL.Interfaces.IReturnOrderBL _ReturnOrderBL
+@inject Winit.Modules.Base.BL.Helper.Interfaces.IFilterHelper _filter
+@inject Winit.Modules.Printing.Model.Classes.BluetoothDeviceInfo _btinfo;
+@using WINITMobile.Models.TopBar;
+<div class="cls_main_top_text1">
+    <h3>Return<label>  @(_PageState.ReturnOrderViewModel.OrderType) Preview</label> </h3>
+</div>
+@if (IsInitialized)
+{
+    <PlaceOrderPopUp IsOpen="@IsOrderPlacedPopupVisible"
+                     OrderNumber="Return Order Reference Number"
+                     OnClose="OrderPlacedPopup_CloseClicked"
+                     OnShareClicked="OrderPlacedPopup_ShareClicked" OnPrintClicked="OrderPlacedPopup_PrintClicked" />
+    <div class="cls_serch_nn" style="margin-top:5px;">
+        <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder=@Localizer["search_by_item_code_/_description"]
+                                                               MaxLength="200" DebounceInterval="500" OnDebounceIntervalElapsed="OnSearching"
+                                                               KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+                                                               Value="" IsForSearch="true" />
+    </div>
+
+
+    @if (DisplayReturnOrderItemViews != null && DisplayReturnOrderItemViews.Any())
+    {
+        <div class="cls_return_order_preview">
+            <Virtualize Items="DisplayReturnOrderItemViews" Context="item" OverscanCount="10">
+                <div class="cls_item">
+                    <div class="cls_item_details1">
+                        <div class="cls_item_details1_left">
+                            <div class="cls_item_details1_left_image">
+                                <img src="@item.SKUImage" height="38px" width="38px">
+
+                            </div>
+                            <div class="cls_item_details1_left_text">
+                                <h5>@item.SKULabel</h5>
+                                <label>@item.SKUCode</label>
+                                <div class="cls_item_details_left_text_type">
+                                    <label>Type :</label>
+                                    <p>@item.SKUType</p>
+                                </div>
+                                <!-- <p>Type : <span class="cls_item_details_left_text_type">salable</span></p> -->
+
+                            </div>
+
+                        </div>
+                        <div class="cls_item_details1_right">
+                            <label>Return Qty</label>
+                            <h2>@item.Qty</h2>
+
+                        </div>
+
+                    </div>
+                    <div class="cls_item_prices">
+                        <div class="cls_item_prices__rep">
+                            <label>UOM</label>
+                            <p>@(item.UOMLabel ?? item.SelectedUOM?.Label ?? "N/A")</p>
+                        </div>
+                        <div class="cls_item_prices__rep">
+                            <label>Price</label>
+                            <p>@(item.TotalAmount)</p>
+
+                        </div>
+                        <div class="cls_item_prices__rep">
+                            <label>Discount</label>
+                            <p>@item.TotalLineDiscount</p>
+
+                        </div>
+                        <div class="cls_item_prices__rep">
+                            <label>TAX.Amt</label>
+                            <p>@item.TotalLineTax</p>
+
+                        </div>
+                        <div class="cls_item_prices__rep">
+                            <label>Invoice Price</label>
+                            <p>@item.TotalAmount</p>
+
+                        </div>
+
+                    </div>
+                    <div class="cls_item_desc">
+                        <div class="cls_item_desc_left">
+                            <label>Reason</label>
+                            <p>@item.ReasonText</p>
+
+                        </div>
+
+                        <div class="cls_item_desc_right">
+                            <label>Images</label><br>
+                           
+                        </div>
+
+                    </div>
+                </div>
+            </Virtualize>
+        </div>
+    }
+    else
+    {
+        <label>@Localizer["no_items_selected"]..</label>
+    }
+    @if (IsSignatureView)
+    {
+        <MultiSignature Signature2Footer="@_appUser.Emp?.Name"
+                        Signature1Footer="@_PageState.ReturnOrderViewModel?.SelectedStoreViewModel?.Name"
+                        Signature1Heading=@Localizer["customer_signature"] Signature2Heading=@Localizer["salesman_signature"]
+                        OnProceedClick="HandleSignature_ProceedClick"
+                        OnCloseClick="() => IsSignatureView=false"
+                        Signature1FolderPath="@_PageState.ReturnOrderViewModel.CustomerSignatureFolderPath"
+                        Signature2FolderPath="@_PageState.ReturnOrderViewModel.UserSignatureFolderPath"
+                        Signature1FileName="@_PageState.ReturnOrderViewModel.CustomerSignatureFileName"
+                        Signature2FileName="@_PageState.ReturnOrderViewModel.UserSignatureFileName" />
+    }
+
+}
+
+

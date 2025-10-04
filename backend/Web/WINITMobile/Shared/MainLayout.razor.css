@@ -1,0 +1,340 @@
+/* Common styles for all screen sizes */
+.page {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+.sidebar {
+    background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
+    position: fixed; /* Make the sidebar fixed */
+    top: 0;
+    left: 0;
+    width: 250px; /* Adjust the width as needed */
+    height: 100%;
+    z-index: 1000;
+    transition: left 0.3s ease; /* Add a smooth transition for left property */
+}
+.container-fluid {width:400px;
+}
+
+    /* Collapsed sidebar */
+    .sidebar.collapse {
+        left: -250px; /* Hide the collapsed sidebar by shifting it to the left */
+    }
+
+.top-row {
+    background-color: #f7f7f7;
+    border-bottom: 1px solid #d6d5d5;
+    height: 3.5rem;
+    display: flex;
+    align-items: center;
+}
+
+    .top-row a,
+    .top-row .btn-link {
+        white-space: nowrap;
+        margin-left: 1.5rem;
+        text-decoration: none;
+    }
+
+        .top-row a:hover,
+        .top-row .btn-link:hover {
+            text-decoration: underline;
+        }
+
+        .top-row a:first-child {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+/* Small screens (max-width: 640.98px) */
+@media (max-width: 640.98px) {
+    .top-row:not(.auth) {
+        display: flex; /* Display the top row on small screens */
+    }
+
+    .top-row.auth {
+        justify-content: space-between;
+    }
+
+    .top-row a,
+    .top-row .btn-link {
+        margin-left: 0;
+    }
+
+    .sidebar.collapse {
+        display: block; /* Show the collapsed menu */
+    }
+
+    main {
+        margin-left: 0; /* Adjust main content margin */
+    }
+}
+
+/* Medium screens and above (min-width: 641px) */
+@media (min-width: 641px) {
+    .page {
+        flex-direction: row;
+    }
+
+    .sidebar {
+        position: sticky;
+        top: 0;
+    }
+
+    .top-row {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+
+    .top-row,
+    article {
+        padding-left: 2rem !important;
+        padding-right: 1.5rem !important;
+    }
+}
+
+/* Large screens (max-width: 768px) */
+@media (max-width: 768px) {
+    .sidebar {
+        left: 0;
+    }
+}
+
+/* styels mainlayout */
+
+.top-row {
+    background-color: #007BFF; /* Set the background color */
+    padding: 10px; /* Add some padding for spacing */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Add a shadow */
+}
+
+.navbar-brand {
+    font-size: 24px; /* Increase the font size */
+    color: white; /* Set the text color to white */
+    text-decoration: none; /* Remove underlines from links */
+}
+
+.navbar-toggler {
+    background-color: transparent; /* Make the button transparent */
+    border: none; /* Remove the border */
+    color: white; /* Set the text color to white */
+}
+
+    .navbar-toggler:hover {
+        color: #007BFF; /* Change text color on hover */
+    }
+
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(255,0,0,0.3); /* TEST: bright red, revert to rgba(0,0,0,0.2) after confirming */
+    z-index: 1001; /* above most content, below sidebar if needed */
+}
+
+/* Common styles for all screen sizes */
+/*.page {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+.sidebar {
+    background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
+}
+
+.top-row {
+    background-color: #f7f7f7;
+    border-bottom: 1px solid #d6d5d5;
+    height: 3.5rem;
+    display: flex;
+    align-items: center;
+}
+
+    .top-row a,
+    .top-row .btn-link {
+        white-space: nowrap;
+        margin-left: 1.5rem;
+        text-decoration: none;
+    }
+
+        .top-row a:hover,
+        .top-row .btn-link:hover {
+            text-decoration: underline;
+        }
+
+        .top-row a:first-child {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }*/
+
+/* Small screens (max-width: 640.98px) */
+/*@media (max-width: 640.98px) {
+    .top-row:not(.auth) {
+        display: flex;*/ /* Display the top row on small screens */
+    /*}
+
+    .top-row.auth {
+        justify-content: space-between;
+    }
+
+    .top-row a,
+    .top-row .btn-link {
+        margin-left: 0;
+    }*/
+
+    /*.sidebar {
+        display: none;*/ /* Hide the sidebar on small screens */
+    /*}*/
+
+    /*.menu.collapse {
+        display: block;*/ /* Show the collapsed menu */
+        /*position: fixed;*/ /* Keep the menu fixed when opened */
+        /*top: 0;*/ /* Position it at the top */
+        /*left: 0;*/ /* Position it at the left */
+        /*width: 80%;*/ /* Set the width as needed */
+        /*max-width: 250px;*/ /* Optionally, set a maximum width */
+        /*height: 100%;*/ /* Take the full height */
+        /*z-index: 1000;*/ /* Ensure it's above other elements */
+        /*background-color: rgba(0, 0, 0, 0.8);*/ /* Add a semi-transparent background */
+    /*}
+
+    main {
+        display: block;*/ /* Display the main content on small screens */
+        /*margin-left: 0;*/ /* Adjust main content margin */
+    /*}
+}*/
+
+/* Medium screens and above (min-width: 641px) */
+/*@media (min-width: 641px) {
+    .page {
+        flex-direction: row;
+    }
+
+    .sidebar {
+        width: 250px;
+        height: 100vh;
+        position: sticky;
+        top: 0;
+    }
+
+    .top-row {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+
+    .top-row,
+    article {
+        padding-left: 2rem !important;
+        padding-right: 1.5rem !important;
+    }
+}*/
+
+/* Large screens (max-width: 768px) */
+/*@media (max-width: 768px) {
+    .sidebar {
+        left: 0;
+    }
+}*/
+
+
+
+
+
+
+
+
+
+
+
+
+/*.page {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+.sidebar {
+    background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
+}
+
+.top-row {
+    background-color: #f7f7f7;
+    border-bottom: 1px solid #d6d5d5;
+    justify-content: flex-end;
+    height: 3.5rem;
+    display: flex;
+    align-items: center;
+}
+
+    .top-row ::deep a, .top-row ::deep .btn-link {
+        white-space: nowrap;
+        margin-left: 1.5rem;
+        text-decoration: none;
+    }
+
+    .top-row ::deep a:hover, .top-row ::deep .btn-link:hover {
+        text-decoration: underline;
+    }
+
+    .top-row ::deep a:first-child {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+@media (max-width: 640.98px) {
+    .top-row:not(.auth) {
+        display: none;
+    }
+
+    .top-row.auth {
+        justify-content: space-between;
+    }
+
+    .top-row ::deep a, .top-row ::deep .btn-link {
+        margin-left: 0;
+    }
+}
+
+@media (min-width: 641px) {
+    .page {
+        flex-direction: row;
+    }
+
+    .sidebar {
+        width: 250px;
+        height: 100vh;
+        position: sticky;
+        top: 0;
+    }
+
+    .top-row {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+
+    .top-row, article {
+        padding-left: 2rem !important;
+        padding-right: 1.5rem !important;
+    }
+}
+*/

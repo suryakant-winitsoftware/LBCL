@@ -1,0 +1,106 @@
+﻿@page "/maintaincashcollection"
+@using Winit.Shared.CommonUtilities.Common
+@inject Winit.Modules.CollectionModule.BL.Interfaces.ICashCollectionDepositViewModel _collectionDepositViewModel;
+
+
+
+<style>
+    .header {
+        display: flex;
+        align-items: center;
+        padding: 5px 0px;
+        background-color: white;
+        margin-top: -4px;
+    }
+
+    .headr_cls {
+        margin-left: 15px;
+        font-size: 20px;
+        margin-top: 5px;
+    }
+
+    .view_cls {
+        margin-left: -28px;
+        width: 20px;
+        height: 20px;
+    }
+</style>
+
+<div style="margin-bottom: 5px;"></div>
+<div class="header">
+    <h1 class="headr_cls">
+        <b>Cash </b>Collection Deposit
+    </h1>
+    <div style="margin-left: 35px;">
+        <button class="cls_wastage_btn" style="padding:4px 10px;font-weight: bold;" @onclick="AddNewRequest">AddNewRequest</button>
+    </div>
+</div>
+<div class="tab-container card " style="height:52px;">
+    <div class="nav nav-tabs ">
+        @foreach (var tab in tabItems)
+        {
+            <button class="col-3 @(selectedTab == tab ? "active" : "") tab-button" style="height:50px;font-size: 12px;" @onclick="() => ChangeTab(tab)">
+                <p style="margin-top: 10px;">@tab</p>
+            </button>
+        }
+    </div>
+</div>
+
+<div style="margin-bottom: 10px;"></div>
+<div class="container" style="display:block;">
+    <div class="row">
+        <div class="card-copy d-flex flex-row" style="background-color:#EDF5FF;">
+            <div class="card-content-copy col-5 d-flex flex-column invc_cls">
+                <p style="margin-left: 20px;"> Request No</p>
+            </div>
+            <div class="card-content-copy col-4 d-flex flex-column ep_cls">
+                <p style="margin-left:-2px;">Deposit Date</p>
+            </div>
+            <div class="card-content-copy col-3 d-flex flex-column clt_cls">
+                Amount
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (accCollectionDeposit.Any())
+{
+    @foreach (var list in accCollectionDeposit)
+    {
+
+        <div class="container">
+            <div class="row">
+                <div class="card d-flex flex-row">
+                    <div class="card-content col-5 d-flex flex-column" style="padding: 5px;border-right: 1px solid #ddd;margin-left: -14px;width: 234px;">
+                        <label style="font-size: 12px;font-weight:500;margin-top:5px;">@list.RequestNo</label>
+                    </div>
+                    <div class="card-content col-3 d-flex flex-column" style="padding: 5px;border-right: 1px solid #ddd;width: 87px;">
+                        @CommonFunctions.GetDateTimeInFormat(list.RequestDate)
+                    </div>
+                    <div class="card-content col-2 d-flex flex-column" style="padding: 5px;border-right: 1px solid #ddd;width: 97px;">
+                        @list.Amount
+                    </div>
+                    <div class="card-content col-2 d-flex flex-column" style="padding: 5px;border-right: 1px solid #ddd;width: 97px;">
+                        <img class="view_cls" src="Images/view_eye.png" @onclick="() => View(list)" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    }
+}
+else
+{
+    <div class="tab-content">
+        <div style="margin-bottom: 3px;"></div>
+        <div class="container">
+            <div class="row">
+                <div class="card">
+                    <div class="card-title" style="color:red;margin-left:150px;margin-top: 10px;font-size: 12px;">
+                        No Records Available
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

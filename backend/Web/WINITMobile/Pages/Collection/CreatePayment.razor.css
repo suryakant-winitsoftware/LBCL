@@ -1,0 +1,190 @@
+﻿body {
+    margin: 2px;
+}
+
+.line {
+    border-top: 1px solid #ccc; /* Change the color as needed */
+    margin-top: 10px; /* Adjust the margin as needed */
+}
+
+
+
+.content {
+    display: none;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 0 0 5px 5px;
+}
+
+.tab:target {
+    background-color: #ccc;
+}
+
+    .tab:target + .content {
+        display: block;
+    }
+
+.card {
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    height: 70px;
+}
+
+/* Additional styles for card content, title, etc. */
+.card-title {
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 1px;
+    margin-top: 12px;
+}
+
+.card-content {
+    font-size: 12px;
+    color: #555;
+    margin-bottom: 0px;
+    font-weight: 500;
+}
+
+/*Tabs styling*/
+.nav-tabs {
+    background-color: #f8f9fa; /* Background color of the tabs */
+    /* border-bottom: 2px solid #007bff; */ /* Border color at the bottom of the tabs */
+    display: flex;
+    justify-content: space-evenly; /* Evenly space the tabs */
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+    width: 108px;
+    height: 23px;
+    margin-top: 10px;
+}
+
+    .nav-tabs .nav-item {
+        flex: 1;
+        margin-bottom: -1px;
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
+        height: 23px;
+        width: 55px;
+    }
+
+    .nav-tabs .nav-item1 {
+        flex: 1;
+        margin-bottom: -1px;
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
+        height: 23px;
+        width: 55px;
+    }
+
+    .nav-tabs .nav-link {
+        color: black; /* Default text color */
+        background-color: #fff; /* Default background color */
+        border: 1px solid deepskyblue; /* Border color of the tabs */
+        border-radius: 0; /* Remove border-radius for a more modern look */
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
+        height: 23px;
+        width: 55px;
+        margin-left: -1px;
+        padding: 3px;
+        text-align: center;
+        font-size: 11px;
+        cursor: pointer;
+        margin-top: -16px;
+    }
+
+    .nav-tabs .nav-links {
+        color: black; /* Default text color */
+        background-color: #fff; /* Default background color */
+        border: 1px solid deepskyblue; /* Border color of the tabs */
+        border-radius: 0; /* Remove border-radius for a more modern look */
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
+        display: block;
+        height: 23px;
+        padding: 3px;
+        text-align: center;
+        width: 55px;
+        margin-left: -2px;
+        font-size: 10px;
+        text-decoration: none;
+        cursor: pointer;
+        float: right;
+    }
+
+    .nav-tabs .nav-link.active {
+        color: white !important; /* Text color when tab is active */
+        background-color: deepskyblue; /* Background color when tab is active */
+        border: 0px deepskyblue; /* Border color when tab is active */
+    }
+
+    .nav-tabs .nav-links.active {
+        color: white !important; /* Text color when tab is active */
+        background-color: deepskyblue; /* Background color when tab is active */
+        border: 0px deepskyblue; /* Border color when tab is active */
+    }
+
+.dam {
+    width: 111px;
+    padding: 2px;
+    background-color: deepskyblue;
+    border-radius: 5px;
+    margin-top: -33px;
+    margin-left: 525px;
+}
+.invc_cls {
+    padding: 10px;
+    width: 112px;
+    border-right: 1px solid silver;
+    font-size: 14px;
+    font-weight: 500;
+    color: black;
+    margin-left: -20px;
+}
+
+.ep_cls {
+    padding: 10px;
+    align-items: center;
+    width: 53px;
+    border-right: 1px solid silver;
+    font-size: 11px;
+    font-weight: 500;
+    color: black;
+    text-align: center;
+}
+
+.inc_cls {
+    padding: 10px;
+    width: 55px;
+    text-align: center;
+    margin-top: -1px;
+    vertical-align: middle;
+    border-right: 1px solid silver;
+    font-size: 11px;
+    font-weight: 500;
+    color: black;
+}
+
+.blnce_cls {
+    padding: 10px;
+    width: 55px;
+    margin-top: -1px;
+    text-align: center;
+    vertical-align: middle;
+    border-right: 1px solid silver;
+    font-size: 11px;
+    font-weight: 500;
+    color: black;
+}
+
+.clt_cls {
+    padding: 10px;
+    align-items: center;
+    font-size: 11px;
+    font-weight: 500;
+    color: black;
+    margin-left: 3px;
+}

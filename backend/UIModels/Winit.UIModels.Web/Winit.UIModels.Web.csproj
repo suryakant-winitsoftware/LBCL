@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Modules\AwayPeriod\Winit.Modules.AwayPeriod.Model\Winit.Modules.AwayPeriod.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\StoreDocument\Winit.Modules.StoreDocument.Model\Winit.Modules.StoreDocument.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\Store\Winit.Modules.Store.Model\Winit.Modules.Store.Model.csproj" />
+    <ProjectReference Include="..\..\SharedObjects\Winit.Shared.Models\Winit.Shared.Models.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.6" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+</Project>

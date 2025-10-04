@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Base\Winit.Modules.Base.Model\Winit.Modules.Base.Model.csproj" />
+    <ProjectReference Include="..\..\Merchandiser\Winit.Modules.Merchandiser.Model\Winit.Modules.Merchandiser.Model.csproj" />
+    <ProjectReference Include="..\..\Planogram\Winit.Modules.Planogram.Model\Winit.Modules.Planogram.Model.csproj" />
+    <ProjectReference Include="..\..\PO\Winit.Modules.PO.Model\Winit.Modules.PO.Model.csproj" />
+    <ProjectReference Include="..\..\StoreCheck\Winit.Modules.StoreCheck.Model\Winit.Modules.StoreCheck.Model.csproj" />
+    <ProjectReference Include="..\..\ExpiryCheck\Winit.Modules.ExpiryCheck.Model\Winit.Modules.ExpiryCheck.Model.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,105 @@
+﻿@using Microsoft.AspNetCore.Components.Forms
+@using WinIt.Pages.Maintain_User;
+@inject Winit.Shared.Models.Common.IAppConfig _appConfigs
+@inject Winit.UIComponents.Common.IAlertService _alertService
+@inject Winit.Modules.User.BL.Interfaces.IAddEditEmployeeViewModel _addEditEmployeeViewModel;
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+
+
+@if (IsLoaded)
+{
+    <div class="cls_state_section1">
+        @if (!string.IsNullOrWhiteSpace(ValidationMessage))
+        {
+            <div class="alert alert-danger">
+                <div class="col-md-12">
+                    <div style="color: red;">@ValidationMessage</div>
+                </div>
+            </div>
+        }
+        
+
+            <div class="cls_state_section_div">
+              
+                   <label class="cls_section_div_purchase2_label">@Localizer["org"]<span class="cls_section_div_purchase2_span">*</span></label>
+@*                      <Winit.UIComponents.Common.CustomControls.DropDown DataSource=" _addEditEmployeeViewModel.OrgSelectionItems" Title="Org" IsButtonVisible="true" OnSelect="_addEditEmployeeViewModel.OnOrgSelection" IsSearchable="false" />
+                *@
+            <div class="cls_btn_y_n">
+            <label class="cls_btn_radio_label">@($"{OrgName}")</label>
+            </div>
+              
+            </div>
+            <div class="cls_state_section_div">
+               
+                   <label class="cls_section_div_purchase2_label">@Localizer["role"]<span class="cls_section_div_purchase2_span">*</span></label>
+                    <Winit.UIComponents.Common.CustomControls.DropDown DataSource=" RoleSelectionItems" 
+                    Title=@Localizer["role"] IsButtonVisible="true" OnSelect="OnRoleSelect"
+                                                               IsSearchable="true"  />
+
+              
+               
+            </div>
+        @if (IsBranchApplicable)
+            {
+                <div class="cls_state_section_div">
+                    
+                       <label class="cls_section_div_purchase2_label">Branch<span class="cls_section_div_purchase2_span">*</span></label>
+                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="BranchSelectionItems"
+                                                                           Title="Branch" IsButtonVisible="true" OnSelect="OnBranchSelect"
+                                                                           IsSearchable="true"  />
+
+                        
+                    
+                </div>
+
+                <div class="cls_state_section_div" style="display: none">
+                   
+                       <label class="cls_section_div_purchase2_label">SalesOffice<span class="cls_section_div_purchase2_span">*</span></label>
+                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource=" SalesOfficeSelectionItems"
+                                                                   Title="SalesOffice" IsButtonVisible="true" OnSelect="OnSalesOfficeSelect"
+                                                                           IsSearchable="true" />
+
+               
+                 </div>
+                
+            }
+            <div class="cls_state_section_div">
+              
+                   <label class="cls_section_div_purchase2_label">@Localizer["reportsto"]<span class="cls_section_div_purchase2_span">*</span></label>
+                    <Winit.UIComponents.Common.CustomControls.DropDown DataSource="ReportsToSelectionItems"
+                                                               Title=@Localizer["reportsto"] IsButtonVisible="true" OnSelect="OnReportsToSelect"
+                                                               IsSearchable="true" @ref="_addEditEmployeeViewModel.Reportsddl" />
+                    
+                
+            </div>
+            <div class="cls_state_section_div">
+                
+                   <label class="cls_section_div_purchase2_label">@Localizer["department"]<span class="cls_section_div_purchase2_span">*</span></label>
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="DepartmentSelectionItems" Title=@Localizer["department"] IsButtonVisible="true" OnSelect="OnDepartmentSelect" IsSearchable="false" />
+                    
+            </div>
+            @if (RoleSelectionItems.Any(p => p.IsSelected && (roleDD.Any(q => q.UID == p.UID && q.IsAppUser))))
+            {
+                <div class="cls_state_section_div">
+                  
+                       <label class="cls_section_div_purchase2_label">Collection Limit  <span class="cls_section_div_purchase2_span">*</span></label>
+                        <input class="form-control" type="text" @bind-value="jobPosition.CollectionLimit" />
+                   
+                </div>
+            }
+        <div class="cls_button_bottom_purchase">
+
+
+            <button class="cls_button_blue" @onclick="() => SaveUpdateOrgRoleMapping()"
+                        disabled="@IsLoading">
+                        @(string.IsNullOrEmpty(ValidationMessage) ? (IsLoading ? "Saving..." : (IsNew ? @Localizer["save"] : @Localizer["update"])) : @Localizer["save"])
+                    </button>
+               
+            </div>
+        
+    </div>
+}
+@code {
+
+}

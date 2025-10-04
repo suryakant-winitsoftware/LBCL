@@ -1,0 +1,61 @@
+﻿@page "/StoreGroupHierarchy"
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.Store.BL.Interfaces.IStoreGroupViewModel _StoreGroupViewModel
+<PageTitle>StoreGroup Hierarchy</PageTitle>
+<PageHeaderAndFilter IDataBreadcrumbService="dataService"
+                     IsShowFilter="true"
+                     ColumnsForFilter="@FilterColumns"
+                     IsSearchCriteriaNeeded="true"
+                     OnFilterApplied="@OnFilterApply" />
+
+<button class="cls_add_new_sec" @onclick="() => {Context = new Winit.Modules.Store.Model.Classes.StoreGroupItemView(); Context.ItemLevel=0; IsAddStoreGroup = !IsAddStoreGroup; } ">@Localizer["add_new"] </button>
+<div class="div1 cls_Hierarchy_1">
+    <table>
+        <thead>
+
+    <tr>
+                <th style="width:5%">
+        </th>
+        <th style="width:40%">
+            <span style="cursor:default;">@Localizer["code_&_name"]</span>
+        </th>
+        <th style="width:5%">
+            <span style="cursor:default;">@Localizer["level"]</span>
+        </th>
+        <th style="width:10%">
+            <span style="cursor:default;">@Localizer["parent"]</span>
+        </th>
+        <th style="width:15%">
+            <span style="cursor:default;">Store Group Type</span>
+        </th>
+        <th style="width:25%">
+            <span style="cursor:default;">@Localizer["action"]</span>
+        </th>
+            </tr>
+
+        </thead>
+        <tbody>
+    
+    <StoreGroupHierarchy HierarchyGrids="@_StoreGroupViewModel.StoreGroupItemViews" OnBtnExpandClick="GetChildGrid"
+                         OnCreateClick="CreateStoreGroup" OnDeleteStoreGroup="DeleteStoreGroup"
+                         OnCreateClone="getClonedIStoreGroupItemView" OnUpdateClick="UpdateStoreGroup" 
+                         OnStoreGroupTypebtnClicked="StoreGroupTypeDDClicked"></StoreGroupHierarchy>
+        </tbody>
+    </table>
+</div>
+@if (IsAddStoreGroup)
+{
+    <AddUpdateStoreGroupPopUp CancelbtnText=@Localizer["cancel"] OkBtnText=@Localizer["create"] Context="Context" IsAddPopUp="true"
+                              OnCloseClick="AddStoreGroupPOPupClosed" OnOkClick="CreateClickedFromHome"
+                              title=@Localizer["add_storegroup_hierarchy"] 
+                              OnStoreGroupTypebtnClicked="() =>{StoreGroupTypeDDClicked(Context);}" />
+}
+@if (IsStoreGroupTypeDDOpen)
+{
+    <Winit.UIComponents.Common.CustomControls.DropDown DataSource="StoreGroupTypeSelectionItems"
+                                                       IsButtonVisible="false"
+                                                       IsSearchable="false"
+                                                       OnSelect="StoreGroupTypeSelected"
+                                                       ShowPopUp="IsStoreGroupTypeDDOpen"
+                                                       Title="Select Store Group Type" />
+}

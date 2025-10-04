@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Base\Winit.Modules.Base.BL\Winit.Modules.Base.BL.csproj" />
+    <ProjectReference Include="..\Winit.Modules.JobPosition.DL\Winit.Modules.JobPosition.DL.csproj" />
+    <ProjectReference Include="..\Winit.Modules.JobPosition.Model\Winit.Modules.JobPosition.Model.csproj" />
+  </ItemGroup>
+</Project>

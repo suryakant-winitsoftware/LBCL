@@ -1,0 +1,43 @@
+﻿@page "/Summary_DeliverySummary"
+@inherits WINITMobile.Pages.Base.BaseComponentBase 
+@using Winit.Modules.Common.Model.Interfaces;
+@using Winit.Shared.Models.Constants;
+@inject Winit.Modules.SalesOrder.BL.UIInterfaces.ISalesSummaryViewModel _SalesSummeryViewModel
+@inject Winit.Modules.SalesOrder.BL.Interfaces.ISalesOrderBL _SalesOrderBL
+
+
+<h2 class="cls_main_heading">Sales Report</h2>
+<div class="container-fluid">
+    <div style="width:100%;float:left;background:#fff;padding:5px 2%;margin-top:5px;margin-bottom:5px;">
+    <div style="display: flex; align-items: center; ">
+
+            <InputDate @bind-Value="_SalesSummeryViewModel.StartDate" id="txttdate" class="form-control cls_new_form"></InputDate>
+        <span style="margin:10px 10px;font-weight:700; font-size:13px;">@Localizer["to"]</span>
+            <InputDate @bind-Value="_SalesSummeryViewModel.EndDate" id="txtfdate" class="form-control cls_new_form"></InputDate>
+        </div>
+    </div>
+   @* <SearchBox Placeholder="Enter Customer Name/Code here.." OnSearch="OnSearching"></SearchBox>*@
+    <div class="cls_serch_nn">
+        <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder="Enter Customer Name/Code here.." MaxLength="200" DebounceInterval="500" OnDebounceIntervalElapsed="OnSearching"
+                                                               KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+                                                               Value="" IsForSearch="true" />
+    </div>
+</div>
+    <div style="width:100%;float:left;margin-top:5px;">
+
+        <Winit.UIComponents.Common.CustomControles.Tabs TabItems="_SalesSummeryViewModel.TabList" OnTabSelect="ActiveTabChanged"></Winit.UIComponents.Common.CustomControles.Tabs>
+        
+    </div>
+ 
+
+    @if (_SalesSummeryViewModel.DisplayedSalesSummaryItemViews != null && _SalesSummeryViewModel.DisplayedSalesSummaryItemViews.Any())
+    {
+        @* <DeliverySummeryListView Data="_SalesSummeryViewModel.DisplayedSalesSummaryItemViews" 
+                                 OnItemSelected="OnItemSelected"></DeliverySummeryListView> *@
+        <DeliverySummeryListView Data="_SalesSummeryViewModel.DisplayedSalesSummaryItemViews" OnItemSelected="OnItemSelected"></DeliverySummeryListView>
+    }
+    else
+    {
+    <p style="width:100%;float:left;text-align:center;padding:15px 0px;">@Localizer["no_results_found"].</p>
+    }
+

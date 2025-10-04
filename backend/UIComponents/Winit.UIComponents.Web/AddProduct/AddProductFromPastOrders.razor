@@ -1,0 +1,157 @@
+﻿@using System.ComponentModel.DataAnnotations
+@using System.Linq
+@using Microsoft.Extensions.Localization
+@using Winit.UIComponents.Common.LanguageResources.Mobile
+@inject IStringLocalizer<LanguageKeys> Localizer
+@inject Winit.UIComponents.Common.Language.ILanguageService _languageService
+
+
+<div class="modal-backdrop fade show"></div>
+@if (IsShowPopUpProducts)
+{
+    <div class="modal fade show" tabindex="-1" style="display: block;">
+        <div class="modal-dialog" style="top:10%;max-width:800px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">Add Products From Past Order </h2>
+                    <span class="close" @onclick="CloseDialogMT">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="">
+                        <div class="d-flex">
+                            <input type="radio" name="Select" id="SelectByInvoice" @onclick=@(()=>SelectByInvoice=true) checked="@SelectByInvoice" />
+                            <label for="SelectByInvoice">Select By invoice</label>
+                            <input type="radio" name="Select" id="SelectByModel" @onclick=@(()=>SelectByInvoice=false) />
+                            <label for="SelectByModel">Select By Model</label>
+                        </div>
+                        <div class="search-container">
+                            <Winit.UIComponents.Common.CustomControls.WinitTextBox MaxLength="200" DebounceInterval="500" OnDebounceIntervalElapsed="SearchASelectedProduct"
+                                                                                   KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+                                                                                   Value="" IsForSearch="true" />
+                        </div>
+                    </div>
+                    <div class="dialog-content">
+                        <div class="div1" >
+                            <table>
+                                <thead>
+
+                                <th>
+
+                                </th>
+
+                                <th>
+                                    <span style="cursor:default;">@(SelectByInvoice ? "Invoice Number" : "Model Number")</span>
+                                </th>
+                                <th>
+                                    <span style="cursor:default;">@(SelectByInvoice ? "Date" : "Model Name")</span>
+                                </th>
+                                    @if (SelectByInvoice)
+                                    {
+                                    <th>
+                                        TotalQty
+                                    </th>
+                                    }
+                                </thead>
+                                <tbody>
+
+                                    @if (productByInvoiceOrModels != null && productByInvoiceOrModels.Any())
+                                    {
+                                        @foreach (var row in productByInvoiceOrModels)
+                                        {
+                                            <tr>
+
+                                                <td>
+                                                    @if (SelectByInvoice)
+                                                    {
+                                                        <input type="checkbox" @onclick="() => row.IsSelected = !row.IsSelected"
+                                                               checked="@row.IsSelected" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="radio" name="Model" id="@row.ModelName" checked="@row.IsSelected" @onclick="@(()=>SelectSingleItemItem(row))" />
+                                                    }
+                                                </td>
+                                               
+                                                <td>
+                                                    @(SelectByInvoice ? row.InvoiceNumber : row.ModelNumber)
+                                                </td>
+                                                <td>
+                                                    @(SelectByInvoice ? CommonFunctions.GetDateTimeInFormat(row.Date) : row.ModelName)
+                                                </td>
+                                                @if (SelectByInvoice)
+                                                {
+                                                    <td>@row.TotalQty</td>
+                                                }
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="3" style="text-align: center;color:red">@Localizer["no_items"]</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="cls_new_sec" @onclick=@AddSelectedProducts>
+                        Add Selected
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@if (IsShowPopUpInvoices)
+{
+    <div class="modal fade show" tabindex="-1" style="display: block;">
+        <div class="modal-dialog" style="top:10%;max-width:800px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">Select Invoice </h2>
+                    <span class="close" @onclick="CloseDialogMT">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="dialog-content">
+                        <div class="div1">
+                            <table>
+                               
+                                <tbody>
+
+                                    @if (productByInvoiceOrModels != null && productByInvoiceOrModels.Any())
+                                    {
+                                        @foreach (var row in productByInvoiceOrModels)
+                                        {
+                                            <input type="radio" name="Model" id="@row.ModelName" checked="@row.IsSelected" @onclick="@(()=>SelectSingleItemItem(row))" />
+                                            <tr>
+                                               @row.InvoiceNumber
+                                            </tr>
+                                            <tr>
+                                                <td>Date : @CommonFunctions.GetDateTimeInFormat(row.Date)</td>
+                                                <td>Order Qty : @row.TotalQty</td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="3" style="text-align: center;color:red">@Localizer["no_items"]</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="cls_new_sec" @onclick=@AddSelectedProducts>
+                        Proceed
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

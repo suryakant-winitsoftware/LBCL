@@ -1,0 +1,314 @@
+﻿@page "/AddEditMaintainSKU"
+@page "/AddEditMaintainSKU/{SKUUID}"
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize]
+@inject Winit.Modules.SKU.BL.Interfaces.IAddEditMaintainSKUViewModel _addEditMaintainSKUViewModel;
+@inject Winit.Modules.SKU.BL.Interfaces.IMaintainSKUViewModel _skuViewModel;
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" />
+@if (IsLoaded)
+{
+    <header>
+        @* <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"> *@
+    </header>
+    <div class="content">
+        @* <div class="page-header" style="border: 0px; margin-bottom: 0px; padding:7px 0px;">
+    <div class="cls_gridtitlebox">
+    <span class="gridtitle gridcolor minimized_width">
+    <h3 class="cls_head_cust" style="color: #013799;margin-bottom: 0px;"> @(IsAdd ? "Add" : "Edit") Item SKU</h3>
+    </span>
+    <div class="breadcrum extra_padd">
+    <a href="#/principaldashboard">Home</a> » <a>Master Add Item SKU</a> » @(IsAdd ? "Add" : "Edit") Item SKU
+    </div>
+    </div>
+    </div> *@
+        <div class="cls_section" >
+
+            @if (!string.IsNullOrWhiteSpace(validationMessageSKU))
+            {
+                <div class="alert alert-danger">
+                    <div class="col-md-12">
+                        <div style="color: red;">@validationMessageSKU</div>
+                    </div>
+                </div>
+            }
+
+            <h3 class="cls_container_p_full" > @Localizer["item_sku"] </h3>
+            <div class="cls_container_div4">
+
+                <div class="cls_section_div_purchase2">
+                    <label class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span">*</span> @Localizer["supplier"]</label>
+                        
+                            <Winit.UIComponents.Common.CustomControls.DropDown DataSource=" _addEditMaintainSKUViewModel.ORGSupplierSelectionItems" Title="Supplier" IsButtonVisible="true" OnSelect="OnORGSupplierSelection" IsSearchable="false" />
+                        
+                    </div>
+                <div class="cls_section_div_purchase2">
+                    <label class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span">*</span> @Localizer["item_sku_code"]</label>
+
+                    <input placeholder="Enter Here" type="text" @bind-value="_addEditMaintainSKUViewModel.SKU.Code" disabled="@(!IsAdd)" class="cls_select2_button">
+                
+                </div>
+                <div class="cls_section_div_purchase2">
+                    <label class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span">*</span>@Localizer["long_name"] </label>
+
+                    <input placeholder="Enter Here" type="text" @bind-value="_addEditMaintainSKUViewModel.SKU.LongName" class="cls_select2_button">
+                    
+                </div>
+                
+                
+                    <div class="cls_section_div_purchase2">
+                    <label class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span">*</span>@Localizer["display_description"] </label>
+                    
+                        <input placeholder="Enter Here" type="text" @bind-value="_addEditMaintainSKUViewModel.SKU.Name" class="cls_select2_button">
+                   
+                </div>
+                    <div class="cls_section_div_purchase2">
+                    <label class="cls_section_div_purchase2_label">@Localizer["from_date"]  </label>
+                    <input class="cls_select_date" type="date" @bind-value="_addEditMaintainSKUViewModel.SKU.FromDate">
+                    </div>
+            </div>
+                <div class="cls_container_div4">
+                    <div class="cls_section_div_purchase2">
+                    <label class="cls_section_div_purchase2_label">@Localizer["end_date"]  </label>
+                    <input class="cls_select_date" type="date" @bind-value="_addEditMaintainSKUViewModel.SKU.ToDate">
+                    </div>
+                    <div class="cls_section_div_purchase2">
+                        <label class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span"></span>  @Localizer["rss_display_description"] </label>
+
+                    <input placeholder="Enter Here" type="text" @bind-value="_addEditMaintainSKUViewModel.SKU.AliasName" class="cls_select2_button">
+                        
+                    </div>
+                    <div class="cls_section_div_purchase2">
+                    <div class="cls_btn_radio">
+                        <input type="checkbox" class="cls_btn_radio_input" @bind="_addEditMaintainSKUViewModel.SKU.IsActive">
+                        <label class="cls_btn_radio_label">@Localizer["is_active"]</label>
+                        </div>
+                    <div class="cls_btn_radio">
+                        <input type="checkbox" class="cls_btn_radio_input" @bind="_addEditMaintainSKUViewModel.SKU.IsThirdParty">
+                        <label class="cls_btn_radio_label"> @Localizer["is_thirdparty"]</label>
+                            </div>
+                        
+                    </div>
+                </div>
+                <div class="cls_button_bottom_purchase" >
+                    <button class="cls_button_blue" @onclick="SaveUpdateSKUItem" disabled="@IsLoading">
+                        @(string.IsNullOrEmpty(validationMessageSKU) ? (IsLoading ? @Localizer["saving..."] : (IsAdd ? @Localizer["save"] : @Localizer["update"])) : @Localizer["save"])
+                    </button>
+                </div>
+            
+        </div>
+        <SKUAttribute DataSource="_addEditMaintainSKUViewModel.SKUAttributeData" OnSaveClick="OnSaveSKUAttributes" OnDropdownValueSelectSKUAtrribute="OnDropdownValueSelectSKUAtrributes" IsSave="_addEditMaintainSKUViewModel.IsAddSkuAttribute" />
+        <div class="cls_section">
+            <h3 class="cls_container_p_half"> @Localizer["sku_uom"]</h3>
+            <button class="cls_comman_btn_right" id="addNewBtn" @onclick="OnSKUUOMAddBtnClicked" style="display: @(IsAddNewSKUUOMVisiblebtn ? "inline" : "none");">
+                @Localizer["add_new"]
+            </button>
+            <div class="cls_container_div1">
+                <span style="display: @(IsAddNewSKUUOMVisiblebtn ? "inline" : "none");" class="cls_section_div_purchase2_span"> @Localizer["it_is_must_to_add_both_base_and_outer_uom."]</span>
+                
+              
+                    <div class="div1">
+                    <table class="table" style="width:100%;">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Localizer["code"]
+                                </th>
+                                <th>
+                                    @Localizer["name"]
+                                </th>
+                                <th>
+                                    @Localizer["multiplier"] 
+                                </th>
+                                <th>
+                                    @Localizer["is_base_uom"] 
+                                </th>
+                                <th>
+                                    @Localizer["is_outer_uom"] 
+                                </th>
+                                <th>
+                                    @Localizer["barcode"] 
+                                </th>
+                                <th>
+                                    @Localizer["action"]
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="cls_new_grid_style">
+                            @foreach (var sku in _addEditMaintainSKUViewModel.SKUUOMList)
+                            {
+                                <tr>
+                                    <td>@sku.Code</td>
+                                    <td>@sku.Name</td>
+                                    <td>@sku.Multiplier</td>
+                                    <td>@sku.IsBaseUOM</td>
+                                    <td>@sku.IsOuterUOM</td>
+                                    <td>@sku.Barcodes</td>
+                                    <td>
+                                        <img src="./Images/Edit_icon.svg" alt="Alternate Text" @onclick="() => OnSKUUOMEditBtnClick(sku)" title="Edit" style="width:17px;" />
+                                        @* <button class="btn btn-outline-primary" @onclick="() => OnSKUUOMEditBtnClick(sku)" title="Edit"> *@
+                                        @*     @Localizer["edit"]  *@
+                                        @* </button> *@
+                                       @*  <button class="btn btn-outline-primary" @onclick="() => OnSKUUOMViewBtnClick(sku)" title="View">
+                                            <i class="fas fa-trash"></i> View
+                                        </button> *@
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    </div>
+              
+            </div>
+        </div>
+        <div class="cls_section">
+            <h3 class="cls_container_p_half">@Localizer["distribution_channel_mapping"] </h3>
+            <button class="cls_comman_btn_right" id="addNewBtn" @onclick="OnDistributionAddBtnClicked" style="display: @(IsAddNewDistributionVisiblebtn ? "inline" : "none");">
+                @Localizer["add_new"]
+            </button>
+            <div class="cls_container_div1">
+               
+                <div class="cls_container_div1">
+                    <div class="div1">
+                    <table class="table" style="width:100%;">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Localizer["distribution_channel"]
+                                </th>
+                                <th>
+                                    @Localizer["can_buy"]
+                                </th>
+                                <th>
+                                    @Localizer["can_sell"]
+                                </th>
+                                <th>
+                                    @Localizer["buying_uom"]
+                                </th>
+                                <th>
+                                    @Localizer["selling_uom"]
+                                </th>
+
+                                <th>
+                                    @Localizer["is_active"]
+                                </th>
+                                <th>
+                                    @Localizer["action"]
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="cls_new_grid_style">
+                            @foreach (var skuconfig in _addEditMaintainSKUViewModel.SKUCONFIGLIST)
+                            {
+                                <tr>
+                                    <td>@skuconfig.DistributionChannelOrgUID</td>
+                                    <td>@skuconfig.CanBuy</td>
+                                    <td>@skuconfig.CanSell</td>
+                                    <td>@skuconfig.BuyingUOM</td>
+                                    <td>@skuconfig.SellingUOM</td>
+                                    <td>@skuconfig.IsActive</td>
+                                    <td>
+                                            <img src="./Images/Edit_icon.svg" alt="Alternate Text" @onclick="() => OnDistributionEditBtnClick(skuconfig)" title="Edit" style="width:17px;" />
+                                        @* <button class="btn btn-outline-primary" @onclick="() => OnDistributionEditBtnClick(skuconfig)" title="Edit"> *@
+                                        @*     <i class="fas fa-edit"></i> @Localizer["edit"] *@
+                                        @* </button> *@
+                                        @*  <button class="btn btn-outline-primary" title="View">
+                                <i class="fas fa-trash"></i> View
+                                </button> *@
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+            </div>
+        
+        <div class="cls_container_div4">
+            <div class="cls_file_upload_qps">
+                <h3 class="cls_file_upload_label">@Localizer["image_upload_for_sku"]</h3>
+            
+            <Winit.UIComponents.Common.FileUploader.FileUploader @ref=fileUploader FileExtension=".jpg,.jpeg,.pdf,.png" RelativePath="@FilePath" FileSize="500000"
+                                                                 AllowMultipleFiles=true FileSysList=fileSysList
+                                                                 LinkedItemType="@Winit.Modules.SKU.Model.Classes.SKUConsonant.FileSysLinkedItmeType" LinkedItemUID="@_addEditMaintainSKUViewModel.SKU.UID"
+                                                                 FileSysType="@Winit.Modules.SKU.Model.Classes.SKUConsonant.FileSysLinkedItmeType" FileType="@Winit.Modules.SKU.Model.Classes.SKUConsonant.FileSysFileType"
+                                                                 IsDirectory="false"
+                                                                 UploadEventCallBack="GetsavedImagePath" DeleteEventCallBack="AfterDeleteImage" />
+            </div>
+            <div class="cls_button_bottom_purchase" >
+                <button class="cls_button_blue"  type="button" @onclick="()=>SaveFileSys()">
+                    @Localizer["save"]
+                </button>
+            </div>
+        </div>
+        </div>
+
+        @* @if (ListCustomSKUFields != null && ListCustomSKUFields.Any())
+    { *@
+        <div class="cls_section">
+            <h3 class="cls_container_p_full">@Localizer["custom_field"]</h3>
+            <div class="cls_container_div1">
+                
+                    @foreach (var field in ListCustomSKUFields)
+                    {
+
+                        <div class="cls_section_div_sku">
+                        <label for="@field.UID" class="cls_section_div_purchase2_label">@field.Label:</label>
+                        
+                                
+                                @if (field.Type == "Text")
+                                {
+                                <input type="text" id="@field.UID" name="@field.UID" @bind="@field.Value" class="cls_select2_button">
+                                }
+                                else if (field.Type == "Number")
+                                {
+                                <input type="number" id="@field.UID" name="@field.UID" @bind="@field.Value" class="cls_select2_button">
+                                }
+                           
+                        </div>
+                    }
+
+
+                
+            </div>
+            <div class="cls_button_bottom_purchase" >
+
+                <button class="cls_button_blue" @onclick="SaveSKUCustomFieldsForDynamic" disabled="@IsLoading">
+                    @(IsLoading ? "Saving..." : (IsCustomAdd ? @Localizer["save"] : @Localizer["update"]))
+                </button>
+            </div>
+
+        </div>
+        @*  } *@
+        <div class="cls_button_bottom_purchase" >
+            <button class="cls_button_light"  type="button" @onclick="BackBtnClicked">
+                @Localizer["back"] 
+            </button>
+        </div>
+    </div>
+}
+
+@if (IsAddSkuUomPopUp)
+{
+    <AddUpdateSKUUOMDialog Msg="@Msg" OnCloseClick="OnSKUUOMCancelBtnClickInPopUp" OKBtnText=@Localizer["save"] cancelBtnClick=@Localizer["back"] Title=@Localizer["add_sku_uom"] OnOkClick="OnSKUUOMCreateBtnClickFromPopUp" SKUUOM="_addEditMaintainSKUViewModel.SKUUOM" ListForUOMSelection="_addEditMaintainSKUViewModel.SKUUOMTypeSelectionItems" ListForVolumeUnitSelection="_addEditMaintainSKUViewModel.VoumeUnitSelectionItems" ListForGrossWeightUnitSelection="_addEditMaintainSKUViewModel.GrossWeightUnitSelectionItems" ListForWeightUnitSelection="_addEditMaintainSKUViewModel.WeightUnitSelectionItems" />
+}
+@if (IsEditskuUOMPopUp)
+{
+    <AddUpdateSKUUOMDialog Msg="@Msg" OnCloseClick="OnSKUUOMCancelBtnClickInPopUp" IsEditMode="true" OKBtnText=@Localizer["update"] cancelBtnClick=@Localizer["back"] Title=@Localizer["edit_sku_uom"] OnOkClick="OnSKUUOMUpadteBtnClickFromPopUp" SKUUOM="_addEditMaintainSKUViewModel.SKUUOM" ListForUOMSelection="_addEditMaintainSKUViewModel.SKUUOMTypeSelectionItems" ListForVolumeUnitSelection="_addEditMaintainSKUViewModel.VoumeUnitSelectionItems" ListForGrossWeightUnitSelection="_addEditMaintainSKUViewModel.GrossWeightUnitSelectionItems" ListForWeightUnitSelection="_addEditMaintainSKUViewModel.WeightUnitSelectionItems" />
+
+}
+@if (IsViewskuUOMPopUp)
+{
+    <AddUpdateSKUUOMDialog OnCloseClick="OnSKUUOMCancelBtnClickInPopUp" IsEditMode="true" IsViewMode="true" cancelBtnClick=@Localizer["back"] Title=@Localizer["view_sku_uom"] SKUUOM="_addEditMaintainSKUViewModel.SKUUOM" ListForVolumeUnitSelection="_addEditMaintainSKUViewModel.VoumeUnitSelectionItems" ListForGrossWeightUnitSelection="_addEditMaintainSKUViewModel.GrossWeightUnitSelectionItems" ListForUOMSelection="_addEditMaintainSKUViewModel.SKUUOMTypeSelectionItems" ListForWeightUnitSelection="_addEditMaintainSKUViewModel.WeightUnitSelectionItems" />
+
+}
+@if (IsDistributionPopUp)
+{
+    <AddUpdateDistributionDialog Msg="@Msg" OnCloseClick="OnSKUConfigCancelBtnClickInPopUp" OKBtnText=@Localizer["save"] cancelBtnClock=@Localizer["back"] Title=@Localizer["add_distribution"] SKUConfig="_addEditMaintainSKUViewModel.SKUCONFIG" OnOkClick="OnDistributionCreateBtnClickFromPopUp" ListForDistributionSelection="_addEditMaintainSKUViewModel.oRGDistributionSelectionItems" ListForBuyingUomSelection="_addEditMaintainSKUViewModel.BuyingUOMSelectionItems" ListForSellingUomSelection="_addEditMaintainSKUViewModel.SellingUOMSelectionItems" />
+}
+@if (IsDistributionEDitPopUp)
+{
+    <AddUpdateDistributionDialog OnCloseClick="OnSKUConfigCancelBtnClickInPopUp" OKBtnText=@Localizer["update"] cancelBtnClock=@Localizer["back"] Title=@Localizer["edit_distribution"] SKUConfig="_addEditMaintainSKUViewModel.SKUCONFIG" OnOkClick="OnDistributionUpadteBtnClickFromPopUp" ListForDistributionSelection="_addEditMaintainSKUViewModel.oRGDistributionSelectionItems" ListForBuyingUomSelection="_addEditMaintainSKUViewModel.BuyingUOMSelectionItems" ListForSellingUomSelection="_addEditMaintainSKUViewModel.SellingUOMSelectionItems" />
+}
+

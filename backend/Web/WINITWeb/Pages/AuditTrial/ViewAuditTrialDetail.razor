@@ -1,0 +1,273 @@
+﻿@page "/viewaudittraildetail"
+@using System.Text.Json
+@using Winit.Modules.ApprovalEngine.Model.Constants
+@using Winit.Modules.AuditTrail.Model.Classes
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject NavigationManager NavManager
+@inject Winit.Modules.AuditTrail.BL.Interfaces.IAuditTrailView _viewModel
+
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" />
+
+<div class="cls_section">
+
+    <div class="cls_section_div_purchase4">
+
+        <label class="cls_section_div_purchase2_label">Module:</label>
+
+        <label class="cls_credit_label">@(_viewModel.CurrentAuditTrailEntry?.LinkedItemType)</label>
+
+    </div>
+    <div class="cls_section_div_purchase4">
+
+        <label class="cls_section_div_purchase2_label">Doc No:</label>
+
+        <label class="cls_credit_label">@(_viewModel.CurrentAuditTrailEntry?.DocNo)</label>
+
+    </div>
+  @*   <div class="cls_section_div_purchase4">
+
+        <label class="cls_section_div_purchase2_label">Command:</label>
+
+        <label class="cls_credit_label">@(_viewModel.CurrentAuditTrailEntry?.CommandType)</label>
+
+    </div> *@
+    <div class="cls_section_div_purchase4">
+
+        <label class="cls_section_div_purchase2_label">Created On:</label>
+
+        <label class="cls_credit_label">@(CommonFunctions.GetDateTimeInFormat(_viewModel.CurrentAuditTrailEntry?.ServerCommandDate, "dd MMM, yyyy HH:mm:ss"))</label>
+
+    </div>
+
+</div>
+<div class="cls_section">
+    
+    <div class="cls_section_div_purchase4">
+
+        <label class="cls_section_div_purchase2_label">Emp Name:</label>
+        <label class="cls_credit_label">@(_viewModel.CurrentAuditTrailEntry?.EmpName)</label>
+
+    </div>
+    <div class="cls_section_div_purchase4">
+
+        <label class="cls_section_div_purchase2_label">Has Changes:</label>
+        <label class="cls_credit_label"> @(CommonFunctions.ConvertBoolToYesNo(_viewModel?.CurrentAuditTrailEntry?.HasChanges ?? false))</label>
+
+    </div>
+    
+        <div class="cls_section_div_purchase4">
+            <label class="cls_section_div_purchase2_label">Old Request:</label>
+        @if (_viewModel?.CurrentAuditTrailEntry?.HasChanges ?? false)
+        {
+            <div class="cls_container_div1">
+                <a class="cls_section_level2_a" @onclick="() => LoadOldRequestData(true)">Click to View</a>
+            </div>
+        }
+        else
+        {
+            <label class="cls_credit_label">NA</label>
+
+        }
+
+        </div>
+     <div class="cls_section_div_purchase4">
+
+        <label class="cls_section_div_purchase2_label">New Request:</label>
+        <div class="cls_container_div1">
+            <a class="cls_section_level2_a" @onclick="() => LoadOldRequestData(false)">Click to View</a>
+        </div>
+    </div>
+   
+    
+</div>
+@if (_viewModel?.CurrentAuditTrailEntry?.HasChanges ?? false)
+{
+    <div class="cls_audit_content"><h5 class="cls_audit_content_label">Change Details</h5></div>
+<div class="cls_container_div1">
+  @*   <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder="Search" MaxLength="200" DebounceInterval="500" OnDebounceIntervalElapsed="SearchAmongChangeData"
+                                                           KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+                                                           Value="@searchTerm" IsForSearch="true" /> *@
+        <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder="Search"
+                                                               MaxLength="200" DebounceInterval="500"
+                                                               KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+                                                               IsForSearch="true"
+                                                               OnDebounceIntervalElapsed="SearchAmongChangeData" />
+</div>
+
+<div class="cls_container_div4">
+        <div class="div1">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Field Name</th>
+                        <th>Old Value</th>
+                        <th>New Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (_viewModel.FilteredChangeData != null)
+                      {
+                        @foreach (ChangeLog changeLog in _viewModel?.FilteredChangeData!)
+                        {
+                           <tr>
+                                <td>@(changeLog.Field)</td>
+                                <td>@(changeLog.OldValue)</td>
+                                <td>@(changeLog.NewValue)</td>
+                           </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="3" style="text-align: center;color:red">No Change Record Found</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+@if (IsDataViewRequested)
+{
+    <div class="modal fade show d-block" id="oldDataModal" tabindex="-1" aria-hidden="true">
+        <div class="" style="width: 80% !important;margin: 68px auto;">
+            <div class="modal-content">
+                <div class="modal-header" style="align-items: center;padding: 8px 16px;">
+                    <h5 class="modal-title" >
+                        @(IsRequestForOldData ? "Old Request" : "New Request")
+                    </h5>
+                    <button class="cls_add_new_sec" @onclick="ToggleRawTableView">
+                        @(IsTableView ? "View Raw" : "View Table")
+                    </button>
+                    <span class="close"  style="margin:0px; padding:0px;"
+                            @onclick="OnClickCloseViewDataPopup">
+                        ×
+                    </span>
+                </div>
+             
+                <div class="modal-body cls_audit">
+                    @* <div class="cls_container_div1">
+                        <button class="cls_add_new_sec" @onclick="ToggleRawTableView" >
+                            @(IsTableView ? "View Raw" : "View Table")
+                        </button>
+                    </div> *@
+                    
+
+                    @* @{
+                        Dictionary<string, object>? oldData = IsRequestForOldData
+                            ? _viewModel?.OriginalAuditTrailEntry?.NewData as Dictionary<string, object>
+                            : _viewModel?.CurrentAuditTrailEntry?.NewData as Dictionary<string, object>;
+
+                        
+                    } *@
+                    <div class="cls_sales_container2">
+
+                        @if (OldData != null && OldData.Any())
+                        {
+
+                            @if (IsTableView)
+                            {
+                                @foreach (var item in OldData)
+                                {
+                                   @*  <h5 class="cls_container_p_full"
+                                        style="background-color: grey; text-align: center; padding: 10px; border-radius: 5px; color: white; font-weight: bold; cursor: pointer;"
+                                        @onclick="() => ToggleSection(item.Key)">
+                                        @item.Key
+                                    </h5> *@
+
+                                    <button class="cls_dropdown_button_full"                                        
+                                        @onclick="() => ToggleSection(item.Key)">
+                                      <span>
+                                            @item.Key
+                                      </span>
+                                        <span>
+                                            @if (sectionVisibility.ContainsKey(item.Key) && sectionVisibility[item.Key])
+                                            {
+                                                <img src="./Images/arrow_up.png" class="cls_arrow_up">
+                                            }
+                                            else
+                                            {
+                                                <img src="./Images/arrow_down.png" class="cls_arrow_down">
+                                            }
+                                        </span>
+                                    </button>
+
+
+                                        @if (sectionVisibility.ContainsKey(item.Key) && sectionVisibility[item.Key])
+                                        {
+                                            var parsedDict = ParseJson(item.Value.ToString() ?? "");
+                                            if (parsedDict != null)
+                                            {
+                                                <div class="cls_audit_table">
+                                                    <table>
+                                                        <tbody>
+                                                            @foreach (var kvp in parsedDict)
+                                                            {
+                                                                <tr>
+                                                                    <td style="width:30%;">@kvp.Key</td>
+                                                                    <td>@kvp.Value</td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                continue;
+                                            }
+
+                                            var parsedList = ParseJsonArray(item.Value.ToString() ?? "");
+                                            if (parsedList != null)
+                                            {
+                                                @foreach (var dict in parsedList)
+                                                {
+                                                    <div class="cls_audit_table">
+                                                        <table>
+                                                            <tbody>
+                                                                @foreach (var kvp in dict)
+                                                                {
+                                                                    <tr>
+                                                                    <td style="width:30%;">@kvp.Key</td>
+                                                                        <td>@kvp.Value</td>
+                                                                    </tr>
+                                                                }
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                }
+                                                continue;
+                                            }
+
+                                            <p>@item.Value</p>
+
+                                        }
+
+
+                                    
+
+                                }
+                            }
+                            else
+                            {
+                                <div class="cls_sales_container_outline">
+                               
+                                    <pre class="cls_auidt_pre">@Newtonsoft.Json.JsonConvert.SerializeObject(OldData, Newtonsoft.Json.Formatting.Indented)</pre>
+                                </div>
+
+                            }
+                        }
+                        else
+                        {
+                            <p>No Old Data Available.</p>
+                        }
+
+
+                    </div>
+
+                
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+

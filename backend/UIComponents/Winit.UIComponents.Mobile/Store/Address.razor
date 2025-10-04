@@ -1,0 +1,89 @@
+﻿@inject Winit.Modules.Address.BL.Interfaces.IAddressBL AddressBL
+@using Microsoft.Extensions.Localization
+@using Winit.UIComponents.Common.LanguageResources.Mobile
+@inject Winit.UIComponents.Common.Language.ILanguageService _languageService
+@inject IStringLocalizer<LanguageKeys> Localizer
+
+ <h1> @Type Address</h1>
+<div class="cls_main_sign_input_new1">
+    <div>@Localizer["address_line1"]</div>
+    <div>
+        <input type="text"  @bind="@_address.Line1"  />
+    </div>
+</div>
+
+<div class="cls_main_sign_input_new1">
+    <div>@Localizer["address_line2"] </div>
+    <div>
+        <input type="text"  @bind="@_address.Line2" />
+    </div>
+</div>
+<div class="cls_main_sign_input_new1">
+    <div>@Localizer["address_line3"] </div>
+    <div>
+        <input type="text"  @bind="@_address.Line3" />
+    </div>
+</div>
+<div class="cls_main_sign_input_new1">
+    <div>@Localizer["village/area/locality"]</div>
+    <div>
+        <input type="text"  @bind="@_address.Area" />
+    </div>
+</div>
+<div class="cls_main_sign_input_new1">
+    <div>@Localizer["sub_area"]</div>
+    <div>
+        <input type="text"  @bind="@_address.SubArea" />
+    </div>
+</div>
+<div class="cls_main_sign_input_new1">
+    <div>@Localizer["region/zone"]</div>
+    <div>
+        <input type="text"  @bind="@_address.RegionCode" />
+    </div>
+</div>
+<div class="cls_main_sign_input_new1">
+    <div>@Localizer["state"]</div>
+    <div>
+        <input type="text"  @bind="@_address.StateCode" />
+    </div>
+</div>
+<div class="cls_main_sign_input_new1">
+    <div>@Localizer["territory"]</div>
+    <div>
+        <input type="text"  @bind="@_address.TerritoryCode" />
+    </div>
+</div >
+<div class="cls_main_sign_input_new1">
+    <div>@Localizer["city/district"]</div>
+    <div>
+        <input type="text"  @bind="@_address.City" />
+    </div>
+</div>
+<div class="cls_main_sign_input_new1">
+    <div>@Localizer["po_boxnumber"]</div>
+    <div>
+        <input type="text"   />
+    </div>
+</div>
+<div class="cls_main_sign_input_new1">
+    <div>@Localizer["capture_geo_location"]</div>
+    <div>
+        <input type="text"  />
+    </div>
+</div>
+@if (Type == Winit.Shared.Models.Constants.ListHeaderType.Store )
+{
+    <div class="cls_main_sign_input_new1"><input type="checkbox" @onchange="GetAddressSameForbilling" name="Store" id="Store" value="Billing Address is Same as Store Address" /><label for="Store">Billing Address is Same as Store Address</label></div>
+  
+}
+@if (Type == Winit.Shared.Models.Constants.ListHeaderType.Billing || Type == Winit.Shared.Models.Constants.ListHeaderType.Store)
+{
+    <div class="cls_main_sign_input_new1"><input  type="checkbox" @onchange="GetAddressSameForShipping" name="Billing" id="Billing" value="Shipping Address is Same as Store Address" /><label for="Billing">Shipping Address is Same as Store Address</label></div>
+}
+
+
+<div><button class="btn" @onclick="SaveAddress">@SaveOrUpdate</button></div>
+
+
+

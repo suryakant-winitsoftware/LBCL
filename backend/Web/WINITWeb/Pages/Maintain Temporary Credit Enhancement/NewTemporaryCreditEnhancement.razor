@@ -1,0 +1,200 @@
+﻿@page "/NewTemporaryCreditEnhancement"
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.CreditLimit.BL.Interfaces.IMaintainTemporaryCreditEnhancementViewModel _viewModel;
+
+@using Winit.UIComponents.Common.WinitDatepicker;
+@if (IsInitialised)
+{
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="false" IsSearchCriteriaNeeded="false"/>
+    <div class="cls_section">
+
+        <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label">
+                <span class="cls_section_div_purchase2_span">*</span>Channel Partner
+            </label>
+            <Winit.UIComponents.Common.CustomControls.DropDown
+                DataSource="_viewModel.ChannelPartnerList"
+                IsButtonVisible="true"
+                Title="Channel Partner"
+                OnSelect="OnChannelPartnerSelect"
+                _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single"
+                Disabled="@IsView"/>
+        </div>
+
+        <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label">
+                <span class="cls_section_div_purchase2_span">*</span>Division
+            </label>
+            <Winit.UIComponents.Common.CustomControls.DropDown
+                DataSource="_viewModel.DivisionsList"
+                IsButtonVisible="true"
+                Title="Division"
+                OnSelect="OnDivisionSelect"
+                _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single"
+                Disabled="@IsView"/>
+        </div>
+
+        @if (IsView)
+        {
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">
+                    <span class="cls_section_div_purchase2_span">*</span>Request Date
+                </label>
+                <label
+                    class="form-control">
+                    @(CommonFunctions.GetDateTimeInFormat(_viewModel.TemporaryCreditEnhancementDetails.RequestDate))
+                </label>
+
+            </div>
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">
+                    <span class="cls_section_div_purchase2_span">*</span>Approved On
+                </label>
+                <label
+                    class="form-control">
+                    @(_viewModel.TemporaryCreditEnhancementDetails.ApprovedOn == null ? "N/A" :
+                        CommonFunctions.GetDateTimeInFormat(_viewModel.TemporaryCreditEnhancementDetails.ApprovedOn))
+                </label>
+
+            </div>
+        }
+
+    </div>
+
+    <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns"
+                                                DataSource="_viewModel.CreditLimits"/>
+    <div class="cls_section_purchase">
+        <div class="cls_section_purchase_div">
+            <label class="cls_purchase2_section_label">Total Credit Limit</label>
+            <p class="cls_purchase2_section_p"> @CommonFunctions.FormatNumberInIndianStyle(_viewModel.CreditLimits?.Sum(e => e.CreditLimit) ?? 0, _appSetting.RoundOffDecimal)</p>
+        </div>
+        <div class="cls_section_purchase_div">
+            <label class="cls_purchase2_section_label">Total Temp Credit Limit</label>
+            <p class="cls_purchase2_section_p"> @CommonFunctions.FormatNumberInIndianStyle(_viewModel.CreditLimits?.Sum(e => e.TemporaryCreditLimit) ?? 0, _appSetting.RoundOffDecimal)</p>
+        </div>
+        <div class="cls_section_purchase_div">
+            <label class="cls_purchase2_section_label">Total Existing Out Standing</label>
+            <p class="cls_purchase2_section_p"> @CommonFunctions.FormatNumberInIndianStyle(_viewModel.CreditLimits?.Sum(e => e.CurrentOutstanding) ?? 0, _appSetting.RoundOffDecimal)</p>
+        </div>
+        <div class="cls_section_purchase_div">
+            <label class="cls_purchase2_section_label">Total Max</label>
+            <p class="cls_purchase2_section_p"> @CommonFunctions.FormatNumberInIndianStyle(_viewModel.CreditLimits?.Sum(e => e.CurrentOutstanding) ?? 0, _appSetting.RoundOffDecimal)</p>
+        </div>
+    </div>
+
+    <div class="cls_section">
+        <div class="cls_container_div1">
+            <div class="cls_state_section_div1">
+                <label class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span">*</span>Request
+                    Type :</label>
+                <Winit.UIComponents.Common.CustomControls.DropDown
+                    DataSource="_viewModel.TemporaryCreditEnhancementRequestselectionItems"
+                    IsButtonVisible="true"
+                    Title="Request Type"
+                    OnSelect="OnRequestTypeSelect"
+                    _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single"
+                    Disabled="@IsView"/>
+            </div>
+
+        </div>
+        @if (SelectedRequestType == "Credit Limit")
+        {
+            <div class="cls_container_div1">
+                <div class="cls_state_section_div dn">
+                    <label class="cls_section_div_purchase2_label" for="EffectiveFrom">Effective From</label>
+                    @if (true)
+                    {
+                        <WinitCalendar @ref="ref1" id="EffectiveFrom" IsDisabled="@IsView" MinDate="0"
+                                       selectedDate="@_viewModel.TemporaryCreditEnhancementDetails.EffectiveFrom?.ToString("dd/MM/yyyy")"
+                                       OnChange="OnDateChange">
+                        </WinitCalendar>
+                    }
+                </div>
+                <div class="cls_state_section_div dn">
+                    <label class="cls_section_div_purchase2_label" for="EffectiveTo">Effective To</label>
+                    @if (true)
+                    {
+                        <WinitCalendar @ref="ref2" id="EffectiveTo" IsDisabled="@IsView" MinDate="0"
+                                       selectedDate="@_viewModel.TemporaryCreditEnhancementDetails.EffectiveUpto?.ToString("dd/MM/yyyy")"
+                                       OnChange="OnDateChange">
+                        </WinitCalendar>
+                    }
+                </div>
+                <div class="cls_state_section_div">
+                    <label class="cls_section_div_purchase2_label">Incremental Credit Limit Request</label>
+                    <input autocomplete="off" class="cls_select2_button" type="number" placeholder="Enter here"
+                           @bind="@_viewModel.TemporaryCreditEnhancementDetails.RequestAmountDays"
+                           disabled="@IsView"/>
+                </div>
+                <div class="cls_state_section_div">
+                    <label class="cls_section_div_purchase2_label">Collection MTD</label>
+                    <input autocomplete="off" class="cls_select2_button" type="number" placeholder="Enter here"
+                           @bind="@_viewModel.TemporaryCreditEnhancementDetails.CollectionMTD"
+                           disabled="@IsView"/>
+                </div>
+                <div class="cls_state_section_div">
+                    <label class="cls_section_div_purchase2_label">Collection BOM</label>
+                    <input autocomplete="off" class="cls_select2_button" type="number" placeholder="Enter here"
+                           @bind="@_viewModel.TemporaryCreditEnhancementDetails.CollectionBOM"
+                           disabled="@IsView"/>
+                </div>
+            </div>
+        }
+        else if (SelectedRequestType == "Aging Days")
+        {
+            <div class="cls_state_section_div">
+                <label class="cls_section_div_purchase2_label">Incremental Aging Days Request</label>
+                @* <input autocomplete="off" class="cls_select2_button" type="number" placeholder="Enter here" *@
+                @*        @bind-value="@_viewModel.TemporaryCreditEnhancementDetails.RequestAmountDays" *@
+                @*        disabled="@IsView" max="@_appSetting.TempAgingDaysMaxDays" @oninput="OnAgingDaysInput"/> *@
+
+                <NumberInput
+                    Value="_viewModel._requestDays"
+                    ValueExpression="() => _viewModel._requestDays"
+                    Max="@_appSetting.TempAgingDaysMaxDays"
+                    Min="0"
+                    class="cls_select2_button"
+                    Disabled="IsView"
+                    AfterQtyChanged="(e) =>
+                    {if (e <= _appSetting.TempAgingDaysMaxDays) _viewModel.TemporaryCreditEnhancementDetails.RequestAmountDays = e;}"/>
+
+
+            </div>
+        }
+    </div>
+    <div class="cls_container_div4">
+        <div class="cls_section_textarea">
+            <span class="cls_section_div_purchase2_label">Remarks :<label style="margin-bottom:0px;"
+                                                                          class="cls_section_div_purchase2_span">*</label></span>
+            <div class="cls_select_text1">
+                <textarea autocomplete="off" class="form-control  ng-pristine ng-valid" type="text"
+                          placeholder="Enter here"
+                          @bind="_viewModel.TemporaryCreditEnhancementDetails.Remarks"
+                          disabled="@IsView"/>
+            </div>
+        </div>
+    </div>
+    <div class="cls_container_div4">
+        <h6>Upload Attatchments</h6>
+        <div class="cls_file_upload_qps">
+            <h3 class="cls_file_upload_label">Upload File</h3>
+            <Winit.UIComponents.Common.FileUploader.FileUploader @ref=fileUploader
+                                                                 FileExtension=".jpg,.jpeg,.pdf,.png,.docx"
+                                                                 RelativePath="@FilePath" FileSize="50000000000"
+                                                                 AllowMultipleFiles=true
+                                                                 FileSysList=_viewModel.CreditEnhancementFileSysList
+                                                                 LinkedItemType="temporary_credit"
+                                                                 LinkedItemUID="@_viewModel.TemporaryCreditEnhancementDetails.UID"
+                                                                 FileType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.Image"
+                                                                 IsDirectory="false"
+                                                                 UploadEventCallBack="SaveFileSys"
+                                                                 DeleteEventCallBack="AfterDeleteImage"/>
+        </div>
+    </div>
+    <div class="cls_button_bottom_purchase">
+        <button class="cls_button_light " @onclick="BackBtnClicked">Back</button>
+        <button type="button" class="cls_button_blue " @onclick="SaveCreditEnhancementDetails"
+                style="@(IsView ? "display: none;" : "")">Save
+        </button>
+    </div>
+}

@@ -1,0 +1,26 @@
+﻿@inject IJSRuntime JSRuntime
+@using System.Net.Http
+@using System.Threading.Tasks
+@using Newtonsoft.Json
+@using Winit.UIModels.Common
+
+<div>
+    <canvas id="myChart" width="400" height="200"></canvas>
+</div>
+
+@code {
+
+    [Parameter]
+    public List<BarGraphModel> DataSource { get; set; }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var jsonData = JsonConvert.SerializeObject(DataSource);
+            await JSRuntime.InvokeAsync<object>("createChart", new object[] { jsonData });
+        }
+    }
+
+
+}
+

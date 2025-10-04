@@ -1,0 +1,261 @@
+﻿@page "/extendedgraphs"
+
+
+<div style="float:left;width:100%;margin:20px 0px;">
+
+    @if (SelectedGraph == "Clustered")
+
+    {
+        <div class="cls_graph_cont_div">
+            <div class="cls_graph_content">
+                <div class="cls_container_div1">
+                    <label class="cls_graph_container_label1">Primary Qty vs Sell Through Qty by Month</label>
+                   @*  <label class="cls_graph_container_label2">November</label> *@
+                </div>
+                <Winit.UIComponents.Common.Graphs.ClusteredBarChart DataSource="ClusteredBarDataSource" BarLabels="BarLabels"></Winit.UIComponents.Common.Graphs.ClusteredBarChart>
+
+            </div>
+
+        </div>
+
+        <div class="cls_graph_cont_div1">
+
+            <div class="cls_container_div1" style="padding: 7px 2%;">
+                <label class="cls_graph_container_label1">Primary Qty and Sell Through Qty by Month</label>
+
+            </div>
+
+            <div class="cls_dsb_table" style="margin-bottom:32px;">
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Target</th>
+                            <th>Ach</th>
+                            <th>Ach %</th>
+                            <th style="text-align:center;">Growth</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                18k3StarFS
+                            </td>
+                            <td>12</td>
+                            <td>12</td>
+                            <td>100%</td>
+                            @*  <td style="text-align:center;font-size:11px;"><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" /> <label style="margin-left:3px;">(70%)</label> </td> *@
+                            <td style="text-align:center;"><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" />  </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                18k5StarInv
+                            </td>
+                            <td>40</td>
+                            <td>20</td>
+                            <td>50%</td>
+                            <td style="text-align:center;"><img src="./Images/Arrow_red.png" width="9px" alt="Alternate Text" /></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                12K3starInv
+                            </td>
+                            <td>18</td>
+                            <td>18</td>
+                            <td>100%</td>
+                            <td style="text-align:center;"><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" /></td>
+                        </tr>
+                        <tr>
+                            <td>18k3StarInvWRAC</td>
+                            <td>18</td>
+                            <td>18</td>
+                            <td>100%</td>
+                            <td style="text-align:center;"><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" /></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                24K3StarFS
+                            </td>
+                            <td>14</td>
+                            <td>14</td>
+                            <td>100%</td>
+                            <td style="text-align:center;"><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" /></td>
+                        </tr>
+                        <tr>
+                            <td>24K3StarWRAC</td>
+                            <td>85</td>
+                            <td>85</td>
+                            <td>100%</td>
+                            <td style="text-align:center;"><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" /></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                18k5StarInv
+                            </td>
+                            <td>20</td>
+                            <td>20</td>
+                            <td>20%</td>
+                            <td style="text-align:center;"><img src="./Images/Arrow_red.png" width="9px" alt="Alternate Text" /></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+            </div>
+
+
+
+        </div>
+
+    }
+    @if (SelectedGraph == "DoughNut")
+    {
+
+
+        <div class="cls_graph_cont_div">
+            <div class="cls_graph_content">
+                <div class="cls_container_div1">
+                    <label class="cls_graph_container_label1">@("Number of Dealer Billed < 5 Quantity")</label>
+                    @* <label class="cls_graph_container_label2">November</label> *@
+                </div>
+                <img src="./Images/img_graph4.png" width="642px" />
+                @* <Winit.UIComponents.Common.Graphs.DoughNutGraph DataSource="DoghnutGraphDataSource"></Winit.UIComponents.Common.Graphs.DoughNutGraph> *@
+            </div>
+
+        </div>
+
+        <div class="cls_graph_cont_div1">
+
+            <div class="cls_container_div1" style="padding: 7px 2%;">
+                <label class="cls_graph_container_label1">Quantity by Dealers</label>
+
+            </div>
+
+            <div class="cls_dsb_table" style="margin-bottom:32px;">
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Dealers</th>
+                            <th>Quantity</th>
+                            <th>Percentage</th>
+
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>S.B Electronics</td>
+                            <td>69</td>
+                            <td>4.24%</td>
+                        </tr>
+                        <tr>
+                            <td>Shess Electronics</td>
+                            <td>62</td>
+                            <td>3.81%</td>
+                        </tr>
+                        <tr>
+                            <td>Shree Shankar Electronics</td>
+                            <td>50</td>
+                            <td>3.07%</td>
+                        </tr>
+                        <tr>
+                            <td>NK Electronics</td>
+                            <td>45</td>
+                            <td>2.76%</td>
+                        </tr>
+                        <tr>
+                            <td>Shankar Electronics</td>
+                            <td>41</td>
+                            <td>2.52%</td>
+                        </tr>
+                        <tr>
+                            <td>JJ Electronics</td>
+                            <td>41</td>
+                            <td>2.52%</td>
+                        </tr>
+                        <tr>
+                            <td>ROY Electronics</td>
+                            <td>32</td>
+                            <td>1.97%</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+            </div>
+
+
+
+        </div>
+
+
+    }
+    @if (SelectedGraph == "Image1")
+    {
+
+        <div class="cls_graph_cont_div">
+            <div class="cls_graph_content">
+                <div class="cls_container_div1">
+                    <label class="cls_graph_container_label1">Month wise Total Sub Dealer Billed vs Universe</label>
+                    @* <label class="cls_graph_container_label2">November</label> *@
+                </div>
+                <img src="./Images/img_graph1.png" alt="Alternate Text" width="510px" />
+            </div>
+
+        </div>
+
+    }
+    @if (SelectedGraph == "Image2")
+    {
+
+        <div class="cls_graph_cont_div">
+            <div class="cls_graph_content">
+                <div class="cls_container_div1">
+                    <label class="cls_graph_container_label1">Number of  Dealer Billed 5 Quantity</label>
+                    @* <label class="cls_graph_container_label2">November</label> *@
+                </div>
+                <img src="./Images/img_graph2.png" alt="Alternate Text" width="510px" />
+            </div>
+
+        </div>
+
+    }
+    @if (SelectedGraph == "BarGraph")
+    {
+
+
+        <div class="cls_graph_cont_div">
+            <div class="cls_graph_content">
+                <div class="cls_container_div1">
+                    <label class="cls_graph_container_label1">Average of Unit Price by Productivity</label>
+                    @* <label class="cls_graph_container_label2">November</label> *@
+                </div>
+                <Winit.UIComponents.Common.Graphs.BarChart BarDataSource="BarDataSource" SingleBarLabels="SingleBarLabels"></Winit.UIComponents.Common.Graphs.BarChart>
+            </div>
+
+        </div>
+
+    }
+    @if (SelectedGraph == "img_graph3")
+    {
+
+        <div class="cls_graph_cont_div">
+            <div class="cls_graph_content">
+                <div class="cls_container_div1">
+                    <label class="cls_graph_container_label1">Sum of Quantity by Category</label>
+                    @* <label class="cls_graph_container_label2">November</label> *@
+                </div>
+                <img src="./Images/img_graph3.png" alt="Alternate Text" width="555px" />
+            </div>
+
+        </div>
+    }
+
+</div>
+
+<div class="cls_button_bottom_purchase">
+    <button class="cls_button_light" @onclick="BackToDashBoard">Back</button>
+
+</div>

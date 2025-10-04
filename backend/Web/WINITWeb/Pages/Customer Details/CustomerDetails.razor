@@ -1,0 +1,32 @@
+﻿@page "/CustomerDetails"
+@inject Winit.Modules.Store.BL.Interfaces.ICustomerDetailsViewModel _customerDetailsViewModel
+@inherits WinIt.Pages.Base.BaseComponentBase
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize]
+
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+                     OnFilterApplied="@OnFilterApply" />
+
+
+
+<div class="cls_full_width">
+    @if (_iAppUser.Role.Code == "ASM" || _iAppUser.Role.Code == "ASEM")
+    {
+        <button class="cls_comman_btn" @onclick="()=>AddCustomer()">
+            Add New
+        </button>
+    }
+</div> 
+
+@if (IsLoaded)
+{
+    <Winit.UIComponents.Common.CustomControles.Tabs TabItems="TabSelectionItems" OnTabSelect="OnTabSelect" IsCountRequired="true"></Winit.UIComponents.Common.CustomControles.Tabs>
+    <div style="margin-bottom:10px;"></div>
+    <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" DataSource="onBoardGridviewList"
+    ShowRecordsCount="true" PageNumber="_customerDetailsViewModel.PageNumber" PageSize="_customerDetailsViewModel.PageSize"
+    TotalItemsCount="_customerDetailsViewModel.TotalItemsCount" OnSort="OnSortClick" />
+     <Winit.UIComponents.Web.Paging.Paging CurrentPage="_customerDetailsViewModel.PageNumber" OnPageChange="PageIndexChanged" PageSize="_customerDetailsViewModel.PageSize" TotalItems="_customerDetailsViewModel.TotalItemsCount" />
+ }
+@code {
+
+}

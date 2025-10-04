@@ -1,0 +1,98 @@
+@page "/reports/dashboard-v2"
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
+@using WinIt.Components.ECharts
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h3 class="mb-4">Dashboard Reports V2 (ECharts)</h3>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="dateRange">Date Range</label>
+                                <input type="date" class="form-control" id="dateRange" @bind="startDate" />
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>&nbsp;</label>
+                                <button class="btn btn-primary form-control" @onclick="LoadReportData">
+                                    <i class="fas fa-sync"></i> Refresh
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (isLoading)
+                    {
+                        <div class="text-center">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="row mt-4">
+                            <!-- Bar Chart -->
+                            <div class="col-md-6 mb-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title">Sales Comparison by Category</h5>
+                                    </div>
+                                    <div class="card-body" style="height: 400px;">
+                                        <EChartsComponent Options="@barChartOptions" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Horizontal Bar Chart -->
+                            <div class="col-md-6 mb-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title">Product Financial Analysis</h5>
+                                    </div>
+                                    <div class="card-body" style="height: 400px;">
+                                        <EChartsComponent Options="@horizontalBarChartOptions" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Line Chart -->
+                            <div class="col-md-6 mb-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title">Monthly Sales Trend</h5>
+                                    </div>
+                                    <div class="card-body" style="height: 400px;">
+                                        <EChartsComponent Options="@lineChartOptions" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pie Chart -->
+                            <div class="col-md-6 mb-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title">Revenue Distribution</h5>
+                                    </div>
+                                    <div class="card-body" style="height: 400px;">
+                                        <EChartsComponent Options="@pieChartOptions" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

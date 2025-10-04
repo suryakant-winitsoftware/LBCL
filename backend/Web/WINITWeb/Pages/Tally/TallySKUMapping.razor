@@ -1,0 +1,84 @@
+﻿@page "/tallyskumapping"
+@using Winit.Modules.Tally.Model.Classes
+@inject Winit.Modules.Tally.BL.Interfaces.ITallySKUMappingViewModel _tallySKUMappingViewModel
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject IJSRuntime JSRuntime
+
+@if (IsInitialised)
+{
+    <div>
+        <PageHeaderAndFilter IDataBreadcrumbService="dataService" />
+        <div class="cls_container_div1">
+            <button class="cls_add_new_sec" style="float:right;margin-top:-47px;" @onclick="FilterOpen">Filter</button>
+
+
+            <div class="cls_section" style="display:@(IsFilterOpen ? "block":"none");">
+                <div class="cls_section_div_purchase2">
+                    <label class="cls_section_div_purchase2_label">Distributor Code</label>
+                    <input class="cls_select2_button" id="websiteInput" @oninput="SearchDistributor" @bind="@SearchString" autocomplete="off" type="text" placeholder="Enter here" />
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="cls_section">
+        <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span">*</span> Distributor</label>
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="DistributorselectionItems"
+                                                               IsButtonVisible="true"
+                                                               Title="Distributor"
+                                                               OnSelect="OnDistributorSelection"
+                                                               IsSearchable="false" />
+        </div>
+
+        <div class="cls_file_upload_qps1">
+            <label class="cls_file_upload_label"><span class="cls_section_div_purchase2_span">*</span> Upload File</label>
+            <InputFile @key=fileId OnChange="HandleFileSelected" />
+            <button style="padding:10px 30px;" class="cls_file_upload_button" @onclick="UploadDetails">Upload</button>
+            <a href="#" class="cls_hyperlink" style="width:41%;" @onclick="DownloadTemplate" @onclick:preventDefault>Download Template</a>
+            <a href="#" class="cls_hyperlink" style="width:41%;" @onclick="DownloadCMIItemList" @onclick:preventDefault>Download CMI Master Item List</a>
+        </div>
+
+
+        <div class="cls_header_right" style="width:auto;">
+            <button class="cls_button_blue" @onclick="ExportToExcel">
+                Export to Excel
+            </button>
+        </div>
+
+
+    </div>
+    @if (ShowHideMessage)
+    {
+        <div class="d-flex flex-column" style="float:left;text-align:center;">
+            <div class="col-12">
+                @(successDistributorDetails.Count + " record(s) Inserted successfully out of " + ExcelTallySkuDetails.Count + " record(s).")
+            </div>
+            <div class="col-12">
+                Click here to <a href="#" onclick="@(() => ViewStatusPopUp())" @onclick:preventDefault>view</a> Status
+            </div>
+        </div>
+    }
+
+
+    <Winit.UIComponents.Common.CustomControles.Tabs TabItems="TabItems" OnTabSelect="OnTabSelect"></Winit.UIComponents.Common.CustomControles.Tabs>
+    <div style="margin-bottom:10px;"></div>
+
+    <Winit.UIComponents.Web.Table.TableGridView Columns="@(SelectedTab == TallyConstants.MappedWithCMI ? ProductColumns : UnMappedProductColumns)" DataSource="TallyDBDetailsForView"
+    PageNumber="_tallySKUMappingViewModel.PageNumber" PageSize="_tallySKUMappingViewModel.PageSize"
+                                                TotalItemsCount="_tallySKUMappingViewModel.TotalCount" ShowRecordsCount="true"/>
+
+    @if (!string.IsNullOrEmpty(DistributorCode))
+    {
+        <Winit.UIComponents.Web.Paging.Paging TotalItems=@_tallySKUMappingViewModel.TotalCount PageSize="@_tallySKUMappingViewModel.PageSize" CurrentPage="@_tallySKUMappingViewModel.PageNumber" OnPageChange="Product_OnPageChange" />
+    }
+
+    @if (IsViewStatus)
+    {
+        <PopUp Title="Uploaded details" CancelbtnText="Back" DisableOkBtn="true"
+               OnCloseClick="() => IsViewStatus = false">
+            <Winit.UIComponents.Web.Table.TableGridView Columns="PopUpColumns" DataSource="FailedOrInvalidRecords"></Winit.UIComponents.Web.Table.TableGridView>
+        </PopUp>
+    }
+}

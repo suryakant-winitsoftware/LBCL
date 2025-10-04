@@ -1,0 +1,80 @@
+﻿@page "/Provisioning"
+@using Winit.UIComponents.Common.DougnutGraph
+@using Winit.UIModels.Common.GraphModels
+@layout MainLayout
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.Provisioning.BL.Interfaces.IProvisioningHeaderViewViewModel provisioningHeaderViewModel;
+@inject Winit.Modules.Provisioning.BL.Interfaces.IProvisioningItemViewViewModel provisioningItemViewModel;
+
+@if (IsInitialised)
+{
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="false" IsSearchCriteriaNeeded="false"/>
+    <div class="cls_logo_section3">
+        <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span">*</span>Channel Partner</label>
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="provisioningHeaderViewModel.ChannelPartnerList"
+                                                               IsButtonVisible="true"
+                                                               Title="Channel Partner"
+                                                               OnSelect="OnChannelPartnerSelect"
+                                                               _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single"/>
+        </div>
+    </div>
+    @if (IsChannelPartnerSelected)
+    {
+        <div class="cls_container_div4">
+            <div class="cls_container_left1">
+                <label class="cls_container_left1_p">@(provisioningHeaderViewModel.ProvisionHeaderViewDetails.City  ??  "StoreLocation")</label>
+                <Doughnut @ref="DoughNut" DataSource="Doughnutdata" CenterText="Available Provision" CentreValue="@AvailableBalanceAmount" />
+            </div>
+            <div class="cls_container_right1">
+                    <div class="cls_container_div_outline">
+                        <div class="cls_container_right1_div">
+                            <div class="cls_container_right1_div_left">
+                                <div class="cls_container_right1_div_img_outline">
+                                    <img src="./Images/provision_img1.svg" height="30px" width="30px" class="cls_container_right1_div_img" />
+                                </div>
+                            </div>
+                            <div class="cls_container_right1_div_right">
+                                <label class="cls_container_right1_div_right_p">Total Provisioning Amount </label>
+                                <label class="cls_container_right1_div_right_label"> 
+                                    @("₹" + (provisioningHeaderViewModel.ProvisionHeaderViewDetails.P2Amount +
+                                        +provisioningHeaderViewModel.ProvisionHeaderViewDetails.P3Amount
+                                        + provisioningHeaderViewModel.ProvisionHeaderViewDetails.HoAmount).ToString("N2") ?? "0.00")
+                                </label>
+                            </div>
+                         </div>
+                    </div>
+                    <div class="cls_container_div_outline">
+                        <div class="cls_container_right1_div1">
+                            <div class="cls_container_right1_div_left">
+                                <div class="cls_container_right1_div_img_outline">
+                                    <img src="./Images/provision_img2.svg" height="30px" width="30px" class="cls_container_right1_div_img" />
+                                </div>
+                            </div>
+                            <div class="cls_container_right1_div_right">
+                                <label class="cls_container_right1_div_right_p">Utilized Amount </label>
+                                <label class="cls_container_right1_div_right_label">  @("₹" + provisioningHeaderViewModel.ProvisionHeaderViewDetails.UsedAmount.ToString("N2") ?? "0.00") </label>
+
+                            </div>
+                        </div>
+                    </div>
+                <div class="cls_container_div_outline">
+                    <div class="cls_container_right1_div2">
+                        <div class="cls_container_right1_div_left">
+                            <div class="cls_container_right1_div_img_outline">
+                                <img src="./Images/provision_img3.svg" height="30px" width="30px" class="cls_container_right1_div_img" />
+                            </div>
+                        </div>
+                        <div class="cls_container_right1_div_right">
+                            <label class="cls_container_right1_div_right_p">Available Provisioning Amount </label>
+                            <label class="cls_container_right1_div_right_label"> @("₹" + provisioningHeaderViewModel.ProvisionHeaderViewDetails.BalanceAmount.ToString("N2") ?? "0.00") </label>
+                        </div>
+                    </div>
+                 </div>
+             </div>  
+        </div>
+        <div class="cls_container_div4">
+        <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" DataSource="provisioningItemViewModel.ProvisionItemDataList" />
+        </div>
+    }
+}

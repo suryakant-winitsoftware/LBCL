@@ -1,0 +1,61 @@
+﻿@page "/AddEditMaintainErrorDescription"
+@inherits WinIt.Pages.Base.BaseComponentBase;
+@using Microsoft.AspNetCore.Authorization;
+
+
+@attribute [Authorize]
+@inject Winit.Modules.ErrorHandling.BL.Interfaces.IAddEditMaintainErrorDescriptionViewModel _addEditMaintainErrorDescriptionViewModel;
+
+@if (IsLoaded)
+{
+    <div class="cls_section">
+        
+                <div class="cls_section_div_purchase2">
+                    <label class="cls_section_div_purchase2_label">
+                        <span class="cls_section_div_purchase2_span">*</span>@Localizer["language_code"]
+                    </label>
+                 
+                        <input type="text" class="cls_select2_button" placeholder=@Localizer["enter_here"] disabled="@IsEditErrorDescription" @bind="@_addEditMaintainErrorDescriptionViewModel.ErrorDetailsLocalization.LanguageCode" />
+                   
+                </div>
+                <div class="cls_section_div_purchase2">
+                    <label class="cls_section_div_purchase2_label">
+                        <span class="cls_section_div_purchase2_span">*</span>@Localizer["cause"] 
+                    </label>
+                    
+                        <input type="text" class="cls_select2_button" placeholder=@Localizer["enter_here"] @bind="@_addEditMaintainErrorDescriptionViewModel.ErrorDetailsLocalization.Cause" />
+                    
+                </div>
+                <div class="cls_section_div_purchase2">
+                    <label class="cls_section_div_purchase2_label">
+                        <span class="cls_section_div_purchase2_span">*</span>@Localizer["resolution"] 
+                    </label>
+                    
+                        <input type="text" class="cls_select2_button" placeholder=@Localizer["enter_here"] @bind="@_addEditMaintainErrorDescriptionViewModel.ErrorDetailsLocalization.Resolution" />
+                    
+                </div>
+                <div class="cls_section_div_purchase2">
+                    <label class="cls_section_div_purchase2_label">
+                        <span class="cls_section_div_purchase2_span">*</span>@Localizer["short_description"] 
+                    </label>
+                    
+                        <input type="text" class="cls_select2_button" placeholder=@Localizer["enter_here"] @bind="@_addEditMaintainErrorDescriptionViewModel.ErrorDetailsLocalization.ShortDescription" />
+                    
+                </div>
+                <div class="cls_section_div_purchase2">
+                    <label class="cls_section_div_purchase2_label">
+                        <span class="cls_section_div_purchase2_span">*</span>@Localizer["description"] 
+                    </label>
+                  
+                        <input type="text" class="cls_select2_button" placeholder=@Localizer["enter_here"] @bind="@_addEditMaintainErrorDescriptionViewModel.ErrorDetailsLocalization.Description" />
+                    
+                </div>
+           
+    </div>
+
+
+    <div class="cls_button_bottom_purchase">
+        @* <button class="cls_add_new_sec" @onclick="Cancel">Cancel</button> *@
+        <button class="cls_button_light" @onclick="SaveOrUpdateAsync"> @(IsEditErrorDescription ? @Localizer["update"] : @Localizer["save"])</button>
+    </div>
+}

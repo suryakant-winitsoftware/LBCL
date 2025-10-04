@@ -1,0 +1,53 @@
+﻿@typeparam T
+<div class="modal-backdrop fade show"></div>
+<div class="modal fade show" tabindex="-1" style="display: block;z-index:20">
+    <div style="margin-top:4%">
+        <div class="modal-content" style="z-index:25;">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Products</h5>
+                <button type="button" class="close" @onclick="() => OnCancelClick.InvokeAsync()">
+                    <span style="color:black; padding:10px;width:100%">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div>
+                    <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder="Search by Item Item/Code"
+                                                                           MaxLength="200" DebounceInterval="500"
+                                                                           OnDebounceIntervalElapsed="e => SearchString = e"
+                                                                           KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+                                                                           Value="" IsForSearch="true" />
+                    <FilterDialog TabDataDictionary="FilterDataList" OnFilterChange="ApplyFilter" @ref="FilterDialog" />
+                    <img style="width:20px;" src="/Images/carbon_filter.png" @onclick="() => FilterDialog.ShowFilterDialog()" />
+                </div>
+                <div style="height:400px;" class="overflow-auto">
+                    @foreach (var item in FilteredItems)
+                    {
+                        <div class="cls_item_details">
+                            <div class="cls_item_details_left">
+                                <input type="checkbox" @onchange="(e) => OnItemSelect(item,e)">
+                                <img src="@(ImageUrl?.Invoke(item) ?? "N/A")" height="40px" width="40px" class="image">
+
+                            </div>
+                            <div class="cls_item_details_right">
+                                <h3>@(SKUHeader?.Invoke(item) ?? "N/A")</h3>
+                                <label>@(SKUCode?.Invoke(item) ?? "N/A")</label>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="modal-footer" style="padding: 0px;border: 0px;">
+                <div class="cls_btn_new" style="border:0px;list-style:none;text-decoration:underline;margin:0px;padding:0px;padding-left:1">
+                    <button type="button" class="cls_btn_new1" @onclick="() => OnCancelClick.InvokeAsync()">
+                        Cancel
+                    </button>
+                    <button type="button" class="cls_btn_new2" @onclick="HandleOkClick">
+                        Ok
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

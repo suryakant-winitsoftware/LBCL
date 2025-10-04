@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Winit.Modules.Common.BL\Winit.Modules.Common.BL.csproj" />
+    <ProjectReference Include="..\..\Common\Winit.Modules.Common.Model\Winit.Modules.Common.Model.csproj" />
+    <ProjectReference Include="..\..\Currency\Winit.Modules.Store.BL\Winit.Modules.Currency.BL.csproj" />
+    <ProjectReference Include="..\..\Emp\Winit.Modules.Emp.BL\Winit.Modules.Emp.BL.csproj" />
+    <ProjectReference Include="..\..\JobPosition\Winit.Modules.JobPosition.BL\Winit.Modules.JobPosition.BL.csproj" />
+    <ProjectReference Include="..\..\JourneyPlan\Winit.Modules.JourneyPlan.BL\Winit.Modules.JourneyPlan.BL.csproj" />
+    <ProjectReference Include="..\..\ListHeader\Winit.Modules.ListHeader.BL\Winit.Modules.ListHeader.BL.csproj" />
+    <ProjectReference Include="..\..\Org\Winit.Modules.Org.BL\Winit.Modules.Org.BL.csproj" />
+    <ProjectReference Include="..\..\Promotion\Winit.Modules.Promotion.BL\Winit.Modules.Promotion.BL.csproj" />
+    <ProjectReference Include="..\..\Role\Winit.Modules.Role.BL\Winit.Modules.Role.BL.csproj" />
+    <ProjectReference Include="..\..\Route\Winit.Modules.Route.Model\Winit.Modules.Route.Model.csproj" />
+    <ProjectReference Include="..\..\Tax\Winit.Modules.Tax.BL\Winit.Modules.Tax.BL.csproj" />
+    <ProjectReference Include="..\..\User\Winit.Modules.User.Model\Winit.Modules.User.Model.csproj" />
+    <ProjectReference Include="..\Winit.Modules.DashBoard.DL\Winit.Modules.DashBoard.DL.csproj" />
+  </ItemGroup>
+</Project>

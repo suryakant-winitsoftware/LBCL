@@ -1,0 +1,205 @@
+﻿@inject HttpClient http
+@inject Winit.Modules.Base.BL.ApiService _apiService
+@using Microsoft.Extensions.Localization
+@using Winit.UIComponents.Common.LanguageResources.Web
+@inject Winit.UIComponents.Common.Language.ILanguageService _languageService
+@inject IStringLocalizer<LanguageKeys> Localizer
+
+<Microsoft.AspNetCore.Components.Forms.EditForm Model="Contact" OnValidSubmit="AddContacts">
+    <Microsoft.AspNetCore.Components.Forms.DataAnnotationsValidator />
+    <div class="cls_sales_container_outline">
+        <div class="cls_container_div1">
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">@Localizer["contact_person_name"]@Localizer["(mr_/_mss)"]</label>
+                <div class="cls_container_div1 ">
+                    <div class="cls_section_div_purchase2_left">
+                        <select @bind="@Contact.Title" class="cls_section_div_purchase2_select">
+                            <option value="Mr">Mr.</option>
+                            <option value="Mss">Mss</option>
+                        </select>
+                    </div>
+                    <div class="cls_section_div_purchase2_right">
+                        <div class="cls_select">
+                        <input type="text" @oninput="ChangeIsEditedOrNot" @bind="@Contact.Name" placeholder=@Localizer["enter_contact_person_name"] />
+
+                        <Microsoft.AspNetCore.Components.Forms.ValidationMessage For="(()=>Contact.Name)" />
+                        </div>
+                    </div>
+                   
+                    @* <select @bind="@Contact.Title">
+                        <option value="Mr">Mr.</option>
+                        <option value="Mss">Mss</option>
+                    </select>
+                    <input type="text" @oninput="ChangeIsEditedOrNot" @bind="@Contact.Name" placeholder=@Localizer["enter_contact_person_name"] />
+
+                    <Microsoft.AspNetCore.Components.Forms.ValidationMessage For="(()=>Contact.Name)" /> *@
+                </div>
+
+
+            </div>
+
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">@Localizer["contact_person_mobile_number"]</label>
+                <div class="cls_container_div1 margin_top">
+                    
+                   @*  <input type="number" @bind="@Contact.Mobile" placeholder=@Localizer["enter_contact_person_mobile_number"] /> *@
+                    <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder=@Localizer["enter_contact_person_mobile_number"]
+                                                                           MaxLength="10"
+                                                                           DebounceInterval="500" OnDebounceIntervalElapsed="@((e)=>Contact.Mobile=e)"
+                                                                           KeyboardType="Winit.Shared.Models.Enums.InputType.Numeric"
+                                                                           Value="@Contact.Mobile" />
+                    <Microsoft.AspNetCore.Components.Forms.ValidationMessage For="(()=>Contact.Mobile)" />
+                </div>
+
+
+            </div>
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">@Localizer["landline_number"]</label>
+                <div class="cls_container_div1 margin_top">
+                    
+                    @* <input type="number" @bind="@Contact.Phone" placeholder=@Localizer["enter_landline_number"] /> *@
+                    <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder=@Localizer["enter_landline_number"]
+                                                                           MaxLength="10"
+                                                                           DebounceInterval="500" OnDebounceIntervalElapsed="@((e)=>Contact.Phone=e)"
+                                                                           KeyboardType="Winit.Shared.Models.Enums.InputType.Numeric"
+                                                                           Value="@Contact.Phone" />
+                    <Microsoft.AspNetCore.Components.Forms.ValidationMessage For="(()=>Contact.Phone)" />
+                </div>
+
+
+            </div>
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">@Localizer["extension"]</label>
+                <div class="cls_container_div1 margin_top">
+                    
+                    @* <input type="number" @bind="@Contact.PhoneExtension" maxlength="2" placeholder=@Localizer["enter_extension"] /> *@
+                    <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder=@Localizer["enter_extension"]
+                                                                           MaxLength="5"
+                                                                           DebounceInterval="500" OnDebounceIntervalElapsed="@((e)=>Contact.PhoneExtension=e)"
+                                                                           KeyboardType="Winit.Shared.Models.Enums.InputType.Numeric"
+                                                                           Value="@Contact.PhoneExtension" />
+                    <Microsoft.AspNetCore.Components.Forms.ValidationMessage For="(()=>Contact.PhoneExtension)" />
+                </div>
+
+
+            </div>
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">@Localizer["additional_mobile_number"]</label>
+                <div class="cls_container_div1 margin_top">
+                    
+                   @*  <input type="number" placeholder=@Localizer["enter_additional_mobile_number"] @bind-value="Contact.Mobile2" /> *@
+                    <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder=@Localizer["enter_additional_mobile_number"]
+                                                                           MaxLength="10"
+                                                                           DebounceInterval="500" OnDebounceIntervalElapsed="@((e)=>Contact.Mobile2=e)"
+                                                                           KeyboardType="Winit.Shared.Models.Enums.InputType.Numeric"
+                                                                           Value="@Contact.Mobile2" />
+                    <Microsoft.AspNetCore.Components.Forms.ValidationMessage For="(()=>Contact.Mobile2)" />
+                </div>
+
+
+            </div>
+        </div>
+        <div class="cls_container_div4">
+
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">@Localizer["fax_number"]</label>
+                <div class="cls_container_div1 margin_top">
+                   
+                    @* <input type="number" @bind="@Contact.Fax" placeholder=@Localizer["enter_fax_number"] /> *@
+                    <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder=@Localizer["enter_fax_number"]
+                                                                           MaxLength="10"
+                                                                           DebounceInterval="500" OnDebounceIntervalElapsed="@((e)=>Contact.Fax=e)"
+                                                                           KeyboardType="Winit.Shared.Models.Enums.InputType.Numeric"
+                                                                           Value="@Contact.Fax" />
+                    <Microsoft.AspNetCore.Components.Forms.ValidationMessage For="(()=>Contact.Fax)" />
+                </div>
+
+
+            </div>
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">@Localizer["email_address"]</label>
+                <div class="cls_select">
+                   
+                    <input type="text" @oninput="ChangeIsEditedOrNot" @bind="@Contact.Email" placeholder=@Localizer["enter_email_address"] />
+                    <Microsoft.AspNetCore.Components.Forms.ValidationMessage For="(()=>Contact.Email)" />
+                </div>
+
+
+            </div>
+           
+
+            <div class="cls_section_div_purchase2">
+                <div class="cls_main_sign_input_new1"></div>
+                <div class="cls_main_check_radio margin_top">
+                    <input type="checkbox" @oninput="ChangeIsEditedOrNot" id="txtMakeAsDefault" checked="@Contact.IsDefault" @onchange="ChangeIsDefault">
+                    <label for="txtMakeAsDefault">@Localizer["make_as_default"]</label>
+                </div>
+            </div>
+
+            <div class="cls_section_div_purchase2">
+                <div class="cls_main_sign_input_new1"></div>
+                <div class="cls_main_check_radio margin_top">
+                    <input type="checkbox" @oninput="ChangeIsEditedOrNot" id="txtEmailDeliveryDocket" checked="@Contact.EnabledForDocketEmail" @onclick="() => Contact.EnabledForDocketEmail = !Contact.EnabledForDocketEmail">
+                    <label for="txtEmailDeliveryDocket">@Localizer["email_delivery_docket"]</label>
+                </div>
+            </div>
+
+            <div class="cls_section_div_purchase2">
+                <div class="cls_main_sign_input_new1"></div>
+                <div class="cls_main_check_radio margin_top">
+                    <input type="checkbox" @oninput="ChangeIsEditedOrNot" id="txtEmailInvoice" checked="@Contact.EnabledForInvoiceEmail" @onclick="() => Contact.EnabledForInvoiceEmail = !Contact.EnabledForInvoiceEmail">
+                    <label for="txtEmailInvoice">@Localizer["email_invoice"]</label>
+                </div>
+            </div>
+
+        </div>
+        <div class="cls_button_bottom_purchase"> <button class="cls_button_blue" type="submit">@btnName</button></div>
+    </div>
+</Microsoft.AspNetCore.Components.Forms.EditForm>
+
+
+@if (Contacts?.Count > 0)
+{
+
+    <div class="div1">
+        <table class="table">
+            <thead>
+            <th>@Localizer["contact_person_name"]</th>
+            <th>@Localizer["contact_person_number"]</th>
+            <th>@Localizer["landline_number"]</th>
+            <th>@Localizer["extension"]</th>
+            <th>@Localizer["additional_number"]</th>
+            <th>@Localizer["fax"]</th>
+            <th>@Localizer["email"]</th>
+            <th>@Localizer["make_default"]</th>
+            <th>@Localizer["email_delivery_docket"]</th>
+            <th>@Localizer["email_invoice"]</th>
+            <th>@Localizer["action"]</th>
+            </thead>
+            <tbody>
+                @foreach (var item in Contacts)
+                {
+                    <tr>
+                        <td>@item.Name</td>
+                        <td>@item.Mobile</td>
+                        <td>@item.Phone</td>
+                        <td>@item.PhoneExtension</td>
+                        <td>@item.Mobile2 </td>
+                        <td>@item.Fax</td>
+                        <td>@item.Email</td>
+                        <td><input type="checkbox" checked="@item.IsDefault"  disabled="disabled" /></td>
+                        <td><input type="checkbox" disabled="disabled"  checked="@item.EnabledForDocketEmail" /></td>
+                        <td><input type="checkbox" disabled="disabled" checked="@item.EnabledForInvoiceEmail" /></td>
+                        <td>
+                            <button @onclick="@(()=>EditContact(item))">@Localizer["edit"]</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+
+}
+
+

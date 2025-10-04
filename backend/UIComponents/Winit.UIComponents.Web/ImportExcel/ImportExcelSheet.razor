@@ -1,0 +1,12 @@
+﻿@using System.IO
+@using Microsoft.JSInterop
+@using NPOI.XSSF.UserModel
+@inject IJSRuntime JSRuntime
+@using System.Dynamic;
+@inject IServiceProvider _serviceProvider
+@typeparam T
+<h3>Upload an Excel File</h3>
+
+<InputFile @key=@(inputFileId) @ref="fileInput" OnChange="HandleFileUpload" />
+
+<button @onclick="@ImportExcel">Upload</button>

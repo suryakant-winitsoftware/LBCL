@@ -1,0 +1,111 @@
+﻿@page "/AddEditPrice"
+@using WinIt.Components
+@using Winit.Modules.SKU.BL.Interfaces
+@using Winit.UIComponents.Web.Table
+@layout MainLayout
+@inherits WinIt.Pages.Base.BaseComponentBase
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@inject Winit.UIComponents.Common.IAlertService iAlert
+@inject Winit.Shared.CommonUtilities.Common.CommonFunctions _commonFunctions
+@inject ISKUPriceViewModel _viewModel
+@inject Winit.Modules.Mapping.BL.Interfaces.IMappingViewModel mappingViewModel
+
+@if (isLoad)
+{
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" />
+
+    <div class="cls_section">
+        <div class="cls_container_div1">
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label"><span _ngcontent-c9="" class="cls_section_div_purchase2_span">*</span> @Localizer["code"] </label>
+                <div class="cls_select">
+                    <input type="text" disabled="@(!_viewModel.IsNew)" @bind="@_viewModel.SKUPriceView.SKUPriceGroup.Code" placeholder="Enter Here" />
+
+                </div>
+            </div>
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label"><span _ngcontent-c9="" class="cls_section_div_purchase2_span">*</span> @Localizer["name"] </label>
+                <div class="cls_select">
+
+                    <input type="text" @bind="@_viewModel.SKUPriceView.SKUPriceGroup.Name" placeholder="Enter Here" />
+
+                </div>
+            </div>
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label"><span _ngcontent-c9="" class="cls_section_div_purchase2_span">*</span> @Localizer["priority"] </label>
+                <div class="cls_select">
+
+                    <input type="number" @bind="@_viewModel.SKUPriceView.SKUPriceGroup.Priority" min="0" />
+
+                </div>
+            </div>
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label"><span _ngcontent-c9="" class="cls_section_div_purchase2_span">*</span> @Localizer["valid_from"] </label>
+
+
+                <input type="date" @bind="@_viewModel.SKUPriceView.SKUPriceGroup.ValidFrom" class="cls_select_date" />
+
+
+            </div>
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label"><span _ngcontent-c9="" class="cls_section_div_purchase2_span">*</span> @Localizer["valid_upto"] </label>
+
+
+                <input type="date" @bind="@_viewModel.SKUPriceView.SKUPriceGroup.ValidUpto" class="cls_select_date" />
+
+
+            </div>
+
+
+        </div>
+    </div>
+
+    <div class="cls_container_div4">
+        <div class="div_section">
+            <div class="div_section_select  @(IsCustomerselected ? "" : "tabSelected")" @onclick="@(() => IsCustomerselected = false)">
+                <label class="div_section_select_label">
+                    @Localizer["items"]
+                </label>
+            </div>
+            <div class="div_section_select @(IsCustomerselected ? "tabSelected" : "")" @onclick="@(() => IsCustomerselected = true)">
+                <label class="div_section_select_label">
+                    @Localizer["customers"]
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="cls_container_div1">
+        <div style="display:@(DisplayMappingComponent ? "block" : "none")">
+            @*             <MappingComponent @ref=mappingComponent LinkedItemType="customer" LinkedItemUID="@_viewModel.SKUPriceView.SKUPriceGroup.UID" OnSaveMapping="@(()=>DisplayMappingComponent=false)" OnCloseClick="@(()=>DisplayMappingComponent=false)" />
+ *@
+            <MappingComponentNew MappingDTO="@mappingViewModel.MappingDTO"
+                                 OnSaveMapping="@(()=>DisplayMappingComponent=false)"
+                                 OnCloseClick="@(()=>DisplayMappingComponent=false)" />
+        </div>
+        @if (IsCustomerselected)
+        {
+            @*  <div class="cls_container_div4">
+                <button class="cls_add_new_sec" @onclick=@(() => DisplayMappingComponent = true)>@Localizer["add"]</button>
+            </div>
+            <div class="cls_container_div1">
+                <TableGridView DataSource="mappingViewModel.MappingDTO.GridDataSource" Columns="mappingViewModel.MappingDTO.DataGridColumns" />
+            </div> *@
+            <MappingComponentNew MappingDTO="@mappingViewModel.MappingDTO" />
+        }
+
+        else
+        {
+            <PriceListComponent SKUPriceGroup=_viewModel.SKUPriceView.SKUPriceGroup
+                                SKUPriceList=_viewModel.SKUPriceView.SKUPriceList @ref=_priceListComponent
+                                PriceListUID="@_viewModel.SKUPriceView.SKUPriceGroup.UID"
+                                IsNew=_viewModel.IsNew />
+        }
+    </div>
+
+
+    <div class="cls_button_bottom_purchase">
+        <button class="cls_button_light " @onclick="@(() => SaveOrUpdate(Winit.UIModels.Web.SKUConstant.SkuPriceListConstant.Draft))">@Localizer["save_as_draft"]</button>
+        <button class="cls_button_blue " @onclick="@(() => SaveOrUpdate(Winit.UIModels.Web.SKUConstant.SkuPriceListConstant.Published))">Save</button>
+    </div>
+}

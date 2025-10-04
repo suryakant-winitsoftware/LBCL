@@ -1,0 +1,48 @@
+﻿@page "/ViewProvisioningDetails"
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.Provisioning.BL.Interfaces.IProvisioningItemViewViewModel provisioningItemViewModel;
+
+@if (IsInitialised)
+{
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="false" IsSearchCriteriaNeeded="false" />
+
+    <div class="cls_state_section_div">
+        <label class="cls_section_div_purchase2_label">Channel Partner</label>
+        <label autocomplete="off" class="cls_select2_button" @bind="@provisioningItemViewModel.ProvisionItemViewDetails.ChannelPartner" disabled="@IsInitialised" />
+    </div>
+     <div class="cls_state_section_div">
+        <label class="cls_section_div_purchase2_label">Date</label>
+        <label autocomplete="off" class="cls_select2_button" @bind="@provisioningItemViewModel.ProvisionItemViewDetails.OrderDate" disabled="@IsInitialised" />
+    </div>
+    <div class="cls_state_section_div">
+        <label class="cls_section_div_purchase2_label">Amount</label>
+        <label autocomplete="off" class="cls_select2_button" @bind="@provisioningItemViewModel.ProvisionItemViewDetails.Amount" disabled="@IsInitialised" />
+    </div>
+    <div class="cls_state_section_div">
+        <label class="cls_section_div_purchase2_label">Type</label>
+        <label autocomplete="off" class="cls_select2_button" @bind="@provisioningItemViewModel.ProvisionItemViewDetails.Type" disabled="@IsInitialised" />
+    </div>
+    <div class="cls_state_section_div">
+        <label class="cls_section_div_purchase2_label">Transaction code</label>
+        <label autocomplete="off" class="cls_select2_button" @bind="@provisioningItemViewModel.ProvisionItemViewDetails.TransactionCode" disabled="@IsInitialised" />
+    </div>
+    <div class="cls_state_section_div">
+        <label class="cls_section_div_purchase2_label">Model #</label>
+        <label autocomplete="off" class="cls_select2_button" @bind="@provisioningItemViewModel.ProvisionItemViewDetails.ModelNo" disabled="@IsInitialised" />
+    </div>
+    <div class="cls_state_section_div">
+        <label class="cls_section_div_purchase2_label">Quantity</label>
+        <label autocomplete="off" class="cls_select2_button" @bind="@provisioningItemViewModel.ProvisionItemViewDetails.Qty" disabled="@IsInitialised" />
+    </div>
+    <div class="cls_state_section_div">
+        <label class="cls_section_div_purchase2_label">Amount/SKU</label>
+        <label autocomplete="off" class="cls_select2_button" @bind="@provisioningItemViewModel.ProvisionItemViewDetails.UnitAmount" disabled="@IsInitialised" />
+    </div>
+    <div class="cls_state_section_div">
+        <label class="cls_section_div_purchase2_label">Description</label>
+        <label autocomplete="off" class="cls_select2_button" @bind="@provisioningItemViewModel.ProvisionItemViewDetails.Description" disabled="@IsInitialised" />
+    </div>
+    <div class="cls_button_bottom_purchase">
+        <button class="cls_button_light " @onclick="BackBtnClicked">Back</button>
+    </div>
+}

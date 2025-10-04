@@ -1,0 +1,42 @@
+﻿@page "/OdometerReading"
+@using Winit.Modules.Store.BL.Interfaces
+@using Winit.Modules.Store.Model.Interfaces
+@using Winit.Modules.Store.Model.Classes
+@using Winit.Shared.Models.Common
+@using Microsoft.JSInterop
+@using Newtonsoft.Json
+@using System.IO
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+@inject WINITMobile.Data.SideBarService _sideBarService
+@inject Winit.Modules.JourneyPlan.BL.Interfaces.IStartDayViewModel _viewmodel
+@inject Winit.Modules.Store.BL.Interfaces.IStoreBL _storeBL
+@inject Winit.Modules.Address.BL.Interfaces.IAddressBL _addressbl
+@inject Winit.Modules.DashBoard.BL.Classes.UserConfig _userConfig
+@inject Winit.Modules.JourneyPlan.BL.Interfaces.IBeatHistoryViewModel _beatHistoryViewModel;
+@inject Winit.Modules.DashBoard.BL.Interfaces.IDashBoardViewModel _dashBoardViewModel;
+@inject Winit.Modules.Syncing.BL.Interfaces.IMobileDataSyncBL _mobileDataSyncBL;
+<div class="container" >
+    <div class="cls_odometer dn">
+        <div class="cls_odometer_top">
+            <h3>@Localizer["odometer"] <b> @Localizer["reading"]</b></h3>
+        </div>
+        <div class="cls_odometer_bottom">
+            <div class="cls_odometer_bottom_left"> <img style="width:52px;" src="/Images/bi_speedometer.png" /></div>
+            <div class="cls_odometer_bottom_right">
+                <h3>@Localizer["reading"]</h3>
+                <input type="text" @bind="@OdometerReading" />
+                <p style="display:none;">@Localizer["vehicle_no"]: <b style="color:#EF6F26;font-weight:500;">@VehicleNumber</b></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="cls_proceed">
+        <a @onclick="SaveReading">@Localizer["continue"]</a>
+    </div>
+</div>
+
+
+@code {
+
+
+}

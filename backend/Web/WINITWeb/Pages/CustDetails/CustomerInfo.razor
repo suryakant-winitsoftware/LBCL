@@ -1,0 +1,163 @@
+﻿@page "/CustDet"
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+<h3>Customer Details</h3>
+
+<div>
+    <EditForm Model="_CustomerInformation" OnValidSubmit="Save">
+    <div class="row">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <p>@Localizer["customer_code"]</p>
+                <input style="margin-top:0; border: solid;" type="text" placeholder=@Localizer["enter_here"] @bind="_CustomerInformation.Code" />
+                <ValidationMessage For="(() => _CustomerInformation.Code)" />
+                <p style="color: red;" class="error-message">@customerCodeErrorMessage</p>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <p>@Localizer["customer_number"]</p>
+                <input style="border: solid;" type="text" placeholder=@Localizer["enter_here"] @bind="_CustomerInformation.Number" />
+                <ValidationMessage For="(() => _CustomerInformation.Number)" />
+                <p style="color: red;" class="error-message">@customerNumberErrorMessage</p>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <p>@Localizer["customer_name"]</p>
+                <input style="border: solid;" type="text" placeholder=@Localizer["enter_here"] @bind="_CustomerInformation.Name" />
+                <ValidationMessage For="(() => _CustomerInformation.Name)" />
+                <p style="color: red;" class="error-message">@customerNameErrorMessage</p>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <p>@Localizer["customer_alias_name"]</p>
+                <input style="border: solid;" type="text" placeholder=@Localizer["enter_here"] @bind="_CustomerInformation.AliasName" />
+                <ValidationMessage For="(() => _CustomerInformation.AliasName)" />
+                <p style="color: red;" class="error-message">@customerAliasNameErrorMessage</p>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <p>@Localizer["customer_arabic_name"]</p>
+                <input style="border: solid;" type="text" placeholder=@Localizer["enter_here"] @bind="_CustomerInformation.ArabicName" />
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <p>@Localizer["legal_name"]</p>
+                <input style="border: solid;" type="text" placeholder=@Localizer["enter_here"] @bind="_CustomerInformation.LegalName" />
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <p>@Localizer["outlet_name"]</p>
+                <input style="border: solid;" type="text" placeholder=@Localizer["enter_here"] @bind="_CustomerInformation.OutletName" />
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <p>@Localizer["customer_type"]</p>
+            <select style="width: 80%; height: 45%;">
+                    <option value="" disabled selected>@Localizer["enter_here"]</option>
+                    <option value="OB">@Localizer["ob"]</option>
+                    <option value="FBC">@Localizer["frc"]</option>
+            </select>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <p>@Localizer["price_type"]</p>
+            <select style="width: 80%; height: 45%;">
+                    <option value="Wholesale">@Localizer["wholesale"]</option>
+                    <option value="Retail">@Localizer["retail"]</option>
+            </select>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <p>@Localizer["customer_status"]</p>
+            <div>
+                <label>
+                        <input type="radio" name="status" value="active" /> @Localizer["active"]
+                </label>
+                &nbsp;&nbsp;
+                <label>
+                        <input type="radio" name="status" value="inactive" checked /> @Localizer["inactive"]
+                </label>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <p>@Localizer["is_blocked"]</p>
+            <div>
+                <label>
+                        <input type="radio" name="blocked" value="yes" />@Localizer["yes"] Yes
+                </label>
+                &nbsp;&nbsp;
+                <label>
+                        <input type="radio" name="blocked" value="no" checked />@Localizer["no"] No
+                </label>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <p>@Localizer["blocked_reason"]</p>
+                <input style="border: solid;" type="text" placeholder="Enter Here" />
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <p>@Localizer["taxkey_field"]</p>
+                <input style="border: solid;" type="text" placeholder="Enter Here" @bind="_CustomerInformation.TaxKeyField" />
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <p>@Localizer["is_warehouse_or_school"]</p>
+            <div>
+                <label>
+                        <input type="radio" name="wareorschool" value="warehouse" /> @Localizer["warehouse"]
+                </label>
+                &nbsp;&nbsp;
+                <label>
+                        <input type="radio" name="wareorschool" value="school" checked /> @Localizer["school"]
+                </label>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <p>@Localizer["special_day"]</p>
+                <input style="border: solid;" type="text" placeholder="Enter Here" @bind="_CustomerInformation.SpecialDay" />
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <p>@Localizer["special_day_date"]</p>
+            <input placeholder="01/01/0001" type="date" style="background-image:" @bind="_CustomerInformation.SpecialDay" />
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <p>@Localizer["route_type"]</p>
+            <select style="width: 80%; height: 45%;">
+                    <option value="van">@Localizer["vansales"]</option>
+                    <option value="pre">@Localizer["presales"]</option>
+            </select>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <p>@Localizer["store_size"]</p>
+            <input style="border: solid;" type="text" placeholder="0" @bind="_CustomerInformation.StoreSize" />
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <p>@Localizer["bdm"]</p>
+            <select style="width: 80%; height: 45%;">
+                <option></option>
+            </select>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <p>@Localizer["is_vat_qr_capture_mandatory"]</p>
+            <div>
+                <label>
+                        <input type="radio" name="vatqr" value="yes" />@Localizer["yes"] Yes
+                </label>
+                &nbsp;&nbsp;
+                <label>
+                        <input type="radio" name="vatqr" value="no" />@Localizer["no"] No
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+            <p>@Localizer["outlet_image"]</p>
+        <input style="border: solid;" type="file" id="fileInput" class="file-input" accept="image/*">
+    </div>
+    <br />
+    <div class="row" style="align-items:center;">
+            <button @onclick="Save" type="submit" style="width: 40%; height: 45%; border:solid">@Localizer["save"] Save </button>
+    </div>
+    </EditForm>
+</div>

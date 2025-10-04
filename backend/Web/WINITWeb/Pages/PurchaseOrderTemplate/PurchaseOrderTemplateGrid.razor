@@ -1,0 +1,92 @@
+﻿@namespace WinIt.Pages.PurchaseOrderTemplate
+@using System.ComponentModel.DataAnnotations
+@using System.Linq
+@using Winit.Shared.Models.Enums
+@inherits WinIt.Pages.Base.BaseComponentBase
+<div class="div1">
+    <table>
+        <!-- Table header content -->
+        <thead>
+            <tr>
+                <th>
+                    <input type="checkbox" @onchange="HandleRowSelectAll" checked="@IsSelectAll" />
+                </th>
+                <th>
+                    S.No
+                </th>
+                <th>
+                    Item Code
+                </th>
+                <th>
+                    Model Description / Name
+                </th>
+                <th style="width:10%;">
+                    Order Qty
+                </th>
+
+            </tr>
+        </thead>
+
+        <!-- Table row template -->
+        <tbody>
+            @if (DisplayedSKUList != null && DisplayedSKUList.Any())
+            {
+                @foreach (var item in DisplayedSKUList)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" @bind="@item.IsSelected" />
+                        </td>
+                        <td>
+                            @item.LineNumber
+                        </td>
+                        <td>
+                            [@item.SKUCode]
+                        </td>
+                        <td>
+                            <p>
+                                <span style="color:#1B478A;">@item.L2</span><br />
+                                [@item.ModelCode] @item.SKUName
+                            </p>
+                        </td>
+
+                        <td>
+@*                             <input step="1" *@
+@*                                    value="@(item.Qty == 0 ? string.Empty : CommonFunctions.RoundForSystem(item.Qty, 0).ToString())" *@
+@*                                    @oninput="(e) => {SelectedProduct = item; *@
+@*                                        Winit.Shared.CommonUtilities.Common.CommonFunctions *@
+@*                                            .Debounce<string> *@
+@*                                                (OnQtyChange, e?.Value?.ToString() ?? string.Empty, TimeSpan.FromMilliseconds(300));}" *@
+@*                                    type="number" min="0" class="cls_select2_button" *@
+@*                                    onkeypress="return event.charCode >= 48 && event.charCode <= 57" *@
+@*                                    title="Numbers only" /> *@
+                            <NumberInput
+                                Value="@item.inputQty"
+                                ValueExpression="@(() => item.inputQty)"
+                                Min="0"
+                                class="cls_select2_button"
+                                AfterQtyChanged="(e) => {SelectedProduct = item; OnQtyChange(e);}"/>
+                                
+                        </td>
+
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="14" style="text-align: center; font-weight:600;color:red;font-size:15px;">No Records Found</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@if (IsDDLOpen)
+{
+    <Winit.UIComponents.Common.CustomControls.DropDown UniqueUID="@SelectedProduct?.UID" DataSource="UOMselectionItems" IsButtonVisible="false" IsSearchable="false" Title=@Localizer["uom"] OnSelect="OnUOMSelection" />
+}
+@if (IsCloneItemOpen)
+{
+    <Winit.UIComponents.Common.CustomControls.DropDown UniqueUID="@SelectedProduct?.UID" DataSource="UOMCloneselectionItems" IsButtonVisible="false" IsSearchable="false" Title=@Localizer["uom"] OnSelect="SelectedAddUOMType" />
+}
+

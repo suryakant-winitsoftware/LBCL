@@ -1,0 +1,66 @@
+﻿@page "/Activity"
+@using Winit.Modules.NewsActivity.BL.Interfaces
+
+@inherits Base.BaseComponentBase
+@inject INewsActivityViewModel _viewModel
+@if (IsLoad)
+{
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" />
+    <div class="cls_section">
+
+        @*  <div class="form-group">
+            <label>Type</label>
+            <input type="radio" name="type" value="create" id="create" checked> <label for="create">Create Post</label>
+            <input type="radio" name="type" value="embedded" id="embedded"> <label for="embedded">Embedded From Social Media</label>
+        </div> *@
+
+        <div class="cls_container_div1">
+            <label for="title" class="cls_section_div_purchase2_label">Title</label>
+            <textarea id="title" name="title" @bind=@_viewModel.NewsActivity.Title placeholder="Enter Title" class="cls_news_textarea1"></textarea>
+        </div>
+
+        <div class="cls_container_div4">
+            <label for="description" class="cls_section_div_purchase2_label">Description</label>
+            <textarea id="description" name="description" @bind=@_viewModel.NewsActivity.Description placeholder="Enter Description" class="cls_news_textarea"></textarea>
+        </div>
+        <div class="cls_container_div4">
+            <div class="cls_section_div_purchase4">
+                <label for="publish-date" class="cls_section_div_purchase2_label">Publish Date</label>
+                <input type="date" id="publish-date" @bind=@_viewModel.NewsActivity.PublishDate name="publish-date" class="cls_date1">
+            </div>
+            <div class="cls_section_div_purchase4">
+                <label for="IsActive" class="cls_section_div_purchase2_label">Is Active</label>
+                <input type="checkbox" id="IsActive" class="cls_sales_checkbox_input" checked="@_viewModel.NewsActivity.IsActive" @onclick=@(()=>_viewModel.NewsActivity.IsActive= !_viewModel.NewsActivity.IsActive) name="publish-date">
+            </div>
+
+            @if (_viewModel.IsAdvertisement)
+            {
+                <div class="cls_file_upload_qps">
+                    <h3 class="cls_file_upload_label">File Type</h3>
+                    <Winit.UIComponents.Common.CustomControls.DropDown IsButtonVisible="true" DataSource="_viewModel.FileTypes" OnSelect="OnFileTypeSelect" />
+
+                </div>
+            }
+            <div class="cls_file_upload_qps">
+                <h3 class="cls_file_upload_label">Attach Document</h3>
+                <WinIt.FileUploader.FileUploaderV1 @ref=fileUploader
+                                                   RelativePath="@FilePath"
+                                                   FileSysList="_viewModel.FileSysList"
+                                                   FileType="@_viewModel.SelectedFile"
+                                                   LinkedItemType="NewsActivity"
+                                                   LinkedItemUID="@_viewModel.NewsActivity.UID"
+                                                   FileExtension="@_viewModel.FileExtensions"
+                                                   UploadEventCallBack="_viewModel.OnFilesUpload" />
+            </div>
+            @*  </div> *@
+        </div>
+        <div class="cls_container_div4">
+            <div class="cls_button_bottom_purchase">
+                <button type="button" class="cls_button_light" @onclick=@(()=>_navigationManager.NavigateTo("MaintainNewsActivity"))>Cancel</button>
+                <button type="submit" class="cls_button_blue" @onclick=Save>Save</button>
+            </div>
+        </div>
+
+
+    </div>
+}

@@ -1,0 +1,87 @@
+﻿@using Microsoft.Extensions.Localization
+@using Winit.UIComponents.Common.LanguageResources.Web
+@using Winit.UIModels.Common.Filter
+@using Winit.Shared.Models.Common
+@using Winit.Shared.Models.Events
+@using Winit.Shared.Models.Constants
+@using Microsoft.JSInterop
+@inject IJSRuntime JSRuntime
+@using Winit.UIComponents.Common.WinitDatepicker
+@using Winit.UIModels.Common
+@inject IStringLocalizer<LanguageKeys> Localizer
+@inject Winit.UIComponents.Common.Language.ILanguageService _languageService
+
+@if (IsSearchCriteriaNeeded)
+{
+    <div class="search-criteria">
+        @Localizer["search_criteria"] : @((MarkupString)GetSearchCriteriaDisplay())
+    </div>
+}
+@if (showFilter)
+{
+    <div class="cls_filter_container" >
+
+        
+            @for (int i = 0; i < ColumnsForFilter.Count; i++)
+            {
+                var columnProperties = ColumnsForFilter[i];
+                var columnName = ColumnsForFilter[i].ColumnName;
+
+                <div class="cls_section_div_sku">
+
+                <label class="cls_section_div_purchase2_label" for="@columnName">@ColumnsForFilter[i].Label:</label>
+                       
+                        @switch (ColumnsForFilter[i].FilterType)
+                        {
+                            case FilterConst.TextBox:
+                        <input type="text" class="cls_select2_button" placeholder="Enter Here" id="@columnName"
+                                       @bind="columnProperties.SelectedValue" />
+                                break;
+                            case FilterConst.DropDown:
+                                string columnNameKey = ColumnsForFilter[i].ColumnName;
+                                <Winit.UIComponents.Common.CustomControls.DropDown @ref="DropDownRefs[columnNameKey]" DataSource="ColumnsForFilter[i].DropDownValues"
+                                                                                   Title="@ColumnsForFilter[i].Label"
+                                                                                   IsButtonVisible=true
+                                                                                   OnSelect="(e) => HandleSelectionChange(columnNameKey, e)"
+                                IsSearchable=true _SelectionMode="ColumnsForFilter[i].SelectionMode" />
+                                break;
+                            case FilterConst.Date:
+
+                                    <WinitCalendar id="@columnName" selectedDate="@columnProperties.SelectedValue" OnChange="OnDateChange">
+
+                                    </WinitCalendar>
+                               
+                                break;
+                        }
+                        
+                </div>
+            }
+
+        <div class="float:left;margin-top:20px;">
+            <button class="cls_button_light" @onclick="ResetFilter">@Localizer["reset"]sdf </button>
+            <button class="cls_button_blue" style="background-color:#003898" @onclick="ApplyFilter">@Localizer["search"]gdfgdfg</button>
+            
+                
+            </div>
+       
+
+    </div>
+    
+}
+
+
+
+
+@code {
+
+    
+
+   }
+
+
+
+
+
+
+
+

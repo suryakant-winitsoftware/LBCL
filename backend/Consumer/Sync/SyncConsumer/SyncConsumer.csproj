@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-SyncConsumer-132f8056-113b-4416-82e3-00ffac56912d</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MassTransit" Version="8.4.0" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="8.3.4" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Modules\CaptureCompetitor\Winit.Modules.CaptureCompetitor.BL\Winit.Modules.CaptureCompetitor.BL\Winit.Modules.CaptureCompetitor.BL.csproj" />
+    <ProjectReference Include="..\..\..\Modules\CollectionModule\Winit.Modules.CollectionModule.BL\Winit.Modules.CollectionModule.BL.csproj" />
+    <ProjectReference Include="..\..\..\Modules\JourneyPlan\Winit.Modules.JourneyPlan.BL\Winit.Modules.JourneyPlan.BL.csproj" />
+    <ProjectReference Include="..\..\..\Modules\Planogram\Winit.Modules.Planogram.Model\Winit.Modules.Planogram.Model.csproj" />
+    <ProjectReference Include="..\..\..\Modules\ReturnOrder\Winit.Modules.ReturnOrder.BL\Winit.Modules.ReturnOrder.BL.csproj" />
+    <ProjectReference Include="..\..\..\Modules\ReturnOrder\Winit.Modules.ReturnOrder.Model\Winit.Modules.ReturnOrder.Model.csproj" />
+    <ProjectReference Include="..\..\..\Modules\SalesOrder\Winit.Modules.SalesOrder.BL\Winit.Modules.SalesOrder.BL.csproj" />
+    <ProjectReference Include="..\..\..\Modules\Syncing\Winit.Modules.Syncing.Model\Winit.Modules.Syncing.Model.csproj" />
+  </ItemGroup>
+</Project>

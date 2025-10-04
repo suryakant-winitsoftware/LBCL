@@ -1,0 +1,110 @@
+﻿@page "/CreateReturnOrderGridview"
+@using System.ComponentModel.DataAnnotations
+@using System.Linq
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+<div class="div1">
+<table>
+    <!-- Table header content -->
+    <thead>
+        <tr>
+            <th >
+                @Localizer["sku_code"]
+            </th>
+            <th >
+                @Localizer["sku_name"]
+            </th>
+            @if (IsWithInvoice)
+            {
+                <th>
+                    @Localizer["available_qty"]
+                </th>
+            }
+            <th >
+                @Localizer["order_qty"]
+            </th>
+            <th >
+                @Localizer["sku_type"]
+            </th>
+            <th >
+                @Localizer["reason"]
+            </th>
+            <th >
+                @Localizer["uom"]
+            </th>
+            <th >
+                @Localizer["unit_price"]
+            </th>
+            <th >
+                @Localizer["total_amount"]
+            </th>
+            <th >
+                @Localizer["action"]
+            </th>
+        </tr>
+    </thead>
+
+    <!-- Table row template -->
+    <tbody>
+        @if (DisplayedSKUList != null && DisplayedSKUList.Any())
+        {
+            @foreach (var item in DisplayedSKUList)
+            {
+                <tr>
+                    <td >
+                        @item.SKUCode
+                    </td>
+                    <td >
+                        @item.SKUName
+                    </td>
+                    @if (IsWithInvoice)
+                    {
+                        <td>
+                            <input @bind="@item.AvailableQty"
+                                   disabled
+                                   type="number" min="0" class="form-control" />
+                        </td>
+                    }
+                    <td >
+                        <input @bind="@item.OrderQty"
+                               @oninput="(e) => {selectedProduct = item;
+Winit.Shared.CommonUtilities.Common.CommonFunctions.Debounce<string>(OnQtyChange, e?.Value?.ToString(), TimeSpan.FromMicroseconds(300));}"
+                               type="number" min="0" max="@(IsWithInvoice ? item.AvailableQty : decimal.MaxValue)" class="form-control" />
+                    </td>
+                    <td >
+                        <label class="form-select" @onclick="() => OnReasonTypeDDLClick(item)" disabled="@IsViewMode">
+                            @(string.IsNullOrEmpty(item.SKUType) ? "Select" : item.SKUType)
+                        </label>
+                    </td>
+                    <td >
+                        <label class="form-select" @onclick="() => OnReasonDDLClick(item)" disabled="@IsViewMode">
+                            @(string.IsNullOrEmpty(@item.ReasonText) ? "Select" : @item.ReasonText)
+                        </label>
+                    </td>
+                    <td >
+                        <label class="form-select" disabled="@(IsWithInvoice || IsViewMode)" @onclick="() => OnUOMDDLClick(item)" >
+                            @(@item.SelectedUOM == null ? "Select" : @item.SelectedUOM?.Label)
+                        </label>
+                    </td>
+                    <td >
+                        @item.UnitPrice
+                    </td>
+                    <td >
+                        @item.TotalAmount
+                    </td>
+                    <td >
+                        <img disabled="@IsWithInvoice" @onclick="() => HandleRowBtnClick(item)" style="width:20px"
+                             src='@(item.ItemStatus == Winit.Shared.Models.Enums.ItemState.Cloned ? "/Images/delete.png" : "/Images/plus.png")' />
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="9" style="text-align: center;color:red">@Localizer["no_record_found"]</td>
+            </tr>
+        }
+    </tbody>
+</table>
+</div>

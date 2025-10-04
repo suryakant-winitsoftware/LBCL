@@ -1,0 +1,36 @@
+﻿@page "/SnackBarTest"
+@using Winit.UIComponents.SnackBar.Enum;
+<h3>SnackBarTest</h3>
+<button class="btn btn-primary" @onclick="IncrementCount">Warning</button>
+<button class="btn btn-primary" @onclick="tost1">Success</button>
+<button class="btn btn-primary" @onclick="tost2">Error</button>
+<button class="btn btn-primary" @onclick="tost3">Info</button>
+<button class="btn btn-primary" @onclick="tost4">Normal</button>
+@code {
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        _tost.Add("srinadh", "firsttost" + currentCount,Winit.UIComponents.SnackBar.Enum.Severity.Warning);
+    }
+    private void tost1()
+    {
+        currentCount++;
+        _tost.Add("srinadh", "first tost" + currentCount,Winit.UIComponents.SnackBar.Enum.Severity.Success);
+    }
+    private void tost2()
+    {
+        currentCount++;
+        _tost.Add("srinadh", "first tost" + currentCount,Winit.UIComponents.SnackBar.Enum.Severity.Error);
+    }
+    private void tost3()
+    {
+        currentCount++;
+        _tost.Add("srinadh", "first tost" + currentCount,Winit.UIComponents.SnackBar.Enum.Severity.Info);
+    }
+    private void tost4()
+    {
+        currentCount++;
+        _tost.Add("","first tost" + currentCount,Winit.UIComponents.SnackBar.Enum.Severity.Normal);
+    }
+}

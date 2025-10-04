@@ -1,0 +1,63 @@
+﻿@page "/ClearData"
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize]
+<PageTitle>Clear Data Permission</PageTitle>
+@using System.ComponentModel.DataAnnotations
+@using System.Linq
+@using Microsoft.JSInterop
+@using Newtonsoft.Json
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.Mobile.BL.Interfaces.IClearDataViewModel _mobileAppActionViewModel;
+@inject Winit.UIComponents.Common.IAlertService _AlertMessgae;
+@using Winit.UIComponents.Web.Filter
+@using Winit.UIModels.Common.Filter
+
+<div>
+    @* <button class="cls_add_new_sec" style="float:right;margin-right:0px" @onclick="ShowFilter">@Localizer["filter"]</button>
+    <Filter @ref="filterRef" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+            OnFilterApplied=@OnFilterApply /> *@
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+                         OnFilterApplied="@OnFilterApply" />
+</div>
+
+@if (IsInitialized)
+{
+    <div class="cls_export_main">
+        <button class="cls_add_new_sec" @onclick="AddClearDataPermission">@Localizer["add_clear_data_permission"]</button>
+        <button class="cls_add_new_sec dn">@Localizer["export_to_excel"]</button>
+        <button class="cls_add_new_sec dn">@Localizer["export_to_csv"]</button>
+        <button class="cls_add_new_sec dn">@Localizer["export_to_pdf"]</button>
+    </div>
+    
+    @if (IsAddPopUp)
+    {
+        <PopUp Title=@Localizer["add"] OkbtnText=@Localizer["save"] CancelbtnText=@Localizer["cancel"] OnOkClick="SaveMobileActionItem" OnCloseClick="OnCancelFromBackBTnPopUpClick">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="cls_new_lab">
+                        <span style="color:red;">*</span>@Localizer["select_sales_rep"]
+                    </label>
+                    <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_mobileAppActionViewModel.EmpSalesRepSelectionItems"
+                                                                       Title=@Localizer["sales_rep"]
+                                                                       IsButtonVisible="true"
+                                                                       OnSelect="OnsalesRepSelection"
+                                                                       IsSearchable="false" />
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="cls_new_lab">@Localizer["action"]</label>
+                    <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_mobileAppActionViewModel.ActionSelectionItems"
+                                                                       Title=@Localizer["action"]
+                                                                       IsButtonVisible="true"
+                                                                       OnSelect="OnActionSelection"
+                                                                       IsSearchable="false" />
+                </div>
+            </div>
+        </PopUp>
+
+    }
+    <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" DataSource="_mobileAppActionViewModel.ClearDataLists" OnSort="OnSortApply" PageNumber="_mobileAppActionViewModel.PageNumber" PageSize="_mobileAppActionViewModel.PageSize" TotalItemsCount="_mobileAppActionViewModel.TotalItemsCount" ShowRecordsCount="true" />
+     <Winit.UIComponents.Web.Paging.Paging CurrentPage="_mobileAppActionViewModel.PageNumber" OnPageChange="_mobileAppActionViewModel.PageIndexChanged" PageSize="_mobileAppActionViewModel.PageSize" TotalItems="_mobileAppActionViewModel.TotalItemsCount" />
+ }
+@code {
+
+}

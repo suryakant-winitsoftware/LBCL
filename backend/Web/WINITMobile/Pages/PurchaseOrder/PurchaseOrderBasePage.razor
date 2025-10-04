@@ -1,0 +1,474 @@
+﻿@page "/purchaseorder"
+@page "/purchaseorder/{PurchaseOrderUID}"
+@inject IPurchaseOrderViewModel _viewModel
+@using Winit.Modules.PurchaseOrder.BL.Interfaces;
+@using Winit.Modules.PurchaseOrder.Model.Constatnts
+@using Winit.Modules.SKU.Model.Interfaces
+@using Winit.Modules.Store.Model.Interfaces
+@using Winit.Shared.CommonUtilities.Common
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+
+<PageTitle>Purchase Order</PageTitle>
+@if (IsDistributorSelect)
+{
+    <PopUp Title="Select Channel Partner" OkbtnText="Proceed" CancelbtnText="Close"
+           OnOkClick="OnDistributorSelect"
+           OnCloseClick="() => IsDistributorSelect = false">
+        <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder="Search by Channel Partner Code / Name"
+                                                               MaxLength="200" DebounceInterval="500"
+                                                               OnDebounceIntervalElapsed="e => _viewModel.StoreSearchString = e"
+                                                               KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+                                                               Value="@_viewModel.StoreSearchString"
+                                                               IsForSearch="true" />
+
+        <div class="div1">
+            <table>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>
+                            Channel Partner Code
+                        </th>
+                        <th>
+                            Channel Partner Namee
+                        </th>
+                        <th>
+                            Broad Classification
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (_viewModel.FilteredStores != null && _viewModel.FilteredStores.Any())
+                    {
+                        @foreach (IStore store in _viewModel.FilteredStores)
+                        {
+                            <tr @onclick="() => _viewModel.SelectedDistributor = store.UID">
+                                <td>
+                                    <input type="radio" name="store"
+                                           checked="@(_viewModel.SelectedDistributor == store.UID)" id="@store.UID" />
+                                </td>
+                                <td>@(store.Code ?? "N/A")</td>
+                                <td>@(store.Name ?? "N/A")</td>
+                                <td>@(store.BroadClassification ?? "N/A")</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" style="text-align: center; font-weight:700;font-size:14px; color:red;">
+                                No
+                                Records Found..
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </PopUp>
+}
+
+
+<div class="cls_main1">
+
+    <div class="cls_container_div1">
+        <button class="cls_add_new_sec dn" style="float:right;margin-top:-47px;"
+                @onclick="() => IsFilterOpen = !IsFilterOpen">
+            Filter
+        </button>
+
+
+        <div class="cls_section" style="display:@(IsFilterOpen ? "block" : "none");">
+
+            <div class="cls_section_div_purchase2">
+                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_viewModel.OrganizationUnitSelectionItems"
+                                                                   IsButtonVisible="true"
+                                                                   Title="Organisation Unit"
+                                                                   OnSelect="e => _viewModel.ApplyGridFilter()"
+                                                                   _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Multiple" />
+            </div>
+            <div class="cls_section_div_purchase2">
+                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_viewModel.DivisionSelectionItems"
+                                                                   IsButtonVisible="true"
+                                                                   Title="Division"
+                                                                   OnSelect="e => _viewModel.ApplyGridFilter()"
+                                                                   _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Multiple" />
+            </div>
+            <div class="cls_section_div_purchase2">
+                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_viewModel.ProductCategorySelectionItems"
+                                                                   IsButtonVisible="true"
+                                                                   Title="Product Category"
+                                                                   OnSelect="e => _viewModel.ApplyGridFilter()"
+                                                                   _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Multiple" />
+            </div>
+        </div>
+
+    </div>
+    <div class="cls_section">
+        <div class="cls_container_div1">
+
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">
+                    <span class="cls_section_div_purchase2_span">*</span>Channel
+                    Partner
+                </label>
+                <input type="button" class="cls_select2_button" @onclick="() => IsDistributorSelect = true"
+                       disabled="@(_appUser.Role.IsDistributorRole || _viewModel.IsDraftOrder || !_viewModel.IsNewOrder)"
+                       value="@(_viewModel.SelectedStoreMaster?.Store?.Code == null ? "Select Channel Partner" : $"[{_viewModel.SelectedStoreMaster?.Store?.Code}] {_viewModel.SelectedStoreMaster?.Store?.Name}") " />
+            </div>
+
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">
+                    <span class="cls_section_div_purchase2_span">*</span>Order
+                    Date
+                </label>
+                <input type="date" class="cls_select2_input1" id="orderDate"
+                       @bind="_viewModel.PurchaseOrderHeader.OrderDate" disabled />
+            </div>
+            <div class="cls_section_div_purchase2 ">
+                <label class="cls_section_div_purchase2_label">
+                    <span class="cls_section_div_purchase2_span">*</span>Organization
+                    Unit
+                </label>
+                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_viewModel.OrgUnitSelectionItems"
+                                                                   IsButtonVisible="true"
+                                                                   Title="Organization Unit"
+                                                                   OnSelect="OnOrgUnitSelect"
+                                                                   _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single"
+                                                                   Disabled="@(!_viewModel.IsNewOrder || _viewModel.IsDraftOrder)" />
+            </div>
+            <div class="cls_section_div_purchase2 dn">
+                <label class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span">*</span>Warehouse</label>
+                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_viewModel.WareHouseSelectionItems"
+                                                                   IsButtonVisible="true"
+                                                                   Title="Warehouse"
+                                                                   OnSelect="OnWareHouseSelect"
+                                                                   _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single"
+                                                                   Disabled="@(!_viewModel.IsNewOrder || _viewModel.IsDraftOrder)" />
+            </div>
+
+
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">
+                    <span class="cls_section_div_purchase2_span">*</span>Billing
+                    Address
+                </label>
+                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_viewModel.BillingAddressSelectionItems"
+                                                                   IsButtonVisible="true"
+                                                                   Title="Billing Address"
+                                                                   OnSelect="OnBillingAddressSelect"
+                                                                   _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single"
+                                                                   Disabled="@(!_viewModel.IsNewOrder || _viewModel.IsDraftOrder)" />
+            </div>
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">
+                    <span class="cls_section_div_purchase2_span">*</span>Shipping
+                    Address
+                </label>
+                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_viewModel.ShippingAddressSelectionItems"
+                                                                   IsButtonVisible="true"
+                                                                   Title="Shipping Address"
+                                                                   OnSelect="OnShippingAddressSelect"
+                                                                   _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single"
+                                                                   Disabled="@(!_viewModel.IsNewOrder || _viewModel.IsDraftOrder)" />
+            </div>
+
+       
+            <div class="cls_section_div_purchase2 ">
+                <label class="cls_section_div_purchase2_label">Template</label>
+                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_viewModel.TemplateSelectionItems"
+                                                                   IsButtonVisible="true"
+                                                                   Title="Template"
+                                                                   OnSelect="OnTemlateSelect"
+                                                                   _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single"
+                                                                   Disabled="!_viewModel.IsNewOrder" />
+            </div>
+            @if (!string.IsNullOrEmpty(_viewModel.PurchaseOrderHeader.ReportingEmpName))
+            {
+                <div class="cls_container_div1 cls_mar_btm_10px ">
+                    <label class="cls_section_div_purchase2_label">Reporting ASM</label>
+                    <label class="cls_credit_label2">[@_viewModel.PurchaseOrderHeader.ReportingEmpCode] @_viewModel.PurchaseOrderHeader.ReportingEmpName</label>
+                </div>
+                <div class="cls_container_div1 cls_mar_btm_10px ">
+                    <label class="cls_section_div_purchase2_label">Created By</label>
+                    <label class="cls_credit_label2">[@_viewModel.PurchaseOrderHeader.CreatedByEmpCode] @_viewModel.PurchaseOrderHeader.CreatedByEmpName</label>
+                </div>
+
+            }
+            @if (!string.IsNullOrEmpty(_viewModel.PurchaseOrderHeader.OrderNumber))
+            {
+                <div class="cls_container_div1 cls_mar_btm_10px">
+                    <label class="cls_section_div_purchase2_label">DMS Purchase Order No</label>
+                    <label class="cls_credit_label2">@(_viewModel.PurchaseOrderHeader.OrderNumber)</label>
+                </div>
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(_viewModel.PurchaseOrderHeader.DraftOrderNumber))
+                {
+                    <div class="cls_container_div1 cls_mar_btm_10px">
+                        <label class="cls_section_div_purchase2_label">DMS Draft Order No</label>
+                        <label class="cls_credit_label2">@(_viewModel?.PurchaseOrderHeader?.DraftOrderNumber ?? "N/A")</label>
+                    </div>
+                }
+            }
+        </div>
+        <div class="cls_container_div1 cls_mar_btm_10px">
+            <div class="">
+                <label class="cls_section_div_purchase2_label">Billing Address</label>
+                <label class="cls_credit_label2">@(string.IsNullOrEmpty(_viewModel.PurchaseOrderHeader.BillingAddressUID) ? "N/A" : _viewModel.BillingAddressSelectionItems.Find(e => e.UID == _viewModel.PurchaseOrderHeader.BillingAddressUID)?.Label)</label>
+            </div>
+        </div>
+        <div class="cls_container_div1 ">
+            <div class="">
+                <label class="cls_section_div_purchase2_label">Shipping Address</label>
+                <label class="cls_credit_label2">@(string.IsNullOrEmpty(_viewModel.PurchaseOrderHeader.ShippingAddressUID) ? "N/A" : _viewModel.ShippingAddressSelectionItems.Find(e => e.UID == _viewModel.PurchaseOrderHeader.ShippingAddressUID)?.Label)</label>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="cls_section ">
+        <div class="cls_container_div1 cls_flex " style=" justify-content:space-around; ">
+            <div class="cls_section_search">
+                <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder="Search "
+                                                                       MaxLength="200" DebounceInterval="500"
+                                                                       OnDebounceIntervalElapsed="e => {_viewModel.ProductSearchString = e; _viewModel.ApplyGridFilter();}"
+                                                                       KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+                                                                       Value="@_viewModel.ProductSearchString"
+                                                                       IsForSearch="true" />
+            </div>
+            <div class="">
+                <button class="cls_comman_btn @(!_viewModel.IsNewOrder ? "dn" : "")"
+                        @onclick="() => AddProductDialogBox?.OnOpenClick()">
+                    Add Product
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="cls_contianer1">
+
+        
+        <WINITMobile.Pages.DialogBoxes.AddProductDialogBoxV1 T="ISKUV1"
+                                                           DataSource="_viewModel.SKUs"
+                                                           L1="@(e => e.L1)"
+                                                           L2="@(e => e.L2)"
+                                                           L3="@(e => e.L3)"
+                                                           L4="@(e => e.L4)"
+                                                           L5="@(e => e.L5)"
+                                                           L6="@(e => e.L6)"
+                                                           L7="@(e => e.Code)"
+                                                           L8="@(e => e.Name)"
+                                                           UID="@(e => e.UID)"
+                                                           SKUImage="@(e => e.SKUImage)"
+                                                           OnCancelClick="() => AddProductDialogBox?.OnCloseClick()"
+                                                           OnOkClick="OnAddProductClick"
+                                                           DropDownDataSource="_viewModel.SKUAttributeData"
+                                                           OnDropdownValueSelectSKUAtrribute="OnDropdownValueSelectSKUAtrributes"
+                                                           SelectedItems="SKUs"
+                                                           FilterAction="_viewModel.FilterAction"
+                                                           OnSelect="OnItemSelect"
+                                                           @ref="AddProductDialogBox" />
+
+        <div class='cls_container_div4'>
+
+            @if (!_viewModel.IsNewOrder && _viewModel.StoreCreditLimit != null)
+            {
+                <p>
+                    Available Limit : A+B-C-D
+                </p>
+                <div class="cls_container_div1">
+                    <div class="cls_alert2">
+                        <div class="cls_alert2_bottom">
+                            <div class="cls_alter_credit">
+                                <label class="cls_alter2_label">Default Credit limit (A)</label>
+                                <p class="cls_alter_credit_p">@_viewModel.CurrencyLabel @(CommonFunctions.FormatNumberInIndianStyle(_viewModel.StoreCreditLimit.CreditLimit))</p>
+                            </div>
+                            <div class="cls_alter_credit">
+                                <label class="cls_alter2_label">Temporary Credit Limit (B)</label>
+                                <p class="cls_alter_credit_p">@_viewModel.CurrencyLabel @(CommonFunctions.FormatNumberInIndianStyle(_viewModel.StoreCreditLimit.TemporaryCreditLimit))</p>
+                            </div>
+                            <div class="cls_alter_credit">
+                                <label class="cls_alter2_label">Current Outstanding (C)</label>
+                                <p class="cls_alter_credit_p">@_viewModel.CurrencyLabel @(CommonFunctions.FormatNumberInIndianStyle(_viewModel.StoreCreditLimit.CurrentOutstanding))</p>
+                            </div>
+                            <div class="cls_alter_credit">
+                                <label class="cls_alter2_label">Pending Order Value (D)</label>
+                                <p class="cls_alter_credit_p">@_viewModel.CurrencyLabel @(CommonFunctions.FormatNumberInIndianStyle(_viewModel.StoreCreditLimit.BlockedLimit))</p>
+                            </div>
+
+                            <div class="cls_alter_credit">
+                                <label class="cls_alter2_label">Available Limit</label>
+                                <p class="cls_alter_limit_p">
+                                    @_viewModel.CurrencyLabel @(CommonFunctions.FormatNumberInIndianStyle(_viewModel.StoreCreditLimit.CreditLimit + _viewModel.StoreCreditLimit.TemporaryCreditLimit - _viewModel.StoreCreditLimit.CurrentOutstanding - _viewModel.StoreCreditLimit.BlockedLimit))
+                                </p>
+                            </div>
+
+                            <div class="cls_alter_credit">
+                                <label class="cls_alter2_label">Allowed Order Limit</label>
+                                <p class="cls_alter_limit_p">@_viewModel.CurrencyLabel @(CommonFunctions.FormatNumberInIndianStyle(_viewModel.StoreCreditLimit.CreditLimit + _viewModel.StoreCreditLimit.TemporaryCreditLimit + (_viewModel.StoreCreditLimit.CreditLimit * _viewModel.CrediLimitBufferPercentage * 0.01m) - _viewModel.StoreCreditLimit.CurrentOutstanding - _viewModel.StoreCreditLimit.BlockedLimit))</p>
+                            </div>
+
+
+                            <div class="cls_alter_credit">
+                                <label class="cls_alter2_label">Default Aging Days</label>
+                                <p class="cls_alter_credit_p">@(_viewModel.StoreCreditLimit.CreditDays)</p>
+                            </div>
+
+                            <div class="cls_alter_credit">
+                                <label class="cls_alter2_label">Temp Aging Days</label>
+                                <p class="cls_alter_credit_p">@(_viewModel.StoreCreditLimit.TemporaryCreditDays)</p>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+                <div @ref="alertErrorMsgElementRefference">
+                    @if (!string.IsNullOrEmpty(ErrorMsg))
+                    {
+                        <div class="cls_alert">
+                            <label class="cls_alert_label">Alert !</label>
+
+                            @((MarkupString)ErrorMsg)
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+
+    </div>
+    <div class="cls_container_left">
+        <p>Product Details</p>
+    </div>
+    <PurchaseOrderGrid DisableQtyField="_viewModel.IsQtyDisabled"
+                                   DisplayedSKUList="_viewModel.FilteredPurchaseOrderItemViews"
+                                   OnQtyChanged="OnQtyChange" IsForApproval="IsForApproval"/>
+
+    <div class="cls_section cls_flex cls_flex_wrap cls_flex_row_gap_14px">
+        <div class="cls_section_div_purchase3 ">
+            <label class="cls_purchase2_section_label">Total Qty</label>
+            <p class="cls_purchase2_section_p"> @CommonFunctions.RoundForSystemWithoutZero(_viewModel.PurchaseOrderHeader.QtyCount, 0)</p>
+        </div>
+        <div class="cls_section_div_purchase3 ">
+            <label class="cls_purchase2_section_label">Total Lines</label>
+            <p class="cls_purchase2_section_p"> @CommonFunctions.RoundForSystemWithoutZero(_viewModel.PurchaseOrderItemViews.Count, 0)</p>
+        </div>
+        <div class="cls_section_div_purchase3 ">
+            <label class="cls_purchase2_section_label">Total Discount</label>
+            <p class="cls_purchase2_section_p">@CommonFunctions.FormatNumberInIndianStyle(_viewModel.PurchaseOrderHeader.TotalDiscount, _appSetting.RoundOffDecimal)</p>
+        </div>
+
+        <div class="cls_section_div_purchase3 ">
+            <label class="cls_purchase2_section_label">Order Value</label>
+            <p class="cls_purchase2_section_p"> @CommonFunctions.FormatNumberInIndianStyle(_viewModel.PurchaseOrderHeader.NetAmount, _appSetting.RoundOffDecimal)</p>
+        </div>
+
+        @if (!string.IsNullOrEmpty(_viewModel.PurchaseOrderHeader.App6EmpUID))
+        {
+            <div class="cls_section_div_purchase3 ">
+                <label class="cls_purchase2_section_label">Total Billed Qty</label>
+                <p class="cls_purchase2_section_p">
+                    @CommonFunctions.RoundForSystemWithoutZero(_viewModel.PurchaseOrderHeader.TotalBilledQty, 0)
+                </p>
+            </div>
+            <div class="cls_section_div_purchase3 ">
+                <label class="cls_purchase2_section_label">Total Cancelled Qty</label>
+                <p class="cls_purchase2_section_p">
+                    @CommonFunctions.RoundForSystemWithoutZero(_viewModel.PurchaseOrderHeader.TotalCancelledQty, 0)
+                </p>
+            </div>
+        }
+    </div>
+    <div class="cls_button_bottom_purchase">
+        <button class="cls_button_light @(_viewModel.IsNewOrder ? "" : "dn")" @onclick="OnDeleteSelectedItems">
+            Delete Selected From the list
+        </button>
+        <button class="cls_button_blue @(_viewModel.IsNewOrder ? "" : "dn")" @onclick="OnSaveAsDraftClick">
+            Save as Draft
+        </button>
+        
+            <button class="cls_button_blue @(_viewModel.IsNewOrder ? "" : "dn")" @onclick="OnConfirmOrderClick">
+                Confirm
+            </button>
+            @* @if (!_viewModel.IsNewOrder && !_viewModel.PurchaseOrderHeader.IsApprovalCreated)
+            {
+                <button class="cls_button_blue" @onclick="OnCreateApprovalClick">
+                    Create Approval
+                </button>
+            } *@
+        <button class="cls_button_light" @onclick='() => _navigationManager.NavigateTo("ViewPurchaseOrderStatus")'>
+            Back
+        </button>
+    </div>
+</div>
+
+
+@if (IsOrderPlaced)
+{
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show" tabindex="-1" style="display: block; overflow:auto; ">
+        <div class="modal-dialog" style="top:22%;max-width:40%;">
+            <div class="modal-content">
+                <div class="modal-body" style="max-height: calc(100vh - 210px); overflow-y: auto;">
+                    <span class="close" @onclick='() => _navigationManager.NavigateTo("ViewPurchaseOrderStatus")'>&times;</span>
+                    <div class="cls_popup_image">
+                        <img src="Images/checked1.png" width="74px" height="74px">
+                    </div>
+                    <div class="cls_popup_center">
+                        <label class="cls_popup_center_label">Purchase Order <br> Placed successfully. </label>
+                    </div>
+                    <div class="cls_popup_center_text">
+                        @if (_viewModel.CreatedPurchaseOrderNumbers.Count == 1)
+                        {
+                            <p class="cls_popup_center_text_p">
+                                Order Number:
+                                <span class="cls_popup_center_text_span">@string.Join(",", _viewModel.CreatedPurchaseOrderNumbers)</span>
+                            </p>
+                        }
+                        else
+                        {
+                            <p class="cls_popup_center_text_p">
+                                Since your purchase order includes items from multiple business units, it has been
+                                split accordingly and sent to the respective business units separately for approval.
+                                Below are the purchase order numbers:
+                                @foreach (var num in _viewModel.CreatedPurchaseOrderNumbers)
+                                {
+                                    <label class="cls_popup_center_text_span">
+                                        @num
+                                    </label>
+                                }
+                            </p>
+                        }
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    @* </div> *@
+}
+
+@* @if (IsApprovalEngineNeeded)
+    {
+        <WinIt.Pages.ApprovalRoleEngine.ApprovalEngine
+            ShowApprovalEngine="@(_viewModel.PurchaseOrderHeader.Status == PurchaseOrderStatusConst.PendingForApproval || _viewModel.PurchaseOrderHeader.Status != null)"
+            RuleId="@_viewModel.RuleId" RequestId="@_viewModel.RequestId.ToString()"
+            @ref="childComponentRef"
+            ApprovalUsercodes="@ApprovalUserCodes"
+            IsRejectButtonNeeded="_appSetting.IsRejectNeededInPurchaseOrder"
+            IsReassignButtonNeeded="_appSetting.IsReassignNeededInPurchaseOrder"
+            HandleApprovalAction="HandelApprovalClick"
+            OnAfterApproveOrRejct='() => _navigationManager.NavigateTo("ViewPurchaseOrderStatus")'/>
+    } *@
+
+

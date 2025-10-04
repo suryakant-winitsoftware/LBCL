@@ -1,0 +1,72 @@
+﻿@using Microsoft.Extensions.Localization
+@using Winit.UIComponents.Common.LanguageResources.Web
+@inject Winit.UIComponents.Common.Language.ILanguageService _languageService
+@inject IStringLocalizer<LanguageKeys> Localizer
+
+
+<div class="cls_sales_container_outline">
+    <div class="cls_container_div1">
+
+        <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label">@Localizer["mobile_number"]<span class="cls_section_div_purchase2_span">*</span></label>
+            <div class="margin_top cls_container_div1">
+                
+              @*   <input type="number" @bind="@Contact.Mobile" placeholder=@Localizer["enter_mobile_number"] /> *@
+                <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder=@Localizer["enter_mobile_number"]
+                                                                       MaxLength="10"
+                                                                       DebounceInterval="500" OnDebounceIntervalElapsed="@((e)=>Contact.Mobile=e)"
+                                                                       KeyboardType="Winit.Shared.Models.Enums.InputType.Numeric"
+                                                                       Value="@Contact.Mobile" />
+            </div>
+        </div>
+        <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label">@Localizer["landline_number"]<span class="cls_section_div_purchase2_span">*</span></label>
+            <div class="margin_top cls_container_div1">
+                
+              @*   <input type="text" @bind="@Contact.Mobile2" placeholder=@Localizer["enter_landline_number"] /> *@
+                <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder=@Localizer["enter_landline_number"]
+                                                                       MaxLength="10"
+                                                                       DebounceInterval="500" OnDebounceIntervalElapsed="@((e)=>Contact.Mobile2=e)"
+                                                                       KeyboardType="Winit.Shared.Models.Enums.InputType.Numeric"
+                                                                       Value="@Contact.Mobile2" />
+            </div>
+        </div>
+        <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label">@Localizer["extension"]<span class="cls_section_div_purchase2_span">*</span></label>
+            <div class="margin_top cls_container_div1">
+                
+               @*  <input type="number" @bind="@Contact.PhoneExtension" placeholder=@Localizer["enter_extension"] /> *@
+                <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder=@Localizer["enter_extension"]
+                                                                       MaxLength="5"
+                                                                       DebounceInterval="500" OnDebounceIntervalElapsed="@((e)=>Contact.PhoneExtension=e)"
+                                                                       KeyboardType="Winit.Shared.Models.Enums.InputType.Numeric"
+                                                                       Value="@Contact.PhoneExtension" />
+            </div>
+        </div>
+        <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label">@Localizer["email"]<span class="cls_section_div_purchase2_span">*</span></label>
+            <div class="cls_select">
+                
+                <input type="text" @bind="@Contact.Email" placeholder=@Localizer["enter_email"] />
+            </div>
+        </div>
+        <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label">@Localizer["fax_number"]<span class="cls_section_div_purchase2_span">*</span></label>
+            <div class="margin_top cls_container_div1">
+                
+              @*   <input type="number" @bind="@Contact.Fax" placeholder=@Localizer["enter_fax_number"] /> *@
+                <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder=@Localizer["enter_fax_number"]
+                                                                       MaxLength="10"
+                                                                       DebounceInterval="500" OnDebounceIntervalElapsed="@((e)=>Contact.Fax=e)"
+                                                                       KeyboardType="Winit.Shared.Models.Enums.InputType.Numeric"
+                                                                       Value="@Contact.Fax" />
+            </div>
+        </div>
+
+
+
+    </div>
+</div>
+
+
+

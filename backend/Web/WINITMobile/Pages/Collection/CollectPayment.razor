@@ -1,0 +1,404 @@
+﻿@page "/collectpayment"
+@inject NavigationManager _navigate
+@inject Winit.Modules.CollectionModule.BL.Interfaces.ICreatePaymentViewModel _createPaymentAppViewModel
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+@inject Winit.Modules.Printing.Model.Classes.BluetoothDeviceInfo _btinfo;
+
+
+
+<style>
+    .container {
+        margin-bottom: 0px; /* Adjust the value to include the height of your footer */
+        overflow-y: auto;
+    }
+
+    .card {
+        border: 1px solid #ddd;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+    }
+
+    .card-copy {
+        border: 1px solid #ddd;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+        height: 50px;
+    }
+
+    .card-copy-Drop {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+        padding: 10px;
+    }
+
+    .card-content {
+        align-items: center;
+        font-size: 10px;
+        color: black;
+        padding: 3px;
+        margin-top: 5px;
+    }
+
+
+    .card-type {
+        font-size: 13px;
+        color: #555;
+    }
+
+    .card-type-copy {
+        font-size: 10px;
+        color: white;
+    }
+
+    .footer {
+        background-color: #474444;
+        color: #ffffff;
+        padding: 20px;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        text-align: center;
+        height: 65px;
+    }
+
+    .form-control {
+        display: block;
+        width: 25%;
+        padding: 0.375rem 0.75rem;
+        font-size: 14px;
+        line-height: 1.5;
+        color: #3d5167;
+        background: #fff;
+        border: 1px solid #b4b4b4;
+        border-radius: 2px;
+        overflow: hidden;
+    }
+
+    .underline-textbox-copy {
+        border: none;
+        border-bottom: 1px solid black; /* You can adjust the color and thickness of the underline */
+        outline: none; /* Remove the default outline styles */
+        background: transparent; /* Make the background transparent */
+        text-align: center;
+        width: 100px;
+        margin-left: 50px;
+    }
+
+        .underline-textbox-copy::placeholder {
+            font-style: italic;
+            text-align: justify;
+        }
+
+
+    /* Style the select container */
+    .custom-dropdown {
+        position: relative;
+        display: inline-block;
+        width: calc(117% - 50px);
+        margin-bottom: 20px;
+    }
+
+        /* Style the select element */
+        .custom-dropdown select {
+            display: block;
+            width: calc(112% - 50px);
+            font-size: 14px;
+            line-height: 1.5;
+            color: #3d5167;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #b4b4b4;
+            border-radius: 0;
+            appearance: none;
+            outline: none; /*remove focus*/
+            box-shadow: none; /*remove focus*/
+            text-align: left;
+        }
+
+        /* Style the down arrow */
+        .custom-dropdown::after {
+            content: '\25BC'; /* Unicode character for a down arrow */
+            position: absolute;
+            top: 50%;
+            right: 0.75rem;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+    .custom-date-input {
+        border: none;
+        border-bottom: 1px solid black; /* Add an underline */
+        outline: none;
+        background: transparent;
+        width: 100%;
+        font-size: 14px;
+        line-height: 1.5;
+        color: #3d5167;
+        margin-bottom: 20px;
+    }
+
+    .butn_cls {
+        font-size: 12px;
+        font-weight: 500;
+        margin-top: -6px;
+        margin-left: -5px;
+    }
+
+    .chq_btn_cls {
+        height: 30px;
+        width: 341px;
+        margin-left: -14px;
+    }
+</style>
+
+
+
+@if (IsInitialised)
+{
+
+    <MultiCurrencyPopUp @ref="multi" IsShow="IsShowMultiCurrency" OnSubmitList="UpdatePaymentList" PaymentMode="@PaymentMode" OnSubmitAmount="UpdateRemainingAmount" Invoice="Invoice" Collected="Collected" Closebtn="@(() => OpenCloseMultiCurrency(""))"></MultiCurrencyPopUp>
+
+
+    <div style="margin-bottom: 5px;"></div>
+
+    <div class="container">
+        <div class="row">
+            <div class="cls_pay_summary_header">
+                <div class="cls_pay_summary_header_left">
+                    <b>Collection </b> Payment
+                </div>
+            </div>
+            <div class="cls_collec_pament">
+                <div class="cls_collec_pament1">
+                    <div class="cls_collec_pament1_rep">
+                        @Localizer["invoice_number"]
+                    </div>
+                    <div class="cls_collec_pament1_rep">
+                        @Localizer["invoice_type"]
+                    </div>
+                    <div class="cls_collec_pament1_rep" style="text-align:right">
+                        <b>AED</b> @Localizer["amount"]
+                    </div>
+
+                </div>
+                @if (SelectedItems != null && SelectedItems.Count != 0 && SelectedItems.Any(p => p.PayingAmount != 0))
+                {
+                    @foreach (var list in SelectedItems)
+                    {
+                        <div class="cls_collec_pament2">
+
+                            <div class="cls_collec_pament2_rep">
+                                @list.ReferenceNumber
+                            </div>
+                            <div class="cls_collec_pament2_rep">
+                                @list.SourceType
+                            </div>
+                            <div class="cls_collec_pament2_rep" style="text-align:right">
+                                <b>AED</b>  @list.PayingAmount
+                            </div>
+                        </div>
+
+                    }
+                }
+                else
+                {
+                    <div class="container">
+                        <div class="row">
+                            <div class="card">
+                                <div class="card-title" style="color:red;">
+                                    @Localizer["no_records_selected"]
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                <div class="cls_collec_pament3">
+                    <div class="cls_collec_pament3_rep" style="width:20%;">
+                        &nbsp;
+                    </div>
+                    <div style="width:46%;" class="cls_collec_pament3_rep">
+                        @Localizer["total_invoice_amount"] :
+                    </div>
+                    <div class="cls_collec_pament3_rep" style="text-align:right;float: right;width: auto;">
+                        <b>@_appUser?.OrgCurrencyList.FirstOrDefault(p => p.UID == "INR").Symbol</b> <h3>@PayingAmount</h3>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="row">
+            @foreach (var payment in PaymentType)
+            {
+
+
+                <div class="cls_collect_pay_type">
+                    <div class="cls_collect_pay_type_rep">
+                        <i>
+                            <div class="round">
+                                <input type="checkbox" id="@payment.Name" checked='@GetCheckboxState(payment.Name)' @onchange='() => ToggleSelection(payment.Name)' disabled="@IsDisable()" />
+                                <label for="@payment.Name"></label>
+                            </div>
+                        </i><h3> @payment.Name Payment</h3>
+                        <a style="width:auto;float:right;">
+                            @if (CashText && payment.Name == PaymentModes.CASH)
+                            {
+                                @if (_appSetting.Payment_Multicurrency_Allowed)
+                                {
+
+                                    <button id="Cash" @onclick="@(() => OpenCloseMultiCurrency(payment.Name))">
+                                        @Localizer["amount"]
+                                    </button>
+
+                                }
+                                else
+                                {
+                                    <div style="float:left">
+                                        <input type="number" id="Cash" checked='@GetCheckboxState(payment.Name)' @bind='paymentInfos.FirstOrDefault(p => p.PaymentType == payment.Name).Amount' @oninput='(e) => OnChangeTextbox(e.Value.ToString(), payment.Name)' class="underline-textbox-copy col-12 mt-1">
+                                    </div>
+                                }
+                            }
+                            else if (!CashText && payment.Name == PaymentModes.CASH)
+                            {
+                                @if (_appSetting.Payment_Multicurrency_Allowed)
+                                {
+
+                                    <button id="Cash" disabled>
+                                        @Localizer["amount"]
+                                    </button>
+
+                                }
+                                else
+                                {
+                                    <div class="card-type col-6 d-flex flex-column" style="padding: 12px;">
+                                        <input type="number" id="Cash" @bind='paymentInfos.FirstOrDefault(p => p.PaymentType == payment.Name).Amount' @oninput='(e) => OnChangeTextbox(e.Value.ToString(), payment.Name)' class="underline-textbox-copy col-12 mt-1" disabled>
+                                    </div>
+                                }
+                            }
+                        </a>
+                        @if (showFields.ContainsKey(payment.Name) && showFields[payment.Name] && payment.Name != PaymentModes.CASH)
+                        {
+                            <div class="cls_collect_main">
+                                <h3>fasf</h3>
+                                <div class="cls_collect_main_input_rep">
+                                    <label>@Localizer["branch_name"]*</label>
+                                    <input placeholder=@Localizer["enter_bank_name"] @bind="paymentInfos.FirstOrDefault(p => p.PaymentType == payment.Name).BranchName" style="" type="text" id="bankName" name="bankName" class="underline-textbox-copy" />
+                                </div>
+                                <div>
+                                </div>
+
+                                <div class="cls_collect_main_input_rep">
+                                    <label>@Localizer["bank_name"]*</label>
+                                    <select @bind="paymentInfos.FirstOrDefault(p => p.PaymentType == payment.Name).BankName">
+                                        <option>--@Localizer["select_bank_name"]--</option>
+                                        @foreach (var items in DropDown)
+                                        {
+                                            <option value="@($"{items.BankName}")">@items.BankName</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="cls_collect_main_input_rep">
+                                    <label>@payment.Name @Localizer["number"]*</label>
+                                    <input @bind="paymentInfos.FirstOrDefault(p => p.PaymentType == payment.Name).AccountNumber" placeholder=@Localizer["enter_account_name"] style="" type="number" id="accountNumber" name="accountNumber" class="underline-textbox-copy" />
+                                </div>
+
+                                <div class="cls_collect_main_input_rep">
+                                    <label>@payment.Name @Localizer["date"]*</label>
+                                    <input @bind="paymentInfos.FirstOrDefault(p => p.PaymentType == payment.Name).PaymentDate" class="custom-date-input" type="date" />
+                                </div>
+
+                                <div class="cls_collect_main_input_rep">
+                                    <label>@Localizer["amount"]*</label>
+                                    @if (!_appUser.IsMultiCurrency)
+                                    {
+
+                                        <input @bind="paymentInfos.FirstOrDefault(p => p.PaymentType == payment.Name).Amount" placeholder=@Localizer["enter_account_name"] @oninput="(e) => OnChangeTextbox(e.Value.ToString(), payment.Name)" style="margin-left:0px;margin-bottom:20px;width: calc(115% - 50px);text-align:justify;" type="number" id="accountNumber" name="accountNumber" class="underline-textbox-copy" />
+
+                                    }
+                                    else
+                                    {
+                                        <div style="width:100%;float:left;">
+                                            <button class="chq_btn_cls" style="width:100%" @onclick="@(() => OpenCloseMultiCurrency(paymentInfos.FirstOrDefault(p => p.PaymentType == payment.Name).PaymentType))">
+                                                @Localizer["amount"]
+                                            </button>
+                                        </div>
+                                    }
+                                </div>
+
+
+                                <div class="cls_collect_main_input_rep">
+                                    <label>@Localizer["upload_image"]</label>
+                                    <FileCapture OnImageDeleteClick="OnImageDeleteClick" OnImageCapture="OnImageCapture" FolderPath="@(Path.Combine(ImgFolderPath,"Cheque"))" FileName="Cheque" CaptureData="fileCaptureData"></FileCapture>
+                                </div>
+
+                            </div>
+                        }
+
+                    </div>
+                </div>
+
+
+            }
+        </div>
+    </div>
+    <div>
+        <div class="cls_collect_pay_footer">
+            <div class="cls_collect_pay_footer_rep">
+                <label> @Localizer["invoice"]</label>
+                <p>  @Invoice</p>
+            </div>
+            <div class="cls_collect_pay_footer_rep">
+                <label> @Localizer["collected"]</label>
+                <p>  @Collected</p>
+            </div>
+            <div class="cls_collect_pay_footer_rep">
+                <label> @Localizer["remaining"]</label>
+                <p> @RemainingAmt</p>
+            </div>
+            <div class="cls_collect_pay_footer_rep">
+                <label>@Localizer["onaccount"]</label>
+                <p>
+                    @if (Convert.ToDecimal(_createPaymentAppViewModel.Discrepency) > 0)
+                    {
+                        <span style="color:lawngreen">@_createPaymentAppViewModel.Discrepency</span>
+                    }
+                    else
+                    {
+                        @_createPaymentAppViewModel.Discrepency
+                    }
+                </p>
+            </div>
+        </div>
+        <div style="position: fixed;bottom: 11px;width: 100%;float: left;">
+            <button class="cls_wastage_btn cls_continue_btn" style="margin: 0px 2%;width: 96%;" @onclick="Redirect">
+                @Localizer["confirm"]
+            </button>
+        </div>
+
+    </div>
+}
+
+
+<WINITMobile.Pages.Sales.PlaceOrderPopUp IsOpen="@IsOrderPlacedPopupVisible"
+                                         OrderNumber="@ReceiptNo"
+                                         Message=@Localizer["receipts_created_successfully"]
+                                         Header=@Localizer["receipt"]
+                                         OnClose="OrderPlacedPopup_CloseClicked"
+                                         OnEmailClicked="OrderPlacedPopup_EmailClicked"
+                                         OnShareClicked="OrderPlacedPopup_ShareClicked" OnPrintClicked="OrderPlacedPopup_PrintClicked" />
+
+
+@if (IsSignatureView)
+{
+
+    <MultiSignature Signature2Footer="@_appUser.Emp?.Name"
+                    Signature1Footer="@_createPaymentAppViewModel.CustomerName"
+                    Signature1Heading=@Localizer["customer_signature"] Signature2Heading=@Localizer["salesman_signature"]
+                    OnProceedClick="HandleSignature_ProceedClick"
+                    OnCloseClick="() => IsSignatureView=false"
+                    Signature1FolderPath="@_createPaymentAppViewModel.CustomerSignatureFolderPath"
+                    Signature2FolderPath="@_createPaymentAppViewModel.UserSignatureFolderPath"
+                    Signature1FileName="@_createPaymentAppViewModel.CustomerSignatureFileName"
+                    Signature2FileName="@_createPaymentAppViewModel.UserSignatureFileName" />
+}

@@ -1,0 +1,37 @@
+﻿@page "/MaintainCurrency"
+@inherits WinIt.Pages.Base.BaseComponentBase;
+@using Microsoft.AspNetCore.Authorization;
+@using Winit.UIComponents.Web.Filter
+@using Winit.UIModels.Common.Filter
+@attribute [Authorize]
+@using Winit.Shared.Models.Common
+
+@using Winit.UIComponents.Common.CustomControles
+
+<PageTitle>Maintain Currency</PageTitle>
+@inject Winit.Modules.Currency.BL.Interfaces.IMaintainCurrencyViewModel _imaintainCurrencyViewModel;
+<PageTitle>View Bank Details</PageTitle>
+@* <button class="cls_add_new_sec" style="float:right;margin-right:0px" @onclick="() => FilterRef?.ToggleFilter()">@Localizer["filter"]</button>
+<Filter @ref="FilterRef" ColumnsForFilter="@FilterColumns" IsSearchCriteriaNeeded="true"
+        OnFilterApplied="@OnFilterApply" />
+ *@
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@FilterColumns" IsSearchCriteriaNeeded="true"
+                     OnFilterApplied="@OnFilterApply" />
+@if (IsLoaded)
+{
+    
+        <button class="cls_add_new_sec" @onclick="AddCurrencyDetails">@Localizer["add_new"]</button>
+
+    
+    <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" DataSource="_imaintainCurrencyViewModel.CurrencyDetailsList" />
+    @if (IsDeleteBtnPopUp)
+    {
+        <PopUp Title=@Localizer["delete"] OnCloseClick="() => IsDeleteBtnPopUp = false" OkbtnText=@Localizer["delete"] CancelbtnText=@Localizer["cancel"] OnOkClick="OnOkFromDeleteBTnPopUpClick">
+            <label>
+                @Localizer["are_you_sure_you_want_to_delete?"]
+            </label>
+        </PopUp>
+
+    }
+    @*     <Winit.UIComponents.Web.Paging.Paging CurrentPage="_imaintainCurrencyViewModel.PageNumber" OnPageChange="_imaintainCurrencyViewModel.PageIndexChanged" PageSize="_imaintainCurrencyViewModel.PageSize" TotalItems="_imaintainCurrencyViewModel.TotalSKUItemsCount" />
+ *@         }

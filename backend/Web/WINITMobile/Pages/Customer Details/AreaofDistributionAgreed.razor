@@ -1,0 +1,440 @@
+﻿@inherits WINITMobile.Pages.Base.BaseComponentBase
+<div style="width:100%;float:left;margin:0px 0px;">
+    @if (!string.IsNullOrWhiteSpace(ValidationMessage))
+    {
+        <div class="alert alert-danger">
+            <div class="col-md-12">
+                <div style="color: red;">@ValidationMessage</div>
+            </div>
+        </div>
+    }
+    <div class="card">
+        <div class="card-body">
+            <div class="cls_cust_information">
+                <div class="row">
+                    <div class="col-12 col-sm-12 col-md-12 col-lg-12 mb-12">
+                        <h6 class="cls_copy_adress_span">Expected T/O with CMI(Rs in Lakhs)</h6>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <label class="cls_customer_label">3 Months<span class="cls_section_div_purchase2_span">*</span></label>
+                        <input autocomplete="off" class="cls_select2_button @(string.IsNullOrWhiteSpace(_onBoardCustomerDTO.StoreAdditionalInfoCMI?.AodaExpectedTo1.ToString()) && IsSaveAttempted ? "is-invalid" : "")" type="number" placeholder="Enter here" @bind="_onBoardCustomerDTO.StoreAdditionalInfoCMI.AodaExpectedTo1" />
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <label class="cls_customer_label"> 6 Months<span class="cls_section_div_purchase2_span">*</span></label>
+                        <input autocomplete="off" class="cls_select2_button @(string.IsNullOrWhiteSpace(_onBoardCustomerDTO.StoreAdditionalInfoCMI?.AodaExpectedTo2.ToString()) && IsSaveAttempted ? "is-invalid" : "")" type="number" placeholder="Enter here" @bind="_onBoardCustomerDTO.StoreAdditionalInfoCMI.AodaExpectedTo2" />
+                    </div>
+
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <label class="cls_customer_label"> 1 year<span class="cls_section_div_purchase2_span">*</span></label>
+                        <input autocomplete="off" class="cls_select2_button @(string.IsNullOrWhiteSpace(_onBoardCustomerDTO.StoreAdditionalInfoCMI?.AodaExpectedTo3.ToString()) && IsSaveAttempted ? "is-invalid" : "")" type="number" placeholder="Enter here" @bind="_onBoardCustomerDTO.StoreAdditionalInfoCMI.AodaExpectedTo3" />
+                    </div>
+                    <div class="col-12 col-sm-12 col-md-12 col-lg-12 mb-12">
+                        <h6 class="cls_copy_adress_span">Infrastructure Dedicated for CMI</h6>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="cls_cust_information">
+                <div class="row">
+                    @foreach (var category in radioCategories)
+                    {
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <label class="cls_customer_label cls_mar_btm_10px">@category.Label</label>
+                            <div class="cls_btn_y_n">
+                                <input type="radio" id="@category.IdYes" name="@category.Name" value="yes" @onchange="() => OnRadioChanged1(category.Key, true)" checked="@category.IsYesChecked" />
+                                <label for="@category.IdYes" class="mr-2">Yes</label>
+                            </div>
+                            <div class="cls_btn_y_n">
+                                <input type="radio" id="@category.IdNo" name="@category.Name" value="no" @onchange="() => OnRadioChanged1(category.Key, false)" checked="@category.IsNoChecked" />
+                                <label for="@category.IdNo">No</label>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="cls_container_div4" style="width:98%; margin: 0px 1%;border: 1px solid #E6E6E6;box-shadow: 0px 16px 51px -30px #314F7C70;border-radius: 5px;margin-bottom:15px;">
+    <div class="col-12 col-sm-12 col-md-12 col-lg-12 mb-12">
+        <h6 style="font-size: 15px;font-weight: 700;line-height: 18.29px;color: #2C3444;margin-top: 20px;">
+            Appraisal Points (Good-3, Average-2, Poor-1)
+        </h6>
+    </div>
+    <div class="div2">
+        <table>
+            <thead>
+                <tr>
+                    <th>Criteria</th>
+                    <AuthorizeView Roles="BM,Admin">
+                        <th class="div2_color">BM</th>
+                    </AuthorizeView>
+                    <AuthorizeView Roles="FSM,FGM,RSH,ZM,Admin">
+                        <th class="div2_color">FSM/FGM/ZM</th>
+                    </AuthorizeView>
+                    <AuthorizeView Roles="Admin">
+                        <th class="div2_color">AVERAGE SCORE</th>
+                    </AuthorizeView>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <div class="cls_table_container">
+                            Make Reputation
+                        </div>
+                    </td>
+                    <AuthorizeView Roles="BM,Admin">
+
+                        <td class="div2_color">
+                            <div class="cls_table_container">
+                                <div class="cls_table_div1">
+                                    <input type="radio" name="dist_dist_bm1" class="cls_table_div_input" value="Good" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.ApMarketReputationLevel1 == 3:_onBoardCustomerDTO.StoreAdditionalInfoCMI.ApMarketReputationLevel1.ToString() == "dist_bm1")" @onchange="@((e) => HandleRadioChange(e, "dist_bm1"))" />
+                                    <label class="cls_table_div_label">Good</label>
+                                </div>
+                                <div class="cls_table_div">
+                                    <input type="radio" name="dist_bm1" class="cls_table_div_input" value="Average" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.ApMarketReputationLevel1 ==2:_onBoardCustomerDTO.StoreAdditionalInfoCMI.ApMarketReputationLevel1.ToString() == "dist_bm1")" @onchange="@((e) => HandleRadioChange(e, "dist_bm1"))" />
+                                    <label class="cls_table_div_label">Average</label>
+                                </div>
+                                <div class="cls_table_div2">
+                                    <input type="radio" name="dist_bm1" class="cls_table_div_input" value="Poor" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.ApMarketReputationLevel1==1:_onBoardCustomerDTO.StoreAdditionalInfoCMI.ApMarketReputationLevel1.ToString() == "dist_bm1")" @onchange="@((e) => HandleRadioChange(e, "dist_bm1"))" />
+                                    <label class="cls_table_div_label">Poor</label>
+                                </div>
+                            </div>
+                        </td>
+                    </AuthorizeView>
+                    <AuthorizeView Roles="FSM,FGM,RSH,ZM,Admin">
+                        <td class="div2_color">
+                            <div class="cls_table_container">
+                                <div class="cls_table_div1">
+                                    <input type="radio" name="dist_fsm1" class="cls_table_div_input" value="Good" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.ApMarketReputationLevel2==3:_onBoardCustomerDTO.StoreAdditionalInfoCMI.ApMarketReputationLevel2.ToString() == "dist_fsm1")" @onchange="@((e) => HandleRadioChange(e, "dist_fsm1"))" />
+                                    <label class="cls_table_div_label">Good</label>
+                                </div>
+                                <div class="cls_table_div">
+                                    <input type="radio" name="dist_fsm1" class="cls_table_div_input" value="Average" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.ApMarketReputationLevel2==2:_onBoardCustomerDTO.StoreAdditionalInfoCMI.ApMarketReputationLevel2.ToString() == "dist_fsm1")" @onchange="@((e) => HandleRadioChange(e, "dist_fsm1"))" />
+                                    <label class="cls_table_div_label">Average</label>
+                                </div>
+                                <div class="cls_table_div2">
+                                    <input type="radio" name="dist_fsm1" class="cls_table_div_input" value="Poor" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.ApMarketReputationLevel2==1:_onBoardCustomerDTO.StoreAdditionalInfoCMI.ApMarketReputationLevel2.ToString() == "dist_fsm1")" @onchange="@((e) => HandleRadioChange(e, "dist_fsm1"))" />
+                                    <label class="cls_table_div_label">Poor</label>
+                                </div>
+                            </div>
+                        </td>
+                    </AuthorizeView>
+                    <AuthorizeView Roles="Admin">
+                        <td class="div2_color">
+                            <div class="cls_table_container">
+                                <label>@_onBoardCustomerDTO.StoreAdditionalInfoCMI.ApMarketReputationLevel3</label>
+                            </div>
+                        </td>
+                    </AuthorizeView>
+                </tr>
+
+                <tr>
+                    <td>
+                        <div class="cls_table_container">
+                            Display Quality
+                        </div>
+                    </td>
+                    <AuthorizeView Roles="BM,Admin">
+                        <td class="div2_color">
+                            <div class="cls_table_container">
+                                <div class="cls_table_div1">
+                                    <input type="radio" name="dist_bm2" class="cls_table_div_input" value="Good" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.ApDisplayQuantityLevel1==3:_onBoardCustomerDTO.StoreAdditionalInfoCMI.ApDisplayQuantityLevel1.ToString() == "dist_bm2")" @onchange="@((e) => HandleRadioChange(e, "dist_bm2"))" />
+                                    <label class="cls_table_div_label">Good</label>
+                                </div>
+                                <div class="cls_table_div">
+                                    <input type="radio" name="dist_bm2" class="cls_table_div_input" value="Average" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.ApDisplayQuantityLevel1==2:_onBoardCustomerDTO.StoreAdditionalInfoCMI.ApDisplayQuantityLevel1.ToString() == "dist_bm2")" @onchange="@((e) => HandleRadioChange(e, "dist_bm2"))" />
+                                    <label class="cls_table_div_label">Average</label>
+                                </div>
+                                <div class="cls_table_div2">
+                                    <input type="radio" name="dist_bm2" class="cls_table_div_input" value="Poor" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.ApDisplayQuantityLevel1==1:_onBoardCustomerDTO.StoreAdditionalInfoCMI.ApDisplayQuantityLevel1.ToString() == "dist_bm2")" @onchange="@((e) => HandleRadioChange(e, "dist_bm2"))" />
+                                    <label class="cls_table_div_label">Poor</label>
+                                </div>
+                            </div>
+                        </td>
+                    </AuthorizeView>
+                    <AuthorizeView Roles="FSM,FGM,RSH,ZM,Admin">
+                        <td class="div2_color">
+                            <div class="cls_table_container">
+                                <div class="cls_table_div1">
+                                    <input type="radio" name="dist_fsm2" class="cls_table_div_input" value="Good" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.ApDisplayQuantityLevel2==3:_onBoardCustomerDTO.StoreAdditionalInfoCMI.ApDisplayQuantityLevel2.ToString() == "dist_fsm2")" @onchange="@((e) => HandleRadioChange(e, "dist_fsm2"))" />
+                                    <label class="cls_table_div_label">Good</label>
+                                </div>
+                                <div class="cls_table_div">
+                                    <input type="radio" name="dist_fsm2" class="cls_table_div_input" value="Average" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.ApDisplayQuantityLevel2==2:_onBoardCustomerDTO.StoreAdditionalInfoCMI.ApDisplayQuantityLevel2.ToString() == "dist_fsm2")" @onchange="@((e) => HandleRadioChange(e, "dist_fsm2"))" />
+                                    <label class="cls_table_div_label">Average</label>
+                                </div>
+                                <div class="cls_table_div2">
+                                    <input type="radio" name="dist_fsm2" class="cls_table_div_input" value="Poor" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.ApDisplayQuantityLevel2==1:_onBoardCustomerDTO.StoreAdditionalInfoCMI.ApDisplayQuantityLevel2.ToString() == "dist_fsm2")" @onchange="@((e) => HandleRadioChange(e, "dist_fsm2"))" />
+                                    <label class="cls_table_div_label">Poor</label>
+                                </div>
+                            </div>
+                        </td>
+                    </AuthorizeView>
+                    <AuthorizeView Roles="Admin">
+                        <td class="div2_color">
+                            <div class="cls_table_container">
+                                <label>@_onBoardCustomerDTO.StoreAdditionalInfoCMI.ApDisplayQuantityLevel3</label>
+                            </div>
+                        </td>
+                    </AuthorizeView>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="cls_table_container">
+                            Distribution or Retail Strength
+                        </div>
+                    </td>
+                    <AuthorizeView Roles="BM,Admin">
+                        <td class="div2_color">
+                            <div class="cls_table_container">
+                                <div class="cls_table_div1">
+                                    <input type="radio" name="dist_bm3" class="cls_table_div_input" value="Good" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.ApDistRetStrengthLevel1==3:_onBoardCustomerDTO.StoreAdditionalInfoCMI.ApDistRetStrengthLevel1.ToString() == "dist_bm3")" @onchange="@((e) => HandleRadioChange(e, "dist_bm3"))" />
+                                    <label class="cls_table_div_label">Good</label>
+                                </div>
+                                <div class="cls_table_div">
+                                    <input type="radio" name="dist_bm3" class="cls_table_div_input" value="Average" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.ApDistRetStrengthLevel1==2:_onBoardCustomerDTO.StoreAdditionalInfoCMI.ApDistRetStrengthLevel1.ToString() == "dist_bm3")" @onchange="@((e) => HandleRadioChange(e, "dist_bm3"))" />
+                                    <label class="cls_table_div_label">Average</label>
+                                </div>
+                                <div class="cls_table_div2">
+                                    <input type="radio" name="dist_bm3" class="cls_table_div_input" value="Poor" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.ApDistRetStrengthLevel1==1:_onBoardCustomerDTO.StoreAdditionalInfoCMI.ApDistRetStrengthLevel1.ToString() == "dist_bm3")" @onchange="@((e) => HandleRadioChange(e, "dist_bm3"))" />
+                                    <label class="cls_table_div_label">Poor</label>
+                                </div>
+                            </div>
+                        </td>
+                    </AuthorizeView>
+                    <AuthorizeView Roles="FSM,FGM,RSH,ZM,Admin">
+                        <td class="div2_color">
+                            <div class="cls_table_container">
+                                <div class="cls_table_div1">
+                                    <input type="radio" name="dist_fsm3" class="cls_table_div_input" value="Good" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.ApDistRetStrengthLevel2==3:_onBoardCustomerDTO.StoreAdditionalInfoCMI.ApDistRetStrengthLevel2.ToString() == "dist_fsm3")" @onchange="@((e) => HandleRadioChange(e, "dist_fsm3"))" />
+                                    <label class="cls_table_div_label">Good</label>
+                                </div>
+                                <div class="cls_table_div">
+                                    <input type="radio" name="dist_fsm3" class="cls_table_div_input" value="Average" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.ApDistRetStrengthLevel2==2:_onBoardCustomerDTO.StoreAdditionalInfoCMI.ApDistRetStrengthLevel2.ToString() == "dist_fsm3")" @onchange="@((e) => HandleRadioChange(e, "dist_fsm3"))" />
+                                    <label class="cls_table_div_label">Average</label>
+                                </div>
+                                <div class="cls_table_div2">
+                                    <input type="radio" name="dist_fsm3" class="cls_table_div_input" value="Poor" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.ApDistRetStrengthLevel2==1:_onBoardCustomerDTO.StoreAdditionalInfoCMI.ApDistRetStrengthLevel2.ToString() == "dist_fsm3")" @onchange="@((e) => HandleRadioChange(e, "dist_fsm3"))" />
+                                    <label class="cls_table_div_label">Poor</label>
+                                </div>
+                            </div>
+                        </td>
+                    </AuthorizeView>
+                    <AuthorizeView Roles="Admin">
+                        <td class="div2_color">
+                            <div class="cls_table_container">
+                                <label>@_onBoardCustomerDTO.StoreAdditionalInfoCMI.ApDistRetStrengthLevel3</label>
+                            </div>
+                        </td>
+                    </AuthorizeView>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="cls_table_container">
+                            Financial Strength
+                        </div>
+                    </td>
+                    <AuthorizeView Roles="BM,Admin">
+                        <td class="div2_color">
+                            <div class="cls_table_container">
+                                <div class="cls_table_div1">
+                                    <input type="radio" name="dist_bm4" class="cls_table_div_input" value="Good" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.ApFinancialStrengthLevel1==3: _onBoardCustomerDTO.StoreAdditionalInfoCMI.ApFinancialStrengthLevel1.ToString() == "dist_bm4")" @onchange="@((e) => HandleRadioChange(e, "dist_bm4"))" />
+                                    <label class="cls_table_div_label">Good</label>
+                                </div>
+                                <div class="cls_table_div">
+                                    <input type="radio" name="dist_bm4" class="cls_table_div_input" value="Average" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.ApFinancialStrengthLevel1==2:_onBoardCustomerDTO.StoreAdditionalInfoCMI.ApFinancialStrengthLevel1.ToString() == "dist_bm4")" @onchange="@((e) => HandleRadioChange(e, "dist_bm4"))" />
+                                    <label class="cls_table_div_label">Average</label>
+                                </div>
+                                <div class="cls_table_div2">
+                                    <input type="radio" name="dist_bm4" class="cls_table_div_input" value="Poor" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.ApFinancialStrengthLevel1==1:_onBoardCustomerDTO.StoreAdditionalInfoCMI.ApFinancialStrengthLevel1.ToString() == "dist_bm4")" @onchange="@((e) => HandleRadioChange(e, "dist_bm4"))" />
+                                    <label class="cls_table_div_label">Poor</label>
+                                </div>
+                            </div>
+                        </td>
+                    </AuthorizeView>
+                    <AuthorizeView Roles="FSM,FGM,RSH,ZM,Admin">
+                        <td class="div2_color">
+                            <div class="cls_table_container">
+                                <div class="cls_table_div1">
+                                    <input type="radio" name="dist_fsm4" class="cls_table_div_input" value="Good" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.ApFinancialStrengthLevel2 ==3: _onBoardCustomerDTO.StoreAdditionalInfoCMI.ApFinancialStrengthLevel2.ToString() == "dist_fsm4")" @onchange="@((e) => HandleRadioChange(e, "dist_fsm4"))" />
+                                    <label class="cls_table_div_label">Good</label>
+                                </div>
+                                <div class="cls_table_div">
+                                    <input type="radio" name="dist_fsm4" class="cls_table_div_input" value="Average" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.ApFinancialStrengthLevel2==2 :_onBoardCustomerDTO.StoreAdditionalInfoCMI.ApFinancialStrengthLevel2.ToString() == "dist_fsm4")" @onchange="@((e) => HandleRadioChange(e, "dist_fsm4"))" />
+                                    <label class="cls_table_div_label">Average</label>
+                                </div>
+                                <div class="cls_table_div2">
+                                    <input type="radio" name="dist_fsm4" class="cls_table_div_input" value="Poor" checked="@(IsEditOnBoardDetails ? _onBoardCustomerDTO.StoreAdditionalInfoCMI.ApFinancialStrengthLevel2 ==1: _onBoardCustomerDTO.StoreAdditionalInfoCMI.ApFinancialStrengthLevel2.ToString() == "dist_fsm4")" @onchange="@((e) => HandleRadioChange(e, "dist_fsm4"))" />
+                                    <label class="cls_table_div_label">Poor</label>
+                                </div>
+                            </div>
+                        </td>
+                    </AuthorizeView>
+                    <AuthorizeView Roles="Admin">
+                        <td class="div2_color">
+                            <div class="cls_table_container">
+                                <label>@_onBoardCustomerDTO.StoreAdditionalInfoCMI.ApFinancialStrengthLevel3</label>
+                            </div>
+                        </td>
+                    </AuthorizeView>
+                </tr>
+                 <AuthorizeView Roles="Admin">
+                <tr class="div2_color">
+                        <td style="border:0px;border-top: 2px solid #FFF;"></td>
+                        <td style="border:0px;border-top: 2px solid #FFF;"></td>
+                        <td style="border:0px;border-top: 2px solid #FFF;"><label style="font-size:15px;font-weight:700;line-height:18.29px;color:#2C3444;">Total Score</label></td>
+                        <td style="font-size:22px;font-weight:700;line-height:26.82px;color:#1F528E;border-top: 2px solid #FFF;border-left:0px;">@(TotalAverageScore())</td>
+                </tr>
+                </AuthorizeView>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="cls_button_bottom_purchase">
+    <button class="cls_button_light" type="button">Clear</button>
+    <button class="cls_button_blue" type="sudist_bmit" @onclick="SaveOrUpdate">@ButtonName</button>
+</div>
+<div style="width:100%;float:left;margin:10px 0px 20px 0px;">
+    <div class="row mt-3">
+        <div class="col-12 d-flex justify-content-start">
+            <div class="form-check d-flex cls_flex_align_start" style="width:100%;">
+                <input type="checkbox" checked="@_onBoardCustomerDTO.StoreAdditionalInfoCMI.IsAgreedWithTNC" disabled="@isDisabled" @onchange="OnCheckboxChanged" style="width:auto;margin-top:4px;" />
+                <label for="termsCheckbox" class="form-check-label mb-0" style="margin-left:8px;">
+                    <button type="button" class="btn btn-link p-0 text-decoration-underline text-primary" style="font-size:13px;font-weight:700;color:#1F528E" @onclick="OpenPopup">The Applicant Acknowledges & Agrees with Terms and Conditions</button>.
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+@if (showErrorPopup)
+{
+    <div class="popup-overlay">
+        <div class="popup-container">
+            <div class="popup-header">
+                <h3>Error</h3>
+                <button class="popup-close" @onclick="OnOKErrorPopup">×</button>
+            </div>
+            <hr class="popup-divider" />
+            <div class="popup-body">
+                <p>Please Read the Terms and Conditions Before Saving.</p>
+            </div>
+            <hr class="popup-divider" />
+            <div class="popup-footer">
+                <button class="btn btn-primary" @onclick="OnOKErrorPopup">Ok</button>
+            </div>
+        </div>
+    </div>
+}
+@if (IsAddPopUp)
+{
+    <PopUp Title="Area of Distribution Agreed" DisableCancelBtn DisableOkBtn >
+        <div class="container mt-3" style="height:350px; overflow:auto;">
+            <div class="table-responsive">
+                <table class="table table-bordered table-sm w-100" style="border: 0px solid #000; border-collapse: collapse;">
+                    <tbody>
+                        <tr style="border-width:0px;">
+                            <td style="border: 0px solid #000; font-size:14px; font-weight:500; padding: .75rem .25rem;" class=" ">That the sending of this application form to the Company or the retention of a completed form by the Company does not in any way imply the Company's consent to appoint the applicant as its sales and service dealer;</td>
+                        </tr>
+                       <tr style="border-width:0px;">
+                            <td style="border: 0px solid #000; font-size:14px; font-weight:500; padding: .75rem .25rem;" class=" ">That this application does not in any way obligate the Company and this application may be accepted or rejected at its sole discretion by the Company after review;</td>
+                        </tr>
+                        <tr style="border-width:0px;">
+                            <td style="border: 0px solid #000; font-size:14px; font-weight:500; padding: .75rem .25rem;" class=" ">That Investments of any kind made by the applicant in the expectation of the acceptance of this application are made exclusively on the applicant's own responsibility and do not obligate the Company in any way;</td>
+                        </tr>
+                        <tr style="border-width:0px;">
+                            <td style="border: 0px solid #000;  font-size:14px; font-weight:500;  padding: .75rem .25rem;" class=" ">That this application can be signed only by the Proprietor, Partner(s), Director(s) or Karta of the applicant;</td>
+                        </tr>
+                        <tr style="border-width:0px;">
+                            <td style="border: 0px solid #000; font-size:14px; font-weight:500; padding: .75rem .25rem;" class=" ">That by signing this application form, the applicant agrees to unconditionally abide by the General Terms and Conditions as annexed herewith as Appendix B;</td>
+                        </tr>
+                        <tr style="border-width:0px;">
+                            <td style="border: 0px solid #000; font-size:14px; font-weight:500; padding: .75rem .25rem;" class=" ">Any material misrepresentation, whether intentional or unintentional, in the information stated by the applicant in this form shall be grounds, notwithstanding anything contained in the General Terms and Conditions, upon which the Company may immediately terminate the dealership granted to the applicant;</td>
+                        </tr>
+                        <tr style="border-width:0px;">
+                            <td style="border: 0px solid #000; font-size:14px; font-weight:500; padding: .75rem .25rem;" class=" ">
+                                That the Applicant has consented that the Company may use, store and process Applicant's data for the purposes mentioned herein below:
+                                <ul class="list-unstyled mt-2 mb-4  ">
+                                    <li>a. Reviewing your application, and verification;</li>
+                                    <li>b. Maintaining records of active and closed channel partners, and applicants;</li>
+                                    <li>c. Maintaining active business records, business relationship and business communication;</li>
+                                    <li>d. Marketing, spreading awareness about promotional schemes/offers, and advertising; and</li>
+                                    <li>e. Giving effect to the terms of this Form/Partnership Agreement, or any other agreement entered into between the Company and the Applicant.</li>
+                                </ul>
+                                The Applicant shall have all the rights available to a Data Principal under Digital Personal Data Protection Act, 2023 (hereinafter "DPDP Act") (from the date of enforcement of DPDP Act) which are not prejudicial to the rights of the Company including getting the data modified, deleted etc. The Applicant is aware of their rights as Data Principal over their personal data, in relation to its collection, use and processing. The Applicant may write to the Company's registered address for the purposes of exercising their rights as Data Principal under DPDP Act. Further, the Company may also share Applicant's personal data with Company's trusted partners, advertisers, service providers, affiliates, and other third parties that the Company believes can provide the Applicant with information or support related to their partnership/agreement with the Company, additional special offers and opportunities.
+                            </td>
+                        </tr>
+                        <tr style="border-width:0px;">
+                            <td style="border: 0px solid #000; font-size:14px; font-weight:500; padding: .75rem .25rem;" class=" ">*In case of Proprietorship, the Proprietor shall be the Bank Account holder/authorised signatory of the Bank Account. (Proof required)</td>
+                        </tr>
+                        <tr style="border-width:0px;">
+                            <td style="border: 0px solid #000; font-size:14px; font-weight:500; padding: .75rem .25rem;" class=" ">*In case of Partnership, partner must be authorised signatory to the Bank Account. (Proof required)</td>
+                        </tr>
+                      <tr style="border-width:0px;">
+                            <td style="border: 0px solid #000; font-size:14px; font-weight:500; padding: .75rem .25rem;" class=" ">**Address of the warehouse/shop must be mentioned in the GST Certificate to where material is billed. If any penalty is imposed while transit under GST due to PO having a different address than the registered addresses, the same will be borne by the dealer.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="cls_button_bottom_purchase">
+                <button class="cls_button_light" type="button" @onclick="OnCancelAreaofDistribution">Cancel</button>
+                <button class="cls_button_blue" type="submit" @onclick="OnUploadAreaofDistribution">I Agree</button>
+            </div>
+        </div>
+    </PopUp>
+}
+<style>
+    .popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .popup-container {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 500px;
+    }
+
+    .popup-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .popup-close {
+        background: none;
+        border: none;
+        font-size: 1.5em;
+        cursor: pointer;
+    }
+
+    .popup-divider {
+        border: 0;
+        border-top: 1px solid #ddd;
+        margin: 10px 0;
+    }
+
+    .popup-footer {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 20px;
+    }
+</style>
+@code {
+
+}

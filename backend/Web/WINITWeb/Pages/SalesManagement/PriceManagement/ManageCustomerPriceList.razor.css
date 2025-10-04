@@ -1,0 +1,26 @@
+﻿table {
+    border-collapse: separate;
+    border-spacing: 0 0;
+    margin-top: 7px;
+}
+.gridheadernew {
+    background: #7c7c7c;
+    width: 100%;
+}
+.cls_new_grid_style {
+    width: 100%;
+}
+
+element.style {
+}
+
+ tr{
+    background: #fff;
+    border: 1px solid #ccc !important;
+    padding: 6px 0;
+    margin: 6px 0 0;
+    width: 100%;
+    font-weight: 700;
+    color: #333;
+    line-height: 18px;
+}

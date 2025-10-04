@@ -1,0 +1,360 @@
+﻿@page "/addnewdepositrequest"
+@using Winit.Shared.CommonUtilities.Common
+@inherits WINITMobile.Pages.Base.BaseComponentBase;
+@inject Winit.Modules.CollectionModule.BL.Interfaces.ICreatePaymentViewModel _createPaymentAppViewModel
+@inject Winit.Modules.CollectionModule.BL.Interfaces.ICashCollectionDepositViewModel _collectionDepositViewModel;
+
+
+
+<style>
+    .header {
+        display: flex;
+        align-items: center;
+        padding: 5px 0px;
+        background-color: white;
+        margin-top: -4px;
+    }
+
+    .headr_cls {
+        margin-left: 15px;
+        font-size: 20px;
+        margin-top: 5px;
+    }
+
+    .cls_main_sign_input_new1 {
+        width: 95%;
+        float: left;
+        margin: 0px 0px 25px 0px;
+    }
+
+    .custom-dropdown {
+        position: relative;
+        display: inline-block;
+        width: calc(117% - 50px);
+        margin-bottom: 20px;
+    }
+
+        /* Style the select element */
+        .custom-dropdown select {
+            display: block;
+            width: calc(112% - 50px);
+            font-size: 14px;
+            line-height: 1.5;
+            color: #3d5167;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #b4b4b4;
+            border-radius: 0;
+            appearance: none;
+            outline: none; /*remove focus*/
+            box-shadow: none; /*remove focus*/
+            text-align: left;
+        }
+
+        /* Style the down arrow */
+        .custom-dropdown::after {
+            content: '\25BC'; /* Unicode character for a down arrow */
+            position: absolute;
+            top: 50%;
+            right: 0.75rem;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+    .card {
+        border: 1px solid #ddd;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+        height: 50px;
+    }
+
+    .card-copy {
+        border: 1px solid #ddd;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+        height: 40px;
+    }
+
+    /* Additional styles for card content, title, etc. */
+    .card-title {
+        font-size: 12px;
+        font-weight: bold;
+        margin-bottom: 4px;
+    }
+
+    .card-content {
+        font-size: 13px;
+        color: #555;
+    }
+
+    .card-content-copy {
+        font-size: 11px;
+        color: white;
+    }
+
+    .round {
+        position: relative;
+    }
+
+        .round label {
+            background-color: #fff;
+            border: 1px solid black;
+            border-radius: 20%;
+            cursor: pointer;
+            height: 15px;
+            left: -1px;
+            position: absolute;
+            top: 0;
+            width: 15px;
+            margin-top: 10px;
+            margin-left: -10px;
+        }
+
+            .round label:after {
+                border: 2px solid #fff;
+                border-top: none;
+                border-right: none;
+                content: "";
+                height: 5px;
+                left: 2px;
+                opacity: 0;
+                position: absolute;
+                top: 3px;
+                transform: rotate(-44deg);
+                width: 10px;
+            }
+
+        .round input[type="checkbox"] {
+            visibility: hidden;
+        }
+
+            .round input[type="checkbox"]:checked + label {
+                background-color: blue;
+                border-color: blue;
+            }
+
+                .round input[type="checkbox"]:checked + label:after {
+                    opacity: 1;
+                }
+</style>
+<div style="margin-bottom: 5px;"></div>
+<div class="header">
+    <h1 class="headr_cls">
+        <b>@(!IsView ? "Add New" : "View") </b> Collection Deposit
+    </h1>
+</div>
+<div class="tab-content">
+    <div class="cls_main_sign_input_new1" style="margin-left:10px;">
+        <div>Request No.</div>
+        <div>
+            <label>@_collectionDepositViewModel.CashCollectionDeposit.RequestNo</label>
+        </div>
+    </div>
+    <div class="cls_main_sign_input_new1" style="margin-left:10px;">
+        <div>Deposit Date</div>
+        @if (!IsView || SelectedTab == "Action Required")
+        {
+            <div>
+                <Winit.UIComponents.Common.Common.DatePickerBS SelectedDateChanged="@((e) => OnDatePickerChanged(e))" EndDate="@DateTime.Now.ToString("yyyy-MM-dd")"></Winit.UIComponents.Common.Common.DatePickerBS>
+            </div>
+        }
+        else
+        {
+            <label>@_collectionDepositViewModel.CashCollectionDeposit.RequestDate</label>
+        }
+    </div>
+    <div class="cls_main_sign_input_new1" style="margin-left:10px;">
+        <div>Amount</div>
+        @if (!IsView)
+        {
+            <div>
+                <input type="text" @bind="@_collectionDepositViewModel.CashCollectionDeposit.Amount" />
+            </div>
+        }
+        else
+        {
+            <div>
+                <label>@_collectionDepositViewModel.CashCollectionDeposit.Amount</label>
+            </div>
+        }
+    </div>
+    <div class="cls_main_sign_input_new1" style="margin-left:10px;">
+        <div>Bank</div>
+        <div>
+            @if (!IsView || SelectedTab == "Action Required")
+            {
+                <div class="custom-dropdown">
+                    <select @bind="@_collectionDepositViewModel.CashCollectionDeposit.BankUID">
+                        <option value="">--Select Bank--</option>
+                        @foreach (var items in DropDown)
+                        {
+                            <option value="@($"{items.BankName}")">@items.BankName</option>
+                        }
+                    </select>
+                </div>
+            }
+            else
+            {
+                <label>@_collectionDepositViewModel.CashCollectionDeposit.BankUID</label>
+            }
+        </div>
+    </div>
+    <div class="cls_main_sign_input_new1" style="margin-left:10px;">
+        <div>Branch</div>
+        @if (!IsView || SelectedTab == "Action Required")
+        {
+            <div>
+                <input type="text" @bind="@_collectionDepositViewModel.CashCollectionDeposit.Branch" />
+            </div>
+        }
+        else
+        {
+            <div>
+                <label>@_collectionDepositViewModel.CashCollectionDeposit.Branch</label>
+            </div>
+        }
+    </div>
+    <div class="cls_main_sign_input_new1" style="margin-left:10px;">
+        <div>Notes</div>
+        @if (!IsView || SelectedTab == "Action Required")
+        {
+            <div>
+                <textarea @bind="@_collectionDepositViewModel.CashCollectionDeposit.Notes"></textarea>
+            </div>
+        }
+        else
+        {
+            <label>@_collectionDepositViewModel.CashCollectionDeposit.Notes</label>
+        }
+    </div>
+    @if (!IsView || SelectedTab == "Action Required")
+    {
+        <div class="cls_main_sign_input_new1" style="margin-left:10px;">
+            <div>Image</div>
+
+            <div>
+                <FileCapture OnImageDeleteClick="OnImageDeleteClick" OnImageCapture="OnImageCapture" FolderPath="@(Path.Combine(ImgFolderPath,"Request"))" FileName="RequestImg" CaptureData="fileCaptureData"></FileCapture>
+            </div>
+
+        </div>
+    }
+    <div style="margin-bottom: 10px;"></div>
+    <div class="container" style="display:block;">
+        <div class="row">
+            <div class="card-copy d-flex flex-row" style="background-color:#EDF5FF;">
+                <div class="card-content d-flex flex-column" style="padding: 5px;">
+                    @if(!IsView)
+                    {
+                        <div class="round" style="margin-top:-6px;">
+                            <input type="checkbox" id="CheckAll" checked="@GetCheckboxState("CheckAll")" @onchange="@(() => ToggleSelection(null,"CheckAll"))" />
+                            <label for="CheckAll" style="margin-top: 15px;"></label>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="round" style="margin-top:-6px;">
+                            <input type="checkbox" id="CheckAll" checked disabled/>
+                            <label for="CheckAll" style="margin-top: 15px;"></label>
+                        </div>
+                    }
+                </div>
+                <div class="card-content-copy col-7 d-flex flex-column invc_cls">
+                    <p style="margin-left: 20px;"> Receipt Number</p>
+                </div>
+                <div class="card-content-copy col-3 d-flex flex-column ep_cls">
+                    <p style="margin-left:-2px;">Date</p>
+                </div>
+                <div class="card-content-copy col-2 d-flex flex-column clt_cls">
+                    Amount
+                </div>
+            </div>
+        </div>
+    </div>
+    @if (ReceiptRecords.Any())
+    {
+        @foreach (var list in ReceiptRecords)
+        {
+            @if (!IsView)
+            {
+                <div class="container">
+                    <div class="row">
+                        <div class="card d-flex flex-row">
+                            <div class="card-content d-flex flex-column" style="padding: 5px;">
+                                <div class="round" style="margin-top: 5px;">
+                                    <input type="checkbox" id="@list.UID" checked="@GetCheckboxState(list.UID)" @onchange="() => ToggleSelection(list)" />
+                                    <label for="@list.UID"></label>
+                                </div>
+                            </div>
+                            <div class="card-content col-7 d-flex flex-column" style="padding: 5px;border-right: 1px solid #ddd;margin-left: -14px;width: 234px;">
+                                <label style="font-size: 12px;font-weight:500;margin-top:5px;">@list.ReceiptNumber</label>
+                            </div>
+                            <div class="card-content col-3 d-flex flex-column" style="padding: 5px;border-right: 1px solid #ddd;width: 87px;">
+                                @CommonFunctions.GetDateTimeInFormat(list.CollectedDate)
+                            </div>
+                            <div class="card-content col-2 d-flex flex-column" style="padding: 5px;border-right: 1px solid #ddd;width: 97px;">
+                                @list.Amount
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="container">
+                    <div class="row">
+                        <div class="card d-flex flex-row">
+                            <div class="card-content d-flex flex-column" style="padding: 5px;">
+                                <div class="round" style="margin-top: 5px;">
+                                    <input type="checkbox" id="@list.UID" checked disabled/>
+                                    <label for="@list.UID"></label>
+                                </div>
+                            </div>
+                            <div class="card-content col-7 d-flex flex-column" style="padding: 5px;border-right: 1px solid #ddd;margin-left: -14px;width: 234px;">
+                                <label style="font-size: 12px;font-weight:500;margin-top:5px;">@list.ReceiptNumber</label>
+                            </div>
+                            <div class="card-content col-3 d-flex flex-column" style="padding: 5px;border-right: 1px solid #ddd;width: 87px;">
+                                @CommonFunctions.GetDateTimeInFormat(list.CollectedDate)
+                            </div>
+                            <div class="card-content col-2 d-flex flex-column" style="padding: 5px;border-right: 1px solid #ddd;width: 97px;">
+                                @list.Amount
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+        }
+    }
+    else
+    {
+        <div class="tab-content">
+            <div style="margin-bottom: 3px;"></div>
+            <div class="container">
+                <div class="row">
+                    <div class="card">
+                        <div class="card-title" style="color:red;margin-left:150px;margin-top: 10px;font-size: 12px;">
+                            No Records Available
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    <div style="margin-bottom: 10px;"></div>
+    <div class="d-flex flex-column">
+        @if(!IsView){
+        <div>SelectedReceipts : @string.Join(", ", SelectedItems.Where(prop => prop.IsExpanded).Select(p => p.ReceiptNumber))</div>
+        
+        <div>SelectedAmount : @Amount()</div>
+        }
+    </div>
+    <div style="margin-bottom: 10px;"></div>
+    @if (!IsView)
+    {
+        <button class="cls_wastage_btn" style="padding:4px 10px;font-weight: bold;" @onclick="CreateRequest">Submit</button>
+    }
+    @if (SelectedTab == "Action Required")
+    {
+        <button class="cls_wastage_btn" style="padding:4px 10px;font-weight: bold;" @onclick="UpdateRequest">Update</button>
+    }
+</div>

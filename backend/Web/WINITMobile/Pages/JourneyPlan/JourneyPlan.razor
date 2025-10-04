@@ -1,0 +1,261 @@
+﻿@page "/JourneyPlan"
+@using Winit.Shared.Models.Common
+@using Winit.UIComponents.Common.CustomControles
+@using Microsoft.Maui.Devices
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+@inject Winit.Modules.JourneyPlan.BL.Interfaces.IJourneyPlanViewModelFactory _viewmodel
+@inject Winit.Modules.Store.BL.Interfaces.IStoreBL _storeBL
+@inject Winit.Modules.Promotion.BL.Interfaces.IPromotionBL _promotionBL
+<div>
+    @if (showDates)
+    {
+        <div class="d-flex justify-content-between rounded-lg" style="overflow-x: auto;">
+            @foreach (var date in DateRange)
+            {
+                <div class="cls_journey_date " style="width: 120px;" @onclick="() => SelectDate(date)">
+                    <h3 class="text-center">@date.ToString("ddd")</h3>
+                    <p class="text-center">@date.Day</p>
+                    @*  <p class="text-center">@date.ToString("MMM")</p> *@
+                </div>
+            }
+        </div>
+    }
+</div>
+<div class="container">
+    <div class="row mt-2">
+        <div class="col">
+            <div class="cls_journy_heading">
+                <div class="cls_journy_heading_left">
+                    @if (_journeyplanviewmodel.IsCurrentDayJP)
+                    {
+                        <h3>@Localizer["todays"] <b>@Localizer["jp"]</b></h3>
+                    }
+                    else
+                    {
+                        <h3>@Localizer["weekly"] <b>@Localizer["jp"]</b></h3>
+                    }
+
+                    @if (_journeyplanviewmodel != null)
+                    {
+                        <label>@SelectedDate.ToString("dd MMM, yyyy")</label>
+
+                        <span><img src="/Images/dot1.png"></span>
+
+                        <p>@_journeyplanviewmodel.SelectedRoute.Name</p>
+                    }
+                </div>
+                @if (_journeyplanviewmodel.IsCurrentDayJP)
+                {
+                    <div class="cls_journy_heading_right">
+                        @if (!IsCustomersView)
+                        {
+                            <a @onclick="ShowCustomers"><img style="width:24px;" src="/Images/list_view.png"></a>
+                        }
+                        else
+                        {
+                            <a @onclick="ShowMapModal"><img style="width:22px;" src="/Images/ic44.png"></a>
+                        }
+
+                        @* <a @onclick="OpenUnplannedCustomers"><img style="width:24px;" src="/Images/ic5.png"></a>
+                        <a style="margin:0px;"><img style="width:6px;" src="/Images/ic6.png"></a> *@
+                    </div>
+                }
+
+            </div>
+            <div class="cls_journy_top" style="display:none;">
+                @if (_journeyplanviewmodel != null)
+                {
+                    <p>@_journeyplanviewmodel.SelectedRoute.Name</p>
+                    @* <p>@_journeyplanviewmodel.SelectedBeatHistory.VisitDate</p> *@
+                    <p style="float:right">@SelectedDate.ToString("dd MMM, yyyy")</p>
+
+                }
+
+            </div>
+
+
+            @if (showCustomerListpopup)
+            {
+                <WINITMobile.Pages.JourneyPlan.UnplanedCustomersPopup IsVisible="IsVisible"
+                                                          CustomerList="UnplanedCustomers"
+                                                          SelectedCustomersChanged="HandleSelectedCustomers" IsVisibleChanged="HandlePopupVisibilityChanges"
+                                                          OnRouteChanged="OnRouteChangedHandler" />
+            }
+            @if (SalesOrganizationPop)
+            {
+                <WINITMobile.Pages.JourneyPlan.StoreOrganizationPopup IsOpnedScoreCredit="IsOpnedScoreCredit"
+                                                          SelectedCustomer="_journeyplanviewmodel.SelectedCustomer"
+                                                          StoreCreditList="_journeyplanviewmodel.SelectedCustomer.StoreCredits"
+                                                          IsVisibleChanged="HandlePopupVisibilityChange"
+                                                          StoreCreditSelected="HandleStoreCreditSelected" />
+            }
+        </div>
+    </div>
+    @if (_journeyplanviewmodel.IsCurrentDayJP)
+    {
+        <div class="row mt-2">
+            <div class="col">
+                <Winit.UIComponents.Common.CustomControles.Tabs IsCountRequired=true OnTabSelect="OnTabSelect" TabItems="tabItems" @ref="TabsRefference" />
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-12" style="padding:0px;">
+                <div class="cls_Dash_planed_chat_main">
+                    <div class="cls_Dash_planed_chat">
+                        <div class="cls_Dash_planed_chat_left" style="width:62px"><Winit.UIComponents.Common.Graphs.PieChart Percentage="@VisitPercentage" PercentageFontSizeInPx=14 /></div>
+
+                        <div class="cls_Dash_planed_chat_right">
+                            <label>@Localizer["you_completed"]</label>
+                            <p><b>@VisitedCustomers</b> of @TotalCustomers</p>
+                            <label>@Localizer["from_your_planned_visits"]</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="cls_serch_nn11">
+                    <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder=@Localizer["search_by_customer_name_or_address_or_code...."]
+                                                                           MaxLength="200" DebounceInterval="500"
+                                                                           KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+                                                                           Value="" IsForSearch="true" OnDebounceIntervalElapsed="OnSearching" />
+
+                </div>
+
+
+            </div>
+        </div>
+
+        @if (IsCustomersView)
+        {
+            <div style="width:100%;float:left;margin-top:15px;">
+                @if (CustomerlisttoShow != null && CustomerlisttoShow.Any())
+                {
+                    <Virtualize Items="CustomerlisttoShow" Context="item" OverscanCount="50">
+                        <div style="width:100%;float:left;">
+
+                            <div class="cls_sel_customer_popup3">
+                                <div class="cls_sel_customer_popup3_top" @onclick="() => Handel_CardClick(item)">
+                                    <div class="cls_sel_customer_popup3_top_left">
+                                        <img style="width:35px;" src="/Images/p1.png">
+                                    </div>
+                                    <div class="cls_sel_customer_popup3_top_right">
+                                        <h3>@item.Name - @item.StoreNumber</h3>
+                                        <label>@item.Code</label>
+                                        @if (@item.CurrentVisitStatus == Winit.Shared.Models.Constants.StoryHistoryStatus.VISITED)
+                                        {
+                                            <span><img src="/Images/dot1.png"></span>
+
+                                            <p>@Localizer["visited_today"]</p>
+
+                                            <span><img src="/Images/ic1.png"></span>
+                                        }
+                                    </div>
+                                    <p>@item.Address</p>
+                                </div>
+                                <div class="cls_sel_customer_popup3_bottom">
+                                    <div class="cls_sel_customer_popup3_bottom_left">
+                                        <img style="width:25px;" src="/Images/ic2.png">
+                                    </div>
+                                    <div class="cls_sel_customer_popup3_bottom_cen">
+                                        <h3>Ramana Kumar</h3>
+                                        <label>@Localizer["manager"]</label><span><img src="/Images/dot1.png"></span><p>9436742566</p>
+                                    </div>
+                                    <div class="cls_sel_customer_popup3_bottom_right"><a @onclick="OpenDialPad"><img src="/Images/ic3.png"></a></div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </Virtualize>
+                }
+            </div>
+        }
+        else
+        {
+            <div style="width:100%;float:left;margin-top:15px;">
+                <div id="map" class="cls_n_map" style="height: 400px;"></div>
+            </div>
+
+        }
+
+    }
+    else
+    {
+        <div class="row mt-2">
+            <div class="col-12">
+
+                <div class="cls_serch_nn">
+                    <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder=@Localizer["search_by_customer_name.."]
+                                                                           MaxLength="200" DebounceInterval="500"
+                                                                           KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+                                                                           Value="" IsForSearch="true" OnDebounceIntervalElapsed="OnSearching" />
+
+                </div>
+            </div>
+            <div class="col-3" style="padding:0px;">
+                <div class="modal fade show" role="alert" style="@($"display: {(ShowMaps ? "block" : "none")}")">
+                    <div class="modal-dialog" style="top:0%;margin:10px;">
+                        <div class="modal-content" style="margin:0px;">
+                            <div class="modal-header">
+                                <h5 class="modal-title">@Localizer["map"]</h5>
+                                <button type="button" class="close" @onclick="HideMap">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div id="map" style="height: 500px; width: 100%;"></div>
+                            </div>
+                            @* <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div> *@
+                        </div>
+                    </div>
+                </div>
+
+
+
+                @* <button type="button" class="cls_btn_secondary" @onclick="ShowMapForJp">Show Map</button> *@
+            </div>
+        </div>
+        <div class="cls_journey_plan">
+            @if (CustomerlisttoShow != null && CustomerlisttoShow.Any())
+            {
+                <Virtualize Items="CustomerlisttoShow" Context="item" OverscanCount="10">
+                    <div style="width:100%;float:left;">
+
+                        <div class="cls_sel_customer_popup3">
+                            <div class="cls_sel_customer_popup3_top">
+                                <div class="cls_sel_customer_popup3_top_left">
+                                    <img style="width:35px;" src="/Images/p1.png">
+                                </div>
+                                <div class="cls_sel_customer_popup3_top_right">
+                                    <h3>@item.Name - @item.StoreNumber</h3>
+                                    <label>@item.Code</label><span><img src="/Images/dot1.png"></span><p>@Localizer["visited_today"]</p><span><img src="/Images/ic1.png"></span>
+
+                                </div>
+                                <p>@item.Address</p>
+                            </div>
+                            <div class="cls_sel_customer_popup3_bottom">
+                                <div class="cls_sel_customer_popup3_bottom_left">
+                                    <img style="width:25px;" src="/Images/ic2.png">
+                                </div>
+                                <div class="cls_sel_customer_popup3_bottom_cen">
+                                    <h3>Ramana Kumar</h3>
+                                    <label>@Localizer["manager"]</label><span><img src="/Images/dot1.png"></span><p>9436742566</p>
+                                </div>
+                                <div class="cls_sel_customer_popup3_bottom_right"><img src="/Images/ic3.png"></div>
+                            </div>
+                        </div>
+                        @*  <div class="cls_journey_plan_rep2">
+                <button>@item.Type</button>
+                </div> *@
+                    </div>
+                </Virtualize>
+            }
+        </div>
+
+    }
+
+
+</div>
+
+
+

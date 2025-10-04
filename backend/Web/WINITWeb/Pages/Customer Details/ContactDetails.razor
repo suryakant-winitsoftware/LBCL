@@ -1,0 +1,117 @@
+﻿@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.Store.BL.Interfaces.ICustomerDetailsViewModel _customerDetailsViewModel
+@inject Winit.Modules.Distributor.Model.Interfaces.IDistributorToggle toggle
+
+@if (@IsInitialised)
+{
+    <div style="width:100%;float:left;margin:0px 0px;">
+        @if (!string.IsNullOrWhiteSpace(ValidationMessage))
+        {
+            <div class="alert alert-danger">
+                <div class="col-md-12">
+                    <div style="color: red;">@ValidationMessage</div>
+                </div>
+            </div>
+        }
+        <div class="card">
+            <div class="card-body">
+                <div class="cls_cust_information">
+                    <div class="row">
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <label class="margin_bottom">Contact Type<i class="cls_section_div_purchase2_span">*</i></label>
+                            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="ContactTypeSelectionItems" IsButtonVisible="true" Title="Contact Type"
+                                                                               OnSelect="OnContactTypeSelection" />
+                        </div>
+                        @*  <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <label><b>Contact Person Name</b></label>
+                    <input class="form-control @(string.IsNullOrWhiteSpace(SelectedContact?.Name) && IsSaveAttempted ? "is-invalid" : "")" autocomplete="off"
+                    type="text" placeholder="Enter here" @bind="SelectedContact.Name" />
+                    <div class="invalid-feedback"></div>
+                    </div> *@
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <label>Contact Person Name<i class="cls_section_div_purchase2_span">*</i></label>
+                            <input @ref="contactNameInput"
+                                   class="form-control"
+                                   autocomplete="off"
+                                   type="text"
+                                   placeholder="Enter here"
+                                   @bind="SelectedContact.Name" />
+                            <div class="invalid-feedback">
+                            </div>
+                        </div>
+                        @* <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <label>Mobile Number 1<i class="cls_section_div_purchase2_span">*</i></label>
+                            <input class="form-control" autocomplete="off"
+                                   type="number" placeholder="Enter here" @bind="SelectedContact.Mobile" @oninput="ValidateMobileNumber" />
+                            <div class="invalid-feedback" style="display: @(string.IsNullOrEmpty(MobilevalidationMessage) ? "none" : "block")">
+                                @MobilevalidationMessage
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <label>Mobile Number 2</label>
+                            <input autocomplete="off" class="form-control" type="number" placeholder="Enter here" @bind="SelectedContact.Mobile2" />
+                        </div> *@
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <label>Mobile Number 1<i class="cls_section_div_purchase2_span">*</i></label>
+                            <input class="form-control" autocomplete="off"
+                                   type="number" placeholder="Enter here" @bind="SelectedContact.Mobile" @oninput="@(e => ValidateMobileNumber(e.Value?.ToString(), "Mobile"))" />
+                            <div class="invalid-feedback" style="display: @(string.IsNullOrEmpty(MobilevalidationMessage) ? "none" : "block")">
+                                @MobilevalidationMessage
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <label>Mobile Number 2</label>
+                            <input autocomplete="off" class="form-control" type="number" placeholder="Enter here" @bind="SelectedContact.Mobile2" @oninput="@(e => ValidateMobileNumber(e.Value?.ToString(), "Mobile2"))" />
+                            <div class="invalid-feedback" style="display: @(string.IsNullOrEmpty(Mobile2validationMessage) ? "none" : "block")">
+                                @Mobile2validationMessage
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <label>Email<i class="cls_section_div_purchase2_span">*</i></label>
+                            <input class="form-control @( !string.IsNullOrWhiteSpace(EmailValidationMessage) ? "is-invalid" : "")"
+                                   autocomplete="off"
+                                   type="email"
+                                   placeholder="Enter here"
+                                   @bind="SelectedContact.Email" @oninput="ValidateEmail" />
+                            <div class="invalid-feedback">@EmailValidationMessage</div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <div class="cls_btn_y_n" style="margin-top:30px;">
+                                <input type="checkbox" @bind="SelectedContact.IsDefault" >
+                                <label>IsPrimary</label>
+                            </div>
+                            <div class="invalid-feedback">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-12 d-flex justify-content-center">
+            <button class="cls_comman_sec_btn mr-2" type="button" @onclick="OnClean">Clear</button>
+            <button class="cls_comman_btn" type="submit" @onclick="SaveOrUpdate">@ButtonName</button>
+        </div>
+    </div>
+    <div style="width:100%;float:left;margin:10px 0px;">
+        <div class="card">
+            <div class="card-body">
+                <div class="">
+                    <button class="cls_comman_btn" style="margin-bottom:15px;" type="submit" @onclick="GetAllContacts">Show All Contacts</button>
+
+                    @if (IsShowAllContacts)
+                    {
+                        <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" DataSource="Contacts" />
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@code {
+
+}
+

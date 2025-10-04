@@ -1,0 +1,167 @@
+﻿@using OfficeOpenXml
+@using System.Reflection
+@typeparam T
+
+<InputFile @key=@(inputFileId) @ref="fileInput" OnChange="HandleFileUpload" />
+<button @onclick="@ImportExcel">Upload</button>
+
+@code {
+    [Parameter]
+    public EventCallback<List<T>> OnImport { get; set; }
+
+    // Add missing service injections
+   
+
+    private InputFile fileInput { get; set; }
+    private Guid inputFileId { get; set; }
+    private IBrowserFile file { get; set; }
+    private byte[] fileData { get; set; } // Store file data
+
+    protected async Task HandleFileUpload(InputFileChangeEventArgs e)
+    {
+        file = e.File;
+        if (file != null)
+        {
+            const long maxFileSize = 10 * 1024 * 1024; // 10 MB (fixed comment)
+            using var stream = file.OpenReadStream(maxFileSize);
+            using var memoryStream = new MemoryStream();
+            await stream.CopyToAsync(memoryStream);
+            fileData = memoryStream.ToArray(); // Store the file data
+        }
+    }
+
+    private bool IsExcelFile(IBrowserFile file)
+    {
+        var fileExtension = Path.GetExtension(file.Name).ToLower();
+        return fileExtension == ".xlsx" || fileExtension == ".xls";
+    }
+
+    public async Task ImportExcel()
+    {
+        await UploadExcelFile<T>();
+    }
+
+    public async Task UploadExcelFile<T>()
+    {
+        List<T> result = new List<T>();
+
+        try
+        {
+            _loadingService.ShowLoading();
+
+            if (file != null && IsExcelFile(file) && fileData != null)
+            {
+                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+                using (var memoryStream = new MemoryStream(fileData))
+                {
+                    using (var package = new ExcelPackage(memoryStream))
+                    {
+                        var worksheet = package.Workbook.Worksheets[0];
+
+                        // Check if worksheet has data
+                        if (worksheet.Dimension == null)
+                        {
+                            await _alertService.ShowErrorAlert("Error", "Excel file is empty");
+                            return;
+                        }
+
+                        // Read header row
+                        var headers = new List<string>();
+                        for (int col = 1; col <= worksheet.Dimension.End.Column; col++)
+                        {
+                            headers.Add(worksheet.Cells[1, col].Text);
+                        }
+
+                        var properties = typeof(T).GetProperties();
+
+                        for (var rowNumber = 2; rowNumber <= worksheet.Dimension.End.Row; rowNumber++)
+                        {
+                            // Fixed: Use Activator.CreateInstance instead of service provider
+                            T row = Activator.CreateInstance<T>();
+
+                            for (var columnNumber = 1; columnNumber <= worksheet.Dimension.End.Column; columnNumber++)
+                            {
+                                var cellValue = worksheet.Cells[rowNumber, columnNumber].Text;
+                                var headerName = headers[columnNumber - 1];
+                                var property = properties.FirstOrDefault(p =>
+                                    p.Name.Equals(headerName, StringComparison.OrdinalIgnoreCase));
+
+                                if (property != null && !string.IsNullOrEmpty(cellValue))
+                                {
+                                    // SetPropertyValue(property, row, cellValue);
+                                }
+                            }
+
+                            result.Add(row);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                inputFileId = Guid.NewGuid();
+                await _alertService.ShowErrorAlert(
+                    file == null ? "Error" : "InvalidFile",
+                    file == null ? "Please upload Excel file" : "Only Excel files are allowed!");
+            }
+        }
+        catch (Exception ex)
+        {
+            await _alertService.ShowErrorAlert("Error", $"Error processing Excel file: {ex.Message}");
+        }
+        finally
+        {
+            // await OnImport.InvokeAsync(result);
+            _loadingService.HideLoading();
+        }
+    }
+
+    private void SetPropertyValue(PropertyInfo property, T obj, string cellValue)
+    {
+        try
+        {
+            if (property.PropertyType == typeof(int) && int.TryParse(cellValue, out var intValue))
+            {
+                property.SetValue(obj, intValue);
+            }
+            else if (property.PropertyType == typeof(int?) && int.TryParse(cellValue, out var nullableIntValue))
+            {
+                property.SetValue(obj, (int?)nullableIntValue);
+            }
+            else if (property.PropertyType == typeof(double) && double.TryParse(cellValue, out var doubleValue))
+            {
+                property.SetValue(obj, doubleValue);
+            }
+            else if (property.PropertyType == typeof(double?) && double.TryParse(cellValue, out var nullableDoubleValue))
+            {
+                property.SetValue(obj, (double?)nullableDoubleValue);
+            }
+            else if (property.PropertyType == typeof(DateTime) && DateTime.TryParse(cellValue, out var dateTimeValue))
+            {
+                property.SetValue(obj, dateTimeValue);
+            }
+            else if (property.PropertyType == typeof(DateTime?) && DateTime.TryParse(cellValue, out var nullableDateTimeValue))
+            {
+                property.SetValue(obj, (DateTime?)nullableDateTimeValue);
+            }
+            else if (property.PropertyType == typeof(bool) && bool.TryParse(cellValue, out var boolValue))
+            {
+                property.SetValue(obj, boolValue);
+            }
+            else if (property.PropertyType == typeof(bool?) && bool.TryParse(cellValue, out var nullableBoolValue))
+            {
+                property.SetValue(obj, (bool?)nullableBoolValue);
+            }
+            else if (property.PropertyType == typeof(string))
+            {
+                property.SetValue(obj, cellValue);
+            }
+        }
+        catch (Exception ex)
+        {
+            // Log the error or handle it as needed
+            Console.WriteLine($"Error setting property {property.Name}: {ex.Message}");
+        }
+    }
+}

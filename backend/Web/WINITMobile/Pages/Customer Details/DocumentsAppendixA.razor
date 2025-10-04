@@ -1,0 +1,478 @@
+﻿@using Winit.Modules.Store.Model.Constants
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+@using Winit.Modules.BroadClassification.Model.Constant
+
+@if (Isinitialized)
+{
+    <div style="width:98%;float:left;margin:15px 1%;">
+        <div class=" ">
+            @if (FirmType == FirmTypeConstants.Company || FirmType == null)
+            {
+                <div class="col-12 col-md-6 mb-4 cls_shadow2">
+                    <div class="card">
+                        <div class="card-body">
+                           <h6 class="cls_copy_adress_span">Memorandum of Association and Certificate of Incorporation of Company<span class="cls_section_div_purchase2_span">*</span></h6>
+                            <label class="cls_customer_label cls_mar_btm_4px">Upload Files</label>
+                            <div class="col-12 mb-3">
+                                <Winit.UIComponents.Common.FileUploader.FileUploader @ref=Memo_AssofileUploader FileExtension=".jpg,.jpeg,.pdf,.png,.docx" RelativePath="@FilePath" FileSize="50000000000"
+                                                                                     AllowMultipleFiles=true FileSysList=Memo_AssofileSysList
+                                                                                     LinkedItemType="Store" LinkedItemUID="@LinkedItemUID"
+                                                                                     FileSysType="@Winit.Modules.Store.Model.Constants.FileSysTypeConstants.MemorandumofAssociation" FileType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.Image"
+                                                                                     IsDirectory="false"
+                                                                                     UploadEventCallBack="GetMoASavedImagePath" DeleteEventCallBack="AfterDeleteImage" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (FirmType == FirmTypeConstants.Partnership || FirmType == null)
+            {
+                <div class="col-12 col-md-6 mb-4 cls_shadow2">
+                    <div class="card">
+                        <div class="card-body">
+                           <h6 class="cls_copy_adress_span">Partnership Dealer & Partnership Registration Along with Bank Certificate for Signatories<span class="cls_section_div_purchase2_span">*</span></h6>
+                            <label class="cls_customer_label cls_mar_btm_4px">Upload Files</label>
+                            <div class="col-12 mb-3">
+                                <Winit.UIComponents.Common.FileUploader.FileUploader @ref=Partnership_DealerPfileUploader FileExtension=".jpg,.jpeg,.pdf,.png,.docx" RelativePath="@FilePath" FileSize="500000"
+                                                                                     AllowMultipleFiles=true FileSysList=Partnership_DealerfileSysList
+                                                                                     LinkedItemType="Store" LinkedItemUID="@LinkedItemUID"
+                                                                                     FileSysType="@Winit.Modules.Store.Model.Constants.FileSysTypeConstants.PartnershipDealerAndPartnershipRegistration" FileType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.Image"
+                                                                                     IsDirectory="false"
+                                                                                     UploadEventCallBack="GetPDPSavedImagePath" DeleteEventCallBack="AfterDeleteImage" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class=" ">
+            @if (FirmType == FirmTypeConstants.Partnership || FirmType == FirmTypeConstants.Propertier || FirmType == FirmTypeConstants.Company || FirmType == null)
+            {
+                <div class="col-12 col-md-6 mb-4 cls_shadow2">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="cls_copy_adress_span">GST<span class="cls_section_div_purchase2_span">*</span></h6>
+                            <label class="cls_customer_label cls_mar_btm_4px">Upload Files</label>
+                            <div class="col-12 mb-3">
+                                <Winit.UIComponents.Common.FileUploader.FileUploader @ref=GSTfileUploader FileExtension=".jpg,.jpeg,.pdf,.png,.docx" RelativePath="@FilePath" FileSize="500000"
+                                                                                     AllowMultipleFiles=true FileSysList=GSTfileSysList
+                                                                                     LinkedItemType="Store" LinkedItemUID="@LinkedItemUID"
+                                                                                     FileSysType="@Winit.Modules.Store.Model.Constants.FileSysTypeConstants.GST" FileType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.Image"
+                                                                                     IsDirectory="false"
+                                                                                     UploadEventCallBack="GetGSTSavedImagePath" DeleteEventCallBack="AfterDeleteImage" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (FirmType == FirmTypeConstants.Partnership || FirmType == FirmTypeConstants.Propertier || FirmType == FirmTypeConstants.Company || FirmType == null)
+            {
+                <div class="col-12 col-md-6 mb-4 cls_shadow2">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="cls_copy_adress_span">PAN<span class="cls_section_div_purchase2_span">*</span></h6>
+                            <label class="cls_customer_label cls_mar_btm_4px">Upload Files</label>
+                            <div class="col-12 mb-3">
+                                <Winit.UIComponents.Common.FileUploader.FileUploader @ref=PANfileUploader FileExtension=".jpg,.jpeg,.pdf,.png,.docx" RelativePath="@FilePath" FileSize="500000"
+                                                                                     AllowMultipleFiles=true FileSysList=PANfileSysList
+                                                                                     LinkedItemType="Store" LinkedItemUID="@LinkedItemUID"
+                                                                                     FileSysType="@Winit.Modules.Store.Model.Constants.FileSysTypeConstants.PAN" FileType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.Image"
+                                                                                     IsDirectory="false"
+                                                                                     UploadEventCallBack="GetPANSavedImagePath" DeleteEventCallBack="AfterDeleteImage" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class=" ">
+            @if (FirmType == FirmTypeConstants.Partnership || FirmType == FirmTypeConstants.Propertier || FirmType == FirmTypeConstants.Company || FirmType == null)
+            {
+                <div class="col-12 col-md-6 mb-4 cls_shadow2">
+                    <div class="card">
+                        <div class="card-body">
+                           <h6 class="cls_copy_adress_span">Shop & Establishment Certificate / Municipal Licence</h6>
+                            <label class="cls_customer_label cls_mar_btm_4px">Upload Files</label>
+                            <div class="col-12 mb-3">
+                                <Winit.UIComponents.Common.FileUploader.FileUploader @ref=Shop_EstfileUploader FileExtension=".jpg,.jpeg,.pdf,.png,.docx" RelativePath="@FilePath" FileSize="500000"
+                                                                                     AllowMultipleFiles=true FileSysList=Shop_EstfileSysList
+                                                                                     LinkedItemType="Store" LinkedItemUID="@LinkedItemUID"
+                                                                                     FileSysType="@Winit.Modules.Store.Model.Constants.FileSysTypeConstants.Shop_EstablishmentCertificate_MunicipalLicence" FileType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.Image"
+                                                                                     IsDirectory="false"
+                                                                                     UploadEventCallBack="GetShopEstSavedImagePath" DeleteEventCallBack="AfterDeleteImage" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (FirmType == FirmTypeConstants.Partnership || FirmType == FirmTypeConstants.Propertier || FirmType == FirmTypeConstants.Company || FirmType == null)
+            {
+                <div class="col-12 col-md-6 mb-4 cls_shadow2">
+                    <div class="card">
+                        <div class="card-body">
+                           <h6 class="cls_copy_adress_span">ESIC Registration</h6>
+                            <label class="cls_customer_label cls_mar_btm_4px">Upload Files</label>
+                            <div class="col-12 mb-3">
+                                <Winit.UIComponents.Common.FileUploader.FileUploader @ref=ESICfileUploader FileExtension=".jpg,.jpeg,.pdf,.png,.docx" RelativePath="@FilePath" FileSize="500000"
+                                                                                     AllowMultipleFiles=true FileSysList=ESICfileSysList
+                                                                                     LinkedItemType="Store" LinkedItemUID="@LinkedItemUID"
+                                                                                     FileSysType="@Winit.Modules.Store.Model.Constants.FileSysTypeConstants.ESICRegistration" FileType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.Image"
+                                                                                     IsDirectory="false"
+                                                                                     UploadEventCallBack="GetESICSavedImagePath" DeleteEventCallBack="AfterDeleteImage" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class=" ">
+            @if (FirmType == FirmTypeConstants.Partnership || FirmType == FirmTypeConstants.Propertier || FirmType == FirmTypeConstants.Company || FirmType == null)
+            {
+                <div class="col-12 col-md-6 mb-4 cls_shadow2">
+                    <div class="card">
+                        <div class="card-body">
+                           <h6 class="cls_copy_adress_span">PF Registration</h6>
+                            <label class="cls_customer_label cls_mar_btm_4px">Upload Files</label>
+                            <div class="col-12 mb-3">
+                                <Winit.UIComponents.Common.FileUploader.FileUploader @ref=PFfileUploader FileExtension=".jpg,.jpeg,.pdf,.png,.docx" RelativePath="@FilePath" FileSize="500000"
+                                                                                     AllowMultipleFiles=true FileSysList=PFfileSysList
+                                                                                     LinkedItemType="Store" LinkedItemUID="@LinkedItemUID"
+                                                                                     FileSysType="@Winit.Modules.Store.Model.Constants.FileSysTypeConstants.PFRegistration" FileType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.Image"
+                                                                                     IsDirectory="false"
+                                                                                     UploadEventCallBack="GetPFSavedImagePath" DeleteEventCallBack="AfterDeleteImage" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (FirmType == FirmTypeConstants.Partnership || FirmType == FirmTypeConstants.Company || FirmType == null)
+            {
+                <div class="col-12 col-md-6 mb-4 cls_shadow2">
+                    <div class="card">
+                        <div class="card-body">
+                           <h6 class="cls_copy_adress_span">List of Authorized Signature with their Specimen Signature/s on the Firm's Letter head<span class="cls_section_div_purchase2_span">*</span></h6>
+                            <label class="cls_customer_label cls_mar_btm_4px">Upload Files</label>
+                            <div class="col-12 mb-3">
+                                <Winit.UIComponents.Common.FileUploader.FileUploader @ref=Auth_SignfileUploader FileExtension=".jpg,.jpeg,.pdf,.png,.docx" RelativePath="@FilePath" FileSize="500000"
+                                                                                     AllowMultipleFiles=true FileSysList=Auth_SignfileSysList
+                                                                                     LinkedItemType="Store" LinkedItemUID="@LinkedItemUID"
+                                                                                     FileSysType="@Winit.Modules.Store.Model.Constants.FileSysTypeConstants.ListofAuthorizedSignature" FileType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.Image"
+                                                                                     IsDirectory="false"
+                                                                                     UploadEventCallBack="GetAuthSignSavedImagePath" DeleteEventCallBack="AfterDeleteImage" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class=" ">
+            @* @if (FirmType == FirmTypeConstants.Partnership || FirmType == FirmTypeConstants.Company || FirmType == null)
+        {
+        <div class="col-12 col-md-6 mb-4 cls_shadow2">
+        <div class="card">
+        <div class="card-body">
+       <h6 class="cls_copy_adress_span">Broad Resolution</h6>
+        <label class="cls_customer_label cls_mar_btm_4px">Upload Files</label>
+        <div class="col-12 mb-3">
+        <Winit.UIComponents.Common.FileUploader.FileUploader @ref=Broad_resfileUploader FileExtension=".jpg,.jpeg,.pdf,.png,.docx" RelativePath="@FilePath" FileSize="500000"
+        AllowMultipleFiles=true FileSysList=Broad_resfileSysList
+        LinkedItemType="Store" LinkedItemUID="@LinkedItemUID"
+        FileSysType="@Winit.Modules.Store.Model.Constants.FileSysTypeConstants.BroadResolution" FileType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.Image"
+        IsDirectory="false"
+        UploadEventCallBack="GetBroadResSavedImagePath" DeleteEventCallBack="AfterDeleteImage" />
+        </div>
+        </div>
+        </div>
+        </div>
+        } *@
+            @if (FirmType == FirmTypeConstants.Partnership || FirmType == FirmTypeConstants.Propertier || FirmType == FirmTypeConstants.Company || FirmType == null)
+            {
+                <div class="col-12 col-md-6 mb-4 cls_shadow2">
+                    <div class="card">
+                        <div class="card-body">
+                           <h6 class="cls_copy_adress_span">Proof of Address of Place of Business<span class="cls_section_div_purchase2_span">*</span></h6>
+                            <label class="cls_customer_label cls_mar_btm_4px">Upload Files</label>
+                            <div class="col-12 mb-3">
+                                <Winit.UIComponents.Common.FileUploader.FileUploader @ref=Proof_AddressfileUploader FileExtension=".jpg,.jpeg,.pdf,.png,.docx" RelativePath="@FilePath" FileSize="500000"
+                                                                                     AllowMultipleFiles=true FileSysList=Proof_AddressfileSysList
+                                                                                     LinkedItemType="Store" LinkedItemUID="@LinkedItemUID"
+                                                                                     FileSysType="@Winit.Modules.Store.Model.Constants.FileSysTypeConstants.ProofofAddressofPlaceofBusiness" FileType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.Image"
+                                                                                     IsDirectory="false"
+                                                                                     UploadEventCallBack="GetProofAddressSavedImagePath" DeleteEventCallBack="AfterDeleteImage" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class=" ">
+            @if (FirmType == FirmTypeConstants.Partnership || FirmType == FirmTypeConstants.Propertier || FirmType == FirmTypeConstants.Company || FirmType == null)
+            {
+                <div class="col-12 col-md-6 mb-4 cls_shadow2">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="cls_copy_adress_span"> <span class="cls_section_div_purchase2_span">*</span> Proof of Permanent and Current Residential Address of Propertier/Partner</h6>
+                            <label class="cls_customer_label cls_mar_btm_4px">Upload Files</label>
+                            <div class="col-12 mb-3">
+                                <Winit.UIComponents.Common.FileUploader.FileUploader @ref=Proof_Res_AddressfileUploader FileExtension=".jpg,.jpeg,.pdf,.png,.docx" RelativePath="@FilePath" FileSize="500000"
+                                                                                     AllowMultipleFiles=true FileSysList=Proof_Res_AddressfileSysList
+                                                                                     LinkedItemType="Store" LinkedItemUID="@LinkedItemUID"
+                                                                                     FileSysType="@Winit.Modules.Store.Model.Constants.FileSysTypeConstants.ProofofPermanentandCurrentResidentialAddressofPropertier_Partner" FileType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.Image"
+                                                                                     IsDirectory="false"
+                                                                                     UploadEventCallBack="GetProofResAddressSavedImagePath" DeleteEventCallBack="AfterDeleteImage" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (HideVendor)
+            {
+                <div class="col-12 col-md-6 mb-4 cls_shadow2">
+                    <div class="card">
+                        <div class="card-body">
+                           <h6 class="cls_copy_adress_span">Vendor Declaration<span class="cls_section_div_purchase2_span">*</span></h6>
+                            <label class="cls_customer_label cls_mar_btm_4px">Upload Files</label>
+                            <div class="col-12 mb-3">
+                                <Winit.UIComponents.Common.FileUploader.FileUploader FileExtension=".jpg,.jpeg,.pdf,.png,.doc" @ref="Vendor_DecfileUploader"
+                                                                                     FileSysList="Vendor_DecfileSysList" RelativePath="@FilePath" FileSize="500000"
+                                                                                     AllowMultipleFiles=true
+                                                                                     LinkedItemType="Store" LinkedItemUID="@LinkedItemUID"
+                                                                                     FileSysType="@Winit.Modules.Store.Model.Constants.FileSysTypeConstants.VenderDeclaration" FileType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.Image"
+                                                                                     IsDirectory="false"
+                                                                                     UploadEventCallBack="GetVendorDecSavedImagePath" DeleteEventCallBack="AfterDeleteImage" />
+                                @* <div class="col-12 d-flex justify-content-end" style="padding:0px;display:none">
+                                    <label for="termsCheckbox" class="form-check-label mb-0">
+                                        <button type="button" class="btn btn-link p-0 text-decoration-underline text-primary" style="font-size:13px;"><b></b></button>
+                                        <a href="OnBoardingDocuments/Vender Declaration Form.pdf" download="Vender Declaration Form.pdf">DownLoad From here</a>
+                                    </label>
+                                </div> *@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class=" ">
+            @if ((FirmType == FirmTypeConstants.Partnership || FirmType == FirmTypeConstants.Propertier || FirmType == FirmTypeConstants.Company || FirmType == null))
+            {
+                <div class="col-12 col-md-6 mb-4 cls_shadow2">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="cls_copy_adress_span"> <span class="cls_section_div_purchase2_span">*</span> Application Letter on Your Letter Head As per Format</h6>
+                            <label class="cls_customer_label cls_mar_btm_4px"> Upload Files</label>
+                            <div class="col-12 mb-3">
+                                <Winit.UIComponents.Common.FileUploader.FileUploader FileExtension=".jpg,.jpeg,.pdf,.png,.doc" @ref="Application_LetterfileUploader"
+                                                                                     FileSysList="Application_LetterfileSysList" RelativePath="@FilePath" FileSize="500000"
+                                                                                     AllowMultipleFiles=true
+                                                                                     LinkedItemType="Store" LinkedItemUID="@LinkedItemUID"
+                                                                                     FileSysType="@Winit.Modules.Store.Model.Constants.FileSysTypeConstants.ApplicationLetteronYourLetterHeadAsperFormat" FileType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.Image"
+                                                                                     IsDirectory="false"
+                                                                                     UploadEventCallBack="GetApplicationLetterSavedImagePath" DeleteEventCallBack="AfterDeleteImage" />
+                                @* <div class="col-12 d-flex justify-content-end" style="padding:0px;display:@(DisplayDownloadPDF)">
+                                    <label for="termsCheckbox" class="form-check-label mb-0">
+                                        <a href="OnBoardingDocuments/Application Letter Form.pdf" download="Application Letter Form.pdf">DownLoad From here</a>
+                                    </label>
+                                </div> *@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            @* @if (HideMSME)
+        {
+        <div class="col-12 col-md-6 mb-4 cls_shadow2">
+        <div class="card">
+        <div class="card-body">
+       <h6 class="cls_copy_adress_span">MSME Certificate</h6>
+        <label class="cls_customer_label cls_mar_btm_4px">Upload Files</label>
+        <div class="col-12 mb-3">
+        <Winit.UIComponents.Common.FileUploader.FileUploader FileExtension=".jpg,.jpeg,.pdf,.png,.doc" @ref="MSME_CertificatefileUploader"
+        FileSysList="MSME_CertificatefileSysList" RelativePath="@FilePath" FileSize="500000"
+        AllowMultipleFiles=true
+        LinkedItemType="Store" LinkedItemUID="@LinkedItemUID"
+        FileSysType="@Winit.Modules.Store.Model.Constants.FileSysTypeConstants.MSMECertificate" FileType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.Image"
+        IsDirectory="false"
+        UploadEventCallBack="GetMSMECertificateSavedImagePath" DeleteEventCallBack="AfterDeleteImage" />
+        <div class="col-12 d-flex justify-content-end" style="padding:0px;">
+        <label for="termsCheckbox" class="form-check-label mb-0">
+        <a href="OnBoardingDocuments/MSME Certificate Form.pdf" download="MSME Certificate Form.pdf">DownLoad From here</a>
+        </label>
+        </div>
+        </div>
+        </div>
+        </div>
+        </div>
+        } *@
+        </div>
+        <div class=" ">
+            @*  <div class="col-12 col-md-6 mb-4 cls_shadow2">
+        <div class="card">
+        <div class="card-body">
+       <h6 class="cls_copy_adress_span">Bank Mandate Form</h6>
+
+        <label class="cls_customer_label cls_mar_btm_4px">Upload Cancellation Cheque</label>
+        <div class="col-12 mb-3">
+        <Winit.UIComponents.Common.FileUploader.FileUploader FileExtension=".jpg,.jpeg,.pdf,.png,.doc" @ref="Cancellation_ChequefileUploader"
+        FileSysList="Cancellation_ChequefileSysList" RelativePath="@FilePath" FileSize="500000"
+        AllowMultipleFiles=true
+        LinkedItemType="Store" LinkedItemUID="@LinkedItemUID"
+        FileSysType="@Winit.Modules.Store.Model.Constants.FileSysTypeConstants.UploadCancellationCheque" FileType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.Image"
+        IsDirectory="false"
+        UploadEventCallBack="GetCancellationChequeSavedImagePath" DeleteEventCallBack="AfterDeleteImage" />
+        <div class="col-12 d-flex justify-content-end" style="padding:0px;">
+        <label for="termsCheckbox" class="form-check-label mb-0">
+        <a href="OnBoardingDocuments/Bank Mandate Form.pdf" download="Bank Mandate Form.pdf">DownLoad From here</a>
+        </label>
+        </div>
+        </div>
+        <div style="margin-bottom:5px;"></div>
+        <label class="cls_customer_label cls_mar_btm_4px">Upload Bank Mandate Form</label>
+        <div class="col-12 mb-3">
+        <Winit.UIComponents.Common.FileUploader.FileUploader FileExtension=".jpg,.jpeg,.pdf,.png,.doc"
+        FileSysList="Bank_MandatefileSysList" RelativePath="@FilePath" FileSize="500000" @ref="Bank_MandatefileUploader"
+        AllowMultipleFiles=true
+        LinkedItemType="Store" LinkedItemUID="@LinkedItemUID"
+        FileSysType="@Winit.Modules.Store.Model.Constants.FileSysTypeConstants.UploadBankMandateForm" FileType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.Image"
+        IsDirectory="false"
+        UploadEventCallBack="GetBankMandateSavedImagePath" DeleteEventCallBack="AfterDeleteImage" />
+        </div>
+        </div>
+        </div>
+        </div> *@
+            @if ((FirmType == FirmTypeConstants.Partnership || FirmType == FirmTypeConstants.Propertier || FirmType == FirmTypeConstants.Company || FirmType == null) && BroadClassification == BroadClassificationConst.SSD)
+            {
+                <div class="col-12 col-md-6 mb-4 cls_shadow2">
+                    <div class="card">
+                        <div class="card-body">
+                           <h6 class="cls_copy_adress_span">RMA Debit Letter<span class="cls_section_div_purchase2_span">*</span></h6>
+                            <label class="cls_customer_label cls_mar_btm_4px">Upload Files</label>
+                            <div class="col-12 mb-3">
+                                <Winit.UIComponents.Common.FileUploader.FileUploader FileExtension=".jpg,.jpeg,.pdf,.png,.doc" @ref="RMA_DebitLetterfileUploader"
+                                                                                     FileSysList="RMA_DebitLetterfileSysList" RelativePath="@FilePath" FileSize="500000"
+                                                                                     AllowMultipleFiles=true
+                                                                                     LinkedItemType="Store" LinkedItemUID="@LinkedItemUID"
+                                                                                     FileSysType="@Winit.Modules.Store.Model.Constants.FileSysTypeConstants.RMADebitLetter" FileType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.Image"
+                                                                                     IsDirectory="false"
+                                                                                     UploadEventCallBack="GetRMADebitLetterSavedImagePath" DeleteEventCallBack="AfterDeleteImage" />
+                                @* <div class="col-12 d-flex justify-content-end" style="padding:0px;display:@(DisplayDownloadPDF)">
+                                    <label for="termsCheckbox" class="form-check-label mb-0">
+                                        <a href="OnBoardingDocuments/RMA Debit Letter.pdf" download="RMA Debit Letter.pdf">DownLoad From here</a>
+                                    </label>
+                                </div> *@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        @if (HideVendor)
+        {
+            <div class="col-12 col-md-6 mb-4 cls_shadow2" >
+                <div class="card">
+                    <div class="card-body">
+                       <h6 class="cls_copy_adress_span">Bank Mandate Form<span class="cls_section_div_purchase2_span">*</span></h6>
+
+
+                        <div style="margin-bottom:5px;"></div>
+                        <label class="cls_customer_label cls_mar_btm_4px">Upload Bank Mandate Form</label>
+                        <div class="col-12 mb-3">
+                            <Winit.UIComponents.Common.FileUploader.FileUploader FileExtension=".jpg,.jpeg,.pdf,.png,.doc"
+                                                                                 FileSysList="Bank_MandatefileSysList" RelativePath="@FilePath" FileSize="500000" @ref="Bank_MandatefileUploader"
+                                                                                 AllowMultipleFiles=true
+                                                                                 LinkedItemType="Store" LinkedItemUID="@LinkedItemUID"
+                                                                                 FileSysType="@Winit.Modules.Store.Model.Constants.FileSysTypeConstants.UploadBankMandateForm" FileType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.Image"
+                                                                                 IsDirectory="false"
+                                                                                 UploadEventCallBack="GetBankMandateSavedImagePath" DeleteEventCallBack="AfterDeleteImage" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        }
+        <div class="col-12 col-md-6 mb-4 cls_shadow2" >
+            <div class="card">
+                <div class="card-body">
+                   <h6 class="cls_copy_adress_span">Cancellation/Security Cheque<span class="cls_section_div_purchase2_span">*</span></h6>
+
+
+                    <div style="margin-bottom:5px;"></div>
+                    <label class="cls_customer_label cls_mar_btm_4px">Upload Cancellation/Security Cheque</label>
+                    <div class="col-12 mb-3">
+                        <Winit.UIComponents.Common.FileUploader.FileUploader FileExtension=".jpg,.jpeg,.pdf,.png,.doc" @ref="Cancellation_ChequefileUploader"
+                                                                             FileSysList="Cancellation_ChequefileSysList" RelativePath="@FilePath" FileSize="500000"
+                                                                             AllowMultipleFiles=true
+                                                                             LinkedItemType="Store" LinkedItemUID="@LinkedItemUID"
+                                                                             FileSysType="@Winit.Modules.Store.Model.Constants.FileSysTypeConstants.UploadCancellationCheque" FileType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.Image"
+                                                                             IsDirectory="false"
+                                                                             UploadEventCallBack="GetCancellationChequeSavedImagePath" DeleteEventCallBack="AfterDeleteImage" />
+                        @* <div class="col-12 d-flex justify-content-end" style="padding:0px;display:@(DisplayDownloadPDF)">
+                            <label for="termsCheckbox" class="form-check-label mb-0">
+                                <a href="OnBoardingDocuments/Bank Mandate Form.pdf" download="Bank Mandate Form.pdf">DownLoad From here</a>
+                            </label>
+                        </div> *@
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 mb-4 cls_shadow2">
+            <div class="card">
+                <div class="card-body">
+                   <h6 class="cls_copy_adress_span">Others</h6>
+                    <label class="cls_customer_label cls_mar_btm_4px">Upload Files</label>
+                    <div class="col-12 mb-3">
+                        <Winit.UIComponents.Common.FileUploader.FileUploader FileExtension=".jpg,.jpeg,.pdf,.png,.doc" @ref="OthersfileUploader"
+                                                                             FileSysList="OthersfileSysList" RelativePath="@FilePath" FileSize="500000"
+                                                                             AllowMultipleFiles=true
+                                                                             LinkedItemType="Store" LinkedItemUID="@LinkedItemUID"
+                                                                             FileSysType="@Winit.Modules.Store.Model.Constants.FileSysTypeConstants.Others" FileType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.Image"
+                                                                             IsDirectory="false"
+                                                                             UploadEventCallBack="GetOthersSavedImagePath" DeleteEventCallBack="AfterDeleteImage" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<div class="cls_button_bottom_purchase">
+    <button class="cls_button_light" type="button" @onclick="OnClear">
+            Clear
+        </button>
+    <button class="cls_button_blue" type="submit" @onclick="SaveFileSys">@ButtonName</button>
+    </div>
+
+@if (ShowRequiredFieldNames)
+{
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show" tabindex="-1" style="display: block; overflow:scroll; ">
+        <div class="modal-dialog cls_pop_up_style">
+            <div class="modal-content">
+                <div class="modal-header" style="f">
+                    <h5 class="modal-title">Please upload following fields:</h5>
+                    <span class="close" @onclick="Close">&times;</span>
+                </div>
+                <div class="modal-body" style="height:600px; overflow-y: auto;">
+
+                    @foreach (var requirement in RequiredFileNames)
+                    {
+                        <span style="font-size:4px;">.</span> <li>@(requirement)</li>
+                    }
+                </div>
+                @* <div class="modal-footer">
+            <div style="float:left">
+            @if (!DisableCancelBtn)
+            {
+            <button type="button" class="cls_comman_sec_btn cls_mar_right_10px" @onclick="() => OnCloseClick.InvokeAsync()">@CancelbtnText</button>
+            }
+            @if (!DisableOkBtn)
+            {
+            <button type="button" class="cls_comman_btn" @onclick="()=>{OnOkClick.InvokeAsync();}">@OkbtnText</button>
+            }
+            </div>
+            </div> *@
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+}

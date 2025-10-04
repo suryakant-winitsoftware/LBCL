@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\SharedObjects\Winit.Shared.CommonUtilities\Winit.Shared.CommonUtilities.csproj" />
+    <ProjectReference Include="..\..\..\WINITServices\WINITServices.csproj" />
+    <ProjectReference Include="..\..\Address\Winit.Modules.Address.Model\Winit.Modules.Address.Model.csproj" />
+    <ProjectReference Include="..\..\ApprovalEngine\Winit.Modules.ApprovalEngine.BL\Winit.Modules.ApprovalEngine.BL.csproj" />
+    <ProjectReference Include="..\..\Base\Winit.Modules.Base.DL\Winit.Modules.Base.DL.csproj" />
+    <ProjectReference Include="..\..\Contact\Winit.Modules.Contact.Model\Winit.Modules.Contact.Model.csproj" />
+    <ProjectReference Include="..\..\FileSys\Winit.Modules.FileSys.DL\Winit.Modules.FileSys.DL.csproj" />
+    <ProjectReference Include="..\..\Settings\Winit.Modules.Settings.DL\Winit.Modules.Setting.DL.csproj" />
+    <ProjectReference Include="..\..\Settings\Winit.Modules.Settings.Model\Winit.Modules.Setting.Model.csproj" />
+    <ProjectReference Include="..\Winit.Modules.Store.Model\Winit.Modules.Store.Model.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+  </ItemGroup>
+</Project>

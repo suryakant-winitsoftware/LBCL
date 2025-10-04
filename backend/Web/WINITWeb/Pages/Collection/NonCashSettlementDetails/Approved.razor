@@ -1,0 +1,118 @@
+﻿@page "/approved"
+@using System.Net.Http.Json;
+@inject HttpClient httpClient;
+@using Newtonsoft.Json;
+@inject IJSRuntime JSRuntime;
+@inject NavigationManager _NavigationManager;
+@inject Winit.Modules.CollectionModule.BL.Interfaces.IApprovePaymentViewModel _approvePaymentViewModel
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+<style>
+    /* Add margin to the MudItem components for side spacing */
+    .mud-item {
+        margin-right: 5px; /* Adjust the spacing as needed */
+    }
+
+        /* Apply margin to the last MudItem in each row to avoid extra spacing */
+        .mud-item:nth-child(2n) {
+            margin-right: 0;
+        }
+
+    .custom-mudfield {
+        font-size: 12px; /* Adjust font size as needed */
+        padding: 20px;
+    }
+</style>
+
+
+
+<MudPaper Elevation="4" Class="py-8 px-10">
+    <h6>.</h6>
+    <div style="display: flex; flex-wrap: wrap;">
+        <div class="mud-item" style="flex-basis: calc(25% - 10px); margin-right: 10px;">
+            @Localizer["bank_name"]
+            <label class="form-control">@BankName</label>
+        </div>
+
+        <div class="mud-item" style="flex-basis: calc(25% - 10px); margin-right: 10px;">
+            @Localizer["branch_name"]
+            <label class="form-control">@BranchName</label>
+        </div>
+
+        <div class="mud-item" style="flex-basis: calc(25% - 10px); margin-right: 10px;">
+            @Localizer["date"]
+            <label class="form-control">@CommonFunctions.GetDateTimeInFormat(TransferDate)</label>
+        </div>
+        <div style="margin-bottom: 80px;"></div>
+        <div class="mud-item" style="flex-basis: calc(25% - 10px); margin-right: 10px;">
+            @Localizer["amount"]
+            <label class="form-control">@Amount</label>
+        </div>
+        <div class="mud-item" style="flex-basis: calc(25% - 10px); margin-right: 10px;">
+            @Localizer["status"]
+            <label class="form-control">@Status</label>
+        </div>
+        <div class="mud-item" style="flex-basis: calc(25% - 10px); margin-right: 10px;">
+            @Localizer["amount"]
+            <label class="form-control">@Amount</label>
+        </div>
+        <div class="mud-item" style="flex-basis: calc(25% - 10px); margin-right: 10px;">
+            @Localizer["level-1_comments"]
+            <label class="form-control">@Comments</label>
+        </div>
+        <div class="mud-item" style="flex-basis: calc(25% - 10px); margin-right: 10px;">
+            @Localizer["level-2_comments"]
+            <label class="form-control">@ApproveComments</label>
+        </div>
+        @if (!reverse)
+        {
+            <div class="mud-item" style="flex-basis: calc(25% - 10px); margin-right: 10px;">
+                @Localizer["reversal_reason"]
+                <label class="form-control">@ReversalComments</label>
+            </div>
+        }
+
+        <div class="mud-item" style="flex-basis: calc(25% - 10px); margin-right: 10px;">
+            @Localizer["can_be_reversed_?"]
+            <label class="form-control">@(reverse == true ? @Localizer["yes"] : @Localizer["no"])</label>
+        </div>
+
+        @if (reverse)
+        {
+            <div class="mud-item" style="flex-basis: calc(25% - 10px); margin-right: 10px;">
+                @Localizer["reversal_comments"]<span style="color:red">*</span>
+                <input type="text" placeholder="Enter Comments" class="form-control" @bind="sampletext" Lines="3"></input>
+            </div>
+        }
+    </div>
+</MudPaper>
+<div style="margin-bottom: 80px;"></div>
+
+@if (reverse)
+{
+
+    <input type="button" class="design" value=@Localizer["reversal"] style="background-color: #19298B;color: white;" @onclick="((e) => Clicked())" />
+    
+}
+
+<style>
+    .design {
+        width: 90px;
+        margin-left: -30px;
+        margin-top: -19px;
+    }
+
+    .carddes {
+        width: 110px;
+        height: 40px;
+        margin-left: 460px;
+        margin-top: -42px;
+    }
+</style>
+
+
+
+
+@code {
+
+}

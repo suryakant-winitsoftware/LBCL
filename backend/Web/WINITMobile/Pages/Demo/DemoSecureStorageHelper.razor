@@ -1,0 +1,17 @@
+﻿@page "/DemoStorage"
+<h3>DemoSecureStorageHelper</h3>
+<p>Username: @_storageHelper.GetStringFromPreferences("UserName")</p>
+<p>Is Logged In: @_storageHelper.GetBooleanFromPreference("IsLoggedIn")</p>
+<p>Age: @_storageHelper.GetIntFromPreferences("Age")</p>
+<p>Balance: @_storageHelper.GetDoubleFromPreference("Balance")</p>
+
+
+@code {
+    protected override void OnInitialized()
+    {
+        _storageHelper.SaveStringToPreference("UserName", "JohnDoe");
+        _storageHelper.SaveBooleanToPreference("IsLoggedIn", true);
+        _storageHelper.SaveIntToPreference("Age", 30);
+        _storageHelper.SaveDoubleToPreference("Balance", 1234.56);
+    }
+}

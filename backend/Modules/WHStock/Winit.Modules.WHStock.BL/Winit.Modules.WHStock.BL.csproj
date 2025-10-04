@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\SharedObjects\Winit.Shared.Models\Winit.Shared.Models.csproj" />
+    <ProjectReference Include="..\..\Base\Winit.Modules.Base.BL\Winit.Modules.Base.BL.csproj" />
+    <ProjectReference Include="..\..\Common\Winit.Modules.Common.BL\Winit.Modules.Common.BL.csproj" />
+    <ProjectReference Include="..\..\Org\Winit.Modules.Org.Model\Winit.Modules.Org.Model.csproj" />
+    <ProjectReference Include="..\..\Route\Winit.Modules.Route.BL\Winit.Modules.Route.BL.csproj" />
+    <ProjectReference Include="..\..\Route\Winit.Modules.Route.Model\Winit.Modules.Route.Model.csproj" />
+    <ProjectReference Include="..\..\SKU\Winit.Modules.SKU.BL\Winit.Modules.SKU.BL.csproj" />
+    <ProjectReference Include="..\..\StockUpdater\Winit.Modules.StockUpdater.BL\Winit.Modules.StockUpdater.BL.csproj" />
+    <ProjectReference Include="..\Winit.Modules.WHStock.DL\Winit.Modules.WHStock.DL.csproj" />
+    <ProjectReference Include="..\Winit.Modules.WHStock.Model\Winit.Modules.WHStock.Model.csproj" />
+  </ItemGroup>
+</Project>

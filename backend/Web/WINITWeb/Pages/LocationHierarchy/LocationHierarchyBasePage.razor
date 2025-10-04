@@ -1,0 +1,60 @@
+﻿@page "/LocationHierarchy"
+@using Microsoft.AspNetCore.Authorization
+@*@attribute [Authorize(Roles = "EMP1, Srinadh")]*@
+@attribute [Authorize]
+@inject Winit.Modules.Location.BL.Interfaces.ILocationViewModel _LocationViewModel
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@FilterColumns" IsSearchCriteriaNeeded="true"
+                     OnFilterApplied="@OnFilterApply" />
+
+
+<button class="cls_add_new_sec" @onclick="() => {Context = new Winit.Modules.Location.Model.Classes.LocationItemView(); Context.ItemLevel=0; IsAddLocation = !IsAddLocation; } ">@Localizer["add_new"]</button>
+<div class="div1 cls_Hierarchy_1">
+    <table style="table-layout:fixed;">
+        <thead>
+            <tr>
+        <th style="width:5%">
+        </th>
+                <th style="width:40%">
+            <span style="cursor:default;">@Localizer["code_&_name"]</span>
+        </th>
+                <th style="width:5%">
+            <span style="cursor:default;">@Localizer["level"]</span>
+        </th>
+                <th style="width:10%">
+            <span style="cursor:default;">@Localizer["parent"]</span>
+        </th>
+                <th style="width:20%">
+            <span style="cursor:default;">Location Type</span>
+        </th>
+                <th style="width:10%">
+            <span style="cursor:default;">@Localizer["action"]</span>
+        </th>
+            </tr>
+        </thead>
+           <tbody>
+        <LocationHierarchy HierarchyGrids="@_LocationViewModel.LocationItemViews" OnBtnExpandClick="GetChildGrid"
+                           OnCreateClick="CreateLocation" OnDeleteLocation="DeleteLocation"
+                           OnCreateClone="getClonedILocationItemView" OnUpdateClick="UpdateLocation"
+                           OnLocationTypebtnClicked="LocationTypeDDClicked" IsFirstGrid="true" />
+                              </tbody>
+    </table>
+
+</div>
+@if (IsAddLocation)
+{
+    <AddUpdateLocationPopUp CancelbtnText=@Localizer["cancel"] OkBtnText=@Localizer["create"] Context="Context" IsAddPopUp="true"
+                            OnCloseClick="AddLocationPOPupClosed" OnOkClick="CreateClickedFromHome"
+                            title=@Localizer["add_location_hierarchy"] OnLocationTypebtnClicked="async () =>{await LocationTypeDDClicked(Context);}" />
+}
+@if (IsLocationTypeDDOpen)
+{
+    <Winit.UIComponents.Common.CustomControls.DropDown DataSource="LocationTypeSelectionItems"
+                                                       IsButtonVisible="false"
+                                                       IsSearchable="false"
+                                                       OnSelect="LocationTypeSelected"
+                                                       ShowPopUp="IsLocationTypeDDOpen"
+                                                       Title="Select Location Type" />
+}
+

@@ -1,0 +1,54 @@
+﻿
+<div style="margin-bottom: 20px;"></div>
+<div class="d-flex flex-row col-12">
+    <div class="d-flex flex-row amountTabLeft col-6">
+        <div class="col-6">
+            <p class="Header">Total Receipts</p>
+        </div>
+        <div class="col-6">
+            <p class="Value">@DataSource.Count</p>
+        </div>
+    </div>
+    <div class="d-flex flex-row amountTabRight col-6">
+        <div class="col-6">
+            <p class="Header">Total Collection</p>
+        </div>
+        <div class="col-6">
+            <p class="Value">@CalculateTotalAmount()</p>
+        </div>
+    </div>
+</div>
+<div style="margin-bottom: 20px;"></div>
+<style>
+    .amountTabLeft {
+        background: #19298B;
+        height: 75px;
+        border-radius: 5px;
+        margin-left: -10px;
+    }
+
+    .amountTabRight {
+        background: #19298B;
+        height: 75px;
+        border-radius: 5px;
+        margin-left: 25px;
+    }
+
+    .Header {
+        text-align: left;
+        color: white;
+        margin-top: 35px;
+        font-size: 23px;
+        font-weight: 600;
+        margin-left: -15px;
+    }
+
+    .Value {
+        text-align: right;
+        color: white;
+        margin-top: 30px;
+        font-size: 23px;
+        font-weight: 600;
+    }
+
+</style>

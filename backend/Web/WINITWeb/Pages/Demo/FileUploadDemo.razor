@@ -1,0 +1,12 @@
+﻿@page "/fileuploading"
+
+<Winit.UIComponents.Common.FileUploader.FileUploader @ref=fileUploader FileExtension=".jpg,.jpeg,.pdf,.png" RelativePath="@FilePath" FileSize="500000" 
+
+AllowMultipleFiles=true 
+LinkedItemType="js" LinkedItemUID="kjsdk" FileSysType="type" 
+UploadEventCallBack="GetsavedImagePath" DeleteEventCallBack="AfterDeleteImage">
+
+</Winit.UIComponents.Common.FileUploader.FileUploader>
+
+<button @onclick="MoveFiles">Move Images</button>
+

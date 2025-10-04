@@ -1,0 +1,161 @@
+﻿@page "/EditPresalesOrder"
+@using Winit.Shared.Models.Common
+@using Winit.UIComponents.Common.CustomControles
+
+@inject NavigationManager NavManager
+
+
+<div style="width: 100%;float: left;">
+    <h6 style="color: #003898; font-weight: bold; margin: 0;">Edit Presales Order</h6>
+</div>
+<div style="width: 100%;float: left;">
+    <nav style="width: 100%;float: left;" aria-label="breadcrumb">
+        <ol class="breadcrumb" style="margin:0;">
+            <li class="breadcrumb-item" style="color:#003898 !important; font-weight:bold"><a href="#">Home</a></li>
+            <li class="separator" style="margin: 0 0.2rem;color:#003898;">>></li>
+            <li class="breadcrumb-item" style="color:#003898 !important; font-weight:bold"><a href="#">Manage Presales Orders</a></li>
+            <li class="separator" style="margin: 0 0.2rem;color:#003898;">>></li>
+            <li class="breadcrumb-item active" aria-current="page" style="color:#003898; font-weight:bold">Edit Presales Order</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="container">
+    <!-- Customer Details Form -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h4 class="card-title">Customer Details</h4>
+        </div>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label class="cls_new_lab"><span style="color:red;">*</span> <b>Sales Type</b></label>
+                <div class="d-flex align-items-start">
+                    <Winit.UIComponents.Common.CustomControls.DropDown Title="Sales Type" IsButtonVisible="true" IsSearchable="false" />
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label class="cls_new_lab"><span style="color:red;">*</span> <b>Route</b></label>
+                <div class="d-flex align-items-start">
+                    <Winit.UIComponents.Common.CustomControls.DropDown Title="Route" IsButtonVisible="true" IsSearchable="false" />
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label class="cls_new_lab"><span style="color:red;">*</span> <b>Select Customer</b></label>
+                <div class="d-flex align-items-start">
+                    <Winit.UIComponents.Common.CustomControls.DropDown Title="Select Customer" IsButtonVisible="true" IsSearchable="false" />
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label class="cls_new_lab"><span style="color:red;">*</span> <b>Order Date</b></label>
+                <input class="form-control" disabled="" required="" tabindex="-1" type="date" min="2024-01-05">
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label class="cls_new_lab"><span style="color:red;">*</span> <b>Delivery Date</b></label>
+                <input class="form-control " required="" tabindex="-1" type="date" usevalueasdate="" min="2024-01-05" max="9999-12-31">
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label class="cls_new_lab"><b>Customer PO Number</b></label>
+                <input class="form-control" required="" tabindex="-1" type="text" maxlength="0">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 mb-3" style="margin-top: 37px;">
+                <label class="cls_new_lab"><span style="color:red;"></span> <b>Status</b></label>
+            </div>
+            <div class="col-md-4 mb-3" style="margin-top: 37px;">
+                <label class="cls_new_lab"><span style="color:red;"></span> <b>Sales Order Number</b></label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Items Form -->
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-9">
+                    <h4 class="cls_inner_heading">Order Items</h4>
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-primary float-right mt-3">Add Product</button>
+                </div>
+            </div>
+            <div class="div1">
+            <table class="table mt-3">
+                <thead>
+                    <tr>
+                        <th class="tblHeader" >SKU Code</th>
+                        <th class="tblHeader" >SKU Name</th>
+                        <th class="tblHeader" >RWP</th>
+                        <th class="tblHeader" >Customer Price</th>
+                        <th class="tblHeader" >UOM</th>
+                        <th class="tblHeader" >Order Qty</th>
+                        <th class="tblHeader" >Total Price</th>
+                    </tr>
+                </thead>
+
+
+                <tbody>
+                    <tr>
+                        <td colspan="7" class="text-center">Please add product</td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-md-8">         
+        </div>
+        <div class="col-md-4">
+            <table class="table table-bordered" style="margin-top: 20px;">
+                <tbody>
+                    <tr>
+                        <td style="text-align: left; font-weight: bold;">Total SKU</td>
+                        <td>:</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left; font-weight: bold;">Amount Exc Tax($)</td>
+                        <td>:</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left; font-weight: bold;">Total Discount:($)</td>
+                        <td>:</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left; font-weight: bold;">Total Tax($)</td>
+                        <td>:</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left; font-weight: bold;">Amount Inc Tax($)</td>
+                        <td>:</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="row mb-2">
+    <div class="col-md-12 d-flex justify-content-center align-items-center">
+        <button class="btn btn-secondary">Delete Selected From List</button>&nbsp;
+        <button class="btn btn-secondary">Back</button>&nbsp;
+        <button class="btn btn-primary mr-2">Save</button>&nbsp;
+        <button class="btn btn-primary mr-2">Approve and Create Forwarded Order</button>&nbsp;
+        <button class="btn btn-secondary">Reject</button>
+
+
+    </div>
+</div>
+
+@code {
+
+}

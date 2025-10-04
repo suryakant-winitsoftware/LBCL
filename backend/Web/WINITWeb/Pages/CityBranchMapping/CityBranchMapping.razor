@@ -1,0 +1,39 @@
+﻿@page "/ViewCityBranchMapping"
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize]
+@using System.ComponentModel.DataAnnotations;
+@using System.Linq
+@using Winit.Modules.Org.Model.Interfaces;
+@inject Winit.Modules.Location.BL.Interfaces.ICityBranchMappingViewModel _cityBranchMappingViewModel;
+@using Newtonsoft.Json;
+@inherits WinIt.Pages.Base.BaseComponentBase
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@FilterColumns" IsSearchCriteriaNeeded="true"
+                     OnFilterApplied="@OnFilterApply" />
+
+
+
+@if (IsLoaded)
+{
+    <Winit.UIComponents.Web.Table.DivGridView Columns="DataGridColumns" DataSource="_cityBranchMappingViewModel.cityBrancheList" />
+    <Winit.UIComponents.Web.Paging.Paging CurrentPage="_cityBranchMappingViewModel.PageNumber" OnPageChange="_cityBranchMappingViewModel.PageIndexChanged" PageSize="_cityBranchMappingViewModel.PageSize" TotalItems="_cityBranchMappingViewModel.TotalItemsCount" />
+}
+
+@if (IsEditPopUp)
+{
+    <PopUp Title="@Localizer["branch_mapping"]"
+           OkbtnText="@Localizer["save"]"
+           CancelbtnText="@Localizer["back"]"
+           OnOkClick="InsertCityBranchMapping"
+           OnCloseClick="OnCancelFromBackBTnPopUpClick">
+        <div>
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_cityBranchMappingViewModel.BranchList"
+                                                               OnSelect="DropDownSelection"
+                                                               Title="Branch Mapping"
+                                                               _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Multiple"
+                                                               IsButtonVisible="true" />
+        </div>
+    </PopUp>
+ 
+}
+
+

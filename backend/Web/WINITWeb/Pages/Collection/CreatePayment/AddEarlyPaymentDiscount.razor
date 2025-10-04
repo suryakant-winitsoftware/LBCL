@@ -1,0 +1,101 @@
+﻿@page "/addearlypayment"
+@using System.Web;
+@using Newtonsoft.Json;
+
+@inject Winit.Modules.CollectionModule.BL.Interfaces.IEarlyPaymentConfigurationViewModel _earlyPaymentConfigurationViewModel
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+@if (IsRendered)
+{
+    <div class="cls_section">
+        <div class="cls_container_div1">
+            <h3 class="cls_container_p_full">
+                @Localizer["add_early_payment_discount"]
+            </h3>
+            <div class="cls_container_div1">
+                @* Form to capture Early Payment Discount details *@
+                <form method="post">
+                    <div class="cls_section_div_sku">
+                        <label for="PreSelectionType" class="cls_section_div_purchase2_label">@Localizer["salesorg"]</label>
+                        
+                            <select id="SalesOrg" @bind="@_earlyPaymentConfigurationViewModel.EarlyPayment.Sales_Org" name="SalesOrg" class="cls_select2_button">
+                                <option value="">@Localizer["select_salesorg"]</option>
+                                <option value="FR001">FR001</option>
+                            </select>
+                        
+                    </div>
+                    
+                    <div class="cls_section_div_sku">
+                        <label for="GroupType" class="cls_section_div_purchase2_label">@Localizer["group_type"]</label>
+                        
+                            <select class="cls_select2_button" @onchange="((ChangeEventArgs e) => OnGroupTypeChange(e))">
+                                <option value="">@Localizer["select_group_type"]</option>
+                                <option value="Customer">@Localizer["customer"]</option>
+                            </select>
+                        
+                    </div>
+                    <div class="cls_section_div_sku">
+                        <label for="GroupCode" class="cls_section_div_purchase2_label">@Localizer["group_code"]</label>
+                        
+                            @if (ShowCustomers)
+                            {
+                                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="customerData" ShowPopUp=@ShowCustomers Title=@selectedValueText OnSelect="@((e)=>OnSelected(e,"CustomerType"))" />
+                            }
+                            else
+                            {
+                            <button class="cls_select2" @onclick="@(()=>ShowCustomers = !ShowCustomers)">
+                                <label class="cls_select2_label1"> @selectedValueText</label>
+                                <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+                                </button>
+                            }
+                        
+                    </div>
+                    <div class="cls_section_div_sku">
+                        <label for="PaymentType" class="cls_section_div_purchase2_label">@Localizer["payment_type"]</label>
+                        
+                            <select id="PaymentType" name="PaymentType" class="cls_select2_button" @bind="@_earlyPaymentConfigurationViewModel.EarlyPayment.Payment_Mode">
+                                <option value="">@Localizer["select_value"]</option>
+                                @foreach (var item in PaymentModes)
+                                {
+                                    <option value="@item">@item</option>
+                                }
+                            </select>
+                        
+                    </div>
+                    <div class="cls_section_div_sku">
+                        <label for="DiscountPercentage" class="cls_section_div_purchase2_label">@Localizer["discount_percentage"]</label>
+                        
+                            <input type="number" class="cls_select2_button" id="DiscountPercentage" name="DiscountPercentage" placeholder="Discount Percentage" @bind="_earlyPaymentConfigurationViewModel.EarlyPayment.Discount_Value">
+                        
+                    </div>
+                    <div class="cls_section_div_sku">
+                        <label for="NoOfDays" class="cls_section_div_purchase2_label"># @Localizer["of_days"]</label>
+                       
+                            <input type="number" class="cls_select2_button" id="NoOfDays" name="NoOfDays" placeholder="# Of Days" @bind="_earlyPaymentConfigurationViewModel.EarlyPayment.Advance_Paid_Days">
+                        
+                    </div>
+                    
+                    <div class="cls_section_div_sku">
+                        <label for="ValidFrom" class="cls_section_div_purchase2_label">@Localizer["valid_from"]</label>
+
+                        <input type="date" class="cls_select_date" id="ValidFrom" name="ValidFrom" placeholder="Valid From" @bind="_earlyPaymentConfigurationViewModel.EarlyPayment.Valid_From" min="@PastDates">
+                       
+                    </div>
+                    
+                    <div class="cls_section_div_sku">
+                        <label for="ValidTo" class="cls_section_div_purchase2_label">@Localizer["valid_to"]</label>
+
+                        <input type="date" class="cls_select_date" id="ValidTo" name="ValidTo" placeholder="Valid To" @bind="_earlyPaymentConfigurationViewModel.EarlyPayment.Valid_To" min="@PastDates">
+                        
+                    </div>
+                    <div class="cls_button_bottom_purchase">
+
+                        <button type="button" class="cls_button_blue" @onclick="InsertOrUpdate">@Localizer["save"]</button>
+                        <button class="cls_button_light" @onclick="NavigateToConfiguration">@Localizer["back"]</button>
+                        
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}

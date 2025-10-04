@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="iTextSharp.LGPLv2.Core" Version="3.4.17" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Base\Winit.Modules.Base.Model\Winit.Modules.Base.Model.csproj" />
+    <ProjectReference Include="..\..\JourneyPlan\Winit.Modules.JourneyPlan.Model\Winit.Modules.JourneyPlan.Model.csproj" />
+    <ProjectReference Include="..\..\Settings\Winit.Modules.Settings.Model\Winit.Modules.Setting.Model.csproj" />
+  </ItemGroup>
+</Project>

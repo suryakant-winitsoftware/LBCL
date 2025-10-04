@@ -1,0 +1,105 @@
+﻿@page "/ViewVanStock"
+@using Winit.UIComponents.Common.CustomControls;
+@using Winit.Shared.Models.Enums;
+@inject Winit.Modules.Org.BL.Interfaces.IViewWareHouse_VanStockViewModel _viewmodel
+<h3>View Van Stock</h3>
+
+
+<div style="width:100%;float:left;margin-top:5px;">
+    <Winit.UIComponents.Common.CustomControles.Tabs TabItems="TabSelectionItems" OnTabSelect="OnTabSelect" />
+</div>
+<div>
+    <p>SKUs: @TotalSKUs</p>
+    <p>Quantity: @TotalSkuQty</p>
+    <p>Value : @TotalValue</p>
+   
+ 
+</div>
+<div class="cls_serch_nn mb-3">
+    <WinitTextBox Placeholder="Search by Code/Description"
+                  MaxLength="200" DebounceInterval="500"
+                  KeyboardType="InputType.Text"
+                  Value="@searchQuery" IsForSearch="true"
+                  OnDebounceIntervalElapsed="OnSearching" />
+</div>
+@if (StockItemsShow == null || !StockItemsShow.Any())
+{
+    <p>No stock items found.</p>
+}
+else
+{
+    <div >
+        <table>
+            <thead>
+                <tr>
+                    <th>Item Code/Description</th>
+                    <th>Total Qty</th>
+                    <th>Total Value</th>
+                   
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in StockItemsShow)
+                {
+                    <tr @onclick="() => ShowItemDetails(item)">
+                        <td>
+                            @item.SKUCode @item.SKUName
+                            <br />  
+                        </td>
+                        <td>@item.TotalEAQty</td>
+                        <td>@item.TotalCost</td>
+                        
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+
+<button @onclick="() => PrintVanStock()" class="btn btn-primary">Finish</button>
+
+@if (selectedItem != null)
+{
+    <div class="modal show d-block" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" aria-label="Close" @onclick="CloseModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex">
+                        @* <img src='@(Path.Combine(_appConfigs.ApiDataBaseUrl, selectedItem.SKUImage))' class="img-thumbnail me-3" alt="item img" style="width: 80px; height: 80px;"> *@
+                        <div>
+                            <p>Code: @selectedItem.SKUCode</p>
+                            <p>Name: @selectedItem.SKUName</p>
+                            <p>1 CASE = @selectedItem.OuterMultiplier PCS</p>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <div class="form-group row">
+                            <div class="col-sm-6 d-flex justify-content-between">
+                                <label class="col-form-label">UOM</label>
+                                <label class="col-form-label">QTY</label>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-column">
+                            <div class="col-sm-6 d-flex justify-content-between m-1">
+                                <label>CASE</label>
+                                <label>@selectedCaseQty</label>
+                            </div>
+                            <div class="col-sm-6 d-flex justify-content-between">
+                                <label>PC</label>
+                                <label>@selectedPieceQty</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" @onclick="CloseModal">Done</button>
+                </div>
+            </div>
+        </div>
+        <div class="show"></div>
+    </div>
+}

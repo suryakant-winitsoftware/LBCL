@@ -1,0 +1,22 @@
+﻿@page "/StandardPriceList"
+@using Winit.Modules.SKU.BL.Interfaces
+@inherits WinIt.Pages.Base.BaseComponentBase
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@inject IMaintainStandardPriceListBaseViewModel _viewModel
+
+@if (_viewModel.isLoad)
+{
+  
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+                         OnFilterApplied="@_viewModel.OnFilterApply" />
+
+
+    <Winit.UIComponents.Web.SalesManagement.PriceManagement.SKUPriceGrid 
+                                                                  OnSort=_viewModel.OnSort PriceListUID="@_appSetting.PriceApplicationModel"
+                                                                  IsNew=false SKUPriceList=_viewModel.SerchedSKUPriceList
+                                                                 
+                                                                  TotalItemsCount="_viewModel._totalItems" PageSize="_viewModel._pageSize" PageNumber="_viewModel._currentPage" ShowRecordsCount="true" />
+
+    @* <Winit.UIComponents.Web.Table.TableGridView DataSource="_viewModel.SerchedSKUPriceList" Columns="ProductColumns" OnSort=_viewModel.OnSort /> *@
+    <Winit.UIComponents.Web.Paging.Paging TotalItems=@_viewModel._totalItems PageSize="_viewModel._pageSize" CurrentPage="_viewModel._currentPage" OnPageChange="_viewModel.OnPageChange" />
+}

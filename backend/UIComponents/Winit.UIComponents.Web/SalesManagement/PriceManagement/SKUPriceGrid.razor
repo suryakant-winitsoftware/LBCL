@@ -1,0 +1,161 @@
+﻿@using Winit.Modules.Common.BL.Interfaces
+@inject IAppUser _iAppUser
+@inject Winit.UIComponents.Common.IAlertService _alertService
+@inject Winit.UIComponents.Common.Services.ILoadingService _loadingService
+@inject Winit.UIComponents.Web.SalesManagement.PriceManagement.Services.ISKUPriceDataHelper _skuPriceViewModel
+@using Microsoft.Extensions.Localization
+@using Winit.UIComponents.Common.LanguageResources.Web
+@inject Winit.UIComponents.Common.Language.ILanguageService _languageService
+@inject IStringLocalizer<LanguageKeys> Localizer
+
+@* <div class="cls_container_div4 ">
+
+
+    <button class="cls_add_new_sec" @onclick="() => AddProductDialogBox?.OnOpenClick()">Add Product</button>
+
+</div> *@
+
+<Winit.UIComponents.Web.DialogBox.ProductDialogBox T="Winit.Modules.SKU.Model.Interfaces.ISKUV1"
+                                                   DataSource="_skuPriceViewModel.SKULIst"
+                                                   SKUCode="@(e => e.Code )"
+                                                   SKUHeader="@(e => e.Name)"
+                                                   OnCancelClick="() => AddProductDialogBox?.OnCloseClick()"
+                                                   OnOkClick="GetSelectedItems"
+                                                   @ref="AddProductDialogBox"></Winit.UIComponents.Web.DialogBox.ProductDialogBox>
+
+<div class="cls_container_div1">
+
+    <div class="cls_container_div1">
+        <div class="cls_container_div1">
+            @if (ShowRecordsCount && !string.IsNullOrEmpty(ViewingMessage))
+            {
+                <p class="cls_table_page_split_count">@ViewingMessage</p>
+            }
+        </div>
+    </div>
+    <div class="div1">
+        <table>
+            <thead>
+                <tr>
+                    <th @onclick="@(()=>SortColumn("SKUCode"))">
+                        <span style="text-decoration:underline;cursor:pointer;">@Localizer["sku_code"]</span>
+                        @if (currentSortField == "SKUCode")
+                        {
+                            <span>@(isAscending ? "▲" : "▼")</span>
+                        }
+                    </th>
+                    <th @onclick="@(()=>SortColumn("SKUName"))">
+                        <span style="text-decoration:underline;cursor:pointer;">
+                            @Localizer["sku_name"]
+                        </span>
+                        @if (currentSortField == "SKUName")
+                        {
+                            <span>@(isAscending ? "▲" : "▼")</span>
+                        }
+                    </th>
+
+                    <th>@Localizer["valid_from"]</th>
+                    <th>@Localizer["valid_upto"]</th>
+
+                    <th>MRP</th>
+                    <th>DP</th>
+                    <th>Min Selling Price</th>
+                    @* <th>@Localizer["action"]</th> *@
+                </tr>
+            </thead>
+            <tbody>
+                @if (SKUPriceList == null || SKUPriceList.Count == 0)
+                {
+                    <tr style="color:red">no records found</tr>
+                }
+                else
+                {
+                    @foreach (var item in SKUPriceList)
+                    {
+                        count++;
+                        <tr>
+                            <td>@item.SKUCode</td>
+                            <td>@item.SKUName</td>
+
+                            <td>
+                                @if (item.IsEdit && item.ISNew)
+                                {
+                                    <input type="date" @bind="@item.TempValidFrom" min="@DateTime.Now.Date" />
+                                }
+                                else
+                                {
+                                    <label>@Winit.Shared.CommonUtilities.Common.CommonFunctions.GetDateTimeInFormat(item.ValidFrom)</label>
+                                }
+                            </td>
+                            <td>
+                                @if (item.IsEdit)
+                                {
+                                    <input type="date" @bind="@item.TempValidUpto" />
+                                }
+                                else
+                                {
+                                    <label>@Winit.Shared.CommonUtilities.Common.CommonFunctions.GetDateTimeInFormat(item.ValidUpto)</label>
+                                }
+
+                            </td>
+
+
+                            <td>
+                                @if (item.IsEdit && item.ISNew)
+                                {
+                                    <input type="number" @bind="@item.TempMRP" />
+                                }
+                                else
+                                {
+                                    @CommonFunctions.RoundForSystem(item.MRP)
+                                }
+                            </td>
+                            <td>
+                                @if (item.IsEdit && item.ISNew)
+                                {
+                                    <input type="number" @bind="@item.TempDummyPrice" />
+
+                                }
+                                else
+                                {
+                                    @CommonFunctions.RoundForSystem(item.DummyPrice)
+                                }
+                            </td>
+                            <td>
+                                @if (item.IsEdit && item.ISNew)
+                                {
+                                    <input type="number" @bind="@item.TempPriceLowerLimit" />
+                                }
+                                else
+                                {
+                                    @CommonFunctions.RoundForSystem(item.PriceLowerLimit)
+                                }
+                            </td>
+
+                            @* <td>
+                                @if (!item.IsEdit && Shared.CommonUtilities.Common.CommonFunctions.GetBooleanValue(item.IsLatest))
+                                {
+                                    <a onclick="@(()=>ChangeDuplicate(item))">
+                                        <img src="Images/add.png" />
+                                    </a>
+                                }
+                                <a @onclick="@(()=>DeleteSKUPrice(item))"><img src="Images/delete.png" /></a>
+                                @if (item.IsEdit)
+                                {
+                                    <a @onclick="@(()=>SaveOrUpdateIndividual(item,true))">
+                                        <img style="width:18px;height:20px" src="Images/save.png" />
+                                    </a>
+                                    <a @onclick="@(()=>SaveOrUpdateIndividual(item,false))"><img src="Images/cancel.png" /></a>
+                                }
+                                else
+                                {
+                                    <a @onclick="@(()=>EditSkuDetails(item))"><img style="width:18px;height:20px" src="Images/edit.png" /></a>
+                                }
+                            </td> *@
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

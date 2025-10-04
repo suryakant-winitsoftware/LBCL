@@ -1,0 +1,600 @@
+﻿@inject Winit.UIComponents.Common.Services.ILoadingService _loadingService
+@inject NavigationManager _navigationManager
+@using Microsoft.Extensions.Localization
+@using Winit.UIComponents.Common.LanguageResources.Web
+@inject Winit.UIComponents.Common.Language.ILanguageService _languageService
+@inject IStringLocalizer<LanguageKeys> Localizer
+@if (isLoad)
+{
+
+    <div></div>
+    <div>  <h1>@Localizer["invoice_information"]</h1></div>
+    <div style="width:100%;float:left;margin:30px 0px;">
+        <div class="row">
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="cls_main_sign_input_new1">
+                    <p>@Localizer["invoice_frequency"]</p>
+                    @if (IsInvoiceFrequencyDisplay)
+                    {
+                        <Winit.UIComponents.Common.CustomControls.DropDown ShowPopUp=true DataSource="InvoiceFrequency" OnSelect=@((e)=>OnSelected(e,"InvoiceFrequency")) />
+
+                    }
+                    else
+                    {
+                        <button class="form-select" @onclick=@(()=>IsInvoiceFrequencyDisplay=!IsInvoiceFrequencyDisplay)>@InvoiceFrequencyLabel</button>
+                    }
+                </div>
+
+
+            </div>
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="cls_main_sign_input_new1">
+                    <p>@Localizer["invoice_format"]</p>
+                    @if (IsInvoiceFormatDisplay)
+                    {
+
+                        <Winit.UIComponents.Common.CustomControls.DropDown ShowPopUp=true DataSource="InvoiceFormat" OnSelect=@((e)=>OnSelected(e,"InvoiceFormat")) />
+                    }
+                    else
+                    {
+                        <button class="form-select" @onclick=@(()=>IsInvoiceFormatDisplay=!IsInvoiceFormatDisplay)>@InvoiceFormatLabel</button>
+                    }
+                </div>
+
+             
+            </div>
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="cls_main_sign_input_new1">
+                    <p>@Localizer["invoice_delivery_method"]</p>
+                    <button class="form-select" @onclick=@(()=>IsInvoiceDeliveryMethod=!IsInvoiceDeliveryMethod)>@InvoiceDeliveryMethodLabel</button>
+                    @if (IsInvoiceDeliveryMethod)
+                    {
+                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="InvoiceDeliverymethod" OnSelect=@((e)=>OnSelected(e,"InvoiceDeliveryMethod")) />
+                    }
+
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="cls_main_sign_input_new1">
+                    <p>@Localizer["display_delivery_docket"]</p>
+                    <div class="cls_main_check_radio">
+                        <input type="radio" @oninput="ChangeIsEditedOrNot" name="IsDisplayDeliveryDocket" value="option1" id="option1" checked="@_StoreAdditionalInfo.DisplayDeliveryDocket" @onclick="(()=>_StoreAdditionalInfo.DisplayDeliveryDocket=true)">
+                        <label for="option1" @onclick=@(()=>_StoreAdditionalInfo.DisplayDeliveryDocket=true)>@Localizer["yes"]</label>
+                        <input type="radio" @oninput="ChangeIsEditedOrNot" name="IsDisplayDeliveryDocket" value="option2" id="option2" checked="@(!_StoreAdditionalInfo.DisplayDeliveryDocket)" @onclick="(()=>_StoreAdditionalInfo.DisplayDeliveryDocket=false)">
+                        <label for="option2" @onclick=@(()=>_StoreAdditionalInfo.DisplayDeliveryDocket=false)>@Localizer["no"]</label>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="cls_main_sign_input_new1">
+                    <p>@Localizer["display_po_number"]</p>
+                    <div class="cls_main_check_radio">
+                        <input type="radio" @oninput="ChangeIsEditedOrNot" name="IsDisplayPONo" value="option1" id="option1" checked="@_StoreAdditionalInfo.ShowCustPO" @onclick="(()=>_StoreAdditionalInfo.ShowCustPO=true)">
+                        <label for="option1">@Localizer["yes"]</label>
+                        <input type="radio" @oninput="ChangeIsEditedOrNot" name="IsDisplayPONo" value="option2" id="option2" checked="@(!_StoreAdditionalInfo.ShowCustPO)" @onclick="(()=>_StoreAdditionalInfo.ShowCustPO=false)">
+                        <label for="option2">@Localizer["no"]</label>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="cls_main_sign_input_new1">
+                    <p>@Localizer["display_price"]</p>
+                    <div class="cls_main_check_radio">
+                        <input type="radio" @oninput="ChangeIsEditedOrNot" name="IsDisplayPrice" value="option1" id="option1" checked="@_StoreAdditionalInfo.DisplayPrice" @onclick="(()=>_StoreAdditionalInfo.DisplayPrice=true)">
+                        <label for="option1">@Localizer["yes"]</label>
+                        <input type="radio" @oninput="ChangeIsEditedOrNot" name="IsDisplayPrice" value="option2" id="option2" checked="@(!_StoreAdditionalInfo.DisplayPrice)" @onclick="(()=>_StoreAdditionalInfo.DisplayPrice=false)">
+                        <label for="option2">@Localizer["no"]</label>
+                    </div>
+                </div>
+
+
+            </div>
+           
+            
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="cls_main_sign_input_new1">
+                    <p>@Localizer["invoice_text"]</p>
+                    <textarea type="text" maxlength="250" @oninput="ChangeIsEditedOrNot" @bind="@_StoreAdditionalInfo.InvoiceText" placeholder="Enter Invoice Text" />
+
+                </div>
+
+            </div>
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="cls_main_sign_input_new1">
+                    <p>@Localizer["start_date"]</p>
+                    <input type="date" @oninput="ChangeIsEditedOrNot" @bind="@_StoreAdditionalInfo.InvoiceStartDate" />
+                </div>
+
+            </div>
+          
+            <div  class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="cls_main_sign_input_new1">
+                    <p>@Localizer["end_date"]</p>
+                    <input type="date" @oninput="ChangeIsEditedOrNot" @bind="@_StoreAdditionalInfo.InvoiceEndDate" />
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+
+    @* <div style="display:none"><h1>Payment Details</h1>
+    <div style="width:100%;float:left;margin:30px 0px;">
+        <div class="row">
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="cls_main_sign_input_new1">
+                    <p>Prefered Payment Mode</p>
+                    @if (IsPaymentModeDisplay)
+                    {
+                        <Winit.UIComponents.Common.CustomControls.DropDown ShowPopUp=true DataSource="PaymentMode" OnSelect=@((e)=>OnSelected(e,"PaymentMode")) />
+                    }
+                    else
+                    {
+                        <button class="form-select" @onclick=@(()=>IsPaymentModeDisplay=!IsPaymentModeDisplay )>@PaymentModeLabel</button>
+                    }
+
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="cls_main_sign_input_new1">
+                    <p>Price Type</p>
+                    @if(IsPriceTypeDisplay){
+                        <Winit.UIComponents.Common.CustomControls.DropDown ShowPopUp=true DataSource="PriceType" OnSelect=@((e)=>OnSelected(e,"PriceType")) />
+                    }
+                    else
+                    {
+                        <button class="form-select" @onclick=@(()=>IsPriceTypeDisplay=!IsPriceTypeDisplay)>@PriceTypeLabel</button>
+                    }
+                 
+                </div>
+
+            </div>
+
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="cls_main_sign_input_new1">
+                    <p>Expected Avg Monthly Income</p>
+                        <input type="text" maxlength="250" @oninput="ChangeIsEditedOrNot" @bind="@_StoreAdditionalInfo.AverageMonthlyIncome" placeholder="Enter Expected Avg Monthly Income" />
+                  
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="cls_main_sign_input_new1">
+                    <p>Drawer</p>
+                        <input type="text" maxlength="250" @oninput="ChangeIsEditedOrNot" @bind="@_StoreAdditionalInfo.Drawer" placeholder="Enter Drawer" />
+                  
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="cls_main_sign_input_new1">
+                    <p>Invoice Delivery Method</p>
+                    @if (IsDeliveryMethodDisplay)
+                    {
+                        <Winit.UIComponents.Common.CustomControls.DropDown ShowPopUp=true DataSource="DeliveryMethod" OnSelect=@((e)=>OnSelected(e,"DeliveryMethod")) />
+                    }
+                    else
+                    {
+                        <button class="form-select" @onclick=@(()=>IsDeliveryMethodDisplay=!IsDeliveryMethodDisplay)>@DeliveryMethodLabel</button>
+                    }
+                </div>
+
+            </div>
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="cls_main_sign_input_new1">
+                    <p>Default Bank</p>
+                    @if(IsBankDisplay){
+                        <Winit.UIComponents.Common.CustomControls.DropDown ShowPopUp=true DataSource="Bank" OnSelect=@((e)=>OnSelected(e,"Bank")) />
+                    }
+                    else
+                    {
+                        <button class="form-select" @onclick=@(()=>IsBankDisplay=!IsBankDisplay)>@BankLabel</button>
+                    }
+                </div>
+
+            </div>
+
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="cls_main_sign_input_new1">
+                    <p>Account Number</p>
+                    <input type="text" @oninput="ChangeIsEditedOrNot" @bind="@_StoreAdditionalInfo.AccountNumber" placeholder="Enter Account Number" />
+                  
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="cls_main_sign_input_new1">
+                    <p>No. Of Cash Counters</p>
+                    <input type="text" @oninput="ChangeIsEditedOrNot" @bind="@_StoreAdditionalInfo.NoOfCashCounters" placeholder="Enter No. Of Cash Counters" />
+                  
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+    </div> *@
+    <div><h1>@Localizer["route_delivery_profile"]</h1></div>
+    <div style="width:100%;float:left;margin:30px 0px;">
+        <div class="row">
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="cls_main_sign_input_new1">
+                    <p>@Localizer["default_route"]</p>
+                    @if (IsRouteDisplay)
+                    {
+                        <Winit.UIComponents.Common.CustomControls.DropDown ShowPopUp=true DataSource="Route" OnSelect=@((e)=>OnSelected(e,"Route")) />
+                    }
+                    else
+                    {
+                        <button class="form-select" @onclick=@(()=>IsRouteDisplay=!IsRouteDisplay)>@RouteLabel</button>
+                    }
+                   
+                </div>
+
+              
+            </div>
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="cls_main_sign_input_new1">
+                    <p>@Localizer["building_delivery_code"]</p>
+                    <input type="text" maxlength="250" @oninput="ChangeIsEditedOrNot" @bind="@_StoreAdditionalInfo.BuildingDeliveryCode" placeholder=@Localizer["enter_building_delivery_code"] />
+                
+                </div>
+
+             
+            </div>
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="cls_main_sign_input_new1">
+                    <p>@Localizer["delivery_instruction"]</p>
+                    <textarea type="text" @oninput="ChangeIsEditedOrNot" @bind="@_StoreAdditionalInfo.DeliveryInformation" placeholder=@Localizer["enter_delivery_instruction"] maxlength ="500" />
+              
+                </div>
+
+              
+            </div>
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="cls_main_sign_input_new1">
+                    <p>@Localizer["stop_delivery"]</p>
+                    <div class="cls_main_check_radio">
+                        <input type="radio"  name="IsStopDelivery" value="option1" id="option1" checked="@_StoreAdditionalInfo.IsStopDelivery" @onchange="(()=>Set_StopDelivery(true))">
+                        <label for="option1" @onclick="(()=>Set_StopDelivery(true))">@Localizer["yes"]</label>
+                        <input type="radio"  name="IsStopDelivery" value="option2" id="option2" checked="@(!_StoreAdditionalInfo.IsStopDelivery)" @onchange="(()=>Set_StopDelivery(false))">
+                        <label for="option2" @onclick="(()=>Set_StopDelivery(false))">@Localizer["no"]</label>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="cls_main_sign_input_new1">
+                    <p>@Localizer["temperature_check"] </p>
+                    <div class="cls_main_check_radio">
+                        <input type="radio" @oninput="ChangeIsEditedOrNot" name="IsTempCheck" value="IsTempCheck1" id="IsTempCheck1" checked="@_StoreAdditionalInfo.IsTemperatureCheck" @onclick="(()=>_StoreAdditionalInfo.IsTemperatureCheck=true)">
+                        <label for="IsTempCheck1">@Localizer["yes"]</label>
+                        <input type="radio" @oninput="ChangeIsEditedOrNot" name="IsTempCheck" value="IsTempCheck2" id="IsTempCheck2" checked="@(!_StoreAdditionalInfo.IsTemperatureCheck)" @onclick="(()=>_StoreAdditionalInfo.IsTemperatureCheck=false)">
+                        <label for="IsTempCheck2">@Localizer["no"]</label>
+                    </div>
+                 
+                </div>
+
+           
+            </div>
+        </div>
+   
+    </div>
+
+
+    <div> <h1>@Localizer["order_settings"]</h1></div>
+    <div class="row">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="cls_main_sign_input_new1">
+                <p> @Localizer["po_number"]</p>
+                <input type="text" @oninput="ChangeIsEditedOrNot" @bind="@_StoreAdditionalInfo.PurchaseOrderNumber" placeholder=@Localizer["enter_po_number"] />
+
+            </div>
+
+        </div>
+      
+
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="cls_main_sign_input_new1">
+                <p>@Localizer["purchase_order_always_required"]</p>
+                <div class="cls_main_check_radio">
+                    <input type="radio" @oninput="ChangeIsEditedOrNot" name="POAlwaysRequired" value="POAlwaysRequired1" id="POAlwaysRequired1" @onclick="(()=>_StoreAdditionalInfo.DeliveryDocketIsPurchaseOrderRequired=1)" checked="@CommonFunctions.GetBooleanValue(_StoreAdditionalInfo.DeliveryDocketIsPurchaseOrderRequired)">
+                    <label for="POAlwaysRequired1">@Localizer["yes"]</label>
+                    <input type="radio" @oninput="ChangeIsEditedOrNot" name="POAlwaysRequired" value="POAlwaysRequired2" id="POAlwaysRequired2" @onclick="(()=>_StoreAdditionalInfo.DeliveryDocketIsPurchaseOrderRequired=0)" checked="@(!CommonFunctions.GetBooleanValue(_StoreAdditionalInfo.DeliveryDocketIsPurchaseOrderRequired))">
+                    <label for="POAlwaysRequired2">@Localizer["no"]</label>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="cls_main_sign_input_new1">
+                <p>@Localizer["with_printed_prices"]</p>
+                <div class="cls_main_check_radio">
+                    <input type="radio" @oninput="ChangeIsEditedOrNot" name="WithPrintedPrices" value="WithPrintedPrices1" id="WithPrintedPrices1" @onclick="(()=>_StoreAdditionalInfo.IsWithPrintedInvoices=true)" checked="@_StoreAdditionalInfo.IsWithPrintedInvoices">
+                    <label for="WithPrintedPrices1">@Localizer["yes"]</label>
+                    <input type="radio" @oninput="ChangeIsEditedOrNot" name="WithPrintedPrices" value="WithPrintedPrices2" id="WithPrintedPrices2" @onclick="(()=>_StoreAdditionalInfo.IsWithPrintedInvoices=false)" checked="@(!_StoreAdditionalInfo.IsWithPrintedInvoices)">
+                    <label for="WithPrintedPrices2">@Localizer["no"]</label>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="cls_main_sign_input_new1">
+                <p>@Localizer["capture_signature"]</p>
+                <div class="cls_main_check_radio">
+                    <input type="radio" @oninput="ChangeIsEditedOrNot" name="CaptureSignature" value="CaptureSignature1" id="CaptureSignature1" @onclick="(()=>_StoreAdditionalInfo.IsCaptureSignatureRequired=true)" checked="@_StoreAdditionalInfo.IsCaptureSignatureRequired">
+                    <label for="CaptureSignature1">@Localizer["yes"]</label>
+                    <input type="radio" @oninput="ChangeIsEditedOrNot" name="CaptureSignature" value="CaptureSignature2" id="CaptureSignature2" @onclick="(()=>_StoreAdditionalInfo.IsCaptureSignatureRequired=false)" checked="@(!_StoreAdditionalInfo.IsCaptureSignatureRequired)">
+                    <label for="CaptureSignature2">@Localizer["no"]</label>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="cls_main_sign_input_new1">
+                <p>@Localizer["always_printed"]</p>
+                <div class="cls_main_check_radio">
+                    <input type="radio" @oninput="ChangeIsEditedOrNot" name="IsAlwaysPrinted" value="IsAlwaysPrinted1" id="IsAlwaysPrinted1"
+                        @onclick="(()=>_StoreAdditionalInfo.IsAlwaysPrinted=1)" checked="@(()=>_StoreAdditionalInfo.IsAlwaysPrinted==1?true:false)">
+                    <label for="IsAlwaysPrinted1">@Localizer["yes"]</label>
+                    <input type="radio" @oninput="ChangeIsEditedOrNot" name="IsAlwaysPrinted" value="IsAlwaysPrinted2" id="IsAlwaysPrinted2" 
+                        @onclick="(()=>_StoreAdditionalInfo.IsAlwaysPrinted=0)" checked="@(()=>_StoreAdditionalInfo.IsAlwaysPrinted==0?true:false)">
+                    <label for="IsAlwaysPrinted2">@Localizer["no"]</label>
+                </div>
+            </div>
+          
+        </div>
+
+
+    </div>
+
+    <div><h1>@Localizer["return_order_settings"]</h1></div>
+    <div class="row">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="cls_main_sign_input_new1">
+                <p>@Localizer["purchase_order_always_required"]</p>
+                <div class="cls_main_check_radio">
+                    <input type="radio" @oninput="ChangeIsEditedOrNot" name="PurchaseOrderAlwaysRequired" value="PurchaseOrderAlwaysRequired1" id="PurchaseOrderAlwaysRequired1" @onclick="(()=>_StoreAdditionalInfo.StockCreditIsPurchaseOrderRequired=true)" checked="@_StoreAdditionalInfo.StockCreditIsPurchaseOrderRequired">
+                    <label for="PurchaseOrderAlwaysRequired1">@Localizer["yes"]</label>
+                    <input type="radio" @oninput="ChangeIsEditedOrNot" name="PurchaseOrderAlwaysRequired" value="PurchaseOrderAlwaysRequired2" id="PurchaseOrderAlwaysRequired2" @onclick="(()=>_StoreAdditionalInfo.StockCreditIsPurchaseOrderRequired=false)" checked="@(!_StoreAdditionalInfo.StockCreditIsPurchaseOrderRequired)">
+                    <label for="PurchaseOrderAlwaysRequired2">@Localizer["no"]</label>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="cls_main_sign_input_new1">
+                <p>@Localizer["capture_signature"]</p>
+                <div class="cls_main_check_radio">
+                    <input type="radio" @oninput="ChangeIsEditedOrNot" name="StorecreditCaptureSignature" value="StorecreditCaptureSignature1" id="StorecreditCaptureSignature1" checked="@(_StoreAdditionalInfo.IsStoreCreditCaptureSignatureRequired)" @onclick="(()=>_StoreAdditionalInfo.IsStoreCreditCaptureSignatureRequired=true)">
+                    <label for="StorecreditCaptureSignature1">@Localizer["yes"]</label>
+                    <input type="radio" @oninput="ChangeIsEditedOrNot" name="StorecreditCaptureSignature" value="StorecreditCaptureSignature2" id="StorecreditCaptureSignature2" checked="@(!_StoreAdditionalInfo.IsStoreCreditCaptureSignatureRequired)" @onclick="(()=>_StoreAdditionalInfo.IsStoreCreditCaptureSignatureRequired=false)">
+                    <label for="StorecreditCaptureSignature2">@Localizer["no"]</label>
+                </div>
+            </div>
+
+        </div>
+
+      
+
+
+
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="cls_main_sign_input_new1">
+                <p>@Localizer["allow_good_returns"]</p>
+                <div class="cls_main_check_radio">
+                    <input type="radio" @oninput="ChangeIsEditedOrNot" name="AllowgoodReturns" value="AllowgoodReturns1" id="AllowgoodReturns1" @onclick="(()=>_StoreAdditionalInfo.AllowGoodReturn=true)" checked="@_StoreAdditionalInfo.AllowGoodReturn">
+                    <label for="AllowgoodReturns1">@Localizer["yes"]</label>
+                    <input type="radio" @oninput="ChangeIsEditedOrNot" name="AllowgoodReturns" value="AllowgoodReturns2" id="AllowgoodReturns2" @onclick="(()=>_StoreAdditionalInfo.AllowGoodReturn=false)" checked="@(!_StoreAdditionalInfo.AllowGoodReturn)">
+                    <label for="AllowgoodReturns2">@Localizer["no"]</label>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="cls_main_sign_input_new1">
+                <p>@Localizer["allow_bad_returns"]</p>
+                <div class="cls_main_check_radio">
+                    <input type="radio" @oninput="ChangeIsEditedOrNot" name="AllowBadReturns" value="AllowBadReturns1" id="AllowBadReturns1" @onclick="(()=>_StoreAdditionalInfo.AllowBadReturn=true)" checked="@_StoreAdditionalInfo.AllowBadReturn">
+                    <label for="AllowBadReturns1">@Localizer["yes"]</label>
+                    <input type="radio" @oninput="ChangeIsEditedOrNot" name="AllowBadReturns" value="AllowBadReturns2" id="AllowBadReturns2" @onclick="(()=>_StoreAdditionalInfo.AllowBadReturn=false)" checked="@(!_StoreAdditionalInfo.AllowBadReturn)">
+                    <label for="AllowBadReturns2">@Localizer["no"]</label>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="cls_main_sign_input_new1">
+                <p>@Localizer["allow_return_against_invoice"]</p>
+                <div class="cls_main_check_radio">
+                    <input type="radio" @oninput="ChangeIsEditedOrNot" name="AllowReturnAgainstinvoice" value="AllowReturnAgainstinvoice1" id="AllowReturnAgainstinvoice1" @onclick="(()=>_StoreAdditionalInfo.AllowReturnAgainstInvoice=true)" checked="@_StoreAdditionalInfo.AllowReturnAgainstInvoice">
+                    <label for="AllowReturnAgainstinvoice1">@Localizer["yes"]</label>
+                    <input type="radio" @oninput="ChangeIsEditedOrNot" name="AllowReturnAgainstinvoice" value="AllowReturnAgainstinvoice2" id="AllowReturnAgainstinvoice2" @onclick="(()=>_StoreAdditionalInfo.AllowReturnAgainstInvoice=false)" checked="@(!_StoreAdditionalInfo.AllowReturnAgainstInvoice)">
+                    <label for="AllowReturnAgainstinvoice2">@Localizer["no"]</label>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="cls_main_sign_input_new1">
+                <p>@Localizer["allow_return_with_sales_order"]</p>
+                <div class="cls_main_check_radio">
+                    <input type="radio" @oninput="ChangeIsEditedOrNot" name="AllowReturnWithSalesOrder" value="AllowReturnWithSalesOrder1" id="AllowReturnWithSalesOrder1" @onclick="(()=>_StoreAdditionalInfo.AllowReturnWithSalesOrder=true)" checked="@_StoreAdditionalInfo.AllowReturnWithSalesOrder">
+                    <label for="AllowReturnWithSalesOrder1">@Localizer["yes"]</label>
+                    <input type="radio" @oninput="ChangeIsEditedOrNot" name="AllowReturnWithSalesOrder" value="AllowReturnWithSalesOrder2" id="AllowReturnWithSalesOrder2" @onclick="(()=>_StoreAdditionalInfo.AllowReturnWithSalesOrder=false)" checked="@(!_StoreAdditionalInfo.AllowReturnWithSalesOrder)">
+                    <label for="AllowReturnWithSalesOrder2">@Localizer["no"]</label>
+                </div>
+            </div>
+
+        </div>
+
+      
+
+    </div>
+    <div><h1>@Localizer["custom_fields"]</h1></div>
+    <div class="row">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="cls_main_sign_input_new1">
+                <p>@Localizer["custom_field"]1</p>
+                <input type="text" @oninput="ChangeIsEditedOrNot" @bind="@_StoreAdditionalInfo.CustomField1" placeholder=@Localizer["custom_field"]1 />
+
+            </div>
+
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="cls_main_sign_input_new1">
+                <p>@Localizer["custom_field"]2</p>
+                <input type="text" @oninput="ChangeIsEditedOrNot" @bind="@_StoreAdditionalInfo.CustomField2" placeholder=@Localizer["custom_field"]2 />
+
+            </div>
+
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="cls_main_sign_input_new1">
+                <p>@Localizer["custom_field"]3</p>
+                <input type="text" @oninput="ChangeIsEditedOrNot" @bind="@_StoreAdditionalInfo.CustomField3" placeholder=@Localizer["custom_field"]3 />
+
+            </div>
+
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="cls_main_sign_input_new1">
+                <p>@Localizer["custom_field"]4</p>
+                <input type="text" @oninput="ChangeIsEditedOrNot" @bind="@_StoreAdditionalInfo.CustomField4" placeholder=@Localizer["custom_field"]4 />
+
+            </div>
+
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="cls_main_sign_input_new1">
+                <p>@Localizer["custom_field"]5</p>
+                <input type="text" @oninput="ChangeIsEditedOrNot" @bind="@_StoreAdditionalInfo.CustomField5" placeholder=@Localizer["custom_field"]5 />
+
+            </div>
+
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="cls_main_sign_input_new1">
+                <p>@Localizer["custom_field"]6</p>
+                <input type="text" @oninput="ChangeIsEditedOrNot" @bind="@_StoreAdditionalInfo.CustomField6" placeholder=@Localizer["custom_field"]6/>
+
+            </div>
+
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="cls_main_sign_input_new1">
+                <p>@Localizer["custom_field"]7</p>
+                <input type="text" @oninput="ChangeIsEditedOrNot" @bind="@_StoreAdditionalInfo.CustomField7" placeholder=@Localizer["custom_field"]7 />
+
+            </div>
+
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="cls_main_sign_input_new1">
+                <p>@Localizer["custom_field"]8</p>
+                <input type="text" @oninput="ChangeIsEditedOrNot" @bind="@_StoreAdditionalInfo.CustomField8" placeholder=@Localizer["custom_field"]8 />
+
+            </div>
+
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="cls_main_sign_input_new1">
+                <p>@Localizer["custom_field"]9</p>
+                <input type="text" @oninput="ChangeIsEditedOrNot" @bind="@_StoreAdditionalInfo.CustomField9" placeholder=@Localizer["custom_field"]9 />
+
+            </div>
+
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="cls_main_sign_input_new1">
+                <p>@Localizer["custom_field"]10</p>
+                <input type="text" @oninput="ChangeIsEditedOrNot" @bind="@_StoreAdditionalInfo.CustomField10" placeholder=@Localizer["custom_field"]10 />
+
+            </div>
+
+        </div>
+        
+    </div>
+
+    <div>
+        <h1>@Localizer["other_section"]</h1>
+        <div class="card mt-3">
+            <div class="container">
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                    <div class="cls_main_sign_input_new1">
+                        <p>@Localizer["asset_enabled"]</p>
+                        <div class="cls_main_check_radio">
+                            <input type="radio" @oninput="ChangeIsEditedOrNot" name="IsAssetEnabled" value="IsAssetEnabled1" id="IsAssetEnabled1" checked="@_StoreAdditionalInfo.IsAssetEnabled" @onclick="(()=>_StoreAdditionalInfo.IsAssetEnabled=true)">
+                            <label for="IsAssetEnabled1">@Localizer["yes"]</label>
+                            <input type="radio" @oninput="ChangeIsEditedOrNot" name="IsAssetEnabled" value="IsAssetEnabled2" id="IsAssetEnabled2" checked="@(!_StoreAdditionalInfo.IsAssetEnabled)" @onclick="(()=>_StoreAdditionalInfo.IsAssetEnabled=false)">
+                            <label for="IsAssetEnabled2">@Localizer["no"]</label>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                    <div class="cls_main_sign_input_new1">
+                        <p>@Localizer["survey_enabled"]</p>
+                        <div class="cls_main_check_radio">
+                            <input type="radio" @oninput="ChangeIsEditedOrNot" name="IsSurveyEnabled" value="IsSurveyEnabled1" id="IsSurveyEnabled1" checked="@_StoreAdditionalInfo.IsSurveyEnabled" @onclick="(()=>_StoreAdditionalInfo.IsSurveyEnabled=true)">
+                            <label for="IsSurveyEnabled1">@Localizer["yes"]</label>
+                            <input type="radio" @oninput="ChangeIsEditedOrNot" name="IsSurveyEnabled" value="IsSurveyEnabled2" id="IsSurveyEnabled2" checked="@(!_StoreAdditionalInfo.IsSurveyEnabled)" @onclick="(()=>_StoreAdditionalInfo.IsSurveyEnabled=false)">
+                            <label for="IsSurveyEnabled2">@Localizer["no"]</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+   @*  <div style="display:none">
+        <h1>Customer Creation Expiration</h1>
+
+    <div class="card mt-3">
+        <div class="card-header">
+            Customer Creation Expiration
+        </div>
+        <div class="container">
+            <div class="row mb-3" style="color: #19298B;">
+                <div class="col-md-6 col-lg-4 col-xl-3">
+                    <label>Start Date</label>
+                    <input type="date" @oninput="ChangeIsEditedOrNot" @bind="_StoreAdditionalInfo.CustomerStartDate" class="form-control" />
+
+                </div>
+                <div class="col-md-6 col-lg-4 col-xl-3">
+                    <label>Created By</label>
+                    <input type="text" @oninput="ChangeIsEditedOrNot" @bind="_StoreAdditionalInfo.CreatedBy" class="form-control" />
+
+                </div>
+                <div class="col-md-6 col-lg-4 col-xl-3">
+                    <label>Last Modified By</label>
+                    <input type="text" @oninput="ChangeIsEditedOrNot" @bind="_StoreAdditionalInfo.ModifiedBy" class="form-control" />
+
+                </div>
+                <div class="col-md-6 col-lg-4 col-xl-3">
+                    <label>Last Modified On</label>
+                    <input type="date" @oninput="ChangeIsEditedOrNot" @bind="_StoreAdditionalInfo.ModifiedTime" class="form-control" />
+                 
+                </div>
+                <div class="col-md-6 col-lg-4 col-xl-3">
+                    <label>End Date</label>
+                    <input type="date" @oninput="ChangeIsEditedOrNot" @bind="_StoreAdditionalInfo.CustomerEndDate" class="form-control" />
+                  
+                </div>
+            </div>
+        </div>
+
+    </div>
+    </div> *@
+   
+}

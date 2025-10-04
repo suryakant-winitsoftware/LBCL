@@ -1,0 +1,48 @@
+﻿@inherits WinIt.Pages.Base.BaseComponentBase
+
+<Virtualize Items="@HierarchyGrids" OverscanCount="50">
+    <ItemContent Context="grid">
+
+     
+                    <tr>
+            <td style="width:5%">
+                    @if (grid.HasChild)
+                    {
+                        <img style="width:20px" @onclick='()=>ToggleCollapse(grid)' src='@(grid.IsOpen ? "Images/hierarchy_minus.svg" : "Images/hierarchy_plus.svg")' />
+                    }
+                </td>
+            <td style="width:40%">[@grid.Code] @grid.Name</td>
+            <td style="width:5%">@grid.ItemLevel</td>
+            <td style="width:10%">@(string.IsNullOrEmpty(grid.ParentName) ? "N/A" : grid.ParentName)</td>
+            <td style="width:20%">[@grid.LocationTypeCode] @grid.LocationTypeName</td>
+            <td style="width:10%">
+                    <img @onclick='() => UpdatePopIconClicked(grid)' src="Images/edit.png" style="width:20px;" />
+                    <img @onclick='() => CreatePopIconClicked(grid)' src="Images/hierarchy_plus.svg" style="width:20px;" />
+                    <img @onclick='() => DeletePopIconClicked(grid)' src="Images/delete.png" style="width:20px;" />
+                </td>
+                    </tr>
+               
+        
+
+        @if (grid.IsCreatePopUpOpen)
+        {
+            <AddUpdateLocationPopUp CancelbtnText=@Localizer["close"] OkBtnText=@Localizer["create"] OnOkClick="() => CreateLocation(grid)" locationItemView="grid" Context="Context" title="@title" IsAddPopUp=true OnCloseClick="() => grid.IsCreatePopUpOpen=false" OnLocationTypebtnClicked="LocationTypeDDClicked" />
+        }
+        @if (grid.IsUpdatePopUpOpen)
+        {
+            <AddUpdateLocationPopUp CancelbtnText=@Localizer["cancel"] OkBtnText=@Localizer["update"] OnOkClick="UpdateLocationClick" locationItemView="grid" Context="Context" title="@title" OnCloseClick="() => grid.IsUpdatePopUpOpen=false" OnLocationTypebtnClicked="LocationTypeDDClicked" />
+        }
+        @if (grid.IsOpen)
+        {
+           <tr style="padding-left:10px;width:100%;">
+                <td colspan="6">
+                    <table>
+                <LocationHierarchy HierarchyGrids="grid.ChildGrids" OnBtnExpandClick="OnBtnExpandClick" OnCreateClick="OnCreateClick" OnDeleteLocation="OnDeleteLocation" OnCreateClone="OnCreateClone" OnUpdateClick="OnUpdateClick" OnLocationTypebtnClicked="OnLocationTypebtnClicked"></LocationHierarchy>
+                    </table>
+                </td>
+            </tr>
+        }
+    </ItemContent>
+    <Placeholder> Loading... </Placeholder>
+</Virtualize>
+

@@ -1,0 +1,135 @@
+﻿@using Microsoft.AspNetCore.Components.Forms
+@using WinIt.Pages.Maintain_User;
+@using Winit.Shared.Models.Common
+@using Winit.Modules.Common.Model.Constants;
+@inject Winit.Shared.Models.Common.IAppConfig _appConfigs
+@inject Winit.UIComponents.Common.IAlertService _alertService
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+
+@if (Isinitialized)
+{
+    <div class="cls_state_section1">
+        @if (!string.IsNullOrWhiteSpace(ValidationMessage))
+        {
+            <div class="alert alert-danger">
+                <div class="col-md-12">
+                    <div style="color: red;">@ValidationMessage</div>
+                </div>
+            </div>
+        }
+
+
+        <div class="cls_state_section_div">
+
+            <label class="cls_section_div_purchase2_label">@Localizer["auth_type"]<span class="cls_section_div_purchase2_span">*</span></label>
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource=" AuthTypeSelectionItems" Title=@Localizer["auth_type"] IsButtonVisible="true" OnSelect="OnAuthTypeSelection" IsSearchable="false"/>
+
+
+        </div>
+        <div class="cls_state_section_div">
+
+            <label class="cls_section_div_purchase2_label">@Localizer["employee_code"] <span class="cls_section_div_purchase2_span">*</span></label>
+            <input class="cls_select2_button "
+                   type="text" @bind="EmpDTOmaintainUser.Emp.Code" disabled="@(!IsNew)">
+
+
+        </div>
+        <div class="cls_state_section_div">
+
+            <label class="cls_section_div_purchase2_label">@Localizer["login_id"]<span class="cls_section_div_purchase2_span">*</span> </label>
+            <input class="cls_select2_button" type="text" @bind-value="EmpDTOmaintainUser.Emp.LoginId " disabled="@(!IsNew)">
+
+        </div>
+        <div class="cls_state_section_div">
+
+            <label class="cls_section_div_purchase2_label">@Localizer["employee_no"]<span class="cls_section_div_purchase2_span">*</span></label>
+            <input class="cls_select2_button" type="text" @bind-value="EmpDTOmaintainUser.Emp.EmpNo" disabled="@(!IsNew)">
+
+        </div>
+        <div class="cls_state_section_div">
+
+            <label class="cls_section_div_purchase2_label">@Localizer["name"] <span class="cls_section_div_purchase2_span">*</span></label>
+            <input class="cls_select2_button" type="text" @bind-value="EmpDTOmaintainUser.Emp.Name">
+
+        </div>
+        <div class="cls_state_section_div">
+
+            <label class="cls_section_div_purchase2_label">@Localizer["alias_name"]</label>
+            <input class="cls_select2_button" type="text" @bind-value="EmpDTOmaintainUser.Emp.AliasName">
+
+        </div>
+        @if (EmpDTOmaintainUser.Emp.AuthType == "Active Directory")
+        {
+            <div class="cls_state_section_div">
+
+                <label class="cls_section_div_purchase2_label">@Localizer["ad_group"]<span class="cls_section_div_purchase2_span">*</span></label>
+                <input class="cls_select2_button" type="text" @bind-value="EmpDTOmaintainUser.EmpInfo.ADGroup">
+
+            </div>
+            <div class="cls_state_section_div">
+
+                <label class="cls_section_div_purchase2_label">@Localizer["ad_username"]<span class="cls_section_div_purchase2_span">*</span></label>
+                <input class="cls_select2_button" type="text" @bind-value="EmpDTOmaintainUser.EmpInfo.ADUsername">
+
+            </div>
+        }
+        <div class="cls_state_section_div">
+
+            <label class="cls_section_div_purchase2_label">@Localizer["email"]</label>
+            <input class="cls_select2_button" type="text" @bind-value="EmpDTOmaintainUser.EmpInfo.Email">
+
+        </div>
+        <div class="cls_state_section_div">
+
+            <label class="cls_section_div_purchase2_label">@Localizer["phone"]</label>
+            <input class="cls_select2_button" type="number" @bind-value="EmpDTOmaintainUser.EmpInfo.Phone">
+
+        </div>
+        <div class="cls_state_section_div">
+
+            <label class="cls_section_div_purchase2_label" for="isActiveDropdown">@Localizer["is_active"]:</label>
+            <select class="cls_select2_button" id="isActiveDropdown" @bind="EmpDTOmaintainUser.Emp.Status">
+                <option value="">@Localizer["select_status"]</option>
+                <option value="Active">@Localizer["active"]</option>
+                <option value="Inactive">@Localizer["inactive"]</option>
+            </select>
+
+        </div>
+        <div class="cls_state_section_div">
+            <div class="cls_btn_y_n" style="margin-top:30px;">
+
+                <input type="checkbox" class="cls_btn_radio_input" @bind="EmpDTOmaintainUser.EmpInfo.CanHandleStock">
+                <label class="cls_btn_radio_label">@Localizer["inventory_manage_required"]</label>
+            </div>
+        </div>
+        @* ramana *@
+
+        <div class="cls_file_upload">
+            <h3 class="cls_file_upload_label">@Localizer["upload_profile"]</h3>
+
+            <Winit.UIComponents.Common.FileUploader.FileUploader @ref=fileUploader FileExtension=".jpg,.jpeg,.pdf,.png" RelativePath="@FilePath" FileSize="500000"
+                                                                 FileSysList=@FileSysList
+                                                                 LinkedItemType="@LinkedItemType.Emp"
+                                                                 LinkedItemUID="@EmpDTOmaintainUser.Emp.UID"
+                                                                 FileSysType="@FileSysType.Profile" FileType="@FileTypeConstants.Image"
+                                                                 IsDirectory="false"
+                                                                 UploadEventCallBack="GetsavedImagePath" DeleteEventCallBack="AfterDeleteImage" />
+
+        </div>
+        @* ramana *@
+
+        <div class="cls_button_bottom_purchase">
+            <button class="cls_button_blue" @onclick=SaveOrUpdate disabled="@IsLoading">
+                @(string.IsNullOrEmpty(ValidationMessage) ? (IsLoading ? "Saving..." : (IsNew ? @Localizer["save"] : @Localizer["update"])) : @Localizer["save"])
+            </button>
+
+        </div>
+
+    </div>
+}
+
+
+@code {
+
+}

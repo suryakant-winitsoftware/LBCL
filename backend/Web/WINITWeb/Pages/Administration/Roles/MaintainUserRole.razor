@@ -1,0 +1,254 @@
+﻿@page "/maintainUserRole"
+@using Winit.Shared.Models.Constants
+@inject Winit.Modules.Role.BL.Interfaces.IMaintainUserRoleBaseViewMode _maintainUserRoleBL
+@inject Winit.Modules.Role.BL.Interfaces.ICreateUserRoleBaseViewModel _createUserRoleBL
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+
+@* <button class="cls_add_new_sec" @onclick=@(()=>_createUserRoleBL.AddOrEditRole(true))>@Localizer["add_new"]</button> *@
+
+@if (_createUserRoleBL.IsAddOrEdit)
+{
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show" tabindex="-1" style="display: block; overflow:auto; ">
+        <div class="modal-dialog cls_pop_up_style1">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@(_createUserRoleBL.IsNew ? @Localizer["add_new_role"] : @Localizer["edit_role"]) </h5>
+                    <span class="close" @onclick="@(()=>_createUserRoleBL.IsAddOrEdit=false)">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="cls_container_div1">
+
+
+                        <div class="cls_pop_up_style_div">
+
+                            <label class="cls_section_div_purchase2_label">@Localizer["code"] <span class="cls_section_div_purchase2_span">*</span></label>
+                            <input class="cls_select2_button" placeholder="Enter Here" type="text" @bind="@_createUserRoleBL.UserRole.Code" />
+
+
+                        </div>
+                        <div class="cls_pop_up_style_div">
+
+                            <label class="cls_section_div_purchase2_label">@Localizer["role_name"]<span class="cls_section_div_purchase2_span">*</span></label>
+                            <input class="cls_select2_button" placeholder="Enter Here" type="text" @bind="@_createUserRoleBL.UserRole.RoleNameEn" />
+
+
+                        </div>
+                        <div class="cls_pop_up_style_div">
+
+                            <label class="cls_section_div_purchase2_label">@Localizer["alias_name"]<span class="cls_section_div_purchase2_span">*</span></label>
+                            <input class="cls_select2_button" placeholder="Enter Here" type="text" @bind="@_createUserRoleBL.UserRole.RoleNameOther" />
+
+                        </div>
+
+
+                        <div class="cls_pop_up_style_div">
+
+                            <label class="cls_section_div_purchase2_label">@Localizer["parent_role"]</label>
+                            @*  @if (_createUserRoleBL.IsParentVisible)
+                        {
+                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_createUserRoleBL.SelectionItems" OnSelect="_createUserRoleBL.ONParentRoleChanged" />
+                        }
+                        <button class="cls_select2" @onclick=@(()=>_createUserRoleBL.IsParentVisible=true)>
+
+                        <label class="cls_select2_label1">  @_createUserRoleBL.ParentLabel</label>
+                        <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+                        </button> *@
+                            <Winit.UIComponents.Common.CustomControls.DropDown IsButtonVisible="true"
+                                                                               Title="Parent Role"
+                                                                               DataSource="_createUserRoleBL.SelectionItems"
+                                                                               OnSelect="_createUserRoleBL.ONParentRoleChanged" />
+
+                        </div>
+                        <div class="cls_pop_up_style_div1">
+                            <div class="cls_btn_radio">
+                                <input type="checkbox" class="cls_btn_radio_input" value="IsActive" id="IsActive" checked="@_createUserRoleBL.UserRole.IsActive" @onclick="(()=>_createUserRoleBL.UserRole.IsActive=!_createUserRoleBL.UserRole.IsActive)">
+                                <label class="cls_btn_radio_label" for="IsActive" @onclick=@(()=>_createUserRoleBL.UserRole.IsActive=!_createUserRoleBL.UserRole.IsActive)>@Localizer["is_active"]</label>
+
+                            </div>
+                        </div>
+                        @if (!_iAppUser.Role.IsDistributorRole)
+                        {
+                            <div class="cls_pop_up_style_div1">
+
+                                <div class="cls_btn_radio">
+                                    <input class="cls_btn_radio_input" type="radio" name="Role" value="option1" id="option1" checked="@_createUserRoleBL.UserRole.IsPrincipalRole" @onchange="(()=>_createUserRoleBL.IsPrincipalOrDistributor(true))">
+                                    <label class="cls_btn_radio_label" for="option1" @onclick=@(()=>_createUserRoleBL.IsPrincipalOrDistributor(true))>@Localizer["is_principal_role"]</label>
+                                </div>
+                                <div class="cls_btn_radio">
+                                    <input class="cls_btn_radio_input cls_margin_left" type="radio" name="Role" value="option2" id="option2" checked="@_createUserRoleBL.UserRole.IsDistributorRole" @onchange="(()=>_createUserRoleBL.IsPrincipalOrDistributor(false))">
+                                    <label class="cls_btn_radio_label" for="option2" @onclick=@(()=>_createUserRoleBL.IsPrincipalOrDistributor(false))>@Localizer["is_distributor_role"]  <span class="cls_section_div_purchase2_span">*</span> </label>
+
+
+                                </div>
+                            </div>
+                        }
+                        @if (_createUserRoleBL.UserRole.IsPrincipalRole)
+                        {
+                            <div class="cls_pop_up_style_div1">
+                                <div class="cls_btn_radio">
+                                    <input class="cls_btn_radio_input" type="radio" name="IsAdmin" value="IsAdmin1" id="IsAdmin1" checked="@_createUserRoleBL.UserRole.IsAdmin" @onclick="(()=>_createUserRoleBL.IsAdminIsPrincipalToDistributor(true))">
+                                    <label class="cls_btn_radio_label" for="IsAdmin1" @onclick=@(()=>_createUserRoleBL.IsAdminIsPrincipalToDistributor(true))>@Localizer["is_admin"]</label>
+                                </div>
+                                <div class="cls_btn_radio">
+                                    <input class="cls_btn_radio_input cls_margin_left" type="radio" name="IsAdmin" value="IsAdmin2" id="IsAdmin2" checked="@_createUserRoleBL.UserRole.BuToDistAccess" @onclick="(()=>_createUserRoleBL.IsAdminIsPrincipalToDistributor(false))">
+                                    <label class="cls_btn_radio_label" for="IsAdmin2" @onclick=@(()=>_createUserRoleBL.IsAdminIsPrincipalToDistributor(false))>@Localizer["principle_to_distributor_access"] <span class="cls_section_div_purchase2_span">*</span> </label>
+
+                                </div>
+
+                            </div>
+                        }
+                        <div class="cls_pop_up_style_div1">
+                            <div class="cls_btn_radio">
+                                <input class="cls_btn_radio_input" type="checkbox" value="IsAppRole" id="IsAppRole" checked="@_createUserRoleBL.UserRole.IsAppUser" @onclick="@ISAppRole">
+                                <label class="cls_btn_radio_label" for="IsAppRole" @onclick=@(()=>_createUserRoleBL.UserRole.IsAppUser=!_createUserRoleBL.UserRole.IsAppUser)>@Localizer["is_app_role"]</label>
+                            </div>
+                            <div class="cls_btn_radio">
+                                <input class="cls_btn_radio_input cls_margin_left" type="checkbox" value="IsWebRole" id="IsWebRole" checked="@_createUserRoleBL.UserRole.IsWebUser" @onclick="(()=>_createUserRoleBL.UserRole.IsWebUser=!_createUserRoleBL.UserRole.IsWebUser)">
+                                <label class="cls_btn_radio_label" for="IsWebRole" @onclick=@(()=>_createUserRoleBL.UserRole.IsWebUser=!_createUserRoleBL.UserRole.IsWebUser)>@Localizer["is_web_role"]  <span class="cls_section_div_purchase2_span">*</span> </label>
+
+                            </div>
+
+                        </div>
+                        <div class="cls_pop_up_style_div1">
+                            <div class="cls_btn_radio">
+                                <input class="cls_btn_radio_input" type="checkbox" disabled="@(!_createUserRoleBL.UserRole.IsAppUser)" id="HaveWarehouse" checked="@_createUserRoleBL.UserRole.HaveWarehouse" @onclick="(()=>_createUserRoleBL.UserRole.HaveWarehouse=!_createUserRoleBL.UserRole.HaveWarehouse)">
+                                <label class="cls_btn_radio_label" for="HaveVehicle">@Localizer["have_warehouse"]</label>
+                            </div>
+                            <div class="cls_btn_radio">
+                                <input class="cls_btn_radio_input cls_margin_left" type="checkbox" disabled="@(!_createUserRoleBL.UserRole.IsAppUser)" id="HaveVehicle" checked="@_createUserRoleBL.UserRole.HaveVehicle" @onclick="(()=>_createUserRoleBL.UserRole.HaveVehicle=!_createUserRoleBL.UserRole.HaveVehicle)">
+                                <label class="cls_btn_radio_label" for="HaveVehicle">@Localizer["have_vehicle"]</label>
+
+                            </div>
+                        </div>
+
+                        <div class="cls_pop_up_style_div1">
+                            <div class="cls_btn_radio">
+                                <input class="cls_btn_radio_input" type="checkbox" value="IsForReportsTo" id="IsForReportsTo" checked="@_createUserRoleBL.UserRole.IsForReportsTo" @onclick="@(()=>_createUserRoleBL.UserRole.IsForReportsTo=!_createUserRoleBL.UserRole.IsForReportsTo)">
+                                <label class="cls_btn_radio_label" for="IsForReportsTo" @onclick=@(()=>_createUserRoleBL.UserRole.IsForReportsTo=!_createUserRoleBL.UserRole.IsForReportsTo)>Is For Reports To</label>
+                            </div>
+                        </div>
+
+                        <div class="cls_pop_up_style_div1">
+                            <div class="cls_btn_radio">
+                                <input class="cls_btn_radio_input" type="checkbox" value="HasP1Access" id="HasP1Access" checked="@_createUserRoleBL.UserRole.HasP1Access" @onclick="@(()=>_createUserRoleBL.UserRole.HasP1Access=!_createUserRoleBL.UserRole.HasP1Access)">
+                                <label class="cls_btn_radio_label" for="HasP1Access" @onclick=@(()=>_createUserRoleBL.UserRole.HasP1Access=!_createUserRoleBL.UserRole.HasP1Access)>P1</label>
+                            </div>
+                            <div class="cls_btn_radio">
+                                <input class="cls_btn_radio_input" type="checkbox" value="HasP1Access" id="HasP2Access" checked="@_createUserRoleBL.UserRole.HasP2Access" @onclick="@(()=>_createUserRoleBL.UserRole.HasP2Access=!_createUserRoleBL.UserRole.HasP2Access)">
+                                <label class="cls_btn_radio_label" for="HasP2Access" @onclick=@(()=>_createUserRoleBL.UserRole.HasP2Access=!_createUserRoleBL.UserRole.HasP2Access)>P2</label>
+                            </div>
+                            <div class="cls_btn_radio">
+                                <input class="cls_btn_radio_input" type="checkbox" value="HasP3Access" id="HasP3Access" checked="@_createUserRoleBL.UserRole.HasP3Access" @onclick="@(()=>_createUserRoleBL.UserRole.HasP3Access=!_createUserRoleBL.UserRole.HasP3Access)">
+                                <label class="cls_btn_radio_label" for="HasP3Access" @onclick=@(()=>_createUserRoleBL.UserRole.HasP3Access=!_createUserRoleBL.UserRole.HasP3Access)>P3</label>
+                            </div>
+                            <div class="cls_btn_radio">
+                                <input class="cls_btn_radio_input" type="checkbox" value="HasP3Access" id="HasP3Access" checked="@_createUserRoleBL.UserRole.HasMarginAccess" @onclick="@(()=>_createUserRoleBL.UserRole.HasMarginAccess=!_createUserRoleBL.UserRole.HasMarginAccess)">
+                                <label class="cls_btn_radio_label" for="HasP3Access" @onclick=@(()=>_createUserRoleBL.UserRole.HasMarginAccess=!_createUserRoleBL.UserRole.HasMarginAccess)>Margin</label>
+                            </div>
+                            <div class="cls_btn_radio">
+                                <input class="cls_btn_radio_input" type="checkbox" value="HasP3Access" id="HasP3Access" checked="@_createUserRoleBL.UserRole.HasMSPAccess" @onclick="@(()=>_createUserRoleBL.UserRole.HasMSPAccess=!_createUserRoleBL.UserRole.HasMSPAccess)">
+                                <label class="cls_btn_radio_label" for="HasP3Access" @onclick=@(()=>_createUserRoleBL.UserRole.HasMSPAccess=!_createUserRoleBL.UserRole.HasMSPAccess)>Minimum Selling Price</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <div style="float:left">
+                        <button class="cls_comman_sec_btn cls_mar_right_10px" @onclick="@(()=>_createUserRoleBL.IsAddOrEdit=false)">@Localizer["back"]</button>
+                        <button type="button" class="cls_comman_btn" @onclick="Save">@Localizer["save"]</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+}
+@if (_maintainUserRoleBL.IsLoad)
+{
+    <PageHeaderAndFilter IDataBreadcrumbService="iDataBreadcrumbService" IsShowFilter="true" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+                         OnFilterApplied="@OnFilterApply"></PageHeaderAndFilter>
+    @*  <button class="cls_add_new_sec" style="float:right;margin-right:0px" @onclick="ShowFilter">@Localizer["filter"]</button> *@
+    @*  <Filter @ref="filterRef" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+            OnFilterApplied="@_maintainUserRoleBL.OnFilterApply" /> *@
+    @*  <Winit.UIComponents.Web.Table.TableGridView Columns="_maintainUserRoleBL.Columns" DataSource="_maintainUserRoleBL.UserRoleList" /> *@
+    <button class="cls_add_new_sec" @onclick=@(()=>_createUserRoleBL.AddOrEditRole(true,_maintainUserRoleBL.RoleList))>@Localizer["add_new"]</button>
+
+    <TableGridView Columns="productColumns"
+                   DataSource="_maintainUserRoleBL.RoleList"
+                   TotalItemsCount="_maintainUserRoleBL.TotalItemsCount"
+                   PageSize="_maintainUserRoleBL.PageSize"
+                   PageNumber="_maintainUserRoleBL.PageNumber"
+                   ShowRecordsCount="true"
+                   IsPaginationRequired="true"
+                   OnPageChange="OnPageChange" OnSort="OnSort" />
+   @*  <div class="cls_container_div1">
+        <div class="col-md-12 d-flex justify-content-end cls_padding_0px">
+            @if (!string.IsNullOrEmpty(ViewingMessage))
+            {
+                <p class="cls_table_page_split_count">@ViewingMessage</p>
+            }
+        </div>
+    </div>
+    <div class="div1">
+        <table>
+            <thead>
+                <tr>
+                    <th>@Localizer["role_name"]</th>
+                    <th>@Localizer["alias_name"]</th>
+                    <th>@Localizer["parent_role"]</th>
+                    <th>@Localizer["is_principal_role"]</th>
+                    <th>@Localizer["is_admin"]</th>
+                    <th>@Localizer["principle_to_distributor_access"]</th>
+                    <th>@Localizer["is_app_role"]</th>
+                    <th>@Localizer["is_web_role"]</th>
+                    <th>@Localizer["action"]</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (_maintainUserRoleBL.RoleList.Count > 0)
+                    @foreach (var item in _maintainUserRoleBL.RoleList)
+                    {
+
+                        <tr>
+                            <td>@item.RoleNameEn</td>
+                            <td>@item.RoleNameOther</td>
+                            <td>@item.ParentRoleName</td>
+
+                            <td>@(item.IsPrincipalRole ? @Localizer["yes"] : @Localizer["no"])</td>
+
+                            <td>@(item.IsAdmin ? @Localizer["yes"] : @Localizer["no"])</td>
+                            <td>@(item.BuToDistAccess ? @Localizer["yes"] : @Localizer["no"])</td>
+                            <td>@item.IsAppUser</td>
+                            <td>@item.IsWebUser</td>
+                            <td>
+                                @if (item.IsWebUser)
+                                {
+                                    <button @onclick=@(()=>_navigationManager.NavigateTo($"MaintainWebMenu?RoleUID={item.UID}&RoleType={item.IsPrincipalRole}&RoleName={item.RoleNameEn}")) style="text-decoration:underline;cursor:pointer;margin-right:5px;">@Localizer["manage_web_menu"]</button>
+                                }
+                                @if (item.IsAppUser)
+                                {
+                                    <button @onclick=@(()=>_navigationManager.NavigateTo($"maintainmobilemenu?RoleUID={item.UID}&RoleType={item.IsPrincipalRole}&RoleName={item.RoleNameEn}")) style="text-decoration:underline;cursor:pointer;margin-right:5px;">@Localizer["manage_mobile_menu"]</button>
+                                }
+                                <a style="text-decoration:underline;cursor:pointer;margin-right:5px;" @onclick=@(()=>_createUserRoleBL.AddOrEditRole(false,_maintainUserRoleBL.RoleList,item))><img src="Images/edit.png" /></a>
+                            </td>
+                        </tr>
+
+                    }
+                }
+                else
+                {
+
+                <tr>
+                    <td colspan="0" style="text-align: center;color:red">No Record Found</td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div> *@
+}
+
+
+

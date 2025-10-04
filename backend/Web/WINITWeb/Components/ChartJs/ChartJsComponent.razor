@@ -1,0 +1,65 @@
+@using Microsoft.JSInterop
+@inject IJSRuntime JSRuntime
+
+@namespace WinIt.Components.ChartJs
+
+<div class="chart-container" style="position: relative; height:400px; width:100%">
+    <canvas id="@ChartId"></canvas>
+</div>
+
+@code {
+    [Parameter]
+    public string ChartId { get; set; } = Guid.NewGuid().ToString();
+
+    [Parameter]
+    public string ChartType { get; set; } = "bar";
+
+    [Parameter]
+    public object Data { get; set; }
+
+    [Parameter]
+    public object Options { get; set; }
+
+    private IJSObjectReference _chartJsModule;
+    private IJSObjectReference _chartInstance;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _chartJsModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/ChartJsComponent/chartJsInterop.js");
+        }
+
+        if (Data != null)
+        {
+            await UpdateChart();
+        }
+    }
+
+    public async Task UpdateChart()
+    {
+        if (_chartInstance != null)
+        {
+            await _chartJsModule.InvokeVoidAsync("updateChart", _chartInstance, Data, Options);
+        }
+        else
+        {
+            _chartInstance = await _chartJsModule.InvokeAsync<IJSObjectReference>("createChart", 
+                ChartId, ChartType, Data, Options);
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_chartInstance != null)
+        {
+            await _chartJsModule.InvokeVoidAsync("destroyChart", _chartInstance);
+            await _chartInstance.DisposeAsync();
+        }
+
+        if (_chartJsModule != null)
+        {
+            await _chartJsModule.DisposeAsync();
+        }
+    }
+} 

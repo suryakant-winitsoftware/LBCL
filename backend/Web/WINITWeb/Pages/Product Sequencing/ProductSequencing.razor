@@ -1,0 +1,136 @@
+﻿@page "/skusequence"
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+@* skusequence *@
+
+@inject NavigationManager NavManager
+
+@inject Winit.Modules.SKU.BL.Interfaces.IProductSequencingViewModel _ProductSequencingViewModel
+
+
+
+
+@if (showFilterComponent)
+{
+   @*  <Filter @ref="filterRef" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+            OnFilterApplied="@OnFilterApply" /> *@
+
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+                         OnFilterApplied="@OnFilterApply" />
+}
+
+
+
+<Winit.UIComponents.Common.CustomControles.Tabs TabItems="TabSelectionItems" OnTabSelect="OnTabSelect" />
+
+@* <div class="cls_export_main">
+    @if (ActiveTab != "General")
+            {
+        <button class="cls_add_new_sec" @onclick="DeleteSelectedSKUs">@Localizer["delete_selected_from_list"]</button>
+        <button class="cls_add_new_sec" @onclick="OpenAddProductDialog">@Localizer["add_product"]</button>
+    }
+    <button class="cls_add_new_sec" @onclick="SaveAndUpdateSKUs">@Localizer["save"]</button>
+</div>
+ *@
+@if (_ProductSequencingViewModel.SkuList != null && _ProductSequencingViewModel.SkuList.Count != 0 && IsAddSKUDialogOpen == true)
+{
+
+    <Winit.UIComponents.Web.DialogBox.AddSKU @ref="AddSKURef" SKUAttributesDataSource="_ProductSequencingViewModel.SkuAttributesList"
+                                             SKUDataSource="_ProductSequencingViewModel.SkuList" GetSelectedSKU="GetSelectedSKUs" />
+       
+}
+
+
+<div class="div1">
+<table >
+    <thead>
+        <tr>
+
+            @if (ActiveTab != "General")
+            {
+                <th class="tblHeader"><input type="checkbox" @onchange="ToggleAllRows" checked="@CheckAllRows" /></th>
+            }
+
+            <th class="tblHeader" style="width:9%;">@Localizer["serial_no"]</th>
+            <th class="tblHeader" style="text-align:center;">@Localizer["sku_code"]</th>
+            <th class="tblHeader">@Localizer["sku_name"]</th>
+
+
+
+        </tr>
+
+    </thead>
+    <tbody>
+        @if (_ProductSequencingViewModel.DisplaySkuSequencelist != null && _ProductSequencingViewModel.DisplaySkuSequencelist.Count > 0)
+        {
+
+            @foreach (var row in _ProductSequencingViewModel.DisplaySkuSequencelist)
+            {
+                @* var row = LoadTemplateOriginalList[i];
+        RowSequence = i + 1; *@
+
+                <tr>
+                    @if (ActiveTab != "General")
+                    {
+                        <td>
+                            <input type="checkbox" @bind="row.IsSelected" @onclick="() => ToggleRow(row)" />
+                        </td>
+                    }
+                   
+
+                    <!-- Apply the classes to the corresponding elements -->
+                    <td class="custom-input-column">
+                        <input type="text" class="form-control"
+                        @bind="row.SerialNo"
+                        @onblur="() => HandleBlur(row)"
+                        @oninput="() => CurrentValue(row)"
+                        onkeydown="return event.key === 'Backspace' || event.key === 'Delete' || (event.key >= '0' && event.key <= '9') || event.key === '.'"
+                        inputmode="numeric"
+                        pattern="[0-9]*" />
+                    </td>
+
+                        <td class="custom-sku-code-column" style="text-align:center;">@row.SKUCode</td>
+                    <td>@row.SKUName</td>
+
+
+                </tr>
+            }
+
+        }
+        else
+        {
+            @if (ActiveTab != "General")
+            {
+                <tr>
+                        <td colspan="4" style="text-align: center;color:red">@Localizer["no_record_found"]</td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                        <td colspan="3" style="text-align: center;color:red">@Localizer["no_record_found"]</td>
+                </tr>
+            }
+
+        }
+
+    </tbody>
+</table>
+</div>
+
+<div class="cls_button_bottom_purchase">
+    @if (ActiveTab != "General")
+    {
+        <button class="cls_button_light  cls_mar_right_10px" @onclick="DeleteSelectedSKUs">@Localizer["delete_selected_from_list"]</button>
+        <button class="cls_button_light  cls_mar_right_10px" @onclick="OpenAddProductDialog">@Localizer["add_product"]</button>
+    }
+    <button class="cls_button_blue" @onclick="SaveAndUpdateSKUs">@Localizer["save"]</button>
+</div>
+
+@code {
+
+
+}
+
+
+

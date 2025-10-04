@@ -1,0 +1,31 @@
+﻿@page "/ProvisioningCreditNote"
+@using Winit.UIComponents.Common.CustomControles
+@inject Winit.Modules.Invoice.BL.Interfaces.IProvisioningCreditNoteViewModel _viewmodel
+
+@* <PageHeaderAndFilter IDataBreadcrumbService="DataService" /> *@
+<div>
+    <PageHeaderAndFilter IDataBreadcrumbService="DataService" IsShowFilter="true" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+                         OnFilterApplied="@OnFilterApply" />
+</div>
+
+<div><Tabs TabItems="TabSelectionItems" OnTabSelect="OnTabSelect" ></Tabs></div>
+
+@if (_viewmodel.DisplayCreditNoteList != null && _viewmodel.DisplayCreditNoteList.Any())
+{
+    <TableGridView IsFirstColumnCheckbox="@(!IsApproveTabSelected)" AfterCheckBoxSelection="AfterCheckBoxSelection" Columns="GridColumns" DataSource="_viewmodel.DisplayCreditNoteList" />
+    @* <Winit.UIComponents.Web.Paging.Paging CurrentPage="_viewPurchaseOrderStatusViewModel.PageNumber"
+                                          OnPageChange="PageIndexChanged"
+                                          PageSize="_viewPurchaseOrderStatusViewModel.PageSize"
+                                          TotalItems="_viewPurchaseOrderStatusViewModel.TotalCount" /> *@
+
+}
+else
+{
+    <p>No records..</p>
+}
+@if (!IsApproveTabSelected)
+{
+    <div class="cls_button_bottom">
+    <button class="cls_button_blue" @onclick="ApproveSelected">Approve Selected</button>
+    </div>
+}

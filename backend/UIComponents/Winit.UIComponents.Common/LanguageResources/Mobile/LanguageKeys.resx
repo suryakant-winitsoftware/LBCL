@@ -1,0 +1,2205 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="absent" xml:space="preserve">
+    <value>Absent</value>
+  </data>
+  <data name="account_number" xml:space="preserve">
+    <value>Account Number</value>
+  </data>
+  <data name="achieved" xml:space="preserve">
+    <value>ACHIEVED</value>
+  </data>
+  <data name="active" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="actual" xml:space="preserve">
+    <value>Actual</value>
+  </data>
+  <data name="actual_visits" xml:space="preserve">
+    <value>Actual Visits</value>
+  </data>
+  <data name="add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="address_line1" xml:space="preserve">
+    <value>Address Line1</value>
+  </data>
+  <data name="address_line2" xml:space="preserve">
+    <value>Address Line2</value>
+  </data>
+  <data name="address_line3" xml:space="preserve">
+    <value>Address Line3</value>
+  </data>
+  <data name="add_items" xml:space="preserve">
+    <value>Add Items</value>
+  </data>
+  <data name="add_itemspreviewstore_1" xml:space="preserve">
+    <value>Add ItemsPREVIEWStore 1</value>
+  </data>
+  <data name="add_load_request" xml:space="preserve">
+    <value>Add Load Request</value>
+  </data>
+  <data name="add_notes" xml:space="preserve">
+    <value>Add Notes</value>
+  </data>
+  <data name="add_product" xml:space="preserve">
+    <value>Add Product</value>
+  </data>
+  <data name="add_selected_product" xml:space="preserve">
+    <value>Add Selected Product</value>
+  </data>
+  <data name="add_unload_request" xml:space="preserve">
+    <value>Add UnLoad Request</value>
+  </data>
+  <data name="after_you_close_for_day_you_will_not_be_able_to_do_any_further_transactions" xml:space="preserve">
+    <value>After you Close for Day you will not be able to do any further transactions</value>
+  </data>
+  <data name="alert" xml:space="preserve">
+    <value>Alert</value>
+  </data>
+  <data name="all" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="allocate_amt" xml:space="preserve">
+    <value>Allocate Amt</value>
+  </data>
+  <data name="already_added" xml:space="preserve">
+    <value>already added</value>
+  </data>
+  <data name="amount" xml:space="preserve">
+    <value>Amount</value>
+  </data>
+  <data name="an_error_occurred" xml:space="preserve">
+    <value>An error occurred</value>
+  </data>
+  <data name="an_unexpected_error_occurred." xml:space="preserve">
+    <value>An unexpected error occurred.</value>
+  </data>
+  <data name="apply" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="approval_is_needed_for_price_updates_as_the_unit_price_of_the_item_is_beyond_the_specified range" xml:space="preserve">
+    <value>Approval is needed for price updates as the unit price of the item is beyond the specified range</value>
+  </data>
+  <data name="approved" xml:space="preserve">
+    <value>Approved</value>
+  </data>
+  <data name="approved_qty" xml:space="preserve">
+    <value>Approved Qty</value>
+  </data>
+  <data name="ar" xml:space="preserve">
+    <value>AR</value>
+  </data>
+  <data name="arabic_name" xml:space="preserve">
+    <value>Arabic Name</value>
+  </data>
+  <data name="are_you_at_the_depot?" xml:space="preserve">
+    <value>Are you at the Depot?</value>
+  </data>
+  <data name="are_you_sure._you_want_to_delete_this_item" xml:space="preserve">
+    <value>Are you sure. you want to delete this item</value>
+  </data>
+  <data name="are_you_sure?_do_you_want_to_create_receipt" xml:space="preserve">
+    <value>Are you sure? Do you want to Create Receipt</value>
+  </data>
+  <data name="are_you_sure_you_want_to" xml:space="preserve">
+    <value>Are you sure you want to</value>
+  </data>
+  <data name="are_you_sure_you_want_to_confirm_the_order" xml:space="preserve">
+    <value>Are you sure you want to confirm the order</value>
+  </data>
+  <data name="are_you_sure_you_want_to_continue_without_taking_advantage_of_the_promotion?" xml:space="preserve">
+    <value>Are you sure you want to continue without taking advantage of the promotion?</value>
+  </data>
+  <data name="are_you_sure_you_want_to_delete_the_item?" xml:space="preserve">
+    <value>Are you sure you want to delete the Item?</value>
+  </data>
+  <data name="are_you_sure_you_want_to_delete_this_item?" xml:space="preserve">
+    <value>Are you sure you want to delete this item?</value>
+  </data>
+  <data name="are_you_sure_you_want_to_do_cfd?" xml:space="preserve">
+    <value>Are you sure you want to do CFD?</value>
+  </data>
+  <data name="are_you_sure_you_want_to_do_close_for_day?" xml:space="preserve">
+    <value>Are you sure you want to do Close for Day?</value>
+  </data>
+  <data name="are_you_sure_you_want_to_logout?" xml:space="preserve">
+    <value>Are you sure you want to Logout?</value>
+  </data>
+  <data name="are_you_sure_you_want_to_save_the_order?" xml:space="preserve">
+    <value>Are you sure you want to save the order?</value>
+  </data>
+  <data name="are_you_sure_you_want_to_submit" xml:space="preserve">
+    <value>Are you sure you want to submit</value>
+  </data>
+  <data name="are_you_sure_you_want_to_submit?" xml:space="preserve">
+    <value>Are you sure you want to submit?</value>
+  </data>
+  <data name="are_you_want_to_logout?" xml:space="preserve">
+    <value>Are you sure you want to Logout?</value>
+  </data>
+  <data name="as_amount_exceeds" xml:space="preserve">
+    <value>As amount exceeds</value>
+  </data>
+  <data name="atleast_one_item_should_be_selected" xml:space="preserve">
+    <value>Atleast one item should be selected</value>
+  </data>
+  <data name="atleast_one_item_should_be_selected." xml:space="preserve">
+    <value>Atleast one item should be selected.</value>
+  </data>
+  <data name="attendance" xml:space="preserve">
+    <value>Attendance</value>
+  </data>
+  <data name="attendance_details" xml:space="preserve">
+    <value>Attendance Details</value>
+  </data>
+  <data name="attendance_percentage" xml:space="preserve">
+    <value>Attendance Percentage</value>
+  </data>
+  <data name="attendance_summary" xml:space="preserve">
+    <value>Attendance Summary</value>
+  </data>
+  <data name="attendence" xml:space="preserve">
+    <value>Attendence</value>
+  </data>
+  <data name="attention" xml:space="preserve">
+    <value>Attention</value>
+  </data>
+  <data name="available_credit_limit" xml:space="preserve">
+    <value>Available Credit Limit</value>
+  </data>
+  <data name="available_limit" xml:space="preserve">
+    <value>Available Limit</value>
+  </data>
+  <data name="back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="backstore_qty" xml:space="preserve">
+    <value>BackStore Qty</value>
+  </data>
+  <data name="balance_amt" xml:space="preserve">
+    <value>Balance Amt</value>
+  </data>
+  <data name="bal_to_go" xml:space="preserve">
+    <value>Bal To Go</value>
+  </data>
+  <data name="bank_name" xml:space="preserve">
+    <value>Bank Name</value>
+  </data>
+  <data name="bargraph" xml:space="preserve">
+    <value>BarGraph</value>
+  </data>
+  <data name="base_margin" xml:space="preserve">
+    <value>Base Margin</value>
+  </data>
+  <data name="battery" xml:space="preserve">
+    <value>Battery</value>
+  </data>
+  <data name="battery_information_unavailable" xml:space="preserve">
+    <value>Battery information unavailable</value>
+  </data>
+  <data name="blocked" xml:space="preserve">
+    <value>Blocked</value>
+  </data>
+  <data name="branch_name" xml:space="preserve">
+    <value>Branch Name</value>
+  </data>
+  <data name="call_coverage" xml:space="preserve">
+    <value>Call Coverage</value>
+  </data>
+  <data name="camera_permission_is_required_to_use_this_feature." xml:space="preserve">
+    <value>Camera permission is required to use this feature.</value>
+  </data>
+  <data name="cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="cannot_process_your_request!" xml:space="preserve">
+    <value>Cannot process your request!</value>
+  </data>
+  <data name="can_not_round_off_local_currency" xml:space="preserve">
+    <value>Can not round off Local Currency</value>
+  </data>
+  <data name="capture_geo_location" xml:space="preserve">
+    <value>Capture Geo Location</value>
+  </data>
+  <data name="capture_store" xml:space="preserve">
+    <value>Capture Store</value>
+  </data>
+  <data name="cart" xml:space="preserve">
+    <value>Cart</value>
+  </data>
+  <data name="cash" xml:space="preserve">
+    <value>Cash</value>
+  </data>
+  <data name="cash_disc" xml:space="preserve">
+    <value>Cash Disc</value>
+  </data>
+  <data name="cash_discount" xml:space="preserve">
+    <value>Cash Discount</value>
+  </data>
+  <data name="cash_payment" xml:space="preserve">
+    <value>Cash Payment</value>
+  </data>
+  <data name="category" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="category_type" xml:space="preserve">
+    <value>Category Type</value>
+  </data>
+  <data name="cfd" xml:space="preserve">
+    <value>CFD</value>
+  </data>
+  <data name="cfdprinter" xml:space="preserve">
+    <value>CFDPrinter</value>
+  </data>
+  <data name="cfd_has_been_completed_for_the_day._you_can't_perform_any_transaction_today." xml:space="preserve">
+    <value>CFD has been completed for the day. You can't perform any transaction Today.</value>
+  </data>
+  <data name="cfd_has_been_completed_for_the_day._you_can't_perform_any_transaction_today.1" xml:space="preserve">
+    <value>CFD has been completed for the day. You can't perform any transaction Today.</value>
+  </data>
+  <data name="cfd_status" xml:space="preserve">
+    <value>CFD Status</value>
+  </data>
+  <data name="cfd_submitted_successfully" xml:space="preserve">
+    <value>CFD Submitted Successfully</value>
+  </data>
+  <data name="change_password" xml:space="preserve">
+    <value>Change Password</value>
+  </data>
+  <data name="channel" xml:space="preserve">
+    <value>Channel</value>
+  </data>
+  <data name="checked" xml:space="preserve">
+    <value>Checked</value>
+  </data>
+  <data name="check_all" xml:space="preserve">
+    <value>Check All</value>
+  </data>
+  <data name="check_in" xml:space="preserve">
+    <value>Check In</value>
+  </data>
+  <data name="check_mobile_internet_availability" xml:space="preserve">
+    <value>Check Mobile Internet Availability</value>
+  </data>
+  <data name="check_out" xml:space="preserve">
+    <value>Check Out</value>
+  </data>
+  <data name="cheque" xml:space="preserve">
+    <value>Cheque</value>
+  </data>
+  <data name="cheque_no" xml:space="preserve">
+    <value>Cheque No</value>
+  </data>
+  <data name="cheque_number" xml:space="preserve">
+    <value>Cheque Number</value>
+  </data>
+  <data name="cheque_payment" xml:space="preserve">
+    <value>Cheque Payment</value>
+  </data>
+  <data name="city/district" xml:space="preserve">
+    <value>City/District</value>
+  </data>
+  <data name="clear" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="clear_all" xml:space="preserve">
+    <value>Clear All</value>
+  </data>
+  <data name="clear_selected" xml:space="preserve">
+    <value>Clear Selected</value>
+  </data>
+  <data name="close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="close_of_day(cfd)" xml:space="preserve">
+    <value>Close Of Day(CFD)</value>
+  </data>
+  <data name="collect" xml:space="preserve">
+    <value>COLLECT</value>
+  </data>
+  <data name="collected" xml:space="preserve">
+    <value>Collected</value>
+  </data>
+  <data name="collected_qty" xml:space="preserve">
+    <value>Collected Qty</value>
+  </data>
+  <data name="collection" xml:space="preserve">
+    <value>Collection</value>
+  </data>
+  <data name="collection_summary" xml:space="preserve">
+    <value>Collection Summary</value>
+  </data>
+  <data name="collect_amount" xml:space="preserve">
+    <value>Collect Amount</value>
+  </data>
+  <data name="collect_payment" xml:space="preserve">
+    <value>Collect Payment</value>
+  </data>
+  <data name="commission_tracker" xml:space="preserve">
+    <value>Commission Tracker</value>
+  </data>
+  <data name="confirm" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="confirm?" xml:space="preserve">
+    <value>Confirm?</value>
+  </data>
+  <data name="confirmation" xml:space="preserve">
+    <value>Confirmation</value>
+  </data>
+  <data name="confirm_password" xml:space="preserve">
+    <value>Confirm Password</value>
+  </data>
+  <data name="contact_person" xml:space="preserve">
+    <value>Contact Person</value>
+  </data>
+  <data name="contact_person_email_id" xml:space="preserve">
+    <value>Contact Person  Email Id</value>
+  </data>
+  <data name="contact_person_mobile_number" xml:space="preserve">
+    <value>Contact Person Mobile Number</value>
+  </data>
+  <data name="contact_person_name" xml:space="preserve">
+    <value>Contact Person Name</value>
+  </data>
+  <data name="continue" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="createsalesorder" xml:space="preserve">
+    <value>createsalesorder</value>
+  </data>
+  <data name="credit" xml:space="preserve">
+    <value>Credit</value>
+  </data>
+  <data name="credit_limit" xml:space="preserve">
+    <value>Credit Limit</value>
+  </data>
+  <data name="credit_note" xml:space="preserve">
+    <value>Credit Note</value>
+  </data>
+  <data name="currency" xml:space="preserve">
+    <value>Currency</value>
+  </data>
+  <data name="currency_not_mapped" xml:space="preserve">
+    <value>Currency not mapped</value>
+  </data>
+  <data name="current" xml:space="preserve">
+    <value>Current</value>
+  </data>
+  <data name="current_outstanding" xml:space="preserve">
+    <value>Current Outstanding</value>
+  </data>
+  <data name="current_password" xml:space="preserve">
+    <value>Current Password</value>
+  </data>
+  <data name="current_password_is_required" xml:space="preserve">
+    <value>Current Password is Required</value>
+  </data>
+  <data name="customers" xml:space="preserve">
+    <value>Customers</value>
+  </data>
+  <data name="customers_not_visited" xml:space="preserve">
+    <value>Customers not visited</value>
+  </data>
+  <data name="customer_call_procedure" xml:space="preserve">
+    <value>Customer Call Procedure</value>
+  </data>
+  <data name="customer_chain" xml:space="preserve">
+    <value>Customer Chain</value>
+  </data>
+  <data name="customer_channel" xml:space="preserve">
+    <value>Customer Channel</value>
+  </data>
+  <data name="customer_classification" xml:space="preserve">
+    <value>Customer Classification</value>
+  </data>
+  <data name="customer_code" xml:space="preserve">
+    <value>Customer Code</value>
+  </data>
+  <data name="customer_group" xml:space="preserve">
+    <value>Customer Group</value>
+  </data>
+  <data name="customer_signature" xml:space="preserve">
+    <value>Customer Signature</value>
+  </data>
+  <data name="customer_sub_channel" xml:space="preserve">
+    <value>Customer Sub Channel</value>
+  </data>
+  <data name="customer_type" xml:space="preserve">
+    <value>Customer Type</value>
+  </data>
+  <data name="damage" xml:space="preserve">
+    <value>Damage</value>
+  </data>
+  <data name="dashboard" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="date" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="date_&amp;_time" xml:space="preserve">
+    <value>Date &amp; Time</value>
+  </data>
+  <data name="days" xml:space="preserve">
+    <value>days</value>
+  </data>
+  <data name="days_present" xml:space="preserve">
+    <value>Days Present</value>
+  </data>
+  <data name="default_bank" xml:space="preserve">
+    <value>Default Bank</value>
+  </data>
+  <data name="delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="delete_user_journey" xml:space="preserve">
+    <value>Delete User Journey</value>
+  </data>
+  <data name="delivered" xml:space="preserve">
+    <value>Delivered</value>
+  </data>
+  <data name="deliveredbysignature" xml:space="preserve">
+    <value>DeliveredBySignature</value>
+  </data>
+  <data name="delivery_date" xml:space="preserve">
+    <value>Delivery Date</value>
+  </data>
+  <data name="demo" xml:space="preserve">
+    <value>Demo</value>
+  </data>
+  <data name="dialog" xml:space="preserve">
+    <value>Dialog</value>
+  </data>
+  <data name="disc" xml:space="preserve">
+    <value>Disc</value>
+  </data>
+  <data name="discount" xml:space="preserve">
+    <value>Discount</value>
+  </data>
+  <data name="discrepency" xml:space="preserve">
+    <value>Discrepency</value>
+  </data>
+  <data name="discrepency_can_not_be_negative" xml:space="preserve">
+    <value>Discrepency can not be Negative</value>
+  </data>
+  <data name="disc_sku" xml:space="preserve">
+    <value>Disc SKU</value>
+  </data>
+  <data name="distance" xml:space="preserve">
+    <value>Distance</value>
+  </data>
+  <data name="distance_in_meters" xml:space="preserve">
+    <value>Distance in Meters</value>
+  </data>
+  <data name="distribution_channel_should_not_be_null" xml:space="preserve">
+    <value>Distribution Channel should not be null</value>
+  </data>
+  <data name="don't_miss_out!" xml:space="preserve">
+    <value>Don't Miss Out!</value>
+  </data>
+  <data name="done" xml:space="preserve">
+    <value>Done</value>
+  </data>
+  <data name="doughnutgraph" xml:space="preserve">
+    <value>DoughnutGraph</value>
+  </data>
+  <data name="doughnut_chart" xml:space="preserve">
+    <value>DOUGHNUT CHART</value>
+  </data>
+  <data name="do_you_want_to_cancel_this_payment?" xml:space="preserve">
+    <value>Do you want to Cancel this payment?</value>
+  </data>
+  <data name="do_you_want_to_create_on_account?" xml:space="preserve">
+    <value>Do you want to Create On account?</value>
+  </data>
+  <data name="do_you_want_to_proceed?" xml:space="preserve">
+    <value>Do you want to Proceed?</value>
+  </data>
+  <data name="do_you_want_to_start_the_journey?" xml:space="preserve">
+    <value>Do You Want To Start the Journey?</value>
+  </data>
+  <data name="draft" xml:space="preserve">
+    <value>Draft</value>
+  </data>
+  <data name="dre" xml:space="preserve">
+    <value>DRE</value>
+  </data>
+  <data name="dre(damage_return_expiry)" xml:space="preserve">
+    <value>DRE(Damage Return Expiry)</value>
+  </data>
+  <data name="due" xml:space="preserve">
+    <value>Due</value>
+  </data>
+  <data name="due_amount" xml:space="preserve">
+    <value>Due Amount</value>
+  </data>
+  <data name="due_date" xml:space="preserve">
+    <value>Due Date</value>
+  </data>
+  <data name="each" xml:space="preserve">
+    <value>Each</value>
+  </data>
+  <data name="edit_price" xml:space="preserve">
+    <value>Edit Price</value>
+  </data>
+  <data name="email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="email_id" xml:space="preserve">
+    <value>Email Id</value>
+  </data>
+  <data name="empty_alert" xml:space="preserve">
+    <value>Empty Alert</value>
+  </data>
+  <data name="end_date" xml:space="preserve">
+    <value>End date</value>
+  </data>
+  <data name="entered_amount_can_not_be_zero_in_selected_payment_mode" xml:space="preserve">
+    <value>Entered amount can not be Zero in Selected Payment mode</value>
+  </data>
+  <data name="enter_account_name" xml:space="preserve">
+    <value>Enter Account Name</value>
+  </data>
+  <data name="enter_amount_currency_wise" xml:space="preserve">
+    <value>Enter Amount Currency Wise</value>
+  </data>
+  <data name="enter_bank_name" xml:space="preserve">
+    <value>Enter Bank Name</value>
+  </data>
+  <data name="enter_customer_name/code_here" xml:space="preserve">
+    <value>Enter Customer Name/Code here</value>
+  </data>
+  <data name="enter_customer_name/code_here.." xml:space="preserve">
+    <value>Enter Customer Name/Code here..</value>
+  </data>
+  <data name="enter_damage_notes_here" xml:space="preserve">
+    <value>Enter Damage Notes Here</value>
+  </data>
+  <data name="enter_discount_amount" xml:space="preserve">
+    <value>Enter Discount Amount</value>
+  </data>
+  <data name="enter_here" xml:space="preserve">
+    <value>Enter here</value>
+  </data>
+  <data name="enter_new_price" xml:space="preserve">
+    <value>Enter New Price</value>
+  </data>
+  <data name="enter_passcode" xml:space="preserve">
+    <value>Enter Passcode</value>
+  </data>
+  <data name="enter_qty" xml:space="preserve">
+    <value>Enter Qty</value>
+  </data>
+  <data name="enter_qty_atleast_one_product" xml:space="preserve">
+    <value>Enter Qty Atleast one product</value>
+  </data>
+  <data name="ep%" xml:space="preserve">
+    <value>EP%</value>
+  </data>
+  <data name="error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="error_initializing_sales_order_view_model" xml:space="preserve">
+    <value>Error initializing sales order view model</value>
+  </data>
+  <data name="error_loading_data" xml:space="preserve">
+    <value>Error loading data</value>
+  </data>
+  <data name="execption" xml:space="preserve">
+    <value>Execption</value>
+  </data>
+  <data name="expecteddeliverydate" xml:space="preserve">
+    <value>ExpectedDeliveryDate</value>
+  </data>
+  <data name="expected_avg_monthly_income" xml:space="preserve">
+    <value>Expected Avg monthly Income</value>
+  </data>
+  <data name="expiry" xml:space="preserve">
+    <value>Expiry</value>
+  </data>
+  <data name="expiry_date" xml:space="preserve">
+    <value>Expiry Date</value>
+  </data>
+  <data name="failed" xml:space="preserve">
+    <value>Failed</value>
+  </data>
+  <data name="failed_to_capture_photo" xml:space="preserve">
+    <value>Failed to capture photo</value>
+  </data>
+  <data name="failed_to_convert_photo" xml:space="preserve">
+    <value>Failed to convert photo</value>
+  </data>
+  <data name="failed_to_post_the_order" xml:space="preserve">
+    <value>Failed to post the Order</value>
+  </data>
+  <data name="failed_to_update_location" xml:space="preserve">
+    <value>Failed to update location</value>
+  </data>
+  <data name="fetching_gps..." xml:space="preserve">
+    <value>Fetching GPS...</value>
+  </data>
+  <data name="file_type_is_not_allowed" xml:space="preserve">
+    <value>File Type is not allowed</value>
+  </data>
+  <data name="filter" xml:space="preserve">
+    <value>Filter</value>
+  </data>
+  <data name="final_order_value" xml:space="preserve">
+    <value>Final Order Value</value>
+  </data>
+  <data name="forgot_password" xml:space="preserve">
+    <value>Forgot Password</value>
+  </data>
+  <data name="free" xml:space="preserve">
+    <value>Free</value>
+  </data>
+  <data name="frequently_buying_items" xml:space="preserve">
+    <value>Frequently Buying Items</value>
+  </data>
+  <data name="from" xml:space="preserve">
+    <value>From</value>
+  </data>
+  <data name="from_your_planned_visits" xml:space="preserve">
+    <value>From your planned visits</value>
+  </data>
+  <data name="good_return" xml:space="preserve">
+    <value>Good Return</value>
+  </data>
+  <data name="gps" xml:space="preserve">
+    <value>GPS</value>
+  </data>
+  <data name="gps_is_not_enabled._do_you_want_to_enable_it?" xml:space="preserve">
+    <value>GPS is not enabled. Do you want to enable it?</value>
+  </data>
+  <data name="gps_is_not_supported_on_this_device" xml:space="preserve">
+    <value>GPS is not supported on this device</value>
+  </data>
+  <data name="gps_must_be_turned_on_to_check_location_&amp;_distance" xml:space="preserve">
+    <value>GPS Must Be Turned On To Check Location &amp; Distance</value>
+  </data>
+  <data name="gps_not_supported" xml:space="preserve">
+    <value>GPS not supported</value>
+  </data>
+  <data name="group_1" xml:space="preserve">
+    <value>Group 1</value>
+  </data>
+  <data name="group_2" xml:space="preserve">
+    <value>Group 2</value>
+  </data>
+  <data name="growth" xml:space="preserve">
+    <value>Growth</value>
+  </data>
+  <data name="gt" xml:space="preserve">
+    <value>GT</value>
+  </data>
+  <data name="history" xml:space="preserve">
+    <value>History</value>
+  </data>
+  <data name="inactive" xml:space="preserve">
+    <value>Inactive</value>
+  </data>
+  <data name="inr" xml:space="preserve">
+    <value>INR</value>
+  </data>
+  <data name="internet" xml:space="preserve">
+    <value>Internet</value>
+  </data>
+  <data name="internetspeed" xml:space="preserve">
+    <value>InternetSpeed</value>
+  </data>
+  <data name="internet_source_&amp;_speed" xml:space="preserve">
+    <value>Internet Source &amp; Speed</value>
+  </data>
+  <data name="invoice" xml:space="preserve">
+    <value>Invoice</value>
+  </data>
+  <data name="invoices_amt" xml:space="preserve">
+    <value>Invoices Amt</value>
+  </data>
+  <data name="invoices_details" xml:space="preserve">
+    <value>Invoices Details</value>
+  </data>
+  <data name="invoices_no" xml:space="preserve">
+    <value>Invoices No</value>
+  </data>
+  <data name="invoice_amount" xml:space="preserve">
+    <value>Invoice Amount</value>
+  </data>
+  <data name="invoice_amount_can't_be_negative" xml:space="preserve">
+    <value>Invoice Amount can't be Negative</value>
+  </data>
+  <data name="invoice_amount_can_not_be_negative" xml:space="preserve">
+    <value>Invoice Amount can not be Negative</value>
+  </data>
+  <data name="invoice_and_collected_amount_should_be_same" xml:space="preserve">
+    <value>Invoice and Collected Amount Should be same</value>
+  </data>
+  <data name="invoice_delivery_method" xml:space="preserve">
+    <value>Invoice Delivery Method</value>
+  </data>
+  <data name="invoice_no" xml:space="preserve">
+    <value>Invoice No</value>
+  </data>
+  <data name="invoice_number" xml:space="preserve">
+    <value>Invoice Number</value>
+  </data>
+  <data name="invoice_price" xml:space="preserve">
+    <value>Invoice Price</value>
+  </data>
+  <data name="invoice_price_sku" xml:space="preserve">
+    <value>Invoice Price SKU</value>
+  </data>
+  <data name="invoice_type" xml:space="preserve">
+    <value>Invoice Type</value>
+  </data>
+  <data name="inv_date" xml:space="preserve">
+    <value>Inv Date</value>
+  </data>
+  <data name="is_warehouse/school" xml:space="preserve">
+    <value>Is WareHouse/School</value>
+  </data>
+  <data name="items_selected" xml:space="preserve">
+    <value>items selected </value>
+  </data>
+  <data name="item_code/description" xml:space="preserve">
+    <value>Item Code/Description</value>
+  </data>
+  <data name="item_code/name" xml:space="preserve">
+    <value>Item Code/Name</value>
+  </data>
+  <data name="item_description" xml:space="preserve">
+    <value>Item Description</value>
+  </data>
+  <data name="it_checks_the_data_is_synced_between_server_&amp;_app" xml:space="preserve">
+    <value>It Checks The Data Is Synced Between Server &amp; App</value>
+  </data>
+  <data name="it_seems_you_are_not_in_customer_location,do_you_want_to_do_force_check_in" xml:space="preserve">
+    <value>It seems you're not at the customer location. Would you like to proceed with a force check-in?</value>
+  </data>
+  <data name="it_seems_you_are_not_in_customer_location,do_you_want_to_do_force_check_in1" xml:space="preserve">
+    <value>It seems you're not at the customer location. Would you like to proceed with a force check-in?</value>
+  </data>
+  <data name="journeyplan" xml:space="preserve">
+    <value>JourneyPlan</value>
+  </data>
+  <data name="journey_plan(jp)" xml:space="preserve">
+    <value>Journey Plan(JP)</value>
+  </data>
+  <data name="jp" xml:space="preserve">
+    <value>JP</value>
+  </data>
+  <data name="jp_reconciliation_is_completed_for_all_available_route_for_selected_vehicle" xml:space="preserve">
+    <value>JP reconciliation is completed for all available route for selected vehicle</value>
+  </data>
+  <data name="jp_reconciliation_status" xml:space="preserve">
+    <value>JP Reconciliation Status</value>
+  </data>
+  <data name="label" xml:space="preserve">
+    <value>Label</value>
+  </data>
+  <data name="landline" xml:space="preserve">
+    <value>Landline</value>
+  </data>
+  <data name="last_invoice" xml:space="preserve">
+    <value>Last Invoice</value>
+  </data>
+  <data name="last_month_billed" xml:space="preserve">
+    <value>Last Month Billed</value>
+  </data>
+  <data name="latitude" xml:space="preserve">
+    <value>Latitude</value>
+  </data>
+  <data name="leaderboard" xml:space="preserve">
+    <value>Leaderboard</value>
+  </data>
+  <data name="legal_name" xml:space="preserve">
+    <value>Legal Name</value>
+  </data>
+  <data name="line_number" xml:space="preserve">
+    <value>Line Number</value>
+  </data>
+  <data name="loading...." xml:space="preserve">
+    <value>Loading....</value>
+  </data>
+  <data name="loading_customers.." xml:space="preserve">
+    <value>lOADING Customers..</value>
+  </data>
+  <data name="loading_journey_plan" xml:space="preserve">
+    <value>Loading Journey Plan</value>
+  </data>
+  <data name="loading_load_request" xml:space="preserve">
+    <value>Loading Load Request</value>
+  </data>
+  <data name="loading_product_catalogue" xml:space="preserve">
+    <value>Loading Product Catalogue</value>
+  </data>
+  <data name="loading_sales_order" xml:space="preserve">
+    <value>Loading Sales Order</value>
+  </data>
+  <data name="load_request" xml:space="preserve">
+    <value>Load request</value>
+  </data>
+  <data name="load_request_submitted_failed" xml:space="preserve">
+    <value>Load request submitted failed</value>
+  </data>
+  <data name="location" xml:space="preserve">
+    <value>Location</value>
+  </data>
+  <data name="location_permission_is_not_granted" xml:space="preserve">
+    <value>Location permission is not granted</value>
+  </data>
+  <data name="location_permission_is_required_to_use_this_feature" xml:space="preserve">
+    <value>Location Permission is required to use this feature</value>
+  </data>
+  <data name="location_permission_is_required_to_use_this_feature1" xml:space="preserve">
+    <value>Location permission is required to use this feature</value>
+  </data>
+  <data name="location_popup" xml:space="preserve">
+    <value>Location Popup</value>
+  </data>
+  <data name="location_update" xml:space="preserve">
+    <value>Location Update</value>
+  </data>
+  <data name="location_updated_successfully" xml:space="preserve">
+    <value>Location updated successfully</value>
+  </data>
+  <data name="logout" xml:space="preserve">
+    <value>Logout</value>
+  </data>
+  <data name="longitude" xml:space="preserve">
+    <value>Longitude</value>
+  </data>
+  <data name="loyalty_redeemed" xml:space="preserve">
+    <value>Loyalty Redeemed</value>
+  </data>
+  <data name="lpo_number" xml:space="preserve">
+    <value>LPO Number</value>
+  </data>
+  <data name="make_sure_battery_is_minimum_30%_charged_to_start_your_day" xml:space="preserve">
+    <value>Make Sure Battery Is Minimum 30% Charged To Start Your Day</value>
+  </data>
+  <data name="manager" xml:space="preserve">
+    <value>Manager</value>
+  </data>
+  <data name="managercontact" xml:space="preserve">
+    <value>ManagerContact</value>
+  </data>
+  <data name="managername" xml:space="preserve">
+    <value>ManagerName</value>
+  </data>
+  <data name="map" xml:space="preserve">
+    <value>Map</value>
+  </data>
+  <data name="mark" xml:space="preserve">
+    <value>Mark</value>
+  </data>
+  <data name="mark_attendance" xml:space="preserve">
+    <value>Mark Attendance</value>
+  </data>
+  <data name="maximum_price_limit" xml:space="preserve">
+    <value>Maximum Price Limit</value>
+  </data>
+  <data name="maxqty_reached" xml:space="preserve">
+    <value>MaxQty Reached</value>
+  </data>
+  <data name="mbps" xml:space="preserve">
+    <value>Mbps</value>
+  </data>
+  <data name="mcl" xml:space="preserve">
+    <value>MCL</value>
+  </data>
+  <data name="mcl_status" xml:space="preserve">
+    <value>MCL Status</value>
+  </data>
+  <data name="message" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="message_of_the_day" xml:space="preserve">
+    <value>Message Of The Day</value>
+  </data>
+  <data name="minimum_price_limit" xml:space="preserve">
+    <value>Minimum Price Limit</value>
+  </data>
+  <data name="mins" xml:space="preserve">
+    <value>Mins</value>
+  </data>
+  <data name="missing_customer_signature" xml:space="preserve">
+    <value>Missing Customer Signature</value>
+  </data>
+  <data name="missing_salesman_signature" xml:space="preserve">
+    <value>Missing SalesMan Signature</value>
+  </data>
+  <data name="mobile" xml:space="preserve">
+    <value>Mobile</value>
+  </data>
+  <data name="mobile_internet" xml:space="preserve">
+    <value>Mobile Internet</value>
+  </data>
+  <data name="mobile_number" xml:space="preserve">
+    <value>Mobile number</value>
+  </data>
+  <data name="mode_of_delivery" xml:space="preserve">
+    <value>Mode Of Delivery</value>
+  </data>
+  <data name="modify_order" xml:space="preserve">
+    <value>Modify Order</value>
+  </data>
+  <data name="moment_code" xml:space="preserve">
+    <value>Moment Code</value>
+  </data>
+  <data name="monthly" xml:space="preserve">
+    <value>Monthly</value>
+  </data>
+  <data name="msl" xml:space="preserve">
+    <value>MSL</value>
+  </data>
+  <data name="mtd_sales_value" xml:space="preserve">
+    <value>MTD Sales Value</value>
+  </data>
+  <data name="mycustomers" xml:space="preserve">
+    <value>MyCustomers</value>
+  </data>
+  <data name="my_customers" xml:space="preserve">
+    <value>My Customers</value>
+  </data>
+  <data name="my_dashboard" xml:space="preserve">
+    <value>My Dashboard</value>
+  </data>
+  <data name="navigate" xml:space="preserve">
+    <value>Navigate</value>
+  </data>
+  <data name="new" xml:space="preserve">
+    <value>New</value>
+  </data>
+  <data name="new_password" xml:space="preserve">
+    <value>New Password</value>
+  </data>
+  <data name="nl" xml:space="preserve">
+    <value>NL</value>
+  </data>
+  <data name="no" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="not" xml:space="preserve">
+    <value>Not</value>
+  </data>
+  <data name="not_delivered" xml:space="preserve">
+    <value>Not Delivered</value>
+  </data>
+  <data name="no_category_selected" xml:space="preserve">
+    <value>No Category Selected</value>
+  </data>
+  <data name="no_category_selected1" xml:space="preserve">
+    <value>No Category Selected</value>
+  </data>
+  <data name="no_file_chosen" xml:space="preserve">
+    <value>No file chosen</value>
+  </data>
+  <data name="no_items" xml:space="preserve">
+    <value>No Items</value>
+  </data>
+  <data name="no_items_added" xml:space="preserve">
+    <value>No Items Added</value>
+  </data>
+  <data name="no_items_are_selected" xml:space="preserve">
+    <value>No items are selected</value>
+  </data>
+  <data name="no_items_selected" xml:space="preserve">
+    <value>No Items selected</value>
+  </data>
+  <data name="no_journey_plan_available_for_the_day" xml:space="preserve">
+    <value>No journey plan available for the day</value>
+  </data>
+  <data name="no_order_details_available" xml:space="preserve">
+    <value>No order details available</value>
+  </data>
+  <data name="no_printer" xml:space="preserve">
+    <value>No Printer</value>
+  </data>
+  <data name="no_printer1" xml:space="preserve">
+    <value>No Printer</value>
+  </data>
+  <data name="no_printer_selected_at_printer_service_for_printing" xml:space="preserve">
+    <value>No Printer Selected at Printer Service for Printing</value>
+  </data>
+  <data name="no_records_available" xml:space="preserve">
+    <value>No Records Available</value>
+  </data>
+  <data name="no_records_selected" xml:space="preserve">
+    <value>No Records Selected</value>
+  </data>
+  <data name="no_record_found" xml:space="preserve">
+    <value>No Record Found</value>
+  </data>
+  <data name="no_results_found" xml:space="preserve">
+    <value>No results found</value>
+  </data>
+  <data name="no_sku_available" xml:space="preserve">
+    <value>No SKU available</value>
+  </data>
+  <data name="number" xml:space="preserve">
+    <value>Number</value>
+  </data>
+  <data name="number_of_cash_counters" xml:space="preserve">
+    <value>Number Of Cash Counters</value>
+  </data>
+  <data name="odometer" xml:space="preserve">
+    <value>Odometer</value>
+  </data>
+  <data name="odometer_reading" xml:space="preserve">
+    <value>Odometer Reading</value>
+  </data>
+  <data name="of_the_day" xml:space="preserve">
+    <value>Of The Day</value>
+  </data>
+  <data name="ok" xml:space="preserve">
+    <value>Ok</value>
+  </data>
+  <data name="old" xml:space="preserve">
+    <value>Old</value>
+  </data>
+  <data name="onaccount" xml:space="preserve">
+    <value>OnAccount</value>
+  </data>
+  <data name="online" xml:space="preserve">
+    <value>Online</value>
+  </data>
+  <data name="online_payment" xml:space="preserve">
+    <value>Online Payment</value>
+  </data>
+  <data name="on_account" xml:space="preserve">
+    <value>On Account</value>
+  </data>
+  <data name="on_account_created_successfully" xml:space="preserve">
+    <value>On Account created Successfully</value>
+  </data>
+  <data name="on_account_creation_failed" xml:space="preserve">
+    <value>On Account creation Failed</value>
+  </data>
+  <data name="on_account_will_be_created._are_you_sure_to_proceed?" xml:space="preserve">
+    <value>On Account will be Created. Are you sure to Proceed?</value>
+  </data>
+  <data name="openfile_not_supported" xml:space="preserve">
+    <value>OpenFile not supported</value>
+  </data>
+  <data name="order" xml:space="preserve">
+    <value>Order</value>
+  </data>
+  <data name="orderdate" xml:space="preserve">
+    <value>OrderDate</value>
+  </data>
+  <data name="order_confirmation" xml:space="preserve">
+    <value>Order Confirmation</value>
+  </data>
+  <data name="order_delivered_successfully" xml:space="preserve">
+    <value>Order delivered successfully</value>
+  </data>
+  <data name="order_number" xml:space="preserve">
+    <value>Order Number</value>
+  </data>
+  <data name="order_placed_successfully" xml:space="preserve">
+    <value>Order Placed Successfully</value>
+  </data>
+  <data name="order_profile" xml:space="preserve">
+    <value>Order Profile</value>
+  </data>
+  <data name="order_qty" xml:space="preserve">
+    <value>Order Qty</value>
+  </data>
+  <data name="order_saved_successfully" xml:space="preserve">
+    <value>Order saved successfully</value>
+  </data>
+  <data name="order_status" xml:space="preserve">
+    <value>Order Status</value>
+  </data>
+  <data name="order_value_can_not_be_less_than_zero(0)" xml:space="preserve">
+    <value>Order value can not be less than zero(0)</value>
+  </data>
+  <data name="order_value_can_not_be_less_than_zero(0)." xml:space="preserve">
+    <value>Order value can not be less than zero(0).</value>
+  </data>
+  <data name="org_seq_code_not_mapped" xml:space="preserve">
+    <value>Org Seq Code not mapped</value>
+  </data>
+  <data name="outer" xml:space="preserve">
+    <value>Outer</value>
+  </data>
+  <data name="outlet_name" xml:space="preserve">
+    <value>Outlet Name</value>
+  </data>
+  <data name="outlet_subtype" xml:space="preserve">
+    <value>Outlet Subtype</value>
+  </data>
+  <data name="out_of" xml:space="preserve">
+    <value>Out of</value>
+  </data>
+  <data name="overdue" xml:space="preserve">
+    <value>Overdue</value>
+  </data>
+  <data name="over_due" xml:space="preserve">
+    <value>Over Due</value>
+  </data>
+  <data name="passcode_incorrect!!" xml:space="preserve">
+    <value>Passcode incorrect!!</value>
+  </data>
+  <data name="passed" xml:space="preserve">
+    <value>Passed</value>
+  </data>
+  <data name="password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="password_miss_match" xml:space="preserve">
+    <value>Password miss match</value>
+  </data>
+  <data name="paying_amount" xml:space="preserve">
+    <value>Paying Amount</value>
+  </data>
+  <data name="payment" xml:space="preserve">
+    <value>Payment</value>
+  </data>
+  <data name="payment_check_list" xml:space="preserve">
+    <value>Payment Check List</value>
+  </data>
+  <data name="payment_date" xml:space="preserve">
+    <value>Payment Date</value>
+  </data>
+  <data name="payment_success" xml:space="preserve">
+    <value>Payment Success</value>
+  </data>
+  <data name="pending" xml:space="preserve">
+    <value>Pending</value>
+  </data>
+  <data name="perfect_score" xml:space="preserve">
+    <value>Perfect Score</value>
+  </data>
+  <data name="permission_denied" xml:space="preserve">
+    <value>Permission Denied</value>
+  </data>
+  <data name="permission_not_granted" xml:space="preserve">
+    <value>Permission not granted</value>
+  </data>
+  <data name="permission_not_granted_to_use_the_phone_dialer" xml:space="preserve">
+    <value>Permission not granted to use the phone dialer</value>
+  </data>
+  <data name="phone_dialer_is_not_supported_on_this_device" xml:space="preserve">
+    <value>Phone Dialer is not supported on this device</value>
+  </data>
+  <data name="phone_dialer_not_supported" xml:space="preserve">
+    <value>Phone Dialer not supported</value>
+  </data>
+  <data name="piechart" xml:space="preserve">
+    <value>piechart</value>
+  </data>
+  <data name="place_order" xml:space="preserve">
+    <value>Place Order</value>
+  </data>
+  <data name="planned" xml:space="preserve">
+    <value>Planned</value>
+  </data>
+  <data name="plan_for_the_call" xml:space="preserve">
+    <value>Plan For The Call</value>
+  </data>
+  <data name="please_capture_before_image_to_continue" xml:space="preserve">
+    <value>Please Capture Before Image to continue</value>
+  </data>
+  <data name="please_check_date_range" xml:space="preserve">
+    <value>Please Check Date Range</value>
+  </data>
+  <data name="please_connect_to_the_internet_before_proceeding" xml:space="preserve">
+    <value>Please connect to the internet before proceeding</value>
+  </data>
+  <data name="please_enable_gps_before_proceeding" xml:space="preserve">
+    <value>Please enable GPS before proceeding</value>
+  </data>
+  <data name="please_ensure_that_the_battery_is_at_least_20%_charged_before_proceeding" xml:space="preserve">
+    <value>Please ensure that the battery is at least 20% charged before proceeding</value>
+  </data>
+  <data name="please_enter_amount" xml:space="preserve">
+    <value>Please Enter Amount</value>
+  </data>
+  <data name="please_enter_amount_in_selected_paymentmode" xml:space="preserve">
+    <value>Please enter amount in Selected PaymentMode</value>
+  </data>
+  <data name="please_enter_a_non-negative_value" xml:space="preserve">
+    <value>Please enter a non-negative value</value>
+  </data>
+  <data name="please_enter_new_password" xml:space="preserve">
+    <value>Please Enter new Password</value>
+  </data>
+  <data name="please_enter_paying_amount" xml:space="preserve">
+    <value>Please enter Paying Amount</value>
+  </data>
+  <data name="please_enter_the_passcode_for_below_passkey" xml:space="preserve">
+    <value>Please Enter the Passcode for below Passkey</value>
+  </data>
+  <data name="please_goto_dashboard_then_only_you_can_change_the_route" xml:space="preserve">
+    <value>Please goto Dashboard then only you can change the Route</value>
+  </data>
+  <data name="please_select_a_reason_to_continue" xml:space="preserve">
+    <value>Please select a Reason to Continue</value>
+  </data>
+  <data name="please_select_checklist" xml:space="preserve">
+    <value>Please select CheckList</value>
+  </data>
+  <data name="please_select_force_chekin_reason" xml:space="preserve">
+    <value>Please Select Force Chekin Reason</value>
+  </data>
+  <data name="please_select_force_chekin_reason1" xml:space="preserve">
+    <value>Please Select Force Chekin Reason</value>
+  </data>
+  <data name="please_select_paymentmode" xml:space="preserve">
+    <value>Please select PaymentMode</value>
+  </data>
+  <data name="please_select_records" xml:space="preserve">
+    <value>Please select Records</value>
+  </data>
+  <data name="please_select_route_to_continue" xml:space="preserve">
+    <value>Please select route to continue</value>
+  </data>
+  <data name="please_select_route_to_continue." xml:space="preserve">
+    <value>Please select route to continue.</value>
+  </data>
+  <data name="please_start_your_day_first_to_continue_to_journey_plan." xml:space="preserve">
+    <value>Please start your day first to continue to Journey Plan.</value>
+  </data>
+  <data name="please_wait_until_all_prerequisites_are_checked" xml:space="preserve">
+    <value>Please wait until all prerequisites are checked</value>
+  </data>
+  <data name="pos" xml:space="preserve">
+    <value>POS</value>
+  </data>
+  <data name="positive_calls" xml:space="preserve">
+    <value>Positive Calls</value>
+  </data>
+  <data name="pos_payment" xml:space="preserve">
+    <value>POS Payment</value>
+  </data>
+  <data name="po_boxnumber" xml:space="preserve">
+    <value>PO BoxNumber</value>
+  </data>
+  <data name="po_number" xml:space="preserve">
+    <value>PO Number</value>
+  </data>
+  <data name="ppq" xml:space="preserve">
+    <value>PPQ</value>
+  </data>
+  <data name="preffered_payment_mode" xml:space="preserve">
+    <value>Preffered Payment Mode</value>
+  </data>
+  <data name="present" xml:space="preserve">
+    <value>Present</value>
+  </data>
+  <data name="preview" xml:space="preserve">
+    <value>Preview</value>
+  </data>
+  <data name="price" xml:space="preserve">
+    <value>Price</value>
+  </data>
+  <data name="price_sku" xml:space="preserve">
+    <value>Price SKU</value>
+  </data>
+  <data name="price_type" xml:space="preserve">
+    <value>Price Type</value>
+  </data>
+  <data name="print" xml:space="preserve">
+    <value>Print</value>
+  </data>
+  <data name="printer_brand" xml:space="preserve">
+    <value>Printer Brand</value>
+  </data>
+  <data name="printer_mac_address" xml:space="preserve">
+    <value>Printer Mac Address</value>
+  </data>
+  <data name="printer_mac_address_is_empty_or_null" xml:space="preserve">
+    <value>Printer MAC Address is empty or null</value>
+  </data>
+  <data name="printer_paper_size" xml:space="preserve">
+    <value>Printer Paper Size</value>
+  </data>
+  <data name="printer_paper_size_is_empty_or_null" xml:space="preserve">
+    <value>Printer Paper Size is empty or null</value>
+  </data>
+  <data name="printer_type_or_brand_is_empty_or_null" xml:space="preserve">
+    <value>Printer Type or Brand is empty or null</value>
+  </data>
+  <data name="print_collection_summary" xml:space="preserve">
+    <value>Print Collection Summary</value>
+  </data>
+  <data name="print_sales_summary" xml:space="preserve">
+    <value>Print Sales Summary</value>
+  </data>
+  <data name="print_summary" xml:space="preserve">
+    <value>Print Summary</value>
+  </data>
+  <data name="proceed" xml:space="preserve">
+    <value>Proceed</value>
+  </data>
+  <data name="product_details" xml:space="preserve">
+    <value>Product Details</value>
+  </data>
+  <data name="promo" xml:space="preserve">
+    <value>Promo</value>
+  </data>
+  <data name="promotions" xml:space="preserve">
+    <value>Promotions</value>
+  </data>
+  <data name="promotion_details" xml:space="preserve">
+    <value>Promotion Details</value>
+  </data>
+  <data name="qty" xml:space="preserve">
+    <value>Qty</value>
+  </data>
+  <data name="quantity" xml:space="preserve">
+    <value>Quantity</value>
+  </data>
+  <data name="quantity_alert" xml:space="preserve">
+    <value>Quantity Alert</value>
+  </data>
+  <data name="radialgauge" xml:space="preserve">
+    <value>RadialGauge</value>
+  </data>
+  <data name="rate" xml:space="preserve">
+    <value>Rate</value>
+  </data>
+  <data name="rc_qty" xml:space="preserve">
+    <value>RC Qty</value>
+  </data>
+  <data name="reading" xml:space="preserve">
+    <value>Reading</value>
+  </data>
+  <data name="reason" xml:space="preserve">
+    <value>Reason</value>
+  </data>
+  <data name="receipt" xml:space="preserve">
+    <value>Receipt</value>
+  </data>
+  <data name="receipts_created_successfully" xml:space="preserve">
+    <value>Receipts created Successfully</value>
+  </data>
+  <data name="receipts_created_successfully,_on_account_failed" xml:space="preserve">
+    <value>Receipts created Successfully, On Account failed</value>
+  </data>
+  <data name="receipts_creation_failed,_on_account_created" xml:space="preserve">
+    <value>Receipts creation failed, On Account created</value>
+  </data>
+  <data name="receivedbysignature" xml:space="preserve">
+    <value>ReceivedBySignature</value>
+  </data>
+  <data name="recommended" xml:space="preserve">
+    <value>Recommended</value>
+  </data>
+  <data name="refresh" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="region/zone" xml:space="preserve">
+    <value>Region/Zone</value>
+  </data>
+  <data name="remaining" xml:space="preserve">
+    <value>Remaining</value>
+  </data>
+  <data name="remember_me" xml:space="preserve">
+    <value>Remember Me</value>
+  </data>
+  <data name="remote_collections" xml:space="preserve">
+    <value>Remote Collections</value>
+  </data>
+  <data name="requested" xml:space="preserve">
+    <value>Requested</value>
+  </data>
+  <data name="requestedqrt2_should_not_be_zero" xml:space="preserve">
+    <value>RequestedQrt2 Should not be zero</value>
+  </data>
+  <data name="requested_qty" xml:space="preserve">
+    <value>Requested Qty</value>
+  </data>
+  <data name="requisites" xml:space="preserve">
+    <value>Requisites</value>
+  </data>
+  <data name="reset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="retake" xml:space="preserve">
+    <value>Retake</value>
+  </data>
+  <data name="returnorder" xml:space="preserve">
+    <value>ReturnOrder</value>
+  </data>
+  <data name="return_order" xml:space="preserve">
+    <value>Return Order</value>
+  </data>
+  <data name="return_order_preview" xml:space="preserve">
+    <value>Return Order Preview</value>
+  </data>
+  <data name="return_summary" xml:space="preserve">
+    <value>Return Summary</value>
+  </data>
+  <data name="rlp" xml:space="preserve">
+    <value>RLP</value>
+  </data>
+  <data name="round_off_range_should_be" xml:space="preserve">
+    <value>Round off range should be </value>
+  </data>
+  <data name="route" xml:space="preserve">
+    <value>Route</value>
+  </data>
+  <data name="route_not_mapped" xml:space="preserve">
+    <value>Route not mapped</value>
+  </data>
+  <data name="route_selection" xml:space="preserve">
+    <value>Route Selection</value>
+  </data>
+  <data name="route_selection_will_be_enabled_once_day_started." xml:space="preserve">
+    <value>Route selection will be enabled once day started.</value>
+  </data>
+  <data name="saleable" xml:space="preserve">
+    <value>Saleable</value>
+  </data>
+  <data name="sales" xml:space="preserve">
+    <value>Sales</value>
+  </data>
+  <data name="salesman_signature" xml:space="preserve">
+    <value>Salesman Signature</value>
+  </data>
+  <data name="salesorder" xml:space="preserve">
+    <value>SalesOrder</value>
+  </data>
+  <data name="sales_invoice" xml:space="preserve">
+    <value>Sales Invoice</value>
+  </data>
+  <data name="sales_order" xml:space="preserve">
+    <value>Sales Order</value>
+  </data>
+  <data name="sales_order_can't_be_null." xml:space="preserve">
+    <value>Sales Order can't be null.</value>
+  </data>
+  <data name="sales_order_can_not_be_null" xml:space="preserve">
+    <value>Sales Order can not be null</value>
+  </data>
+  <data name="sales_order_preview" xml:space="preserve">
+    <value>Sales Order Preview</value>
+  </data>
+  <data name="sales_org" xml:space="preserve">
+    <value>Sales Org</value>
+  </data>
+  <data name="sales_organization" xml:space="preserve">
+    <value>Sales Organization</value>
+  </data>
+  <data name="sales_performance" xml:space="preserve">
+    <value>Sales Performance</value>
+  </data>
+  <data name="sales_summary" xml:space="preserve">
+    <value>Sales Summary</value>
+  </data>
+  <data name="sar" xml:space="preserve">
+    <value>SAR</value>
+  </data>
+  <data name="save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="save_&amp;_proceed" xml:space="preserve">
+    <value>Save &amp; Proceed</value>
+  </data>
+  <data name="school" xml:space="preserve">
+    <value>School</value>
+  </data>
+  <data name="sc_qty" xml:space="preserve">
+    <value>SC Qty</value>
+  </data>
+  <data name="search_by_customer_name.." xml:space="preserve">
+    <value>Search by Customer Name..</value>
+  </data>
+  <data name="search_by_customer_name_/code" xml:space="preserve">
+    <value>Search by Customer Name /Code</value>
+  </data>
+  <data name="search_by_customer_name_or_address" xml:space="preserve">
+    <value>Search by Customer Name or Address</value>
+  </data>
+  <data name="search_by_customer_name_or_address_or_code...." xml:space="preserve">
+    <value>Search by Customer Name or Address or Code....</value>
+  </data>
+  <data name="search_by_item_code/description" xml:space="preserve">
+    <value>Search by Item Code/Description</value>
+  </data>
+  <data name="search_by_item_code_/_description" xml:space="preserve">
+    <value>Search by Item Code / Description</value>
+  </data>
+  <data name="search_by_receipt_number" xml:space="preserve">
+    <value>Search by Receipt Number</value>
+  </data>
+  <data name="search_here..." xml:space="preserve">
+    <value>Search Here...</value>
+  </data>
+  <data name="select" xml:space="preserve">
+    <value>Select</value>
+  </data>
+  <data name="selected_category:" xml:space="preserve">
+    <value>Selected Category:</value>
+  </data>
+  <data name="selected_category_type_:" xml:space="preserve">
+    <value>Selected Category Type :</value>
+  </data>
+  <data name="select_all" xml:space="preserve">
+    <value>Select All</value>
+  </data>
+  <data name="select_atleast_one_sku" xml:space="preserve">
+    <value>Select Atleast one SKU</value>
+  </data>
+  <data name="select_bank_name" xml:space="preserve">
+    <value>Select Bank Name</value>
+  </data>
+  <data name="select_category" xml:space="preserve">
+    <value>Select Category</value>
+  </data>
+  <data name="select_category_type" xml:space="preserve">
+    <value>Select Category Type</value>
+  </data>
+  <data name="select_classification" xml:space="preserve">
+    <value>Select Classification</value>
+  </data>
+  <data name="select_customers" xml:space="preserve">
+    <value>Select Customers</value>
+  </data>
+  <data name="select_customer_chain" xml:space="preserve">
+    <value>Select Customer Chain</value>
+  </data>
+  <data name="select_customer_channel" xml:space="preserve">
+    <value>Select Customer Channel</value>
+  </data>
+  <data name="select_customer_group" xml:space="preserve">
+    <value>Select Customer Group</value>
+  </data>
+  <data name="select_customer_sub_channel" xml:space="preserve">
+    <value>Select Customer Sub Channel</value>
+  </data>
+  <data name="select_customer_type" xml:space="preserve">
+    <value>Select Customer Type</value>
+  </data>
+  <data name="select_delivery_mode" xml:space="preserve">
+    <value>Select Delivery Mode</value>
+  </data>
+  <data name="select_paymentmode" xml:space="preserve">
+    <value>Select PaymentMode</value>
+  </data>
+  <data name="select_reason" xml:space="preserve">
+    <value>Select Reason</value>
+  </data>
+  <data name="select_remote_collection_reason" xml:space="preserve">
+    <value>Select Remote Collection Reason</value>
+  </data>
+  <data name="select_route" xml:space="preserve">
+    <value>Select Route</value>
+  </data>
+  <data name="select_sales_organization" xml:space="preserve">
+    <value>Select Sales Organization</value>
+  </data>
+  <data name="select_store_size" xml:space="preserve">
+    <value>Select Store Size</value>
+  </data>
+  <data name="select_sub_type" xml:space="preserve">
+    <value>Select Sub Type</value>
+  </data>
+  <data name="select_type" xml:space="preserve">
+    <value>Select Type</value>
+  </data>
+  <data name="select_uom_first" xml:space="preserve">
+    <value>Select UOM first</value>
+  </data>
+  <data name="select_visit_frequency" xml:space="preserve">
+    <value>Select Visit Frequency</value>
+  </data>
+  <data name="settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="settings1" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="setupcreate" xml:space="preserve">
+    <value>SetUpCreate</value>
+  </data>
+  <data name="share" xml:space="preserve">
+    <value>Share</value>
+  </data>
+  <data name="shart_fall" xml:space="preserve">
+    <value>Shart Fall</value>
+  </data>
+  <data name="show_promo_records" xml:space="preserve">
+    <value>Show Promo Records</value>
+  </data>
+  <data name="sign_here" xml:space="preserve">
+    <value>Sign Here</value>
+  </data>
+  <data name="skip" xml:space="preserve">
+    <value>Skip</value>
+  </data>
+  <data name="skipped" xml:space="preserve">
+    <value>Skipped</value>
+  </data>
+  <data name="skip_reason" xml:space="preserve">
+    <value>Skip Reason</value>
+  </data>
+  <data name="sku's_qty" xml:space="preserve">
+    <value>SKU's QTY</value>
+  </data>
+  <data name="skus" xml:space="preserve">
+    <value>SKUs</value>
+  </data>
+  <data name="sku_code" xml:space="preserve">
+    <value>SKU Code</value>
+  </data>
+  <data name="sku_name" xml:space="preserve">
+    <value>SKU Name</value>
+  </data>
+  <data name="special_day" xml:space="preserve">
+    <value>Special Day</value>
+  </data>
+  <data name="special_day_description" xml:space="preserve">
+    <value>Special Day Description</value>
+  </data>
+  <data name="standing" xml:space="preserve">
+    <value>Standing</value>
+  </data>
+  <data name="startdayprerequisties" xml:space="preserve">
+    <value>StartdayPreRequisties</value>
+  </data>
+  <data name="start_date" xml:space="preserve">
+    <value>Start date</value>
+  </data>
+  <data name="start_day" xml:space="preserve">
+    <value>Start Day</value>
+  </data>
+  <data name="start_day_pre" xml:space="preserve">
+    <value>Start Day Pre</value>
+  </data>
+  <data name="start_day_pre_requisites" xml:space="preserve">
+    <value>Start Day Pre Requisites</value>
+  </data>
+  <data name="state" xml:space="preserve">
+    <value>State</value>
+  </data>
+  <data name="status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="still" xml:space="preserve">
+    <value>Still</value>
+  </data>
+  <data name="stockrequest" xml:space="preserve">
+    <value>StockRequest</value>
+  </data>
+  <data name="stock_audit" xml:space="preserve">
+    <value>Stock Audit</value>
+  </data>
+  <data name="stock_audit_loading" xml:space="preserve">
+    <value>Stock Audit Loading</value>
+  </data>
+  <data name="stock_audit_saved_successfully" xml:space="preserve">
+    <value>Stock Audit saved Successfully</value>
+  </data>
+  <data name="stock_request_requested_successfully" xml:space="preserve">
+    <value>Stock request Requested successfully</value>
+  </data>
+  <data name="store" xml:space="preserve">
+    <value>Store</value>
+  </data>
+  <data name="store_check" xml:space="preserve">
+    <value>Store Check</value>
+  </data>
+  <data name="store_document" xml:space="preserve">
+    <value>Store Document</value>
+  </data>
+  <data name="store_growth" xml:space="preserve">
+    <value>Store Growth</value>
+  </data>
+  <data name="store_image" xml:space="preserve">
+    <value>Store Image</value>
+  </data>
+  <data name="store_information" xml:space="preserve">
+    <value>Store Information</value>
+  </data>
+  <data name="store_qty" xml:space="preserve">
+    <value>Store Qty</value>
+  </data>
+  <data name="store_size" xml:space="preserve">
+    <value>Store Size</value>
+  </data>
+  <data name="store_view_model_is_null" xml:space="preserve">
+    <value>store View Model is null</value>
+  </data>
+  <data name="stringnotfound" xml:space="preserve">
+    <value>StringNotFound</value>
+  </data>
+  <data name="submit" xml:space="preserve">
+    <value>Submit</value>
+  </data>
+  <data name="sub_area" xml:space="preserve">
+    <value>Sub Area</value>
+  </data>
+  <data name="success" xml:space="preserve">
+    <value>Success</value>
+  </data>
+  <data name="successfully" xml:space="preserve">
+    <value>successfully</value>
+  </data>
+  <data name="success_is_not_a_destination._success_is_a_journey" xml:space="preserve">
+    <value>Success is not a DESTINATION. Success is a JOURNEY</value>
+  </data>
+  <data name="summary" xml:space="preserve">
+    <value>Summary</value>
+  </data>
+  <data name="synchronization" xml:space="preserve">
+    <value>Synchronization</value>
+  </data>
+  <data name="syncing_completed_successfully" xml:space="preserve">
+    <value>Syncing completed successfully</value>
+  </data>
+  <data name="upload_completed_successfully" xml:space="preserve">
+    <value>Upload completed successfully</value>
+  </data>
+  <data name="syncing_data..." xml:space="preserve">
+    <value>Syncing Data...</value>
+  </data>
+  <data name="sync_data" xml:space="preserve">
+    <value> Sync Data</value>
+  </data>
+  <data name="upload_data" xml:space="preserve">
+    <value> Upload Data</value>
+  </data>
+  <data name="tab" xml:space="preserve">
+    <value>Tab</value>
+  </data>
+  <data name="tabs" xml:space="preserve">
+    <value>Tabs</value>
+  </data>
+  <data name="take_selfie" xml:space="preserve">
+    <value>Take Selfie</value>
+  </data>
+  <data name="target" xml:space="preserve">
+    <value>Target</value>
+  </data>
+  <data name="target_vs_ach" xml:space="preserve">
+    <value>Target Vs Ach</value>
+  </data>
+  <data name="tax" xml:space="preserve">
+    <value>Tax</value>
+  </data>
+  <data name="tax_sku" xml:space="preserve">
+    <value>Tax SKU</value>
+  </data>
+  <data name="tax_value[tax_+_invoice_vat]" xml:space="preserve">
+    <value>Tax Value[Tax + Invoice VAT]</value>
+  </data>
+  <data name="tele_order" xml:space="preserve">
+    <value>Tele Order</value>
+  </data>
+  <data name="territory" xml:space="preserve">
+    <value>Territory</value>
+  </data>
+  <data name="there_are_old_invoice_to_collect_/_previous_cheque_/_bank_transfer_payments_are_not_settled.do_you_want_to_continue?" xml:space="preserve">
+    <value>There are old invoice to collect / Previous Cheque / Bank Transfer Payments are not settled.Do you want to continue?</value>
+  </data>
+  <data name="there_are_some_unposted_data_that_need_to_be_posted_before_doing_cfd" xml:space="preserve">
+    <value>There are some unposted data that need to be posted before doing CFD</value>
+  </data>
+  <data name="there_is_no_active_store" xml:space="preserve">
+    <value>There is no Active Store</value>
+  </data>
+  <data name="there_is_some_error_while_processing_request." xml:space="preserve">
+    <value>There is some error while processing request.</value>
+  </data>
+  <data name="there_is_some_unposted_userdata" xml:space="preserve">
+    <value>There is some Unposted Userdata</value>
+  </data>
+  <data name="the_following_field(s)_have_invalid_value(s)" xml:space="preserve">
+    <value>The following field(s) have invalid value(s)</value>
+  </data>
+  <data name="the_order?" xml:space="preserve">
+    <value>the order?</value>
+  </data>
+  <data name="the_selected_customer_is_blocked_with_comment" xml:space="preserve">
+    <value>The selected customer is blocked with comment</value>
+  </data>
+  <data name="the_selected_route_aleady_closed_for_the_day" xml:space="preserve">
+    <value>The selected route aleady closed for the day</value>
+  </data>
+  <data name="this_feature_coming_in_phase2" xml:space="preserve">
+    <value>This Feature Coming in Phase2</value>
+  </data>
+  <data name="time_gone" xml:space="preserve">
+    <value>Time Gone</value>
+  </data>
+  <data name="time_spent" xml:space="preserve">
+    <value>Time Spent</value>
+  </data>
+  <data name="to" xml:space="preserve">
+    <value>To</value>
+  </data>
+  <data name="to1" xml:space="preserve">
+    <value>to</value>
+  </data>
+  <data name="today's" xml:space="preserve">
+    <value>Today's</value>
+  </data>
+  <data name="todays" xml:space="preserve">
+    <value>Todays</value>
+  </data>
+  <data name="todays_jp" xml:space="preserve">
+    <value>Todays JP</value>
+  </data>
+  <data name="todays_scheduled_visits" xml:space="preserve">
+    <value>Todays Scheduled Visits</value>
+  </data>
+  <data name="todays_target" xml:space="preserve">
+    <value>Todays Target</value>
+  </data>
+  <data name="topup" xml:space="preserve">
+    <value>Topup</value>
+  </data>
+  <data name="top_selling" xml:space="preserve">
+    <value>Top Selling</value>
+  </data>
+  <data name="top_trending" xml:space="preserve">
+    <value>Top Trending</value>
+  </data>
+  <data name="total_amount" xml:space="preserve">
+    <value>Total Amount</value>
+  </data>
+  <data name="total_collected_amount" xml:space="preserve">
+    <value>Total Collected Amount</value>
+  </data>
+  <data name="total_collection" xml:space="preserve">
+    <value>Total Collection</value>
+  </data>
+  <data name="total_due" xml:space="preserve">
+    <value>Total Due</value>
+  </data>
+  <data name="total_exicise_duty_amount" xml:space="preserve">
+    <value>Total Exicise Duty Amount</value>
+  </data>
+  <data name="total_invoice_amount" xml:space="preserve">
+    <value>Total Invoice Amount</value>
+  </data>
+  <data name="total_number_of_skus_replaced" xml:space="preserve">
+    <value>Total Number Of SKUs Replaced</value>
+  </data>
+  <data name="total_sale" xml:space="preserve">
+    <value>TOTAL SALE</value>
+  </data>
+  <data name="total_sku's" xml:space="preserve">
+    <value>Total SKU's</value>
+  </data>
+  <data name="total_working" xml:space="preserve">
+    <value>Total working</value>
+  </data>
+  <data name="total_workingdays" xml:space="preserve">
+    <value>Total WorkingDays</value>
+  </data>
+  <data name="total_workingdays_passed" xml:space="preserve">
+    <value>Total WorkingDays Passed</value>
+  </data>
+  <data name="trip_end_time" xml:space="preserve">
+    <value>Trip End Time</value>
+  </data>
+  <data name="trip_start_time" xml:space="preserve">
+    <value>Trip Start Time</value>
+  </data>
+  <data name="trx_number" xml:space="preserve">
+    <value>Trx Number</value>
+  </data>
+  <data name="type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="type_1" xml:space="preserve">
+    <value>Type 1</value>
+  </data>
+  <data name="type_2" xml:space="preserve">
+    <value>Type 2</value>
+  </data>
+  <data name="unable_to_download_user_master_data_completely,_please_relogin_to_continue." xml:space="preserve">
+    <value>Unable to download user master data completely, please relogin to continue.</value>
+  </data>
+  <data name="uncheck_all" xml:space="preserve">
+    <value>Uncheck All</value>
+  </data>
+  <data name="unit_price" xml:space="preserve">
+    <value>Unit Price</value>
+  </data>
+  <data name="unplanned" xml:space="preserve">
+    <value>Unplanned</value>
+  </data>
+  <data name="uom" xml:space="preserve">
+    <value>UOM</value>
+  </data>
+  <data name="uom_must_be_selected." xml:space="preserve">
+    <value>UOM must be selected.</value>
+  </data>
+  <data name="upc" xml:space="preserve">
+    <value>UPC</value>
+  </data>
+  <data name="upcoming" xml:space="preserve">
+    <value>Upcoming</value>
+  </data>
+  <data name="update" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="update_amount" xml:space="preserve">
+    <value>Update Amount</value>
+  </data>
+  <data name="upload_image" xml:space="preserve">
+    <value>Upload Image</value>
+  </data>
+  <data name="upload_status" xml:space="preserve">
+    <value>Upload Status</value>
+  </data>
+  <data name="user_id" xml:space="preserve">
+    <value>User ID</value>
+  </data>
+  <data name="user_org_not_mapped" xml:space="preserve">
+    <value>User org not mapped</value>
+  </data>
+  <data name="user_role_not_mapped" xml:space="preserve">
+    <value>User role not mapped</value>
+  </data>
+  <data name="value" xml:space="preserve">
+    <value>Value</value>
+  </data>
+  <data name="van_qty" xml:space="preserve">
+    <value>Van Qty</value>
+  </data>
+  <data name="vehicle_no" xml:space="preserve">
+    <value>Vehicle No</value>
+  </data>
+  <data name="vehicle_not_mapped" xml:space="preserve">
+    <value>Vehicle not mapped</value>
+  </data>
+  <data name="vehile_no" xml:space="preserve">
+    <value>Vehile No</value>
+  </data>
+  <data name="version" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="version_name" xml:space="preserve">
+    <value>Version Name</value>
+  </data>
+  <data name="view_for" xml:space="preserve">
+    <value>View For</value>
+  </data>
+  <data name="view_load_request" xml:space="preserve">
+    <value>View Load Request</value>
+  </data>
+  <data name="view_product_catalogue" xml:space="preserve">
+    <value>View Product Catalogue</value>
+  </data>
+  <data name="view_unload_request" xml:space="preserve">
+    <value>View Unload Request</value>
+  </data>
+  <data name="village/area/locality" xml:space="preserve">
+    <value>Village/Area/Locality</value>
+  </data>
+  <data name="visited" xml:space="preserve">
+    <value>Visited</value>
+  </data>
+  <data name="visited_today" xml:space="preserve">
+    <value>Visited Today</value>
+  </data>
+  <data name="visit_frequency" xml:space="preserve">
+    <value>Visit Frequency</value>
+  </data>
+  <data name="visit_service_compliance" xml:space="preserve">
+    <value>Visit Service Compliance</value>
+  </data>
+  <data name="ware_house" xml:space="preserve">
+    <value>Ware House</value>
+  </data>
+  <data name="wastage" xml:space="preserve">
+    <value>Wastage</value>
+  </data>
+  <data name="weekdays" xml:space="preserve">
+    <value>weekDays</value>
+  </data>
+  <data name="weekly" xml:space="preserve">
+    <value>Weekly</value>
+  </data>
+  <data name="wifi" xml:space="preserve">
+    <value>Wifi</value>
+  </data>
+  <data name="will_be_available_in_phase_2!" xml:space="preserve">
+    <value>Will be available in Phase 2!</value>
+  </data>
+  <data name="work_in_progress" xml:space="preserve">
+    <value>Work in progress</value>
+  </data>
+  <data name="yes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="your_ranking" xml:space="preserve">
+    <value>Your Ranking</value>
+  </data>
+  <data name="your_session_will_end_in" xml:space="preserve">
+    <value>Your session will end in</value>
+  </data>
+  <data name="you_are_collecting_payment_using" xml:space="preserve">
+    <value>You are Collecting Payment using</value>
+  </data>
+  <data name="you_are_not_entered_qty_for_some_items" xml:space="preserve">
+    <value>You are not entered qty for some items</value>
+  </data>
+  <data name="you_completed" xml:space="preserve">
+    <value>You completed</value>
+  </data>
+  <data name="you_completed_of_from_your_planned_visits" xml:space="preserve">
+    <value>You completed of From your planned visits</value>
+  </data>
+  <data name="you_have_already_started_future_date_and_now_you_can't_start_back_date." xml:space="preserve">
+    <value>You have already started future date and now you can't start back date.</value>
+  </data>
+  <data name="you_have_reached_the_maximum_value" xml:space="preserve">
+    <value>You have reached the maximum value</value>
+  </data>
+  <data name="zero_quotation_outlet" xml:space="preserve">
+    <value>Zero Quotation Outlet</value>
+  </data>
+  <data name="zero_sales" xml:space="preserve">
+    <value>Zero Sales</value>
+  </data>
+  <data name="zone" xml:space="preserve">
+    <value>Zone</value>
+  </data>
+  <data name="qty_exceeds_van_qty" xml:space="preserve">
+    <value>Qty exceeds van qty</value>
+  </data>
+  <data name="failed_to_save_the_signatures" xml:space="preserve">
+    <value>Failed to save the Signatures</value>
+  </data>
+  <data name="name_ascending" xml:space="preserve">
+    <value>Name Ascending</value>
+  </data>
+  <data name="name_descending" xml:space="preserve">
+    <value>Name Descending</value>
+  </data>
+  <data name="price_ascending" xml:space="preserve">
+    <value>Price Ascending</value>
+  </data>
+  <data name="price_descending" xml:space="preserve">
+    <value>Price Descending</value>
+  </data>
+  <data name="sort_by" xml:space="preserve">
+    <value>Sort By</value>
+  </data>
+</root>

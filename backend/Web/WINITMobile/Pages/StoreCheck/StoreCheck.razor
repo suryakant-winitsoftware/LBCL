@@ -1,0 +1,183 @@
+﻿@page "/Storecheck" 
+@using WINITMobile.Pages.StoreCheck
+@using Winit.Shared.Models.Enums
+@inject SideBarService _sidebarService
+@inject Winit.Modules.StoreCheck.BL.Interfaces.IAddEditStoreCheck _AddEditStoreCheck 
+ @inject Winit.Modules.StoreActivity.BL.Interfaces.IStoreActivityViewModel _StoreActivityViewmodel
+ @inherits WINITMobile.Pages.Base.BaseComponentBase // Specify the base class here
+
+ @* Search, Scanner, List/Grid View Section *@
+ <div class="d-flex flex-row justify-content-evenly">
+    <div>
+        <h1 style="font-size: 16px;font-weight: 600;">
+            Opening Stock
+        </h1>
+    </div>
+    <div>
+        <div style="float:left;" class="dn">
+            <FileCapture  OnImageDeleteClick="OnImageDeleteClick" OnImageCapture="OnImageCapture" FolderPath=@ImgFolderPath
+                         FileName="StoreCheck" CaptureData="fileCaptureData" IsGalleryAllow=true></FileCapture>
+        </div>
+    </div>
+
+ </div>
+ <div class="container-fluid">
+    <div class="flex-row cls_serch_nn">
+        <div class="cls_serch_nn_left" style="width:97%">
+            <div class="cls_search_desk">
+            <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder=@Localizer["search_here..."]
+                              MaxLength="200" DebounceInterval="500" OnDebounceIntervalElapsed="WinitTextBox_OnSearch"
+                              KeyboardType="Winit.Shared.Models.Enums.InputType.Text" 
+                               IsForSearch="true"
+                              @ref="wtbSearch"/>
+            </div>
+        </div>
+       @*  <div class="cls_serch_nn_right">
+            
+               <i class="bi bi-mic"></i>
+           
+        </div> *@
+        <div class="cls_serch_nn_cen" style="display:none;">
+            <Scanner OnBarcodeScanned="AfterBarcodeScanned" />
+        </div>
+    </div>
+</div>
+<div class="cls_new_filter">
+    <div class="cls_fil_left" style="overflow-x: auto;">
+        <div class="d-flex justify-content-between py-0" style="white-space: nowrap;">
+            <div class="d-flex">
+                <Winit.UIComponents.Mobile.Common.MobileTabs TabItems="TopScrollSelectionItems.
+                                                                 ToList<Winit.Shared.Models.Common.ISelectionItem>()" OnTabSelect="OnTopScrollItmSelect" />
+            </div>
+        </div>
+    </div>
+</div>
+    <div class="div1">
+    <table class="table" style="table-layout:fixed">
+        <thead>
+            <tr>
+                
+                <th style="width: 85%;" class="tblHeader">Item Description</th>
+                @if (_AddEditStoreCheck.QtyMode == QtyCaptureMode.Single)
+                {
+                    <th class="tblHeader" style="display:none">@Localizer["uom"]</th>
+                }
+                <th class="tblHeader">Stock Qty</th>
+                <th class="tblHeader" style="display:none">@Localizer["backstore_qty"]</th>
+               
+                <th class="tblHeader" style="display:none">@Localizer["dre"]</th>
+                @if (_AddEditStoreCheck.QtyMode == QtyCaptureMode.Multiple)
+                {
+                    <th class="tblHeader"></th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @if (_AddEditStoreCheck.DisplayStoreCheckItemHistoryListView != null)
+            {
+                @foreach (var item in _AddEditStoreCheck.DisplayStoreCheckItemHistoryListView.OrderBy(p => p.SKUName).ToList())
+                {
+                    <tr>
+                        <td>
+                            <div style="float: left;width:80%;margin-right:5px;">
+                                <span style="float: left;padding-right: 5px;"><img style="width:30px;" src="@(_appConfigs.ApiDataBaseUrl + item.SKUImageURL)" ></span>
+                                <span>@item.SKUName</span><br />
+                                <span>@item.ItemCode</span>
+                            </div>
+                            <div style="float: right;display:none;">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" style="width: 3.5em;height: 2em;" type="checkbox" role="switch" id="OOSCheckbox" @bind="item.IsAvailable">
+                                </div>
+                            </div>
+                        </td>
+                        @if (_AddEditStoreCheck.QtyMode == QtyCaptureMode.Single && false) /*False added to not show uom for Farmely*/
+                        {
+                            <td>
+                                <select class="form-select" style="width:70px;padding: 3px 7px;" @onchange="(e) => OnUomChange(e, item)">
+                                    @foreach (var uom in item.AllowedUOMs)
+                                    {
+                                        <option value="@uom.Code" selected="@(uom.Code == item.BaseUOM)">@uom.Code</option>
+                                    }
+                                </select>
+                            </td>
+                           
+                        }
+                        <td>
+                            @if (!item.IsAvailable)
+                            {
+                                <input type="text" class="form-control" style="width: 70px;padding: 3px 7px;line-height: 18px;font-size: 14px;" value="0" readonly />
+                            }
+                            else
+                            {
+                                @if (_AddEditStoreCheck.QtyMode == QtyCaptureMode.Single)
+                                {
+                                    <input type="number" class="form-control" style="width: 70px;padding: 4px 7px;line-height: 18px;font-size: 14px;" value="@item.StoreQty" @onchange="(e) => OnRowDataChange(e, item, false)" />
+                                }
+                                else if (_AddEditStoreCheck.QtyMode == QtyCaptureMode.Multiple)
+                                {
+                                    <input type="number" class="form-control" style="width: 70px;padding: 4px 7px;line-height: 18px;font-size: 14px;" @bind="item.StoreQty" @onclick="() => OnQtyRowBtnClick(item, false)">
+                                }
+                            }
+                        </td>
+                        <td style="display:none">
+                            @if (!item.IsAvailable)
+                            {
+                                <input type="text" class="form-control" style="width: 70px;padding: 3px 7px;line-height: 18px;font-size: 14px;" value="0" readonly />
+                            }
+                            else
+                            {
+                                @if (_AddEditStoreCheck.QtyMode == QtyCaptureMode.Single)
+                                {
+                                    <input type="number" class="form-control" style="width: 70px;padding: 4px 7px;line-height: 18px;font-size: 14px;" value="@item.BackStoreQty" @onchange="(e) => OnRowDataChange(e, item, true)" />
+                                }
+                                else if (_AddEditStoreCheck.QtyMode == QtyCaptureMode.Multiple)
+                                {
+                                    <input type="number" class="form-control" style="width: 70px;width: 70px;padding: 4px 7px;line-height: 18px;font-size: 14px;" @bind="item.BackStoreQty" @onclick="() => OnQtyRowBtnClick(item, true)">
+                                }
+                            }
+                        </td>
+
+                        <td style="display:none">
+                            <button type="button" style="width: 70px;" @onclick="() => OnDREBtnClick(item)">
+                                @(item.IsDRESelected ? @Localizer["checked"] : @Localizer["dre"])
+                            </button>
+                        </td>
+                        @if (_AddEditStoreCheck.QtyMode == QtyCaptureMode.Multiple)
+                        {
+                            <td>
+                                <button type="button" class="btn btn-sm btn-outline-primary" @onclick="() => CloneRow(item, false)">
+                                    +
+                                </button>
+                            </td>
+                        }
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+
+</div>
+<hr style="border-top: 1px solid black; margin-top: 5px; margin-bottom: 5px;">
+<div class="cls_dashboard_7"  style="width:100%">
+
+<button type="button" class="cls_continue_btn" @onclick="SubmitStoreCheckData">@Localizer["submit"]</button>
+</div>
+@if (StoreRowUomDataSource != null)
+{
+    <QtyColumnDialog DataSource="StoreRowUomDataSource" AfterModificationDone="UpdateRowDataSource"></QtyColumnDialog>
+}    
+@if (DRERowDataSource != null)
+{
+    <DRECheckerDialog DataSource="DRERowDataSource" AfterModificationDone="UpdateDRERowDataSource"></DRECheckerDialog>
+}
+
+ 
+ @code
+{
+    
+    public void OnButtonClick()
+    {
+        // Add your button click logic here
+    }
+}

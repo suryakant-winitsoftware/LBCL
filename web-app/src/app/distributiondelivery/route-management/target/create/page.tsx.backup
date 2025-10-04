@@ -1,0 +1,1033 @@
+'use client';
+
+import React, { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { useToast } from '@/components/ui/use-toast';
+import { ArrowLeft, Save, Building2, Search, Check, ChevronDown, RefreshCw } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
+import targetService, { Target } from '@/services/targetService';
+import { api } from '@/services/api';
+import { employeeService } from '@/services/admin/employee.service';
+import {
+  organizationService,
+  Organization,
+  OrgType,
+} from '@/services/organizationService';
+import {
+  initializeOrganizationHierarchy,
+  handleOrganizationSelection,
+  getFinalSelectedOrganization,
+  resetOrganizationHierarchy,
+  OrganizationLevel,
+} from '@/utils/organizationHierarchyUtils';
+import ProductAttributes from '@/components/sku/ProductAttributes';
+
+interface DropdownOption {
+  value: string;
+  label: string;
+  code?: string;
+}
+
+export default function CreateTargetPage() {
+  const router = useRouter();
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
+  
+  // Loading states
+  const [loadingStates, setLoadingStates] = useState({
+    organizations: false,
+    employees: false,
+    routes: false,
+    customers: false,
+  });
+
+  // Organization hierarchy state
+  const [orgTypes, setOrgTypes] = useState<OrgType[]>([]);
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [selectedOrgs, setSelectedOrgs] = useState<string[]>([]);
+  const [orgLevels, setOrgLevels] = useState<OrganizationLevel[]>([]);
+  const [selectedOrgUID, setSelectedOrgUID] = useState('');
+
+  // Dropdown data with pagination support
+  const [dropdowns, setDropdowns] = useState({
+    employees: [] as DropdownOption[],
+    routes: [] as DropdownOption[],
+    customers: [] as DropdownOption[],
+  });
+
+  // Pagination states
+  const [employeesPagination, setEmployeesPagination] = useState({
+    currentPage: 1,
+    pageSize: 50,
+    totalCount: 0,
+    hasMore: true,
+    isLoadingMore: false,
+  });
+
+  const [customersPagination, setCustomersPagination] = useState({
+    currentPage: 1,
+    pageSize: 50,
+    totalCount: 0,
+    hasMore: true,
+    isLoadingMore: false,
+  });
+
+  // Search states
+  const [searchTerms, setSearchTerms] = useState({
+    employees: '',
+    routes: '',
+    customers: '',
+  });
+
+  // Popover states
+  const [popoverStates, setPopoverStates] = useState({
+    userType: false,
+    userSelection: false,
+    customerSelection: false,
+  });
+
+  // Product hierarchy state
+  const [selectedProductAttributes, setSelectedProductAttributes] = useState<
+    Array<{ type: string; code: string; value: string; uid?: string; level: number; fieldName?: string }>
+  >([]);
+
+  const [target, setTarget] = useState<Target>({
+    UserLinkedType: 'Route',
+    UserLinkedUid: '',
+    CustomerLinkedType: 'Customer',
+    CustomerLinkedUid: '',
+    ItemLinkedItemType: '',
+    ItemLinkedItemUid: '',
+    TargetMonth: new Date().getMonth() + 1,
+    TargetYear: new Date().getFullYear(),
+    TargetAmount: 0,
+    AchievedAmount: 0,
+    Status: 'Not Started',
+    Notes: '',
+  });
+
+  // Load organization data
+  const loadOrganizationData = async () => {
+    setLoadingStates((prev) => ({ ...prev, organizations: true }));
+    try {
+      const [typesResult, orgsResult] = await Promise.all([
+        organizationService.getOrganizationTypes(),
+        organizationService.getOrganizations(1, 1000),
+      ]);
+
+      const filteredOrganizations = orgsResult.data.filter(
+        (org) => org.ShowInTemplate === true
+      );
+      
+      const filteredOrgTypes = typesResult.filter(
+        (type) => type.ShowInTemplate !== false
+      );
+
+      setOrgTypes(filteredOrgTypes);
+      setOrganizations(filteredOrganizations);
+
+      const initialLevels = initializeOrganizationHierarchy(
+        filteredOrganizations,
+        filteredOrgTypes
+      );
+      setOrgLevels(initialLevels);
+    } catch (error) {
+      console.error('Error fetching organization data:', error);
+      toast({
+        title: 'Warning',
+        description: 'Could not load organization hierarchy',
+        variant: 'default',
+      });
+    } finally {
+      setLoadingStates((prev) => ({ ...prev, organizations: false }));
+    }
+  };
+
+  // Handle organization selection
+  const handleOrganizationChange = (levelIndex: number, value: string) => {
+    if (!value) return;
+
+    const { updatedLevels, updatedSelectedOrgs } = handleOrganizationSelection(
+      levelIndex,
+      value,
+      orgLevels,
+      selectedOrgs,
+      organizations,
+      orgTypes
+    );
+
+    setOrgLevels(updatedLevels);
+    setSelectedOrgs(updatedSelectedOrgs);
+
+    const finalSelectedOrg = getFinalSelectedOrganization(updatedSelectedOrgs);
+    if (finalSelectedOrg) {
+      setSelectedOrgUID(finalSelectedOrg);
+      loadDependentDropdowns(finalSelectedOrg);
+    }
+  };
+
+  // Load employees with pagination and search
+  const loadEmployees = useCallback(async (
+    orgUID: string, 
+    page: number = 1, 
+    append: boolean = false, 
+    searchTerm: string = ''
+  ) => {
+    if (page === 1) {
+      setLoadingStates((prev) => ({ ...prev, employees: true }));
+    } else {
+      setEmployeesPagination((prev) => ({ ...prev, isLoadingMore: true }));
+    }
+
+    try {
+      const data = await api.dropdown.getEmployee(orgUID, false);
+      if (data.IsSuccess && data.Data) {
+        let allEmployees = data.Data.map((emp: any) => ({
+          value: emp.UID || emp.uid,
+          label: emp.Name || emp.name || `${emp.FirstName || ''} ${emp.LastName || ''}`.trim(),
+          code: emp.Code || emp.code,
+        }));
+
+        // Apply search filter if provided
+        if (searchTerm) {
+          allEmployees = allEmployees.filter((emp: DropdownOption) =>
+            emp.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (emp.code && emp.code.toLowerCase().includes(searchTerm.toLowerCase()))
+          );
+        }
+
+        // Implement client-side pagination
+        const startIndex = (page - 1) * employeesPagination.pageSize;
+        const endIndex = startIndex + employeesPagination.pageSize;
+        const paginatedEmployees = allEmployees.slice(startIndex, endIndex);
+
+        setDropdowns((prev) => ({
+          ...prev,
+          employees: append 
+            ? [...prev.employees, ...paginatedEmployees]
+            : paginatedEmployees
+        }));
+
+        setEmployeesPagination((prev) => ({
+          ...prev,
+          currentPage: page,
+          totalCount: allEmployees.length,
+          hasMore: endIndex < allEmployees.length,
+          isLoadingMore: false,
+        }));
+      }
+    } catch (error) {
+      console.error('Error loading employees:', error);
+      setEmployeesPagination((prev) => ({ ...prev, isLoadingMore: false }));
+    } finally {
+      setLoadingStates((prev) => ({ ...prev, employees: false }));
+    }
+  }, [employeesPagination.pageSize]);
+
+  // Load routes with search
+  const loadRoutes = useCallback(async (orgUID: string, searchTerm: string = '') => {
+    setLoadingStates((prev) => ({ ...prev, routes: true }));
+    try {
+      const data = await api.dropdown.getRoute(orgUID);
+      if (data.IsSuccess && data.Data) {
+        let routes = data.Data.map((route: any) => ({
+          value: route.UID || route.uid,
+          label: route.Name || route.name || route.Code || route.code,
+          code: route.Code || route.code,
+        }));
+
+        // Apply search filter if provided
+        if (searchTerm) {
+          routes = routes.filter((route: DropdownOption) =>
+            route.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (route.code && route.code.toLowerCase().includes(searchTerm.toLowerCase()))
+          );
+        }
+
+        setDropdowns((prev) => ({ ...prev, routes }));
+      }
+    } catch (error) {
+      console.error('Error loading routes:', error);
+    } finally {
+      setLoadingStates((prev) => ({ ...prev, routes: false }));
+    }
+  }, []);
+
+  // Load customers with pagination and search
+  const loadCustomers = useCallback(async (
+    orgUID: string, 
+    page: number = 1, 
+    append: boolean = false, 
+    searchTerm: string = ''
+  ) => {
+    if (page === 1) {
+      setLoadingStates((prev) => ({ ...prev, customers: true }));
+    } else {
+      setCustomersPagination((prev) => ({ ...prev, isLoadingMore: true }));
+    }
+
+    try {
+      const data = await api.dropdown.getCustomer(orgUID);
+      if (data.IsSuccess && data.Data) {
+        let allCustomers = data.Data.map((customer: any) => ({
+          value: customer.UID || customer.uid || customer.Code || customer.code,
+          label: customer.Name || customer.name || customer.Code || customer.code,
+          code: customer.Code || customer.code,
+        }));
+
+        // Apply search filter if provided
+        if (searchTerm) {
+          allCustomers = allCustomers.filter((customer: DropdownOption) =>
+            customer.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (customer.code && customer.code.toLowerCase().includes(searchTerm.toLowerCase()))
+          );
+        }
+
+        // Implement client-side pagination
+        const startIndex = (page - 1) * customersPagination.pageSize;
+        const endIndex = startIndex + customersPagination.pageSize;
+        const paginatedCustomers = allCustomers.slice(startIndex, endIndex);
+
+        setDropdowns((prev) => ({
+          ...prev,
+          customers: append 
+            ? [...prev.customers, ...paginatedCustomers]
+            : paginatedCustomers
+        }));
+
+        setCustomersPagination((prev) => ({
+          ...prev,
+          currentPage: page,
+          totalCount: allCustomers.length,
+          hasMore: endIndex < allCustomers.length,
+          isLoadingMore: false,
+        }));
+      }
+    } catch (error) {
+      console.error('Error loading customers:', error);
+      setCustomersPagination((prev) => ({ ...prev, isLoadingMore: false }));
+    } finally {
+      setLoadingStates((prev) => ({ ...prev, customers: false }));
+    }
+  }, [customersPagination.pageSize]);
+
+  // Load dependent dropdowns
+  const loadDependentDropdowns = useCallback(async (orgUID: string) => {
+    // Reset pagination when organization changes
+    setEmployeesPagination(prev => ({ ...prev, currentPage: 1, hasMore: true }));
+    setCustomersPagination(prev => ({ ...prev, currentPage: 1, hasMore: true }));
+    
+    await Promise.all([
+      loadEmployees(orgUID, 1, false, searchTerms.employees),
+      loadRoutes(orgUID, searchTerms.routes),
+      loadCustomers(orgUID, 1, false, searchTerms.customers),
+    ]);
+  }, [loadEmployees, loadRoutes, loadCustomers, searchTerms]);
+
+  // Load more functions for infinite scroll
+  const loadMoreEmployees = useCallback(async () => {
+    if (!employeesPagination.hasMore || employeesPagination.isLoadingMore || !selectedOrgUID) {
+      return;
+    }
+    const nextPage = employeesPagination.currentPage + 1;
+    await loadEmployees(selectedOrgUID, nextPage, true, searchTerms.employees);
+  }, [employeesPagination, selectedOrgUID, loadEmployees, searchTerms.employees]);
+
+  const loadMoreCustomers = useCallback(async () => {
+    if (!customersPagination.hasMore || customersPagination.isLoadingMore || !selectedOrgUID) {
+      return;
+    }
+    const nextPage = customersPagination.currentPage + 1;
+    await loadCustomers(selectedOrgUID, nextPage, true, searchTerms.customers);
+  }, [customersPagination, selectedOrgUID, loadCustomers, searchTerms.customers]);
+
+  // Load organizations on mount
+  useEffect(() => {
+    loadOrganizationData();
+  }, []);
+
+  // Debounced search effects
+  useEffect(() => {
+    if (!selectedOrgUID) return;
+    
+    const timeoutId = setTimeout(() => {
+      loadEmployees(selectedOrgUID, 1, false, searchTerms.employees);
+    }, 300);
+    return () => clearTimeout(timeoutId);
+  }, [searchTerms.employees, selectedOrgUID, loadEmployees]);
+
+  useEffect(() => {
+    if (!selectedOrgUID) return;
+    
+    const timeoutId = setTimeout(() => {
+      loadRoutes(selectedOrgUID, searchTerms.routes);
+    }, 300);
+    return () => clearTimeout(timeoutId);
+  }, [searchTerms.routes, selectedOrgUID, loadRoutes]);
+
+  useEffect(() => {
+    if (!selectedOrgUID) return;
+    
+    const timeoutId = setTimeout(() => {
+      loadCustomers(selectedOrgUID, 1, false, searchTerms.customers);
+    }, 300);
+    return () => clearTimeout(timeoutId);
+  }, [searchTerms.customers, selectedOrgUID, loadCustomers]);
+
+  // Scroll handlers for lazy loading
+  const handleEmployeeScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
+    const element = e.currentTarget;
+    const threshold = 0.8; // Load more when 80% scrolled
+    const scrolled = (element.scrollTop + element.clientHeight) / element.scrollHeight;
+    
+    if (scrolled >= threshold) {
+      loadMoreEmployees();
+    }
+  }, [loadMoreEmployees]);
+
+  const handleCustomerScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
+    const element = e.currentTarget;
+    const threshold = 0.8;
+    const scrolled = (element.scrollTop + element.clientHeight) / element.scrollHeight;
+    
+    if (scrolled >= threshold) {
+      loadMoreCustomers();
+    }
+  }, [loadMoreCustomers]);
+
+  // Handle product attributes change
+  const handleProductAttributesChange = useCallback((attributes: any[]) => {
+    setSelectedProductAttributes(attributes);
+    
+    // Update target with the first selected product attribute (most specific)
+    const validAttributes = attributes.filter(attr => attr.code && attr.value);
+    if (validAttributes.length > 0) {
+      // Use the most specific (last) level for the target
+      const mostSpecific = validAttributes[validAttributes.length - 1];
+      setTarget(prev => ({
+        ...prev,
+        ItemLinkedItemType: mostSpecific.type,
+        ItemLinkedItemUid: mostSpecific.uid || mostSpecific.code,
+      }));
+    } else {
+      // Clear if no valid selection
+      setTarget(prev => ({
+        ...prev,
+        ItemLinkedItemType: '',
+        ItemLinkedItemUid: '',
+      }));
+    }
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Validate organization selection
+    if (!selectedOrgUID) {
+      toast({
+        title: 'Validation Error',
+        description: 'Please select an organization',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Validate user/route selection based on type
+    if (!target.UserLinkedUid) {
+      const userTypeLabel = target.UserLinkedType === 'Route' ? 'route' : 
+                          target.UserLinkedType === 'Employee' ? 'employee' : 'user';
+      toast({
+        title: 'Validation Error',
+        description: `Please select a ${userTypeLabel}`,
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Verify the selected user/route exists in the loaded dropdown
+    let isValidSelection = false;
+    if (target.UserLinkedType === 'Route') {
+      isValidSelection = dropdowns.routes.some(route => route.value === target.UserLinkedUid);
+    } else if (target.UserLinkedType === 'Employee') {
+      isValidSelection = dropdowns.employees.some(emp => emp.value === target.UserLinkedUid);
+    }
+
+    if (!isValidSelection) {
+      toast({
+        title: 'Validation Error',
+        description: `Selected ${target.UserLinkedType.toLowerCase()} is not valid for the chosen organization`,
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Verify customer if selected
+    if (target.CustomerLinkedUid && target.CustomerLinkedUid.trim() !== '') {
+      const isValidCustomer = dropdowns.customers.some(customer => customer.value === target.CustomerLinkedUid);
+      if (!isValidCustomer) {
+        toast({
+          title: 'Validation Error',
+          description: 'Selected customer is not valid for the chosen organization',
+          variant: 'destructive',
+        });
+        return;
+      }
+    }
+
+    if (target.TargetAmount <= 0) {
+      toast({
+        title: 'Validation Error',
+        description: 'Target amount must be greater than 0',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await targetService.createTarget(target);
+      toast({
+        title: 'Success',
+        description: 'Target created successfully',
+      });
+      router.push('/distributiondelivery/route-management/target');
+    } catch (error) {
+      console.error('Error creating target:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to create target',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleChange = (field: keyof Target, value: any) => {
+    setTarget((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+
+    // Reset UserLinkedUid when UserLinkedType changes
+    if (field === 'UserLinkedType') {
+      setTarget((prev) => ({
+        ...prev,
+        UserLinkedUid: '',
+      }));
+    }
+  };
+
+  const currentYear = new Date().getFullYear();
+
+  return (
+    <div className="container mx-auto py-6 max-w-4xl">
+      <div className="mb-6">
+        <Button
+          onClick={() => router.push('/distributiondelivery/route-management/target')}
+          variant="ghost"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to Targets
+        </Button>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Create New Target</CardTitle>
+          <CardDescription>
+            Set up a new sales target for routes, employees, or customers
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-2 gap-4">
+              {/* Organization Hierarchy Selection */}
+              <div className="md:col-span-2 space-y-4">
+                <Label className="text-sm font-medium text-gray-700">
+                  Organization <span className="text-red-500">*</span>
+                </Label>
+                {loadingStates.organizations ? (
+                  <div className="space-y-2">
+                    <Skeleton className="h-10 w-full" />
+                    <div className="text-xs text-muted-foreground">Loading organizations...</div>
+                  </div>
+                ) : orgLevels.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {orgLevels.map((level, index) => (
+                      <div key={level.orgTypeUID} className="space-y-1.5">
+                        <Label className="text-xs text-muted-foreground uppercase tracking-wide">
+                          {level.orgTypeName}
+                        </Label>
+                        <Select
+                          value={selectedOrgs[index] || ''}
+                          onValueChange={(value) => handleOrganizationChange(index, value)}
+                        >
+                          <SelectTrigger className="h-9 text-sm">
+                            <SelectValue 
+                              placeholder={`Select ${level.orgTypeName}`}
+                              className="text-sm"
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {level.organizations.map((org) => (
+                              <SelectItem key={org.UID} value={org.UID}>
+                                <div className="flex items-center justify-between w-full">
+                                  <span className="font-medium">{org.Name}</span>
+                                  <span className="text-xs text-muted-foreground ml-2">{org.Code}</span>
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Building2 className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                    <p className="text-sm">No organizations available</p>
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="userLinkedType">Target For *</Label>
+                <Select
+                  value={target.UserLinkedType}
+                  onValueChange={(value) => handleChange('UserLinkedType', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select target type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Route">Route</SelectItem>
+                    <SelectItem value="Employee">Employee</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="userLinkedUid">
+                  {target.UserLinkedType === 'Route' ? 'Route' : 'Employee'} *
+                </Label>
+                {!selectedOrgUID ? (
+                  <div className="flex items-center justify-center h-10 border border-dashed border-gray-300 rounded-md">
+                    <p className="text-xs text-gray-500">Please select an organization first</p>
+                  </div>
+                ) : loadingStates.employees || loadingStates.routes ? (
+                  <Skeleton className="h-10 w-full" />
+                ) : (
+                  <Popover open={popoverStates.userSelection} onOpenChange={(open) => setPopoverStates(prev => ({ ...prev, userSelection: open }))}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={popoverStates.userSelection}
+                        className="w-full h-10 justify-between text-left font-normal"
+                      >
+                        <span className="truncate">
+                          {target.UserLinkedUid
+                            ? (() => {
+                                const selectedItem = target.UserLinkedType === 'Route' 
+                                  ? dropdowns.routes.find(r => r.value === target.UserLinkedUid)
+                                  : dropdowns.employees.find(e => e.value === target.UserLinkedUid);
+                                return selectedItem?.label || "Select...";
+                              })()
+                            : `Select ${target.UserLinkedType.toLowerCase()}`}
+                        </span>
+                        <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-full p-0" align="start">
+                      <Command>
+                        <div className="flex items-center border-b px-4 py-2">
+                          <Search className="mr-3 h-4 w-4 shrink-0 opacity-50" />
+                          <CommandInput
+                            placeholder={`Search ${target.UserLinkedType.toLowerCase()}s...`}
+                            value={target.UserLinkedType === 'Route' ? searchTerms.routes : searchTerms.employees}
+                            onValueChange={(value) => {
+                              setSearchTerms(prev => ({
+                                ...prev,
+                                [target.UserLinkedType === 'Route' ? 'routes' : 'employees']: value
+                              }));
+                            }}
+                            className="flex h-9 w-full rounded-md bg-transparent py-2 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 border-0 focus:ring-0"
+                          />
+                        </div>
+                        <CommandEmpty>
+                          <div className="flex flex-col items-center gap-2">
+                            <Search className="h-8 w-8 text-muted-foreground/50" />
+                            <p>No {target.UserLinkedType.toLowerCase()}s found</p>
+                            <p className="text-xs text-muted-foreground">
+                              Try a different search term
+                            </p>
+                          </div>
+                        </CommandEmpty>
+                        <CommandGroup>
+                          <CommandList 
+                            className="max-h-[280px] overflow-y-auto"
+                            onScroll={target.UserLinkedType === 'Employee' ? handleEmployeeScroll : undefined}
+                          >
+                            {(target.UserLinkedType === 'Route' ? dropdowns.routes : dropdowns.employees).map((item) => (
+                              <CommandItem
+                                key={item.value}
+                                value={item.label}
+                                onSelect={() => {
+                                  handleChange('UserLinkedUid', item.value);
+                                  setPopoverStates(prev => ({ ...prev, userSelection: false }));
+                                }}
+                                className="flex items-center justify-between cursor-pointer"
+                              >
+                                <Check
+                                  className={`h-4 w-4 shrink-0 ${
+                                    target.UserLinkedUid === item.value
+                                      ? "opacity-100 text-primary"
+                                      : "opacity-0"
+                                  }`}
+                                />
+                                <div className="flex flex-col gap-1.5 flex-1 min-w-0 ml-2">
+                                  <div className="font-medium text-sm truncate">
+                                    {item.label}
+                                  </div>
+                                  {item.code && (
+                                    <div className="text-xs text-muted-foreground truncate">
+                                      {item.code}
+                                    </div>
+                                  )}
+                                </div>
+                              </CommandItem>
+                            ))}
+                            {target.UserLinkedType === 'Employee' && employeesPagination.isLoadingMore && (
+                              <div className="flex justify-center items-center py-4 bg-gray-50 rounded-lg">
+                                <RefreshCw className="h-4 w-4 text-blue-600 animate-spin mr-2" />
+                                <span className="text-sm text-gray-600">Loading more...</span>
+                              </div>
+                            )}
+                          </CommandList>
+                        </CommandGroup>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="customerLinkedType">Customer Type</Label>
+                <Select
+                  value={target.CustomerLinkedType || 'Customer'}
+                  onValueChange={(value) => handleChange('CustomerLinkedType', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select customer type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Customer">Customer</SelectItem>
+                    <SelectItem value="Store">Store</SelectItem>
+                    <SelectItem value="Outlet">Outlet</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="customerLinkedUid">Customer (Optional)</Label>
+                {!selectedOrgUID ? (
+                  <div className="flex items-center justify-center h-10 border border-dashed border-gray-300 rounded-md">
+                    <p className="text-xs text-gray-500">Please select an organization first</p>
+                  </div>
+                ) : loadingStates.customers ? (
+                  <Skeleton className="h-10 w-full" />
+                ) : (
+                  <Popover open={popoverStates.customerSelection} onOpenChange={(open) => setPopoverStates(prev => ({ ...prev, customerSelection: open }))}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={popoverStates.customerSelection}
+                        className="w-full h-10 justify-between text-left font-normal"
+                      >
+                        <span className="truncate">
+                          {target.CustomerLinkedUid
+                            ? dropdowns.customers.find(c => c.value === target.CustomerLinkedUid)?.label || "Select customer..."
+                            : "Select customer (optional)"}
+                        </span>
+                        <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-full p-0" align="start">
+                      <Command>
+                        <div className="flex items-center border-b px-4 py-2">
+                          <Search className="mr-3 h-4 w-4 shrink-0 opacity-50" />
+                          <CommandInput
+                            placeholder="Search customers..."
+                            value={searchTerms.customers}
+                            onValueChange={(value) => {
+                              setSearchTerms(prev => ({ ...prev, customers: value }));
+                            }}
+                            className="flex h-9 w-full rounded-md bg-transparent py-2 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 border-0 focus:ring-0"
+                          />
+                        </div>
+                        <CommandEmpty>
+                          <div className="flex flex-col items-center gap-2">
+                            <Search className="h-8 w-8 text-muted-foreground/50" />
+                            <p>No customers found</p>
+                            <p className="text-xs text-muted-foreground">
+                              Try a different search term
+                            </p>
+                          </div>
+                        </CommandEmpty>
+                        <CommandGroup>
+                          <CommandList 
+                            className="max-h-[280px] overflow-y-auto"
+                            onScroll={handleCustomerScroll}
+                          >
+                            {/* Clear selection option */}
+                            <CommandItem
+                              value="clear-selection"
+                              onSelect={() => {
+                                handleChange('CustomerLinkedUid', '');
+                                setPopoverStates(prev => ({ ...prev, customerSelection: false }));
+                              }}
+                              className="flex items-center justify-between cursor-pointer text-muted-foreground"
+                            >
+                              <Check
+                                className={`h-4 w-4 shrink-0 ${
+                                  !target.CustomerLinkedUid ? "opacity-100 text-primary" : "opacity-0"
+                                }`}
+                              />
+                              <div className="flex-1 min-w-0 ml-2">
+                                <div className="text-sm italic">No specific customer</div>
+                              </div>
+                            </CommandItem>
+                            
+                            {dropdowns.customers.map((customer) => (
+                              <CommandItem
+                                key={customer.value}
+                                value={customer.label}
+                                onSelect={() => {
+                                  handleChange('CustomerLinkedUid', customer.value);
+                                  setPopoverStates(prev => ({ ...prev, customerSelection: false }));
+                                }}
+                                className="flex items-center justify-between cursor-pointer"
+                              >
+                                <Check
+                                  className={`h-4 w-4 shrink-0 ${
+                                    target.CustomerLinkedUid === customer.value
+                                      ? "opacity-100 text-primary"
+                                      : "opacity-0"
+                                  }`}
+                                />
+                                <div className="flex flex-col gap-1.5 flex-1 min-w-0 ml-2">
+                                  <div className="font-medium text-sm truncate">
+                                    {customer.label}
+                                  </div>
+                                  {customer.code && (
+                                    <div className="text-xs text-muted-foreground truncate">
+                                      {customer.code}
+                                    </div>
+                                  )}
+                                </div>
+                              </CommandItem>
+                            ))}
+                            {customersPagination.isLoadingMore && (
+                              <div className="flex justify-center items-center py-4 bg-gray-50 rounded-lg">
+                                <RefreshCw className="h-4 w-4 text-blue-600 animate-spin mr-2" />
+                                <span className="text-sm text-gray-600">Loading more...</span>
+                              </div>
+                            )}
+                          </CommandList>
+                        </CommandGroup>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                )}
+              </div>
+
+              {/* Product Hierarchy Selection - Full span for complex component */}
+              <div className="md:col-span-2">
+                <ProductAttributes
+                  onAttributesChange={handleProductAttributesChange}
+                  fieldNamePattern="Level{n}"
+                  enableMultiSelect={false}
+                  initialMaxLevels={6}
+                  showLevelNumbers={true}
+                  levelLabelGenerator={(level, typeName) => `${typeName} (Level ${level})`}
+                />
+              </div>
+
+              {/* Product Selection Summary */}
+              {selectedProductAttributes.length > 0 && (
+                <div className="md:col-span-2 space-y-2">
+                  <Label className="text-sm font-medium text-gray-700">
+                    Selected Product Hierarchy
+                  </Label>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedProductAttributes
+                      .filter(attr => attr.code && attr.value)
+                      .map((attr, index) => (
+                        <div
+                          key={`${attr.level}-${attr.code}`}
+                          className="inline-flex items-center px-3 py-1 rounded-full text-xs bg-blue-100 text-blue-800"
+                        >
+                          <span className="font-medium">{attr.type}:</span>
+                          <span className="ml-1">{attr.value}</span>
+                          <span className="ml-1 text-blue-600">({attr.code})</span>
+                        </div>
+                      ))}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    Target will be applied to: <strong>{target.ItemLinkedItemType}</strong>
+                    {target.ItemLinkedItemUid && (
+                      <span> (ID: {target.ItemLinkedItemUid})</span>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <Label htmlFor="targetMonth">Target Month *</Label>
+                <Select
+                  value={target.TargetMonth.toString()}
+                  onValueChange={(value) => handleChange('TargetMonth', parseInt(value))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select month" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
+                      <SelectItem key={month} value={month.toString()}>
+                        {new Date(2000, month - 1).toLocaleString('default', {
+                          month: 'long',
+                        })}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="targetYear">Target Year *</Label>
+                <Select
+                  value={target.TargetYear.toString()}
+                  onValueChange={(value) => handleChange('TargetYear', parseInt(value))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select year" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {[currentYear - 1, currentYear, currentYear + 1].map((year) => (
+                      <SelectItem key={year} value={year.toString()}>
+                        {year}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="targetAmount">Target Amount *</Label>
+                <Input
+                  id="targetAmount"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={target.TargetAmount}
+                  onChange={(e) => handleChange('TargetAmount', parseFloat(e.target.value))}
+                  placeholder="Enter target amount"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="achievedAmount">Achieved Amount</Label>
+                <Input
+                  id="achievedAmount"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={target.AchievedAmount}
+                  onChange={(e) => handleChange('AchievedAmount', parseFloat(e.target.value))}
+                  placeholder="Enter achieved amount"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="status">Status</Label>
+                <Select
+                  value={target.Status}
+                  onValueChange={(value) => handleChange('Status', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Not Started">Not Started</SelectItem>
+                    <SelectItem value="In Progress">In Progress</SelectItem>
+                    <SelectItem value="Achieved">Achieved</SelectItem>
+                    <SelectItem value="Failed">Failed</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="notes">Notes</Label>
+              <Textarea
+                id="notes"
+                value={target.Notes}
+                onChange={(e) => handleChange('Notes', e.target.value)}
+                placeholder="Enter any additional notes"
+                rows={4}
+              />
+            </div>
+
+            <div className="flex justify-end gap-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => router.push('/distributiondelivery/route-management/target')}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={loading}>
+                <Save className="mr-2 h-4 w-4" />
+                {loading ? 'Creating...' : 'Create Target'}
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

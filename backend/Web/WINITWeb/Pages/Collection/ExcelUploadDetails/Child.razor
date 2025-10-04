@@ -1,0 +1,79 @@
+﻿@page "/drop"
+@using OfficeOpenXml.Table;
+@using System.Data;
+@using Microsoft.AspNetCore.Components.Forms;
+@using Winit.Modules.CollectionModule.Model.Classes;
+@using Winit.Modules.CollectionModule.Model.Interfaces;
+@using Winit.Modules.Address.Model.Classes;
+@using static Winit.Modules.CollectionModule.Model.Interfaces.IAccCollection;
+@using static Winit.Modules.CollectionModule.Model.Interfaces.IAccReceivable;
+<style>
+    /* Custom CSS for the dropdown menu */
+    .dropdown .dropdown-menu {
+        display: block;
+        position: absolute;
+        background-color: #fff; /* Change the background color to your desired color */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 1;
+        min-width: 160px;
+        overflow-y : auto;
+    }
+</style>
+
+<style>
+    /* Neon button styles */
+    .neon-button {
+        background-color: #00f0ff; /* Neon blue color */
+        color: #fff; /* Text color */
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        box-shadow: 0 0 10px rgba(0, 240, 255, 0.7);
+    }
+
+        .neon-button:hover {
+            background-color: #00c2d1; /* Slightly darker neon blue on hover */
+        }
+
+    /* Neon glow animation */
+    keyframes neon-glow {
+        0%
+
+    {
+        text-shadow: 0 0 10px #00f0ff, 0 0 20px #00f0ff, 0 0 30px #00f0ff;
+    }
+
+    50% {
+        text-shadow: 0 0 20px #00f0ff, 0 0 30px #00f0ff, 0 0 40px #00f0ff;
+    }
+
+    100% {
+        text-shadow: 0 0 10px #00f0ff, 0 0 20px #00f0ff, 0 0 30px #00f0ff;
+    }
+
+    }
+
+    .neon-button.glowing {
+        animation: neon-glow 1.5s linear infinite;
+    }
+</style>
+@if (!ShowList)
+{
+    <div class="dropdown">
+        @if (ShowCustomers)
+        {
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="customerData" ShowPopUp=@ShowCustomers Title="Select Customer" OnSelect="@((e)=>OnSelected(e,"CustomerType"))" />
+        }
+        else
+        {
+            <button class="form-select" @onclick="@(DropNow)">@Selected</button>
+        }
+    </div>
+}
+
+@code {
+    
+}

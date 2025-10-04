@@ -1,0 +1,75 @@
+﻿<div class="div1">
+    <table>
+    <thead>
+        <tr>
+        @if (IsFirstColumnCheckbox)
+        {
+            <th >
+                <input type="checkbox" @onclick="() => ToggleAllCheckboxes()" />
+                 </th>
+        }
+        @foreach (var column in Columns)
+        {
+            <th  @onclick="() => SortColumn(column)">
+                @if (column.IsSortable)
+                {
+                    <span style="text-decoration:underline;cursor:pointer;">@column.Header</span>
+                    @if (currentSortField == column.SortField)
+                    {
+                        <span>@(isAscending ? "▲" : "▼")</span>
+                    }
+                }
+                else
+                {
+                    <span >@column.Header</span>
+                }
+            </th>
+        }
+        </tr>
+    </thead>
+    
+    <tbody>
+        @foreach (var item in DataSource)
+        {
+            <tr>
+                @if (IsFirstColumnCheckbox)
+                {
+                 <td>
+                        <input type="checkbox" @onclick="() => ToggleSelection(item)"
+                               checked="@SelectedItems.Contains(item)" />
+                 </td>
+                }
+                @foreach (var column in Columns)
+                {
+                    <td>
+                        @if (column.IsButtonColumn)
+                        {
+                            foreach (var buttonAction in column.ButtonActions)
+                            {
+                                if (buttonAction.ButtonType == Shared.Models.Common.ButtonTypes.Image)
+                                {
+                                    <button @onclick="() => buttonAction.Action(item)"
+                                                style="text-decoration:underline;cursor:pointer;margin-right:5px;">
+                                        <img src="@buttonAction.URL" style="width: 17px; pointer-events: auto;" />
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button @onclick="() => buttonAction.Action(item)"
+                                                style="text-decoration:underline;cursor:pointer;margin-right:5px;">
+                                        @buttonAction.Text
+                                    </button>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            @column.GetValue(item)
+                        }
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+    </table>
+</div>

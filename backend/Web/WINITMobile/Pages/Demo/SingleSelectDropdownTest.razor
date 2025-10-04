@@ -1,0 +1,9 @@
+﻿@page "/singleselectdropdown"
+<select @onchange="OnSelectionChange">
+    <option value="">Select an item</option>
+    @foreach (var item in data)
+    {
+        <option value="@item.Code" selected="@item.IsSelected">@item.Label</option>
+    }
+</select>
+<p>Selected Item: @selectedItem</p>

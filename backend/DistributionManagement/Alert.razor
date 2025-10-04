@@ -1,0 +1,38 @@
+﻿@inherits ComponentBase
+
+<div class="alert-popup @(IsVisible ? "visible" : "hidden")">
+    <div class="alert-content">
+        <p>@Message</p>
+    </div>
+</div>
+
+
+@code {
+    [Parameter] public bool IsVisible { get; set; }
+    [Parameter] public string Message { get; set; }
+
+}
+
+<style>
+    .alert-popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: red; /* Apply red background color */
+        color: white; /* Apply white text color */
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        visibility: hidden;
+        opacity: 0;
+        transition: visibility 0s, opacity 0.5s;
+    }
+
+    .visible {
+        visibility: visible;
+        opacity: 1;
+    }
+
+</style>

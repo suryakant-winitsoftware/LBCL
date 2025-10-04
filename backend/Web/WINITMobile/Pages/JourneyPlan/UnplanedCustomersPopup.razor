@@ -1,0 +1,279 @@
+﻿@page "/UnplannedCustomerPopup"
+@using System.Threading.Tasks
+@using Winit.Modules.Route.Model.Interfaces
+@using Winit.Modules.Store.BL.Interfaces;
+@using Winit.Modules.Store.Model.Interfaces;
+@using Winit.Modules.Store.Model.Classes;
+@using Winit.Shared.CommonUtilities.Common
+@using Winit.Shared.Models.Common
+@using Microsoft.JSInterop;
+@using Newtonsoft.Json;
+@using Winit.Shared.Models.Events
+@using Winit.UIComponents.Common.Services
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+@inject WINITMobile.Data.SideBarService _sideBarService
+@inject Winit.Modules.JourneyPlan.BL.Interfaces.IJourneyPlanViewModelFactory _viewmodel
+@if (IsVisible)
+{
+    <div class="modal fade show" tabindex="-1" role="dialog" style="display: block;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@Localizer["select_customers"]</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="HidePopup">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="cls_serch_nn22">
+                    <Winit.UIComponents.Common.CustomControls.WinitTextBox Value="@searchQuery" OnDebounceIntervalElapsed="OnSearch" Placeholder=@Localizer["search_by_customer_name_or_address_or_code...."] MaxLength="200" DebounceInterval="500"
+                                                                           KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+                                                                    IsForSearch="true" />
+                    @* <div class="form-group w-25">
+                        <label class="form-label">select Route:</label>
+                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="" />
+                    </div> *@
+                
+                </div>
+            
+                    <div class="cls_drop_sel_route" @onclick="OnRouteDDClick">
+                    <p>@Localizer["select_route"] : </p> @((SelectedRoute is null) ?
+                @Localizer["select_route"] : SelectedRoute)
+                    </div>
+               
+                <div class="modal-body" style="padding:0px 2%;">
+                    <!-- Customer list table -->
+                    <div style="width:100%;float:left;" class="cls_sel_customer_popup3_main">
+                    @if (CustomerlisttoShow != null && CustomerlisttoShow.Any())
+                    {
+
+                        <Virtualize Items="CustomerlisttoShow" Context="item" OverscanCount="10">
+                         
+                                <div @onclick="() => ToggleCustomerSelection(item)" class="@(IsCustomerSelected(item) ? "cls_sel_customer_popup3 cls_sel_customer_popup3_sel" : "cls_sel_customer_popup3")">
+                                    <div class="cls_sel_customer_popup3_top">
+                                        <div class="cls_sel_customer_popup3_top_left">
+                                            <img style="width:35px;" src="/Images/p1.png">
+                                        </div>
+                                        <div class="cls_sel_customer_popup3_top_right">
+                                            <h3>@item.Name - @item.StoreNumber</h3>
+                                            <label>@item.Code</label><span><img src="/Images/dot1.png"></span><p>@Localizer["visited_today"]</p><span><img src="/Images/ic1.png"></span>
+
+                                        </div>
+                                        <p>@item.Address</p>
+                                    </div>
+
+                                    <div class="cls_sel_customer_popup3_bottom">
+                                        <div class="cls_sel_customer_popup3_bottom_left">
+                                            <img style="width:25px;" src="/Images/ic2.png">
+                                        </div>
+                                        <div class="cls_sel_customer_popup3_bottom_cen">
+                                            <h3>Ramana Kumar</h3>
+                                            <label>@Localizer["manager"]</label><span><img src="/Images/dot1.png"></span><p>9436742566</p>
+                                        </div>
+                                        <div class="cls_sel_customer_popup3_bottom_right"><img @onclick="OpenDialPad" src="/Images/ic3.png"></div>
+                                    </div>
+                                </div>                               
+                        
+                        </Virtualize>
+
+                    }
+                    </div>
+                </div>
+                <div style="width:100%;float:left;">
+                    <button type="button" class="cls_btn_full_width" @onclick="AddSelectedCustomers">@Localizer["proceed"]</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+@code {
+    [Parameter]
+    public bool IsVisible { get; set; }
+    public string searchQuery = "";
+    [Parameter] public List<Winit.Modules.Store.Model.Interfaces.IStoreItemView> CustomerList { get; set; }
+    public List<Winit.Modules.Store.Model.Interfaces.IStoreItemView> CustomerlisttoShow { get; set; }
+    [Parameter] public EventCallback<List<Winit.Modules.Store.Model.Interfaces.IStoreItemView>> SelectedCustomersChanged { get; set; }
+    [Parameter]
+    public EventCallback<bool> IsVisibleChanged { get; set; }
+    [Parameter]
+    public EventCallback<string> OnRouteChanged { get; set; }
+    private List<Winit.Modules.Store.Model.Interfaces.IStoreItemView> selectedCustomers = new List<Winit.Modules.Store.Model.Interfaces.IStoreItemView>();
+    public Winit.Modules.JourneyPlan.BL.Interfaces.IJourneyPlanViewModel _journeyplanviewmodel { get; set; }
+    private string SelectedRoute { get; set; }
+    private bool IsLoading { get; set; } = false;
+    protected override void OnInitialized()
+    {
+        _loadingService.ShowLoading("Loading...");
+        try
+        {
+            CustomerlisttoShow = CustomerList;
+
+        }catch(Exception ex)
+        {
+            _alertService.ShowErrorAlert(@Localizer["execption"], ex.Message);
+        }
+        finally
+        {
+            _loadingService.HideLoading();
+        }
+        
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        _journeyplanviewmodel = _viewmodel._viewmodelJp;
+
+        if (_journeyplanviewmodel != null)
+        {
+
+        }
+        if(_appUser != null)
+        {
+            SelectedRoute = _appUser.SelectedRoute.Name;
+        }
+        LoadResources(null, _languageService.SelectedCulture);
+    }
+
+    protected override Task OnParametersSetAsync()
+    {
+        CustomerlisttoShow = CustomerList;
+        return base.OnParametersSetAsync();
+    }
+    private async Task AddSelectedCustomers()
+    {
+        await SelectedCustomersChanged.InvokeAsync(selectedCustomers);
+        selectedCustomers.Clear();
+        HidePopup();
+    }
+    private async void OpenDialPad()
+    {
+        try
+        {
+            // Check and request permissions
+            var status = await Permissions.CheckStatusAsync<Permissions.Phone>();
+            if (status != PermissionStatus.Granted)
+            {
+                status = await Permissions.RequestAsync<Permissions.Phone>();
+            }
+
+            // If permission is granted, open the dial pad
+            if (status == PermissionStatus.Granted)
+            {
+                // Additional check to ensure that the feature is available on the current platform
+                if (PhoneDialer.Default.IsSupported)
+                {
+                    PhoneDialer.Default.Open("9436742566");
+                }
+                else
+                {
+                    await _alertService.ShowErrorAlert(@Localizer["error"], @Localizer["phone_dialer_is_not_supported_on_this_device"]);
+                }
+            }
+            else
+            {
+
+                await _alertService.ShowErrorAlert(@Localizer["error"], @Localizer["permission_not_granted_to_use_the_phone_dialer"]);
+            }
+        }
+        catch (FeatureNotSupportedException ex)
+        {
+            await _alertService.ShowErrorAlert(@Localizer["phone_dialer_not_supported"], ex.Message);
+
+        }
+        catch (PermissionException ex)
+        {
+            await _alertService.ShowErrorAlert(@Localizer["permission_not_granted"], ex.Message);
+        }
+        catch (Exception ex)
+        {
+            await _alertService.ShowErrorAlert(@Localizer["an_error_occurred"], ex.Message);
+        }
+    }
+    private void HidePopup()
+    {
+        IsVisible = false;
+        IsVisibleChanged.InvokeAsync(IsVisible);
+
+    }
+    private void Reset()
+    {
+
+    }
+    private async Task OnSearch(string searching)
+    {
+        if (!string.IsNullOrEmpty(searching))
+        {
+            searching = searching.ToLower();
+
+            CustomerlisttoShow = CustomerList.Where(c =>
+                (c.Name?.ToLower() ?? "").Contains(searching) ||
+                (c.Code?.ToLower() ?? "").Contains(searching) ||
+                (c.Address?.ToLower() ?? "").Contains(searching)
+            ).ToList();
+        }
+        else
+        {
+            CustomerlisttoShow = CustomerList;
+        }
+
+        StateHasChanged();
+        await Task.CompletedTask;
+    }
+
+
+    private void ToggleCustomerSelection(Winit.Modules.Store.Model.Interfaces.IStoreItemView customer)
+    {
+        if (selectedCustomers.Contains(customer))
+        {
+            selectedCustomers.Remove(customer);
+        }
+        else
+        {
+            selectedCustomers.Add(customer);
+        }
+    }
+
+    private bool IsCustomerSelected(Winit.Modules.Store.Model.Interfaces.IStoreItemView customer)
+    {
+        return selectedCustomers.Contains(customer);
+    }
+    private async Task OnRouteDDClick()
+    {
+        var routeSelectionItems = CommonFunctions.ConvertToSelectionItems<IRoute>(_appUser.JPRoutes, new List<string>
+                { "UID","Code","Name"});
+        if (_appUser.SelectedRoute != null)
+        {
+            routeSelectionItems.Find(e => e.UID == _appUser.SelectedRoute.UID).IsSelected = true;
+        }
+        await _dropdownService.ShowMobilePopUpDropDown(new DropDownOptions
+            {
+                DataSource = routeSelectionItems,
+                OnSelect = async (eventArgs) =>
+                {
+                    await HandelRouteSelect(eventArgs);
+                },
+                OkBtnTxt = @Localizer["proceed"],
+                Title = @Localizer["route_selection"]
+            });
+
+    }
+    private async Task HandelRouteSelect(DropDownEvent dropDownEvent)
+    {
+        if (dropDownEvent != null && dropDownEvent.SelectionItems != null && dropDownEvent.SelectionItems.Any())
+        {
+            ISelectionItem RouteItem = dropDownEvent.SelectionItems.First();
+            SelectedRoute = RouteItem.Label;
+            await HandleRouteChanged(RouteItem.UID);
+
+        }
+    }
+    private async Task HandleRouteChanged(string RouteUID)
+    {
+        await OnRouteChanged.InvokeAsync(RouteUID);
+    }
+}
+
+

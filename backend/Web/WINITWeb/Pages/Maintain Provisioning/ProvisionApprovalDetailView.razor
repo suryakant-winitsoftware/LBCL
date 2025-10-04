@@ -1,0 +1,116 @@
+﻿@page "/provisionapprovaldetail"
+@using Winit.Modules.Provisioning.Model.Classes;
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.Provisioning.BL.Interfaces.IProvisioningHeaderViewViewModel provisioningHeaderViewModel;
+@inject IJSRuntime JSRuntime
+
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+                     OnFilterApplied="@OnFilterApply" />
+<div class="cls_header_right" style="width:auto;">
+    @if (TabName == ProvisionConstants.Pending)
+    {
+        <button class="cls_comman_sec_btn mr-2" type="button" @onclick="RedemptionBtnClicked">Request for Redemption</button>
+    }
+    <button class="cls_button_blue" @onclick="ExportToExcel">
+        Export to Excel
+    </button>
+</div>
+
+
+<Winit.UIComponents.Common.CustomControles.Tabs TabItems="TabItems" OnTabSelect="OnTabSelect" />
+
+<Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" DataSource="provisioningHeaderViewModel.DetailViewDetails" ShowRecordsCount="false" IsFirstColumnCheckbox="@IsFirstColumnCheckbox" AfterCheckBoxSelection="OnGridCheckBoxSelection" />
+<Winit.UIComponents.Web.Paging.Paging CurrentPage="provisioningHeaderViewModel.PageNumber" OnPageChange="PageIndexChanged" PageSize="provisioningHeaderViewModel.PageSize" TotalItems="provisioningHeaderViewModel.TotalItemsCount" />
+
+
+@if (IsShowInfo)
+{
+    <PopUp Title="Details" OkbtnText="Ok" CancelbtnText="Close" OnOkClick="() => IsShowInfo = false" OnCloseClick="() => IsShowInfo = false">
+        <div class="cls_provision_cont">
+            <!-- Row 1<span class="cls_provision_span">:</span> Channel Partner -->
+            <div class="cls_provision_content1">
+                <label class="cls_provision_cont_label3">Channel Partner</label>
+                <label class="cls_provision_cont_label5"><span class="cls_provision_span">:</span>@(InfoSelectedProvisions.FirstOrDefault().CustomerName ?? "N/A")</label>
+            </div>
+
+            <!-- Row 2 -->
+            <div class="cls_provision_content">
+                <div class="cls_provision_content_div">
+                    <label class="cls_provision_cont_label2">Provision Type</label>
+                    <label class="cls_provision_cont_label"><span class="cls_provision_span">:</span> @(InfoSelectedProvisions.FirstOrDefault().ProvisionType ?? "N/A")</label>
+                </div>
+                <div class="cls_provision_content_div">
+                    <label class="cls_provision_cont_label2">Invoice Number</label>
+                    <label class="cls_provision_cont_label"><span class="cls_provision_span">:</span>@(InfoSelectedProvisions.FirstOrDefault().InvoiceNumber ?? "N/A")</label>
+                </div>
+            </div>
+
+            <!-- Row 3 -->
+            <div class="cls_provision_content">
+                <div class="cls_provision_content_div">
+                    <label class="cls_provision_cont_label2">GL Date</label>
+                    <label class="cls_provision_cont_label"><span class="cls_provision_span">:</span> @(CommonFunctions.GetDateTimeInFormat(InfoSelectedProvisions.FirstOrDefault().InvoiceDate) ?? null)</label>
+                </div>
+                <div class="cls_provision_content_div">
+                    <label class="cls_provision_cont_label2">Ar No</label>
+                    <label class="cls_provision_cont_label"><span class="cls_provision_span">:</span> @(InfoSelectedProvisions.FirstOrDefault().ArNo ?? "N/A")</label>
+                </div>
+            </div>
+
+            <!-- Row 4 -->
+            <div class="cls_provision_content">
+                <div class="cls_provision_content_div">
+                    <label class="cls_provision_cont_label2">Item Code</label>
+                    <label class="cls_provision_cont_label"><span class="cls_provision_span">:</span> @(InfoSelectedProvisions.FirstOrDefault().ItemCode ?? "N/A")</label>
+                </div>
+                <div class="cls_provision_content_div">
+                    <label class="cls_provision_cont_label2">Quantity</label>
+                    <label class="cls_provision_cont_label"><span class="cls_provision_span">:</span>@(InfoSelectedProvisions.FirstOrDefault().Quantity ?? 0)</label>
+                </div>
+            </div>
+            <div class="cls_provision_content">
+                <div class="cls_provision_content_div">
+                    <label class="cls_provision_cont_label2">Amount</label>
+                    <label class="cls_provision_cont_label"><span class="cls_provision_span">:</span>@(CommonFunctions.FormatNumberInIndianStyle(CommonFunctions.RoundForSystem(InfoSelectedProvisions.FirstOrDefault().Amount)))</label>
+                </div>
+            </div>
+            @if (TabName == ProvisionConstants.Confirmed)
+            {
+                <div class="cls_provision_content">
+                    <div class="cls_provision_content_div">
+                        <label class="cls_provision_cont_label2">Cn Number</label>
+                        <label class="cls_provision_cont_label"><span class="cls_provision_span">:</span> @(InfoSelectedProvisions.FirstOrDefault().CnNumber ?? "N/A")</label>
+                    </div>
+                    <div class="cls_provision_content_div">
+                        <label class="cls_provision_cont_label2">Cn Date</label>
+                        <label class="cls_provision_cont_label"><span class="cls_provision_span">:</span>@(InfoSelectedProvisions.FirstOrDefault().CnDate ?? null)</label>
+                    </div>
+                </div>
+
+                <div class="cls_provision_content">
+                    <div class="cls_provision_content_div">
+                        <label class="cls_provision_cont_label2">Cn Amount</label>
+                        <label class="cls_provision_cont_label"><span class="cls_provision_span">:</span>@(InfoSelectedProvisions.FirstOrDefault().CnAmount ?? 0)</label>
+                    </div>
+                </div>
+            }
+
+            <!-- Row 5<span class="cls_provision_span">:</span> Remarks -->
+            <div class="cls_provision_content1">
+                <label class="cls_provision_cont_label3">Naration</label>
+                <label class="cls_provision_cont_label5"><span class="cls_provision_span">:</span>@(InfoSelectedProvisions.FirstOrDefault().Naration ?? "N/A")</label>
+            </div>
+
+
+            <div class="cls_provision_content1">
+                <label class="cls_provision_cont_label3">Remarks</label>
+                <label class="cls_provision_cont_label5"><span class="cls_provision_span">:</span>@(InfoSelectedProvisions.FirstOrDefault().Remarks ?? "N/A")</label>
+            </div>
+
+
+        </div>
+
+
+        @* <Winit.UIComponents.Web.Table.TableGridView Columns="InfoDataGridColumns" DataSource="InfoSelectedProvisions" /> *@
+    </PopUp>
+}

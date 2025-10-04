@@ -1,0 +1,94 @@
+﻿@page "/InventoryMaster"
+@using Winit.UIComponents.Web.Table
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.Tally.BL.Interfaces.ITallyMasterViewModel tallyMasterViewModel;
+
+@if (IsInitialised)
+{
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@ColumnsForFilter"
+                         IsSearchCriteriaNeeded="false"
+                         OnFilterApplied="@OnFilterApply" />
+    <div class="cls_container_div1">
+        <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span">*</span>Channel Partner</label>
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="tallyMasterViewModel.ChannelPartnerList"
+                                                               IsButtonVisible="true"
+                                                               Title="Channel Partner"
+                                                               OnSelect="OnChannelPartnerSelect"
+                                                               _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single" />
+        </div>
+        @if (IsChannelPartnerSelected)
+        {
+            <div class="cls_header_right">
+                <Winit.UIComponents.Web.ExportToExcel.ExportToExcel ColumnHeaders="@DataGridColumnsForExcel" OnExportButtonClick="OnExcelDownloadClick" DataSource="@tallyMasterViewModel.InventoryMasterDataListForExcel"
+                ButtonName="Export to Excel" FileName="InventoryMasterTally.xlsx" />
+            </div>
+        }
+    </div>
+    @if (IsChannelPartnerSelected)
+    {
+        
+        <div class="cls_container_div1">
+            <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" DataSource="tallyMasterViewModel.InventoryMasterDataList" PageNumber="tallyMasterViewModel.PageNumber"
+                                                        PageSize="tallyMasterViewModel.PageSize" OnSort="OnSortApply"
+                                                        TotalItemsCount="tallyMasterViewModel.TotalItemsCount" ShowRecordsCount="true" />
+            <Winit.UIComponents.Web.Paging.Paging CurrentPage="tallyMasterViewModel.PageNumber" OnPageChange="PageIndexChanged"
+                                                  PageSize="tallyMasterViewModel.PageSize" TotalItems="tallyMasterViewModel.TotalItemsCount" />
+        </div>
+    }
+    @if (IsItemSelectedToShow)
+    {
+        <PopUp Title="@($"{tallyMasterViewModel.tallyInventoryMaster.Name} Details")" DisableCancelBtn="true" OkbtnText="Back"
+               OnOkClick="OnBackButtonClick" DisableCrossBtn="true"
+               OnCloseClick="() => IsItemSelectedToShow = false">
+
+            <div class="cls_container_div1">
+                <div class="cls_pop_up_div">
+                <label class="cls_section_div_purchase2_label">  Name </label>
+                <label class="cls_credit_label2">@tallyMasterViewModel.tallyInventoryMaster.Name </label>
+            </div>
+            
+
+            <div class="cls_pop_up_div">
+                <label class="cls_section_div_purchase2_label">  Code </label>
+                <label class="cls_credit_label2">@tallyMasterViewModel.tallyInventoryMaster.Code </label>
+            </div>
+
+            <div class="cls_pop_up_div">
+                <label class="cls_section_div_purchase2_label">  Units </label>
+                <label class="cls_credit_label2">@tallyMasterViewModel.tallyInventoryMaster.Units</label>
+            </div>
+            </div>
+            <div class="cls_popup_outline">
+                <div class="cls_pop_up_div">
+                <label class="cls_section_div_purchase2_label">  LastRecordDate </label>
+                <label class="cls_credit_label2">@tallyMasterViewModel.tallyInventoryMaster.LastRecordDate </label>
+            </div>
+
+                <div class="cls_pop_up_div">
+                <label class="cls_section_div_purchase2_label">  OpeningBalance </label>
+                <label class="cls_credit_label2">@tallyMasterViewModel.tallyInventoryMaster.OpeningBalance </label>
+            </div>
+
+                <div class="cls_pop_up_div">
+                <label class="cls_section_div_purchase2_label">  OpeningRate </label>
+                <label class="cls_credit_label2">@tallyMasterViewModel.tallyInventoryMaster.OpeningRate </label>
+            </div>
+            </div>
+            <div class="cls_popup_outline">
+
+                <div class="cls_pop_up_div">
+                <label class="cls_section_div_purchase2_label">  StockGroup </label>
+                <label class="cls_credit_label2">@tallyMasterViewModel.tallyInventoryMaster.StockGroup </label>
+            </div>
+
+
+                @* <div class="cls_pop_up_div">
+                <label class="cls_section_div_purchase2_label">  Distributor Code </label>
+                <label class="cls_credit_label2">@tallyMasterViewModel.tallyInventoryMaster.DistributorCode </label>
+            </div> *@
+            </div>
+        </PopUp>
+    }
+}
+

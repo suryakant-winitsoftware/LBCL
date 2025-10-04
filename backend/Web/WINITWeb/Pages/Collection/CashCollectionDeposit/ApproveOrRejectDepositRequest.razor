@@ -1,0 +1,121 @@
+﻿@page "/approveorrejectdeposit"
+@inject NavigationManager _navigate
+@inject Winit.Modules.CollectionModule.BL.Interfaces.ICashCollectionDepositViewModel _cashCollectionDepostViewModel
+@inject Winit.Modules.CollectionModule.BL.Interfaces.ICreatePaymentViewModel _createPaymentViewModel;
+
+
+
+
+@if (IsInitialize)
+{
+    <div class="cls_section" >
+        <div class="cls_state_section_div2">
+            <label class="cls_section_div_purchase2_label">
+                Request No :
+            </label>
+            <label class="cls_credit_label1">
+                @_cashCollectionDepostViewModel.CashCollectionDeposit.RequestNo
+            </label>
+        </div>
+        <div class="cls_state_section_div2">
+            <label class="cls_section_div_purchase2_label">
+                Request Date :
+            </label>
+            <label class="cls_credit_label1">
+                @_cashCollectionDepostViewModel.CashCollectionDeposit.RequestDate
+            </label>
+        </div>
+        <div class="cls_state_section_div2">
+            <label class="cls_section_div_purchase2_label">
+                Bank
+            </label>
+            <label class="cls_credit_label1">
+                @_cashCollectionDepostViewModel.CashCollectionDeposit.BankUID
+            </label>
+        </div>
+        <div class="cls_state_section_div2">
+            <label class="cls_section_div_purchase2_label">
+                Branch
+            </label>
+            <label class="cls_credit_label1">
+                @_cashCollectionDepostViewModel.CashCollectionDeposit.Branch
+            </label>
+        </div>
+        <div class="cls_state_section_div2">
+            <label class="cls_section_div_purchase2_label">
+                Status
+            </label>
+            <label class="cls_credit_label1">
+                @_cashCollectionDepostViewModel.CashCollectionDeposit.Status
+            </label>
+        </div>
+        <div class="cls_state_section_div2">
+            <label class="cls_section_div_purchase2_label">
+                Amount
+            </label>
+            <label class="cls_credit_label1">
+                @_cashCollectionDepostViewModel.CashCollectionDeposit.Amount
+            </label>
+        </div>
+        <div class="cls_state_section_div2">
+            <label class="cls_section_div_purchase2_label">
+                Notes
+            </label>
+            <label class="cls_credit_label1">
+                @_cashCollectionDepostViewModel.CashCollectionDeposit.Notes
+            </label>
+        </div>
+        <div class="cls_file_upload_qps" style="margin-top:25px;">
+            <label class="cls_section_div_purchase2_label">
+                Images
+            </label>
+            
+                <Winit.UIComponents.Common.FileUploader.ImageViewer FileSysList="_cashCollectionDepostViewModel.FileSysList" />
+            
+        </div>
+        <div class="cls_state_section_div2">
+            <label class="cls_section_div_purchase2_label">
+                Comments
+            </label>
+            
+                @if (_cashCollectionDepostViewModel.CashCollectionDeposit.Status == "Pending")
+                {
+
+                <input type="text" class="cls_select2_button" @bind="@_cashCollectionDepostViewModel.CashCollectionDeposit.Comments" />
+                }
+                else
+                {
+                    <label>
+                    @_cashCollectionDepostViewModel.CashCollectionDeposit.Comments
+                </label>
+                }
+            
+        </div>
+        @if (_cashCollectionDepostViewModel.CashCollectionDeposit.Status != "Pending")
+        {
+            <div class="cls_state_section_div2">
+                <label class="cls_section_div_purchase2_label">
+                    @(_cashCollectionDepostViewModel.CashCollectionDeposit.Status == "Approved" ? "Approval Date" : "Rejected Date")
+                </label>
+                <label class="cls_credit_label1">
+                    @CommonFunctions.GetDateTimeInFormat(_cashCollectionDepostViewModel.CashCollectionDeposit.ApprovalDate)
+                </label>
+            </div>
+        }
+
+    </div>
+    <div class="cls_container_div1">
+        <Winit.UIComponents.Web.Table.TableGridView Columns="Columns" DataSource="accCollections" />
+    </div>
+    <div class="cls_button_bottom_purchase">
+
+    
+    @if (_cashCollectionDepostViewModel.CashCollectionDeposit.Status == "Pending")
+    {
+           
+            <button class="cls_button_light" @onclick="RejectRequest">Reject</button>
+            <button class="cls_button_blue" @onclick="ApproveRequest">Approve</button>
+            <button class="cls_button_light" @onclick="MoveToPending">Reject with Action</button>
+    }
+    </div>
+}

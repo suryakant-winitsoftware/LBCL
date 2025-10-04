@@ -1,0 +1,50 @@
+﻿@page "/viewloadrequest"
+@attribute [Authorize]
+@inject BreadCrum.Interfaces.IDataService _IDataService
+@inject Winit.Modules.WHStock.BL.Interfaces.ILoadRequestView _LoadRequestView
+@inject NavigationManager NavManager
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+
+
+
+
+
+<div>
+@*     <button class="cls_add_new_sec" style="float:right;margin-right:0px" @onclick="ShowFilter">@Localizer["filter"]</button>
+ *@
+@if (showFilterComponent)
+{
+   @*  <Filter @ref="filterRef" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+            OnFilterApplied="@OnFilterApply" /> *@
+        <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+                             OnFilterApplied="@OnFilterApply" />
+}
+</div>
+<div class="cls_export_main">
+    <button class="cls_add_new_sec" @onclick='() =>GoToLoadRequestPage(Winit.Shared.Models.Enums.RequestType.Load)'>@Localizer["add_new_load_request"]</button>
+    <button class="cls_add_new_sec" @onclick='() =>GoToLoadRequestPage(Winit.Shared.Models.Enums.RequestType.Unload)'>@Localizer["add_new_unload_request"]</button>
+</div>
+
+<Winit.UIComponents.Common.CustomControles.Tabs TabItems="TabSelectionItems" OnTabSelect="OnTabSelect" />
+<div class="row" style="margin-top: 9px; display:none">
+    <div class="col-md-4">
+        <div class="form-group">
+            <button class="btn common-button">@Localizer["export_to_excel"]</button>
+            <button class="btn common-button">@Localizer["export_to_csv"]</button>
+            <button class="btn common-button">@Localizer["export_to_pdf"]</button>
+        </div>
+
+    </div>
+</div>
+
+@* <hr style="border-top: 2px solid #ccc; margin: 10px 0;"> *@
+@if (_LoadRequestView.DisplayWHStockRequestItemView != null)
+{
+    <TableGridView DataSource="_LoadRequestView.DisplayWHStockRequestItemView" Columns="LoadRequestColumns"  />
+}
+
+@code {
+
+}
+

@@ -1,0 +1,32 @@
+﻿@using Microsoft.AspNetCore.Components;
+
+
+<div class="storeupper">
+    @if (SubModules.SubModuleHierarchies != null)
+    {
+        @foreach (var item in SubModules.SubModuleHierarchies)
+        {
+            <SubMenu IsCheckAll="IsCheckAll" SubSubModule=item />
+        }
+    }
+</div>
+
+
+<style>
+    .storeupper {
+        width: 100%;
+        float: left;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        -webkit-box-shadow: 0 1px #fff inset, 0 1px 5px rgba(34, 25, 25, .4);
+        box-shadow: 0 1px #fff inset, 0 1px 5px rgba(34, 25, 25, .4);
+        padding: 15px;
+        border-bottom: 3px solid #2298c4 !important;
+        border-top: 1px solid #ccc !important;
+        border-radius: 5px;
+        background: #fff;
+    }
+</style>
+
+
+

@@ -1,0 +1,72 @@
+﻿@page "/shareofshelflist"
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+@inject Winit.Modules.ShareOfShelf.BL.Interfaces.IShareOfShelfViewModel _viewmodel
+@inject Winit.Modules.StoreActivity.BL.Interfaces.IStoreActivityViewModel _StoreActivityViewmodel
+<div class="container-fluid" style=" @(show ? "" : "display:none");padding:5px 2%;">
+    <div class="cls_container_div1">
+        <h3 class="cls_sharelist_h3">Share Of <span class="cls_sharelist_span"> Shelf List</span></h3>
+    </div>
+
+
+
+    <div class="cls_sharelist_container">
+        @if (_viewmodel != null && _viewmodel.SosHeaderCategory != null && _viewmodel.SosHeaderCategory.Count > 0)
+        {
+            @foreach (var item in _viewmodel.SosHeaderCategory)
+            {
+
+                <div class="cls_sharelist_content" @onclick="() => SelectItem(item)">
+                    <img src="@item.RelativePath" class="cls_sharelist_content_img" alt="@item.BrandCode" />
+
+                    <h5 class="cls_sharelist_content_label">@item.BrandCode</h5>
+
+                </div>
+
+            }
+        }
+    </div>
+</div>
+
+
+@if (selectedItem != null && _viewmodel.ShareOfShelfLines != null && _viewmodel.ShareOfShelfLines.Count >= 4)
+{
+    <div class="container-fluid">
+        <h3><b>Share Of Shelf</b></h3>
+
+        <p><b>Brand:</b> @selectedItem.BrandCode</p>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Shelves<br />(In Meters)</th>
+                    <th>Shelves<br />(No. Blocks)</th>
+                    <th>Total Space</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>@selectedItem.BrandCode</td>
+                    <td><input type="number" class="col-3" @bind="_viewmodel.ShareOfShelfLines[0].ShelvesInMeter" /></td>
+                    <td><input type="number" class="col-3" @bind="_viewmodel.ShareOfShelfLines[0].ShelvesInBlock" /></td>
+                    <td><input type="number" class="col-3" @bind="_viewmodel.ShareOfShelfLines[0].TotalSpace" /></td>
+                </tr>
+
+                @for (int i = 1; i < _viewmodel.ShareOfShelfLines.Count; i++)
+
+                {
+                    var index = i;
+                    <tr>
+                        <td><input type="text" class="col-3" @bind="_viewmodel.ShareOfShelfLines[index].ItemGroupCode" placeholder="Competitor Name" /></td>
+                        <td><input type="number" class="col-3" @bind="_viewmodel.ShareOfShelfLines[index].ShelvesInMeter" /></td>
+                        <td><input type="number" class="col-3" @bind="_viewmodel.ShareOfShelfLines[index].ShelvesInBlock" /></td>
+                        <td><input type="number" class="col-3" @bind="_viewmodel.ShareOfShelfLines[index].TotalSpace" /></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <button class="btn btn-danger col-12" @onclick=SubmitShareOfShelfAsync>Submit</button>
+    </div>
+}
+

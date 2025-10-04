@@ -1,0 +1,670 @@
+﻿@page "/AddCustomers"
+@inject Winit.Modules.Store.BL.Interfaces.ICustomerDetailsViewModel _customerDetailsViewModel
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.Distributor.Model.Interfaces.IDistributorToggle toggle
+@inject Winit.UIComponents.Common.IAlertService _AlertMessgae;
+@using Microsoft.AspNetCore.Authorization;
+@using Winit.Modules.BroadClassification.Model.Constant
+@using Winit.Modules.FileSys.Model.Interfaces
+@* @attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@attribute [Authorize] *@
+@inject HttpClient Http
+@using Winit.Modules.Store.Model.Constants
+@inject IJSRuntime JSRuntime
+@* @inject CustomerCodeService customerCodeService
+ *@
+
+
+
+ @if (SelfRegistrationUID == null)
+{
+    <div>
+        <PageHeaderAndFilter IDataBreadcrumbService="dataService" />
+    </div>
+}
+
+@if (IsInitialised)
+{
+
+
+    @if (IsCardVisible && !IsEditOnBoardDetails)
+    {
+        <div class="card shadow-sm rounded mt-5">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="cls_new_lab">Channel Partner Code:</div>
+                        <span>@_customerDetailsViewModel.CustomerCode</span>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="cls_new_lab">GST Number:</label>
+                        <input @bind="gstNumber" autocomplete="off" class="form-control" type="text" placeholder="Enter here" />
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button class="cls_comman_btn" @onclick="AddFetchDetails">
+                            Fetch Details
+                        </button>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-12">
+                        <div class="d-flex" style="font-size:14px;">
+                            <div class="fw-bold me-2" style="color: #19298B; white-space: nowrap;">Note:</div>
+
+                            This is a temporary unique code created by the DMS solution for internal reference.
+                            It will be mapped to the Oracle Partner code once it is interfaced and created in the ERP.
+                            Until then, this code will be used for reference within the WINIT DMS.
+
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+    }
+
+
+    @if ((IsLoad && IsSection) || IsEditOnBoardDetails)
+    {
+
+        <div class="cls_main_page_style">
+            <div class="cls_onboarding_main">
+                <div class="form-group">
+                    @if (!string.IsNullOrWhiteSpace(ValidationMessage))
+                    {
+                        <div class="alert alert-danger mt-3">
+                            <div class="col-md-12">
+                                <div id="validationMessage" style="color: red;">@ValidationMessage</div>
+                            </div>
+                        </div>
+                    }
+                    <button class="cls_add_cust_drilldown"
+                            @onclick="@(() =>toggle.IsCustomerDetails= !toggle.IsCustomerDetails)">
+                        <span>Channel Partner Information</span>
+                        <span>
+                            @if (toggle.IsCustomerDetails)
+                            {
+                                <img src="./Images/arrow_up.png" class="cls_arrow_up">
+                            }
+                            else
+                            {
+                                <img src="./Images/arrow_down.png" class="cls_arrow_down">
+                            }
+                        </span>
+                    </button>
+                    <div style="width:100%;float:left;margin:0px 0px;display:@(toggle.IsCustomerDetails?"block":"none")">
+                        <CustomerInformation @ref="_customerInformation" SaveOrUpdateCustomerInformation="SaveOrUpdateCustomerInformation" GSTINDetailsDataSource="_customerDetailsViewModel.GSTINDetails" CustomerCode="@_customerDetailsViewModel.CustomerCode"
+                                             BroadClassificationSelection="GetBroadClassification" FirmTypeSelection="GetFirmType"
+                                             OnChangeBroadClassification="OnChangeBroadClassification"
+                                             ClassificationTypeselectionItems="_customerDetailsViewModel.ClassificationTypeselectionItems"
+                                             CustomerClassificationselectionItems="_customerDetailsViewModel.CustomerClassificationselectionItems"
+                                             _onBoardCustomerDTO="_customerDetailsViewModel._onBoardCustomerDTO"
+                                             OriginalOnBoardCustomerDTO="_customerDetailsViewModel._originalOnBoardCustomerDTO"
+                                             FirmTypeselectionItems="_customerDetailsViewModel.FirmTypeselectionItems"
+                                             CustomerEditApprovalRequired="_customerDetailsViewModel.CustomerEditApprovalRequired"
+                                             TabName="@_customerDetailsViewModel.TabName"
+                                             InsertDataInChangeRequest="InsertDataInChangeRequest"
+                                             IsEditOnBoardDetails="IsEditOnBoardDetails" MSME="HideSection" Vendor="HideVendorSection"
+                                             DivisionselectionItems="_customerDetailsViewModel.DivisionDetails" IsAsmMappedByCustomer="GetIsAsmMapped" IsSelfRegistration="IsSelfRegistration()" />
+                    </div>
+
+                    <button class="cls_add_cust_drilldown"
+                            @onclick="()=>ToggleSectionDetails(OnboardingScreenConstant.Contact)">
+                        <span>Contact Details</span>
+                        <span>
+                            @if (toggle.IsContactDetails)
+                            {
+                                <img src="./Images/arrow_up.png" class="cls_arrow_up">
+                            }
+                            else
+                            {
+                                <img src="./Images/arrow_down.png" class="cls_arrow_down">
+                            }
+                        </span>
+                    </button>
+                    @if (IsContactRendered)
+                    {
+                        <div style="width:100%;float:left;margin:0px 0px;display:@(toggle.IsContactDetails?"block":"none")">
+                            <ContactDetails @ref="_contactDetails" SaveOrUpdateContact="SaveOrUpdateContact" IsBackBtnClicked="IsBackBtnClicked"
+                                            OnShowAllContactsClick="async () =>  await _customerDetailsViewModel.GetAllContacts()"
+                                            OnDelete="OnDeleteContact" OnAddContact="OnAddContact" OnEditContact="OnEditContact"
+                                            ContactTypeSelectionItems="_customerDetailsViewModel.ContactTypeSelectionItems"
+                                            Contacts="_customerDetailsViewModel.Contacts"
+                                            TabName="@_customerDetailsViewModel.TabName"
+                                            InsertDataInChangeRequest="InsertDataInChangeRequest"
+                                            CustomerEditApprovalRequired="_customerDetailsViewModel.CustomerEditApprovalRequired"
+                                            NewlyContactUID="@_customerDetailsViewModel.NewlyGeneratedUID"
+                                            LinkedItemUID="@_customerDetailsViewModel.StoreUID" />
+                        </div>
+                    }
+                    <div style="margin-bottom:20px;"></div>
+                    <button class="cls_add_cust_drilldown"
+                            @onclick="()=>ToggleSectionDetails(OnboardingScreenConstant.BilltoAddress)">
+                        <span>Bill To Address</span>
+                        <span>
+                            @if (toggle.IsBillToAddress)
+                            {
+                                <img src="./Images/arrow_up.png" class="cls_arrow_up">
+                            }
+                            else
+                            {
+                                <img src="./Images/arrow_down.png" class="cls_arrow_down">
+                            }
+                        </span>
+                    </button>
+                    @if (IsBilltoAddressRendered)
+                    {
+                        <div style="width:100%;float:left;margin:0px 0px;display:@(toggle.IsBillToAddress?"block":"none")">
+                            <BillToAddress @ref="_billtoAddressDetails" BillToAddressFromGst="_customerDetailsViewModel.BillToAddressFromGst" SaveOrUpdateBilltoAddress="SaveOrUpdateBillToAddress" IsBackBtnClicked="IsBackBtnClicked"
+                                           OnShowAllBilltoAddressClick=" async ()=>  await _customerDetailsViewModel.GetAllAddress(Billing)"
+                                           OnDelete="OnDeleteBill_ShiptoAddress" OnAddBilltoAddress="OnAddBill_ShipToAddress"
+                                           OnEditBilltoAddress="OnEditBill_ShipToAddress"
+                                           GSTINDetailsModel="_customerDetailsViewModel.GSTINDetails"
+                                           StoreAdditionalInfo="_customerDetailsViewModel._onBoardCustomerDTO.StoreAdditionalInfo"
+                                           GenderselectionItems="_customerDetailsViewModel.GenderselectionItems"
+                                           Addresses="_customerDetailsViewModel.BillToAddresses"
+                                           IsBillToAddressSuccess="@IsBillToAddressSuccess"
+                                           StateselectionItems="_customerDetailsViewModel.StateselectionItems" StateSelected="OnStateSelection"
+                                           CityselectionItems="_customerDetailsViewModel.CityselectionItems" CitySelected="OnCitySelection"
+                                           LocalityselectionItems="_customerDetailsViewModel.LocalityselectionItems" LocalitySelected="OnLocalitySelection"
+                                           BranchselectionItems="_customerDetailsViewModel.BranchselectionItems" BranchSelected="OnBranchSelection"
+                                           ASMselectionItems="_customerDetailsViewModel.ASMselectionItems" SalesOfficeselectionItems="_customerDetailsViewModel.SalesOfficeselectionItems"
+                                           PinCodeselectionItems="_customerDetailsViewModel.PinCodeselectionItems"
+                                           OUselectionItems="_customerDetailsViewModel.OUselectionItems" OnEditInvokeLocationDropdowns="OnEditSelectionBillTo"
+                                           OnCopyGSTLocationDropdowns="OnCopyGSTBillTo"
+                                           InsertDataInChangeRequest="InsertDataInChangeRequest"
+                                           TabName="@_customerDetailsViewModel.TabName"
+                                           CustomerEditApprovalRequired="_customerDetailsViewModel.CustomerEditApprovalRequired"
+                                           NewlyBillToAddressUID="@_customerDetailsViewModel.NewlyGeneratedUID"
+                                           LinkedItemUID="@_customerDetailsViewModel.StoreUID" IsEditOnBoardDetails="IsEditOnBoardDetails" StoreUID="@_customerDetailsViewModel.StoreUID" />
+                        </div>
+                    }
+                    <button class="cls_add_cust_drilldown"
+                            @onclick="()=>ToggleSectionDetails(OnboardingScreenConstant.ShiptoAddress)">
+                        <span>Ship To Address</span>
+                        <span>
+                            @if (toggle.IsShipToAddress)
+                            {
+                                <img src="./Images/arrow_up.png" class="cls_arrow_up">
+                            }
+                            else
+                            {
+                                <img src="./Images/arrow_down.png" class="cls_arrow_down">
+                            }
+                        </span>
+                    </button>
+                    @if (IsShiptoAddressRendered)
+                    {
+                        <div style="width:100%;float:left;margin:0px 0px;display:@(toggle.IsShipToAddress?"block":"none")">
+
+
+                            <ShipToAddress BillToAddresses="_customerDetailsViewModel.BillToAddresses" @ref="_shiptoAddressDetails" SaveOrUpdateAddress="SaveOrUpdateShipToAddress"
+                                           OnShowAllAddresssClick=" async ()=>  await _customerDetailsViewModel.GetAllAddress(Shipping)" OnDelete="OnDeleteBill_ShiptoAddress"
+                                           OnAddAddress="OnAddBill_ShipToAddress" OnEditAddress="OnEditBill_ShipToAddress"
+                                           Addresses="_customerDetailsViewModel.ShipToAddresses" IsBillToAddressSuccess="@IsBillToAddressSuccess"
+                                           StateselectionItems="_customerDetailsViewModel.StateselectionItemsForShipTo" StateSelected="OnStateSelectionForShipTo"
+                                           CityselectionItems="_customerDetailsViewModel.CityselectionItemsForShipTo" CitySelected="OnCitySelectionForShipTo"
+                                           LocalityselectionItems="_customerDetailsViewModel.LocalityselectionItemsForShipTo" LocalitySelected="OnLocalitySelectionForShipTo"
+                                           BranchselectionItems="_customerDetailsViewModel.BranchselectionItemsForShipTo" BranchSelected="OnBranchSelectionForShipTo"
+                                           ASMselectionItems="_customerDetailsViewModel.ASMselectionItemsForShipTo" SalesOfficeselectionItems="_customerDetailsViewModel.SalesOfficeselectionItemsForShipTo"
+                                           ASEMselectionItems="_customerDetailsViewModel.ASEMselectionItemsForShipTo"
+                                           PinCodeselectionItems="_customerDetailsViewModel.PinCodeselectionItemsForShipTo" OnEditClickInvokeAddressDropdowns="OnEditSelectionForShipTo"
+                                           IsMultipleAsmAllowed="IsMultipleASM" OUselectionItemsForShipTo="_customerDetailsViewModel.OUselectionItemsForShipTo"
+                                           SelfRegistrationUID="@(SelfRegistrationUID ?? _customerDetailsViewModel.EditOnBoardingDetails.StoreAdditionalInfoCMI.SelfRegistrationUID)"
+                                           OUSelected="OnOUSelectionForShipTo" SaveOrUpdateAsmDivision="SaveOrUpdateAsmDivision" DivisionselectionItems="_customerDetailsViewModel.DivisionSelectionItems"
+                                           EditOnBoardingDetails="_customerDetailsViewModel.EditOnBoardingDetails" OnCopyInvokeAddressDropdowns="OnCopySelectionForShipTo"
+                                           InsertDataInChangeRequest="InsertDataInChangeRequest"
+                                           TabName="@_customerDetailsViewModel.TabName"
+                                           ShipToAddressFromGst="_customerDetailsViewModel.ShipToAddressFromGst"
+                                           ASMDivisionInvoke="InvokeAsmDivision" DeleteAsmDivision="DeleteAsmDivision" StoreUID="@_customerDetailsViewModel.StoreUID"
+                                           CustomerEditApprovalRequired="_customerDetailsViewModel.CustomerEditApprovalRequired"
+                                           LinkedItemUID="@_customerDetailsViewModel.StoreUID" IsAsmMappedByCustomer="!IsAsmMappedByCustomer" OnLoad="AsmMappingOnLoad" />
+                        </div>
+                    }
+
+                    <button class="cls_add_cust_drilldown"
+                            @onclick="()=>ToggleSectionDetails(OnboardingScreenConstant.Karta)">
+                        <span>Name & Address of Proprietor/All Partners/All Directors/Karta</span>
+                        <span>
+                            @if (toggle.IsKarta)
+                            {
+                                <img src="./Images/arrow_up.png" class="cls_arrow_up">
+                            }
+                            else
+                            {
+                                <img src="./Images/arrow_down.png" class="cls_arrow_down">
+                            }
+                        </span>
+                    </button>
+                    @if (IsKartaRendered)
+                    {
+                        <div style="width:100%;float:left;margin:0px 0px;display:@(toggle.IsKarta?"block":"none")">
+                            <NameAndAddressOfProprietor KartaDetails="KartaDetails()" SaveOrUpdateKarta="SaveOrUpdateeEmployeeDetails" IsEditOnBoardDetails="IsEditOnBoardDetails" />
+                        </div>
+                    }
+
+                    @if (IsAsmMappedByCustomer && !IsSelfRegistration())
+                    {
+                        <button class="cls_add_cust_drilldown"
+                                @onclick="async () =>
+                            {
+                                ToggleSectionDetails(OnboardingScreenConstant.AsmMapping);
+                                await AsmMappingOnLoad();
+                            }">
+                            <span>Asm Mapping</span>
+                            <span>
+                                @if (toggle.IsAsmMapping)
+                                {
+                                    <img src="./Images/arrow_up.png" class="cls_arrow_up">
+                                }
+                                else
+                                {
+                                    <img src="./Images/arrow_down.png" class="cls_arrow_down">
+                                }
+                            </span>
+                        </button>
+                        @if (IsAsmMappingRendered)
+                        {
+                            <div style="width:100%;float:left;margin:0px 0px;display:@(toggle.IsAsmMapping?"block":"none")">
+                                <AsmMapping DivisionselectionItems="_customerDetailsViewModel.DivisionMappingselectionItems" ASMselectionItems="_customerDetailsViewModel.AsmMappingselectionItems" ASEMselectionItems="_customerDetailsViewModel.ASEMMappingselectionItems"
+                                            SaveOrUpdateAsmDivision="SaveOrUpdateAsmDivision" IsAsmMappingSuccess="IsAsmMappingSuccess" StoreUID="@_customerDetailsViewModel.StoreUID" DeleteAsmDivision="DeleteAsmDivision"
+                                            AsmDivisionDetails="_customerDetailsViewModel.AsmMappingGridDetails" />
+                            </div>
+                        }
+                    }
+                    @if (_customerDetailsViewModel.BroadClassfication == BroadClassificationConst.SERVICE || _customerDetailsViewModel.BroadClassfication == null)
+                    {
+                        <button class="cls_add_cust_drilldown"
+                                @onclick="()=>ToggleSectionDetails(OnboardingScreenConstant.ServiceCenterDetail)">
+                            <span>Service Center Details</span>
+                            <span>
+                                @if (toggle.IsServiceCenterDetails)
+                                {
+                                    <img src="./Images/arrow_up.png" class="cls_arrow_up">
+                                }
+                                else
+                                {
+                                    <img src="./Images/arrow_down.png" class="cls_arrow_down">
+                                }
+                            </span>
+                        </button>
+                        @if (IsServiceCenterRendered)
+                        {
+                            <div style="width:100%;float:left;margin:0px 0px;display:@(toggle.IsServiceCenterDetails?"block":"none")">
+                                <ServiceCenterDetails @ref="_serviceCentreDetails" SaveOrUpdateServiceCenterDetail="SaveOrUpdateeEmployeeDetails" LinkedItemUID="@_customerDetailsViewModel.StoreUID" SaveOrUpdateDocument="CreateUpdateDocumentAppendix1"
+                                                      StoreAdditionalInfoCmi="_customerDetailsViewModel.EditOnBoardingDetails.StoreAdditionalInfoCMI" TechnicianInfo="_customerDetailsViewModel.TechnicianInfo" SupervisorInfos="_customerDetailsViewModel.SupervisorInfos"
+                                                      IsEditOnBoardDetails="IsEditOnBoardDetails" filesysList="_customerDetailsViewModel._onBoardCustomerDTO.FileSys"
+                                                      InsertDataInChangeRequest="InsertDataInChangeRequest"
+                                                      TabName="@_customerDetailsViewModel.TabName"
+                                                      StoreAdditionalInfoCMIUid="@_customerDetailsViewModel.StoreAdditionalInfoCMIUid" />
+                            </div>
+                        }
+                    }
+                    @if (_customerDetailsViewModel.BroadClassfication == BroadClassificationConst.DIST || _customerDetailsViewModel.BroadClassfication == BroadClassificationConst.ECOM || _customerDetailsViewModel.BroadClassfication == BroadClassificationConst.LFS || _customerDetailsViewModel.BroadClassfication == BroadClassificationConst.MT || _customerDetailsViewModel.BroadClassfication == BroadClassificationConst.CPAUSERVICEPARTNER || _customerDetailsViewModel.BroadClassfication == BroadClassificationConst.RETAIL || _customerDetailsViewModel.BroadClassfication == BroadClassificationConst.SSD || _customerDetailsViewModel.BroadClassfication == null)
+                    {
+                        <button class="cls_add_cust_drilldown"
+                                @onclick="()=>ToggleSectionDetails(OnboardingScreenConstant.EmployeeDetails)">
+                            <span>Channel Partner Employee Details</span>
+                            <span>
+                                @if (toggle.IsEmployeeDetails)
+                                {
+                                    <img src="./Images/arrow_up.png" class="cls_arrow_up">
+                                }
+                                else
+                                {
+                                    <img src="./Images/arrow_down.png" class="cls_arrow_down">
+                                }
+                            </span>
+                        </button>
+                        @if (IsEmployeeDetailsRendered)
+                        {
+                            <div style="width:100%;float:left;margin:0px 0px;display:@(toggle.IsEmployeeDetails?"block":"none")">
+                                <EmployeeDetails @ref="_employeeDetails" IsEditOnBoardDetails="IsEditOnBoardDetails"
+                                                 StoreAdditionalInfoCMI="_customerDetailsViewModel.EditOnBoardingDetails.StoreAdditionalInfoCMI"
+                                                 SaveOrUpdateeEmployeeDetails="SaveOrUpdateeEmployeeDetails" InsertDataInChangeRequest="InsertDataInChangeRequest"
+                                                 TabName="@_customerDetailsViewModel.TabName"
+                                                 CustomerEditApprovalRequired="_customerDetailsViewModel.CustomerEditApprovalRequired"
+                                                 StoreAdditionalInfoCMIUid="@_customerDetailsViewModel.StoreAdditionalInfoCMIUid" />
+                            </div>
+                        }
+                    }
+                    @if (_customerDetailsViewModel.BroadClassfication == BroadClassificationConst.DIST || _customerDetailsViewModel.BroadClassfication == BroadClassificationConst.LFS || _customerDetailsViewModel.BroadClassfication == BroadClassificationConst.MT || _customerDetailsViewModel.BroadClassfication == BroadClassificationConst.RETAIL || _customerDetailsViewModel.BroadClassfication == BroadClassificationConst.SSD || _customerDetailsViewModel.BroadClassfication == null)
+                    {
+                        <button class="cls_add_cust_drilldown"
+                                @onclick="()=>ToggleSectionDetails(OnboardingScreenConstant.ShowroomDetails)">
+                            <span>ShowRoom Details</span>
+                            <span>
+                                @if (toggle.IsShowRoomDetails)
+                                {
+                                    <img src="./Images/arrow_up.png" class="cls_arrow_up">
+                                }
+                                else
+                                {
+                                    <img src="./Images/arrow_down.png" class="cls_arrow_down">
+                                }
+                            </span>
+                        </button>
+                        @if (IsShowRoomDetailsRendered)
+                        {
+                            <div style="width:100%;float:left;margin:0px 0px;display:@(toggle.IsShowRoomDetails?"block":"none")">
+                                <ShowRoomDetails ShiptoAddresses="_customerDetailsViewModel.ShipToAddresses" @ref="_showroomDetails" ShowroomDetails="_customerDetailsViewModel.ShowroomDetails"
+                                                 SaveOrUpdateShowroom="SaveOrUpdateeEmployeeDetails" OnAddShowroom="OnAddShowroom" OnEditShowroom="OnEditShowroom"
+                                                 StateselectionItems="_customerDetailsViewModel.StateselectionItemsForShowRoom" CityselectionItems="_customerDetailsViewModel.CityselectionItemsForShowRoom"
+                                                 LocalityselectionItems="_customerDetailsViewModel.LocalityselectionItemsForShowRoom" PinCodeselectionItems="_customerDetailsViewModel.PinCodeselectionItemsForShowRoom"
+                                                 BranchselectionItems="_customerDetailsViewModel.BranchselectionItemsForShowRoom" StateSelected="OnStateSelectionForShowRoom" CitySelected="OnCitySelectionForShowRoom"
+                                                 LocalitySelected="OnLocalitySelectionForShowRoom" OnEditClickInvokeAddressDropdowns="OnEditSelectionForShowRoom"
+                                                 InsertDataInChangeRequest="InsertDataInChangeRequest"
+                                                 TabName="@_customerDetailsViewModel.TabName"
+                                                 CustomerEditApprovalRequired="_customerDetailsViewModel.CustomerEditApprovalRequired"
+                                                 StoreAdditionalInfoCMIUid="@_customerDetailsViewModel.StoreAdditionalInfoCMIUid" />
+                            </div>
+                        }
+                    }
+
+                    <button class="cls_add_cust_drilldown"
+                            @onclick="()=>ToggleSectionDetails(OnboardingScreenConstant.BankersDetails)">
+                        <span>Banker's Details</span>
+                        <span>
+                            @if (toggle.IsBankersDetails)
+                            {
+                                <img src="./Images/arrow_up.png" class="cls_arrow_up">
+                            }
+                            else
+                            {
+                                <img src="./Images/arrow_down.png" class="cls_arrow_down">
+                            }
+                        </span>
+                    </button>
+                    @if (IsBankersDetailsRendered)
+                    {
+                        <div style="width:100%;float:left;margin:0px 0px;display:@(toggle.IsBankersDetails?"block":"none")">
+                            <BankersDetails @ref="_bankersDetails" TabName="@_customerDetailsViewModel.TabName" InsertDataInChangeRequest="InsertDataInChangeRequest"
+                                            CustomerEditApprovalRequired="@_customerDetailsViewModel.CustomerEditApprovalRequired"
+                                            StoreAdditionalInfoCMIUid="@_customerDetailsViewModel.StoreAdditionalInfoCMIUid" IsEditOnBoardDetails="IsEditOnBoardDetails" SignatoryDetails="_customerDetailsViewModel.SignatoryDetails" BankingDetails="_customerDetailsViewModel.SelectedBankingJson" SelectedBanking="_customerDetailsViewModel.SelectedBanking" SaveOrUpdateBanking="SaveOrUpdateeEmployeeDetails" FirmName="@_customerDetailsViewModel.GSTINDetails.TradeName" />
+                        </div>
+                    }
+
+                    @if (_customerDetailsViewModel.BroadClassfication == BroadClassificationConst.DIST || _customerDetailsViewModel.BroadClassfication == BroadClassificationConst.ECOM || _customerDetailsViewModel.BroadClassfication == BroadClassificationConst.LFS || _customerDetailsViewModel.BroadClassfication == BroadClassificationConst.MT || _customerDetailsViewModel.BroadClassfication == BroadClassificationConst.CPAUSERVICEPARTNER || _customerDetailsViewModel.BroadClassfication == BroadClassificationConst.RETAIL || _customerDetailsViewModel.BroadClassfication == BroadClassificationConst.SSD || _customerDetailsViewModel.BroadClassfication == BroadClassificationConst.SERVICE || _customerDetailsViewModel.BroadClassfication == null)
+                    {
+                        <button class="cls_add_cust_drilldown"
+                                @onclick="()=>ToggleSectionDetails(OnboardingScreenConstant.BusinessDetails)">
+                            <span> Business Details</span>
+                            <span>
+                                @if (toggle.IsBusinessDetails)
+                                {
+                                    <img src="./Images/arrow_up.png" class="cls_arrow_up">
+                                }
+                                else
+                                {
+                                    <img src="./Images/arrow_down.png" class="cls_arrow_down">
+                                }
+                            </span>
+                        </button>
+                        @if (IsBusinessDetailsRendered)
+                        {
+                            <div style="width:100%;float:left;margin:0px 0px;display:@(toggle.IsBusinessDetails?"block":"none")">
+                                <BusinessDetails @ref="_businessDetails" IsEditOnBoardDetails="IsEditOnBoardDetails" brandInfos="_customerDetailsViewModel.brandInfos"
+                                                 storeAdditionalInfoCMI="_customerDetailsViewModel.storeAdditionalInfoCMI" SaveOrUpdateBusinessDetails="SaveOrUpdateeEmployeeDetails"
+                                                 InsertDataInChangeRequest="InsertDataInChangeRequest"
+                                                 TabName="@_customerDetailsViewModel.TabName"
+                                                 CustomerEditApprovalRequired="_customerDetailsViewModel.CustomerEditApprovalRequired"
+                                                 StoreAdditionalInfoCMIUid="@_customerDetailsViewModel.StoreAdditionalInfoCMIUid" />
+                            </div>
+                        }
+                    }
+                    @if (_customerDetailsViewModel.BroadClassfication == BroadClassificationConst.DIST || _customerDetailsViewModel.BroadClassfication == null)
+                    {
+                        <button class="cls_add_cust_drilldown"
+                                @onclick="()=>ToggleSectionDetails(OnboardingScreenConstant.DistBusinessDetails)">
+                            <span> Business Details(In case of Distributor)</span>
+                            <span>
+                                @if (toggle.IsDistributorBusinessDetails)
+                                {
+                                    <img src="./Images/arrow_up.png" class="cls_arrow_up">
+                                }
+                                else
+                                {
+                                    <img src="./Images/arrow_down.png" class="cls_arrow_down">
+                                }
+                            </span>
+                        </button>
+                        @if (IsDistBusinessDetailsRendered)
+                        {
+                            <div style="width:100%;float:left;margin:0px 0px;display:@(toggle.IsDistributorBusinessDetails?"block":"none")">
+                                <DistributorBusinessDetails @ref="_distBusinessDetails" IsEditOnBoardDetails="IsEditOnBoardDetails" storeAdditionalInfoCMI="_customerDetailsViewModel.StoreAdditionalInfoCMI" SaveOrUpdateDistBusiness="SaveOrUpdateeEmployeeDetails"
+                                                            RACSalesByYear="_customerDetailsViewModel.RACSalesByYear"
+                                                            RetailingCityMonthlySales="_customerDetailsViewModel.RetailingCityMonthlySales"
+                                                            InsertDataInChangeRequest="InsertDataInChangeRequest"
+                                                            TabName="@_customerDetailsViewModel.TabName"
+                                                            CustomerEditApprovalRequired="_customerDetailsViewModel.CustomerEditApprovalRequired"
+                                                            StoreAdditionalInfoCMIUid="@_customerDetailsViewModel.StoreAdditionalInfoCMIUid" />
+                            </div>
+                        }
+                    }
+
+                    <button class="cls_add_cust_drilldown"
+                            @onclick="()=>ToggleSectionDetails(OnboardingScreenConstant.EarlierWorkWithCMI)">
+                        <span>Earlier Worked with CMI</span>
+                        <span>
+                            @if (toggle.IsEarlierWorkedWithCMI)
+                            {
+                                <img src="./Images/arrow_up.png" class="cls_arrow_up">
+                            }
+                            else
+                            {
+                                <img src="./Images/arrow_down.png" class="cls_arrow_down">
+                            }
+                        </span>
+                    </button>
+                    @if (IsEarlierWorkedCMIRendered)
+                    {
+                        <div style="width:100%;float:left;margin:0px 0px;display:@(toggle.IsEarlierWorkedWithCMI?"block":"none")">
+                            <EarlierWorkedWithCMI @ref="_earlierWorkedwithCMIDetails" IsEditOnBoardEditDetails="IsEditOnBoardDetails"
+                                                  StoreAdditionalInfoCMI="_customerDetailsViewModel.StoreAdditionalInfoCMI"
+                                                  SaveandUpdate="SaveOrUpdateeEmployeeDetails" EarlierWorkedWithCmi="IsEwwCMISelected"
+                                                  InsertDataInChangeRequest="InsertDataInChangeRequest"
+                                                  TabName="@_customerDetailsViewModel.TabName"
+                                                  CustomerEditApprovalRequired="_customerDetailsViewModel.CustomerEditApprovalRequired"
+                                                  StoreAdditionalInfoCMIUid="@_customerDetailsViewModel.StoreAdditionalInfoCMIUid" />
+                        </div>
+                    }
+
+                    @if (_customerDetailsViewModel.BroadClassfication == BroadClassificationConst.DIST || _customerDetailsViewModel.BroadClassfication == null)
+                    {
+                        <button class="cls_add_cust_drilldown"
+                                @onclick="()=>ToggleSectionDetails(OnboardingScreenConstant.AreaOfDistAgreed)">
+                            <span>Area of Distribution Agreed</span>
+                            <span>
+                                @if (toggle.IsAreaofDistributionAgreed)
+                                {
+                                    <img src="./Images/arrow_up.png" class="cls_arrow_up">
+                                }
+                                else
+                                {
+                                    <img src="./Images/arrow_down.png" class="cls_arrow_down">
+                                }
+                            </span>
+                        </button>
+                        @if (IsAreaofDistAgreedRendered)
+                        {
+                            <div style="width:100%;float:left;margin:0px 0px;display:@(toggle.IsAreaofDistributionAgreed?"block":"none")">
+                                <AreaofDistributionAgreed @ref="_areaofDistributonAgreedDetails"
+                                                          SaveandUpdate="SaveOrUpdateeEmployeeDetails"
+                                                          _onBoardCustomerDTO="_customerDetailsViewModel._onBoardCustomerDTO"
+                                                          IsEditOnBoardDetails="@IsEditOnBoardDetails"
+                                                          InsertDataInChangeRequest="InsertDataInChangeRequest"
+                                                          TabName="@_customerDetailsViewModel.TabName"
+                                                          CustomerEditApprovalRequired="_customerDetailsViewModel.CustomerEditApprovalRequired"
+                                                          StoreAdditionalInfoCMIUid="@_customerDetailsViewModel.StoreAdditionalInfoCMIUid"></AreaofDistributionAgreed>
+                            </div>
+                        }
+                    }
+                    @if (_customerDetailsViewModel.BroadClassfication == BroadClassificationConst.SERVICE || _customerDetailsViewModel.BroadClassfication == null)
+                    {
+                        <button class="cls_add_cust_drilldown"
+                                @onclick="()=>ToggleSectionDetails(OnboardingScreenConstant.AreaofOperationAgreed)">
+                            <span>Area of Operation Agreed</span>
+                            <span>
+                                @if (toggle.IsAreaofOperationAgreed)
+                                {
+                                    <img src="./Images/arrow_up.png" class="cls_arrow_up">
+                                }
+                                else
+                                {
+                                    <img src="./Images/arrow_down.png" class="cls_arrow_down">
+                                }
+                            </span>
+                        </button>
+                        @if (IsAreaofOperationAgreedRendered)
+                        {
+                            <div style="width:100%;float:left;margin:0px 0px;display:@(toggle.IsAreaofOperationAgreed?"block":"none")">
+                                <AreaofOperationAgreed @ref="_areaofOperationAgreedDetails" AooaTypeSelection="GetAooaType" GSTINDetailsModel="_customerDetailsViewModel.GSTINDetails" AooaTypeselectionItems="_customerDetailsViewModel.AooaTypeselectionItems" LinkedItemUID="@_customerDetailsViewModel.StoreUID" SaveandUpdate="SaveOrUpdateeEmployeeDetails"
+                                                       _onBoardCustomerDTO="_customerDetailsViewModel._onBoardCustomerDTO" IsEditOnBoardDetails="IsEditOnBoardDetails" SaveOrUpdateDocument="CreateUpdateDocumentAppendix1"
+                                                       DummyData="_customerDetailsViewModel.WayOfCommunication"
+                                                       InsertDataInChangeRequest="InsertDataInChangeRequest"
+                                                       TabName="@_customerDetailsViewModel.TabName"
+                                                       CustomerEditApprovalRequired="_customerDetailsViewModel.CustomerEditApprovalRequired"
+                                                       StoreAdditionalInfoCMIUid="@_customerDetailsViewModel.StoreAdditionalInfoCMIUid" />
+                            </div>
+                        }
+                    }
+                    <button class="cls_add_cust_drilldown"
+                            @onclick="()=>ToggleSectionDetails(OnboardingScreenConstant.DocumentAppendix)">
+                        <span>Documents Appendix A</span>
+                        <span>
+                            @if (toggle.IsDocumentsAppendixA)
+                            {
+                                <img src="./Images/arrow_up.png" class="cls_arrow_up">
+                            }
+                            else
+                            {
+                                <img src="./Images/arrow_down.png" class="cls_arrow_down">
+                            }
+                        </span>
+                    </button>
+                    @if (IsDocumentAppendixRendered)
+                    {
+                        <div style="width:100%;float:left;margin:0px 0px;display:@(toggle.IsDocumentsAppendixA?"block":"none")">
+                            <DocumentsAppendixA @ref="_documentAppendixADetails" FirmType="@FirmType" SaveOrUpdateDocument="CreateUpdateDocumentAppendix" LinkedItemUID="@_customerDetailsViewModel.StoreUID"
+                                                IsEditOnBoardDetails="@IsEditOnBoardDetails" fileSysList="_customerDetailsViewModel._onBoardCustomerDTO.FileSys" HideMSME="@HideMSME" HideVendor="@HideVendor" BroadClassification="@_customerDetailsViewModel.BroadClassfication" />
+                        </div>
+                    }
+                    <button class="cls_add_cust_drilldown"
+                            @onclick="()=>ToggleSectionDetails(OnboardingScreenConstant.CodeofEthics)">
+                        <span>Code of Ethics and Conduct for Partners</span>
+                        <span>
+                            @if (toggle.IsCodeEthicsConductPartners)
+                            {
+                                <img src="./Images/arrow_up.png" class="cls_arrow_up">
+                            }
+                            else
+                            {
+                                <img src="./Images/arrow_down.png" class="cls_arrow_down">
+                            }
+                        </span>
+                    </button>
+                    <div style="width:100%;float:left;margin:0px 0px;display:@(toggle.IsCodeEthicsConductPartners?"block":"none")">
+                        <CodeEthicsConductPartners @ref="_codeEthicsConductPartners" SaveOrUpdateCodeEthicsConductPartners="InsertPdfInFileSys"
+                                                   StoreUID="@_customerDetailsViewModel.StoreUID" IsCodeofEthicsRendered="@IsCodeofEthicsRendered"
+                                                   fileSysList="_customerDetailsViewModel.EditOnBoardingDetails.FileSys.ToList<IFileSys>()"
+                                                   DeleteCodeEthicsConductPartners="MakeCodeOfEthics" />
+                    </div>
+
+                    <button class="cls_add_cust_drilldown"
+                            @onclick="@(() =>toggle.IsTermsConditionsAgreements= !toggle.IsTermsConditionsAgreements)">
+                        <span>Terms & Conditions Agreements</span>
+                        <span>
+                            @if (toggle.IsTermsConditionsAgreements)
+                            {
+                                <img src="./Images/arrow_up.png" class="cls_arrow_up">
+                            }
+                            else
+                            {
+                                <img src="./Images/arrow_down.png" class="cls_arrow_down">
+                            }
+                        </span>
+                    </button>
+                    <div style="width:100%;float:left;margin:0px 0px;display:@(toggle.IsTermsConditionsAgreements?"block":"none")">
+                        <TermsConditionsAgreements SaveandUpdate="SaveOrUpdateeEmployeeDetails" _onBoardCustomerDTO="_customerDetailsViewModel._onBoardCustomerDTO" />
+                    </div>
+
+                </div>
+            </div>
+            <div class="my-4"></div>
+
+        </div>
+        <div style="width:100%; float:left;margin:0px 0px 20px 0px;">
+        </div>
+        <div class="col-12 d-flex justify-content-center mt-4">
+
+            <button class="cls_comman_sec_btn mr-2" type="button" @onclick="BackBtnClicked">Back</button>
+            @if (_customerDetailsViewModel.TabName != Winit.Modules.Store.Model.Constants.StoreConstants.Confirmed)
+            {
+                @if (_customerDetailsViewModel.EditOnBoardingDetails.Store.Status != SalesOrderStatus.PENDING_FROM_BM &&
+                _customerDetailsViewModel.EditOnBoardingDetails.Store.Status != SalesOrderStatus.PENDING_FROM_ASM &&
+               _customerDetailsViewModel.EditOnBoardingDetails.Store.Status != SalesOrderStatus.PENDING
+               && CheckApprovalTracker())
+                {
+                    <button class="cls_comman_btn mr-2" type="submit" @onclick="SaveOrUpdateDistDetails">Save as Draft</button>
+                }
+                @if ((_customerDetailsViewModel.EditOnBoardingDetails.Store.Status != SalesOrderStatus.PENDING_FROM_BM && 
+                _customerDetailsViewModel.EditOnBoardingDetails.Store.Status != SalesOrderStatus.PENDING_FROM_ASM &&
+               _customerDetailsViewModel.EditOnBoardingDetails.Store.Status != SalesOrderStatus.PENDING)
+               && CheckApprovalTracker())
+                {
+                    <button class="cls_comman_btn" type="submit" @onclick="ConfirmedDetails">Confirm</button>
+                }
+                @if (IsCorrectBM)
+                {
+                    <button class="cls_comman_btn" type="submit" @onclick="AsmAssign">Assign To Asm</button>
+                }
+                @if (_customerDetailsViewModel.EditOnBoardingDetails.Store.Status == SalesOrderStatus.PENDING_FROM_ASM && CheckReportingEmpUID())
+                {
+                    <button class="cls_comman_btn" type="submit" @onclick="AsmConfirm">Confirm</button>
+                }
+
+            }
+        </div>
+        <div style="width:100%; float:left;margin:0px 0px 20px 0px;">
+        </div>
+        @if (IsAsm)
+        {
+            <PopUp Title="Asm Division Mapping Details" CancelbtnText="Back" DisableOkBtn="true"
+                   OnCloseClick="() => IsAsm = false">
+
+                <div class="cls_logo_section3">
+                    <div class="cls_section_div_purchase2">
+                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="AsmselectionItems"
+                                                                           IsButtonVisible="true"
+                                                                           Title="Asm"
+                                                                           IsSearchable="true" OnSelect="AsmSelection" />
+                    </div>
+                    <div class="cls_section_div_purchase2" style="margin-top:14px;">
+                        <button class="cls_comman_btn " @onclick="AssignToAsm"> Assign </button>
+                    </div>
+
+                </div>
+            </PopUp>
+        }
+
+
+
+        <WinIt.Pages.ApprovalRoleEngine.ApprovalEngine ShowApprovalEngine="@((_customerDetailsViewModel.EditOnBoardingDetails.Store.Status == SalesOrderStatus.PENDING) && _customerDetailsViewModel.TabName != StoreConstants.Confirmed)"
+                                                       RuleId="@RuleId" RequestId="@RequestId.ToString()"
+                                                       @ref="childComponentRef"
+                                                       ApprovalUsercodes="ApprovalUserCodes"
+                                                       IsRejectButtonNeeded="_appSetting.IsRejectNeededInOnBoarding"
+                                                       IsReassignButtonNeeded="_appSetting.IsReassignNeededInOnBoarding"
+                                                       OnApprovalTracker="OnApprovalTracker"
+                                                       HandleApprovalAction="HandleApprovalAction">
+        </WinIt.Pages.ApprovalRoleEngine.ApprovalEngine>
+
+
+
+
+    }
+
+}
+

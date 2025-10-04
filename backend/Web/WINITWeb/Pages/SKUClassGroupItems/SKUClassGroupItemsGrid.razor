@@ -1,0 +1,74 @@
+﻿@inherits WinIt.Pages.Base.BaseComponentBase
+<table>
+    <thead>
+        <tr>
+            <th>
+                @Localizer["sku_code"]
+            </th>
+            <th>
+                @Localizer["sku_name"]
+            </th>
+            <th>
+                @Localizer["plant"]
+            </th>
+            <th>
+                @Localizer["lead_time_in_days"]
+            </th>
+            <th>
+                @Localizer["daily_cutoff_time"]
+            </th>
+            <th>
+                @Localizer["model_qty"]
+            </th>
+            <th>
+                @Localizer["max_qty"]
+            </th>
+            <th>
+                @Localizer["exclusive_indicator"]
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (SKUClassGroupItemViews is null || !SKUClassGroupItemViews.Any())
+        {
+            <tr>
+                <td colspan="8" style="text-align: center;color:red">@Localizer["no_record_found"]</td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var row in SKUClassGroupItemViews)
+            {
+                <tr>
+                    <td>
+                        @row.SKUCode
+                    </td>
+                    <td>
+                        @row.SKUName
+                    </td>
+                    <td>
+                        <label class="form-select" @onclick="() => OnPlantDDClick.InvokeAsync(row)">
+                            @(row.PlantName ?? @Localizer["select"])
+                        </label>
+                    </td>
+                    <td>
+                        <input type="number" class="form-control" @bind="row.LeadTimeInDays" />
+                    </td>
+                    <td>
+                        <input type="number" class="form-control" @bind="row.DailyCutOffTime" />
+                    </td>
+                    <td>
+                        <input type="number" class="form-control" @bind="row.ModelQty" />
+                    </td>
+                    <td>
+                        <input type="number" class="form-control" @bind="row.MaxQTY"/>
+                    </td>
+                    <td>
+                        <input type="checkbox" class="form-check" @bind="row.IsExclusive" />
+                    </td>
+                </tr>
+            }
+        }
+
+    </tbody>
+</table>

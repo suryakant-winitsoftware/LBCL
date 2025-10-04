@@ -1,0 +1,84 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+
+# WinIT Product Coding Standards & Architectural Guidelines
+
+## 1. Naming Conventions
+
+### a. C#
+
+| Type            | Convention | Example                 |
+|-----------------|------------|-------------------------|
+| Class/Interface | PascalCase | `EmployeeService`       |
+| Method Name     | PascalCase | `GetEmployeeById()`     |
+| Variable Name   | camelCase  | `employeeList`          |
+| Constant        | PascalCase | `MaxLimit`              |
+| Enum            | PascalCase | `OrderStatus`           |
+
+### b. SQL
+
+| Type         | Convention           | Example              |
+|--------------|----------------------|----------------------|
+| Table Name   | snake_case           | `employee_data`      |
+| Column Name  | snake_case           | `employee_id`        |
+| Index Name   | snake_case with prefix| `idx_employee_name`  |
+| Foreign Keys | snake_case           | `fk_order_customer_id`|
+
+## 2. Database Access & Business Logic
+
+### Required Practices
+- Use CRUD operations only
+- Use parameterized queries or ORM
+- Specify columns explicitly (no SELECT *)
+- Use CTEs for complex queries
+
+### Prohibited Practices
+- Stored procedures
+- Logic-heavy SQL
+
+## 3. Coding Style & Structure
+
+- Use **async/await** for all I/O-bound operations
+- Include XML documentation for all public items
+- Use **inline comments** for complex private/protected methods as needed
+- Avoid nested if/else blocks; use early returns
+- Group members in the order: fields ? constructors ? properties ? public methods ? private methods
+- Use interface-based programming
+- Use constructor injection
+- Avoid magic strings; use constants
+
+## 4. Security Standards
+
+- Validate and sanitize all inputs
+- Use authorization attributes
+- Never log sensitive information
+
+## 5. Error Handling & Logging
+
+- Use Serilog for structured logging
+- Implement middleware for global exceptions
+- Return consistent error responses
+
+## 6. Blazor Best Practices
+
+- Don't load everything at once — fetch on-demand
+- Use async lifecycle methods
+- Split large components into smaller ones
+- Use @key directive in loops
+- Avoid unnecessary StateHasChanged() calls
+- Use debounce on search inputs
+- Use Virtualize component for large lists 
+
+## 6. Architectural Principles
+- Enforce **clean separation** between layers:  
+  - **Business Layer (BL)**  
+  - **Data Layer (DL)**  
+  - **Model Layer (Entities, DTOs)**
+- Avoid **tight coupling** between services.  
+- Use **Dependency Injection (DI)** extensively to promote modularity, testability, and easier scaling.
+- Wherever applicable, suggest patterns and strategies that support **horizontal scaling** (stateless services, message queues, caching).
+
+- Follow SOLID Principles

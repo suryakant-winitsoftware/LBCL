@@ -1,0 +1,55 @@
+﻿@page "/FirebaseDetails"
+
+@inject NavigationManager NavigationManager
+@inherits WinIt.Pages.Base.BaseComponentBase;
+@inject Winit.Modules.FirebaseReport.BL.Interfaces.IFirebaseReportViewModel _firebaseReportViewModel;
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" />
+@if (IsInitialized)
+{
+    <h1>@Localizer["fire_basedetails"]</h1>
+    <div class="details-box">
+        <div>
+            <strong>@Localizer["uid"]:</strong> @_firebaseReportViewModel.FirebaseDetails?.UID
+        </div>
+        <div>
+            <strong>@Localizer["request_type"]:</strong> @_firebaseReportViewModel.FirebaseDetails?.LinkedItemType
+        </div>
+        <div>
+            <strong>@Localizer["request_body"]:</strong> @_firebaseReportViewModel.FirebaseDetails?.RequestBody
+        </div>
+        <div>
+            <strong>@Localizer["request_created_time"]:</strong> @CommonFunctions.GetDateTimeInFormat(_firebaseReportViewModel.FirebaseDetails?.RequestCreatedTime)
+        </div>
+        <div>
+            <strong>@Localizer["request_posted_to_api_time"]:</strong> @CommonFunctions.GetDateTimeInFormat(_firebaseReportViewModel.FirebaseDetails?.RequestPosted2ApiTime)
+        </div>
+        <div>
+            <strong>@Localizer["request_received_by_api_time"]:</strong> @CommonFunctions.GetDateTimeInFormat(_firebaseReportViewModel.FirebaseDetails?.RequestReceivedByApiTime)
+        </div>
+        <div>
+            <strong>@Localizer["request_sent_to_service_time"]:</strong> @CommonFunctions.GetDateTimeInFormat(_firebaseReportViewModel.FirebaseDetails?.RequestSent2ServiceTime)
+        </div>
+        <div>
+            <strong>@Localizer["request_received_by_service_time"]:</strong> @CommonFunctions.GetDateTimeInFormat(_firebaseReportViewModel.FirebaseDetails?.RequestReceivedByServiceTime)
+        </div>
+        <div>
+            <strong>@Localizer["request_posted_to_db_time"]:</strong> @CommonFunctions.GetDateTimeInFormat(_firebaseReportViewModel.FirebaseDetails?.RequestPostedToDBTime)
+        </div>
+        <div>
+            <strong>@Localizer["notification_sent_time"]:</strong> @CommonFunctions.GetDateTimeInFormat(_firebaseReportViewModel.FirebaseDetails?.NotificationSentTime)
+        </div>
+        <div>
+            <strong>@Localizer["notification_received_time"]:</strong> @CommonFunctions.GetDateTimeInFormat(_firebaseReportViewModel.FirebaseDetails?.NotificationReceivedTime)
+        </div>
+        <div>
+            <strong>@Localizer["request_sent_2_log_api_time"]:</strong> @CommonFunctions.GetDateTimeInFormat(_firebaseReportViewModel.FirebaseDetails?.RequestSent2LogApiTime)
+        </div>
+        <div>
+            <strong>@Localizer["request_sent_2_log_api_time"]:</strong> @CommonFunctions.GetDateTimeInFormat(_firebaseReportViewModel.FirebaseDetails?.RequestSent2LogApiTime)
+        </div>
+        <button onclick="@RepostFirebaseLog" disabled="@(!IsInitialized)">
+            @Localizer["repost"]
+        </button>
+    </div>
+}
+

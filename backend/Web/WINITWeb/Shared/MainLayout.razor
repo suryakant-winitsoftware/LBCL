@@ -1,0 +1,180 @@
+﻿@using WinIt.Pages
+@using Winit.Modules.Role.Model.Interfaces
+@using Winit.Modules.User.BL.Interface
+@inject MemoryCleanupService CleanupService
+
+@inherits LayoutComponentBase
+@inject Winit.UIComponents.Common.IAlertService AlertService
+@inject WinIt.BreadCrum.Interfaces.IDataService _IDataService
+@inject IJSRuntime _js;
+@inject IMenuMasterHierarchyView ModulesMasterHierarchy
+@inject Winit.Modules.Auth.BL.Interfaces.ILoginViewModel _loginViewModel
+@inject Winit.Modules.Base.BL.ILocalStorageService _localStorageService
+@inject AuthenticationStateProvider _authStateProvider
+@inject ICommonMasterData _iCommonMasterData
+@inject IUserMasterBaseViewModel _userMasterDataViewModel
+@inject IStringLocalizer<LanguageKeys> Localizer
+@inject Winit.Modules.Common.UIState.Classes.NavigationHistoryService _navigationhistory
+<style>
+    .alert-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1000;
+    }
+
+    .alert-content {
+        margin-top: 20px;
+    }
+</style>
+
+
+
+<div class="content">
+    <main class="alert-content">
+        <article class="content px-4">
+            <div class="cls_main_page_style">
+
+                @if (IsShow)
+                {
+                    <Winit.UIComponents.Common.CustomControles.SessionMessage EventCallbackPopup="Close" />
+                }
+
+                <CascadingValue Value="MainErrorBoundary">
+                    <ErrorBoundary @ref="MainErrorBoundary">
+                        <ChildContent>
+                            <Winit.UIComponents.Common.Common.Loader Color="text-info" />
+                            @if (IsLoaded)
+                            {
+                                <div class="alert-container">
+
+                                    <MenuNavigation />
+                                    <Winit.UIComponents.Common.Common.AlertComponent />
+                                </div>
+                                <!--Loader-->
+                                <!--DropDown-->
+                                <Winit.UIComponents.Common.Common.DropDownService />
+                                @Body
+                                <!--Toast-->
+                                <Winit.UIComponents.SnackBar.ToastProvider></Winit.UIComponents.SnackBar.ToastProvider>
+                            }
+                        </ChildContent>
+                        <ErrorContent Context="ex">
+                            <CustomError Context="ex" />
+                            <div><button @onclick="@(() => ResolveError(false))">Reload</button></div>
+                            <div><button @onclick="@(() => ResolveError(true))">Home</button></div>
+                        </ErrorContent>
+                    </ErrorBoundary>
+                </CascadingValue>
+            </div>
+        </article>
+    </main>
+</div>
+
+<script type="text/javascript">
+            // Load WebAssembly module
+    let wasmModule;
+
+    fetch('simple.wasm')
+      .then(response => response.arrayBuffer())
+      .then(bytes => WebAssembly.instantiate(bytes, {}))
+      .then(results => {
+        wasmModule = results.instance;
+        console.log('Wasm module loaded');
+      })
+      .catch(err => console.error('Error loading Wasm:', err));
+
+    // Handle navigation changes
+    function handleNavigationChange() {
+      if (wasmModule) {
+        // Use Wasm to avoid network requests
+        const userId = wasmModule.exports.getMockUserId();
+        console.log('Mock User ID from Wasm:', userId);
+        document.getElementById('user-id').innerText = `User ID: ${userId}`;
+      }
+    }
+
+    // Detect navigation changes
+    window.addEventListener('popstate', () => {
+      handleNavigationChange();
+    });
+
+    // Register service worker to cache the Wasm file
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(() => console.log('Service Worker registered'))
+        .catch(err => console.error('Service Worker registration failed:', err));
+    }
+
+        self.addEventListener('install', (event) => {
+      event.waitUntil(
+        caches.open('my-cache').then((cache) => {
+          return cache.addAll(['simple.wasm']);
+        })
+      );
+    });
+
+    self.addEventListener('fetch', (event) => {
+      event.respondWith(
+        caches.match(event.request).then((response) => {
+          return response || fetch(event.request);
+        })
+      );
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+@* @using WinIt.Pages
+@using WinIt.Services
+@inherits LayoutComponentBase
+@inject IAlertService AlertService
+<div class="content">
+    <main>
+        <AlertComponent />
+
+     <br/>
+        <article class="content px-4 ">
+            <div class="cls_main_page_style">
+                <div class="cls_main_page_style_header">
+                    <h3>@_IDataService.HeaderText</h3>
+                    <div class="cls_breadcrum">
+                        <a href="#">Dashboard</a>
+                        @foreach(var itm in _IDataService.BreadcrumList)
+                        {
+                            <span>></span>
+                            if (itm.IsClickable)
+                            {
+                                <a href="@itm.URL">@itm.Text</a>
+
+                            }
+                            else
+                            {
+                                <label>@itm.Text</label>
+                            }
+
+                        }
+                    </div>
+                </div>
+                <CascadingValue Value="event_DataService" >
+                    @Body
+               </CascadingValue>
+            </div>
+
+        </article>
+    </main>
+</div>
+
+
+ *@

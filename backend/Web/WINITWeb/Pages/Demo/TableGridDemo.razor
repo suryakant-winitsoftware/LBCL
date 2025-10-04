@@ -1,0 +1,20 @@
+﻿@page "/TableGridDemo"
+@inherits WinIt.Pages.Base.BaseComponentBase
+@using Winit.UIComponents.Web.Table
+@using Winit.UIComponents.Web.Paging
+Table structure using Table element and checkbox
+<br />
+<TableGridView DataSource="products" Columns="productColumns" OnSort="Product_OnSort"
+               IsFirstColumnCheckbox="true" AfterCheckBoxSelection="Product_AfterCheckBoxSelection"  />
+<br />
+<Paging TotalItems="1000" PageSize="10" CurrentPage="3" OnPageChange="Product_OnPageChange" />
+<br />
+Table structure using Table element and widthout checkbox
+<br />
+<TableGridView DataSource="products" Columns="productColumns" OnSort="Product_OnSort"  />
+<br />
+<DivGridView DataSource="products" Columns="productColumns" OnSort="Product_OnSort" />
+Table structure using Div element
+<br />
+<DivGridView DataSource="customers" Columns="customerColumns" OnSort="Customer_OnSort" />
+

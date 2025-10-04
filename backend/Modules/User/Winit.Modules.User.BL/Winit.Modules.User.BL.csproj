@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\UIComponents\Winit.UIComponents.Common\Winit.UIComponents.Common.csproj" />
+    <ProjectReference Include="..\..\Auth\Winit.Modules.Auth.Model\Winit.Modules.Auth.Model.csproj" />
+    <ProjectReference Include="..\..\Base\Winit.Modules.Base.BL\Winit.Modules.Base.BL.csproj" />
+    <ProjectReference Include="..\..\Calender\Winit.Modules.Calender.Models\Winit.Modules.Calender.Models.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Winit.Modules.Common.BL\Winit.Modules.Common.BL.csproj" />
+    <ProjectReference Include="..\..\Currency\Winit.Modules.Store.DL\Winit.Modules.Currency.DL.csproj" />
+    <ProjectReference Include="..\..\FileSys\Winit.Modules.FileSys.Model\Winit.Modules.FileSys.Model.csproj" />
+    <ProjectReference Include="..\..\ListHeader\Winit.Modules.ListHeader.Model\Winit.Modules.ListHeader.Model.csproj" />
+    <ProjectReference Include="..\..\Location\Winit.Modules.Location.BL\Winit.Modules.Location.BL.csproj" />
+    <ProjectReference Include="..\..\Location\Winit.Modules.Location.DL\Winit.Modules.Location.DL.csproj" />
+    <ProjectReference Include="..\..\Location\Winit.Modules.Location.Model\Winit.Modules.Location.Model.csproj" />
+    <ProjectReference Include="..\..\Org\Winit.Modules.Org.BL\Winit.Modules.Org.BL.csproj" />
+    <ProjectReference Include="..\..\Org\Winit.Modules.Org.Model\Winit.Modules.Org.Model.csproj" />
+    <ProjectReference Include="..\..\Settings\Winit.Modules.Settings.BL\Winit.Modules.Setting.BL.csproj" />
+    <ProjectReference Include="..\Winit.Modules.User.DL\Winit.Modules.User.DL.csproj" />
+    <ProjectReference Include="..\Winit.Modules.User.Model\Winit.Modules.User.Model.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,191 @@
+﻿@page "/SkuClassificationItemsMap"
+@attribute [Authorize]
+@using WinIt.Components
+@using Winit.Modules.SKU.Model.Interfaces
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.SKUClass.BL.UIInterfaces.ISKUClassGroupItemsViewModelV1 _viewModel;
+@inject Winit.Modules.Mapping.BL.Interfaces.IMappingViewModel mappingViewModel
+
+<PageHeaderAndFilter IDataBreadcrumbService="dataService"></PageHeaderAndFilter>
+
+@if (IsInitialized)
+{
+    <div class="cls_section">
+
+        <div class="cls_section_div_purchase4">
+            <label class="cls_section_div_purchase2_label">
+                <span class="cls_section_div_purchase2_span">*</span>@Localizer["name"]
+            </label>
+            <input class="cls_select2_button" placeholder="Enter Selling SKU name for identification" type="text"
+                   disabled="@_viewModel.IsEdit"
+                   @bind="_viewModel.SKUClassGroupMaster.SKUClassGroup!.Name">
+        </div>
+
+        <div class="cls_section_div_purchase4">
+            <label class="cls_section_div_purchase2_label">
+                <span class="cls_section_div_purchase2_span">*</span>Start Date
+            </label>
+            <input class="cls_select_date" placeholder="Start date" min="@DateTime.Now.AddDays(1).ToString()"
+                   type="date" disabled="@_viewModel.IsEdit"
+                   @bind="_viewModel.SKUClassGroupMaster.SKUClassGroup!.FromDate">
+        </div>
+        <div class="cls_section_div_purchase4">
+            <label class="cls_section_div_purchase2_label">
+                <span class="cls_section_div_purchase2_span">*</span>End Date
+            </label>
+            <input class="cls_select_date"
+                   min="@_viewModel.SKUClassGroupMaster.SKUClassGroup.FromDate.AddDays(1).ToString()"
+                   placeholder="End Date" type="date"
+                   @bind="_viewModel.SKUClassGroupMaster.SKUClassGroup!.ToDate">
+        </div>
+
+    </div>
+
+
+    @*  <div class="cls_section">
+        <h3 class="cls_container_p_full"><sup class="cls_section_div_purchase2_span">*</sup>Applicable to Customer</h3>
+
+        <div class="cls_section_div_sku">
+            <label class="cls_section_div_purchase2_label">
+
+                Broad Classification
+            </label>
+            <Winit.UIComponents.Common.CustomControls.DropDown
+                DataSource="@_viewModel.BroadClassificationSelectionItems"
+                IsButtonVisible=true IsSearchable="true"
+                Title="Broad Classification"
+                _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Multiple"
+                OnSelect="@((e) => OnBroadClassificationSelected(e))"/>
+        </div>
+        <div class="cls_section_div_sku">
+            <label class="cls_section_div_purchase2_label">
+               
+                Branch
+            </label>
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="@_viewModel.BranchDdlSelectionItems"
+                                                               _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Multiple"
+                                                               IsButtonVisible=true
+                                                               Title="Branch"
+                                                               IsSearchable="true"
+                                                               OnSelect="@((e) => _viewModel.OnBranchSelected(e))"/>
+        </div>
+        <div class="cls_section_div_sku">
+            <label class="cls_section_div_purchase2_label">
+                Channel Partner
+            </label>
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="@_viewModel.ChannelPartners"
+                                                               Title="Channel Partner"
+                                                               IsSearchable="true"
+                                                               IsButtonVisible="true"
+                                                               _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Multiple"
+                                                               OnSelect="@((e) => OnChannelpartnerSelected(e))"/>
+        </div>
+
+        <div class="cls_section_div_sku">
+            <a @onclick=@OnShowAllClick class="cls_app_cus_label">All Applicable Channel Partners</a>
+        </div>
+
+        @if (_showAllCustomers)
+        {
+            <PopUpStatic OnCloseClick=@(() => _showAllCustomers = false) DisableOkBtn="true" CancelbtnText="Close">
+                <div class="cls_popupstatic_div">
+                    @if (Stores.Any())
+                    {
+                        @foreach (var store in Stores)
+                        {
+                            <label class="cls_popupstatic_label">@($"[{store.Code}]{store.Name}")</label>
+                        }
+                    }
+                    else
+                    {
+                        <label
+                            class="cls_popupstatic_label">@($"Please select other combination of Broad classification or branch")</label>
+                    }
+
+                </div>
+            </PopUpStatic>
+        }
+    </div>
+ *@
+    <WinIt.Pages.DialogBoxes.AddProductDialogBoxV1 T="ISKUV1"
+                                                   DataSource="_viewModel.SKUs.Where(p=> !_viewModel.DisplayGridSKUs.Any(q=>q.Code ==p.Code)).ToList()"
+                                                   L1="@(e => e.L1)"
+                                                   L2="@(e => e.L2)"
+                                                   L3="@(e => e.L3)"
+                                                   L4="@(e => e.L4)"
+                                                   L5="@(e => e.L5)"
+                                                   L6="@(e => e.L6)"
+                                                   L7="@(e => e.Code)"
+                                                   L8="@(e => e.Name)"
+                                                   UID="@(e => e.UID)"
+                                                   SKUImage="@(e => e.SKUImage)"
+                                                   OnCancelClick="() => AddProductDialogBox?.OnCloseClick()"
+                                                   OnOkClick="OnAddSKUClick"
+                                                   DropDownDataSource="_viewModel.SKUAttributeData"
+                                                   OnDropdownValueSelectSKUAtrribute="OnDropdownValueSelectSKUAtrributes"
+                                                   SelectedItems="SKUs"
+                                                   FilterAction="_viewModel.FilterAction"
+                                                   OnSelect="OnItemSelect"
+                                                   @ref="AddProductDialogBox" />
+
+
+    <div class="cls_container_div4">
+        <Winit.UIComponents.Common.CustomControles.Tabs TabItems="TabSelectionItems" OnTabSelect="OnTabSelect"
+                                                        IsCountRequired="true"></Winit.UIComponents.Common.CustomControles.Tabs>
+    </div>
+    <div class="cls_container_div1">
+        <div class="cls_section_search">
+            <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder="Search"
+                                                                   MaxLength="200" DebounceInterval="500"
+                                                                   OnDebounceIntervalElapsed="e => _viewModel.SKUSearchString = e"
+                                                                   KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+                                                                   Value="@_viewModel.SKUSearchString"
+                                                                   IsForSearch="true" />
+        </div>
+
+
+        <div>
+
+            @{
+                switch (SelectedTab.UID)
+                {
+                    case "1":
+                        <button class="cls_comman_btn" @onclick="() => AddSKU()">Add Product</button>
+                        <TableGridView Columns="GridColumns" DataSource="_viewModel.DisplayGridSKUs?.ToList()" />
+                        break;
+                    case "2":
+                        <button class="cls_comman_btn" @onclick="() => AddSKU(true)">Add To Excluded SKU</button>
+                        <TableGridView Columns="GridColumns"
+                                       DataSource="_viewModel.DisplayGridSKUs?.Where(e => !_viewModel.SkuExcludeList.Contains(e.UID)).ToList()" />
+                        break;
+                    case "3":
+                        <TableGridView Columns="GridColumns"
+                                       DataSource="_viewModel.DisplayGridSKUs?.Where(e => _viewModel.SkuExcludeList.Contains(e.UID)).ToList()" />
+                        break;
+                }
+            }
+
+        </div>
+
+
+    </div>
+    <div class="cls_container_div1">
+        <div class="cls_container_div4">
+            <div class="cls_container_div4">
+                @* <button class="cls_add_new_sec" @onclick=@(() => mappingViewModel.DisplayMappingComponent = true)>Add Mapping</button> *@
+            </div>
+        </div>
+        <div class="cls_container_div1">
+            @*  <MappingComponentNew MappingDTO="@mappingViewModel.MappingDTO"
+                     OnSaveMapping="@(()=>mappingViewModel.DisplayMappingComponent=false)"
+                     OnCloseClick="@(()=>mappingViewModel.DisplayMappingComponent=false)" />
+            <TableGridView DataSource="mappingViewModel.MappingDTO.GridDataSource" Columns="mappingViewModel.MappingDTO.DataGridColumns" /> *@
+               <MappingComponentNew MappingDTO="@mappingViewModel.MappingDTO" />
+        </div>
+    </div>
+
+}
+<div class="cls_button_bottom_purchase">
+    <button class="cls_button_light" @onclick='OnBackClick'>@Localizer["back"]</button>
+    <button class="cls_button_blue " @onclick='OnSaveClick'>@Localizer["save"]</button>
+</div>

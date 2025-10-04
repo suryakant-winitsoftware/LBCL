@@ -1,0 +1,11 @@
+﻿<div class="cls_padding">
+    <button @onclick="FirstPage" disabled="@IsFirstPage" class="@(IsFirstPage ? "inactive" : "")">&lt;&lt;</button>
+    <button @onclick="PreviousPage" disabled="@IsFirstPage" class="@(IsFirstPage ? "inactive" : "")">&lt;</button>
+    @for (int i = StartPage; i <= EndPage; i++)
+    {
+        int pageNumber = i; // Capture the loop variable in a local variable
+        <button @onclick="() => ChangePage(pageNumber)" class="@(pageNumber == _currentPage ? "active" : "")">@i</button>
+    }
+    <button @onclick="NextPage" disabled="@IsLastPage" class="@(IsLastPage ? "inactive" : "")">&gt;</button>
+    <button @onclick="LastPage" disabled="@IsLastPage" class="@(IsLastPage ? "inactive" : "")">&gt;&gt;</button>
+</div>

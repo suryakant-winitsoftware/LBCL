@@ -1,0 +1,342 @@
+﻿@page "/ViewSalesOrdersDetails"
+@page "/ViewSalesOrdersDetails/{SalesOrderUID}"
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize]
+@using Winit.Shared.Models.Common
+@using Winit.UIComponents.Common.CustomControls
+@inject Winit.Modules.SalesOrder.BL.Interfaces.IManageSalesOrdersViewModel _manageSalesOrdersViewModel;
+@inherits WinIt.Pages.Base.BaseComponentBase
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" />
+
+@if (IsIntialized)
+{
+    <div class="cls_container_div1">
+        <div class="cls_section">
+            <h3 class="cls_container_p_full" >
+                @Localizer["customer_details"]
+            </h3>
+            <div class="cls_container_div1">
+              
+                    <div class="cls_state_section_div2">
+                    <label class="cls_section_div_purchase2_label">
+                            @Localizer["customer_number"]
+                        </label>
+                        <label class="cls_credit_label1">@(_manageSalesOrdersViewModel.ViewPresales.CustomerNumber ?? "N/A")</label>
+                    </div>
+                    <div class="cls_state_section_div2">
+                        <label class="cls_section_div_purchase2_label">
+                            @Localizer["customer_name"]
+                        </label>
+                        <label class="cls_credit_label1">@(_manageSalesOrdersViewModel.ViewPresales.CustomerName ?? "N/A")</label>
+                    </div>
+                    <div class="cls_state_section_div2">
+                        <label class="cls_section_div_purchase2_label">
+                            @Localizer["po_number"]
+                        </label>
+                        <label class="cls_credit_label1">@(_manageSalesOrdersViewModel.ViewPresales.PONumber ?? "N/A")</label>
+                    </div>
+                    <div class="cls_state_section_div2">
+                        <label class="cls_section_div_purchase2_label">
+                            @Localizer["sales_order_number"]
+                        </label>
+                        <label class="cls_credit_label1">@(_manageSalesOrdersViewModel.ViewPresales.SalesOrderNumber ?? "N/A")</label>
+                    </div>
+                    <div class="cls_state_section_div2">
+                        <label class="cls_section_div_purchase2_label">
+                            @Localizer["created_from"]
+                        </label>
+                        <label class="cls_credit_label1">@(_manageSalesOrdersViewModel.ViewPresales.Source ?? "N/A")</label>
+                    </div>
+                
+            </div>
+        </div>
+        <div class="cls_section">
+            <div class="cls_container_div4">
+                <h3 class="cls_container_p_full" >
+                    @Localizer["order_details"]
+                </h3>
+                
+                    <div class="cls_state_section_div2">
+                        <label class="cls_section_div_purchase2_label">
+                            @Localizer["order_no"]
+                        </label>
+                        <label class="cls_credit_label1">@(_manageSalesOrdersViewModel.ViewPresales.DraftOrderNumber ?? "N/A")</label>
+                    </div>
+                    <div class="cls_state_section_div2">
+                        <label class="cls_section_div_purchase2_label">
+                            @Localizer["sales_rep"]
+                        </label>
+                        <label class="cls_credit_label1">@(_manageSalesOrdersViewModel.ViewPresales.SalesREP ?? "N/A")</label>
+                    </div>
+                    <div class="cls_state_section_div2">
+                        <label class="cls_section_div_purchase2_label">
+                            @Localizer["order_type"]
+                        </label>
+                        <label class="cls_credit_label1">@(_manageSalesOrdersViewModel.ViewPresales.OrderType ?? "N/A")</label>
+                    </div>
+                    <div class="cls_state_section_div2">
+                        <label class="cls_section_div_purchase2_label">
+                            @Localizer["total_sku_count"]
+                        </label>
+                        <label class="cls_credit_label1">@(_manageSalesOrdersViewModel.ViewPresales.TotalSKUCount >= 0 ? _manageSalesOrdersViewModel.ViewPresales.TotalSKUCount.ToString() : "N/A")</label>
+                    </div>
+                    <div class="cls_state_section_div2">
+                        <label class="cls_section_div_purchase2_label">
+                            @Localizer["order_status"]
+                        </label>
+                        <label class="cls_credit_label1">@(_manageSalesOrdersViewModel.ViewPresales.OrderStatus ?? "N/A")</label>
+                    </div>
+                    <div class="cls_state_section_div2">
+                        <label class="cls_section_div_purchase2_label">
+                            @Localizer["payment_type"]
+                        </label>
+                        <label class="cls_credit_label1">@(_manageSalesOrdersViewModel.ViewPresales.PaymentType ?? "N/A")</label>
+                    </div>
+                    <div class="cls_state_section_div2">
+                        <label class="cls_section_div_purchase2_label">
+                            @Localizer["manual_docket_number"]
+                        </label>
+                        <label class="cls_credit_label1">@(_manageSalesOrdersViewModel.ViewPresales.ManualDocketNumber ?? "N/A")</label>
+                    </div>
+                
+                
+                    <div class="cls_state_section_div2">
+                        <label class="cls_section_div_purchase2_label">
+                            @Localizer["assigned_route"]
+                        </label>
+                        <label class="cls_credit_label1">@(_manageSalesOrdersViewModel.ViewPresales.RouteName ?? "N/A")</label>
+                    </div>
+               
+                @if (PageName == "ManageUnallocatedOrders")
+                {
+                    @if (Status == Winit.Shared.Models.Constants.SalesOrderStatus.PENDING || Status == Winit.Shared.Models.Constants.SalesOrderStatus.ASSIGNED)
+                    {
+                        
+                            <div class="cls_state_section_div2">
+                                <label class="cls_section_div_purchase2_label">
+                                    @Localizer["select_route_to_change"]
+                                </label>
+                                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_manageSalesOrdersViewModel.RouteSelectionItems"
+                                                                                   Title="Route"
+                                                                                   IsButtonVisible="true"
+                                                                                   OnSelect="HandleRouteSelection"
+                                                                                   IsSearchable="false" />
+                            </div>
+                        
+                    }
+                }
+               
+                        @if (PageName == "ManagePresalesOrders" || PageName == "ViewsalesOrder")
+                        {
+
+                            <div class="cls_state_section_div2">
+
+                                @if ((PageName == "ViewsalesOrder" && _manageSalesOrdersViewModel.ViewPresales.OrderStatus == Winit.Shared.Models.Constants.SalesOrderStatus.FINALIZED) ||
+                               (PageName == "ViewsalesOrder" && _manageSalesOrdersViewModel.ViewPresales.OrderStatus == Winit.Shared.Models.Constants.SalesOrderStatus.DELIVERED) ||
+                               (PageName == "ViewsalesOrder" && _manageSalesOrdersViewModel.ViewPresales.OrderStatus == Winit.Shared.Models.Constants.SalesOrderStatus.SENT) ||
+                               (PageName == "ViewsalesOrder" && _manageSalesOrdersViewModel.ViewPresales.OrderStatus == Winit.Shared.Models.Constants.SalesOrderStatus.RECEIVED) ||
+                               (PageName == "ViewsalesOrder" && _manageSalesOrdersViewModel.ViewPresales.OrderStatus == Winit.Shared.Models.Constants.SalesOrderStatus.ERROR))
+                                {
+                                    <label class="cls_section_div_purchase2_label">
+                                        @Localizer["reference_order_no"]
+                                    </label>
+                                }
+                                else if (PageName == "ManagePresalesOrders" || _manageSalesOrdersViewModel.ViewPresales.OrderStatus == Winit.Shared.Models.Constants.SalesOrderStatus.APPROVED)
+                                {
+                                    <label class="cls_section_div_purchase2_label">
+                                        @Localizer["forward_order_no"]
+                                    </label>
+                                }
+                                @if (!string.IsNullOrEmpty(_manageSalesOrdersViewModel.ViewPresales.ReferenceNumber) && _manageSalesOrdersViewModel.ViewPresales.ReferenceNumber != "N/A")
+                                {
+                                    <a href="#" @onclick="()=>OnForwardOrderClick(_manageSalesOrdersViewModel.ViewPresales)">
+                                        @_manageSalesOrdersViewModel.ViewPresales.ReferenceNumber
+                                    </a>
+                                }
+                                else
+                                {
+                                    <label class="cls_credit_label1">
+                                        N/A
+                                    </label>
+                                }
+                            </div>
+
+                        }
+
+                        <div class="cls_state_section_div2">
+                            <label class="cls_section_div_purchase2_label">
+                                @Localizer["order_date"]
+                            </label>
+                            <label class="cls_credit_label1">@Winit.Shared.CommonUtilities.Common.CommonFunctions.GetDateTimeInFormat(_manageSalesOrdersViewModel.ViewPresales.OrderDate)</label>
+                        </div>
+                        @if (PageName == "ManageUnallocatedOrders")
+                        {
+                            @if (Status == Winit.Shared.Models.Constants.SalesOrderStatus.PENDING || Status == Winit.Shared.Models.Constants.SalesOrderStatus.ASSIGNED)
+                            {
+                                
+                                    <div class="cls_state_section_div2">
+                                        <label class="cls_section_div_purchase2_label">
+                                            <strong>@Localizer["expected_delivery_date"]</strong>
+                                            <input class="form-control" type="date" @bind="selectedDate">
+                                        </label>
+                                    </div>
+                                
+                            }
+                        }
+                        else
+                        {
+                            <div class="cls_state_section_div2">
+                                <label class="cls_section_div_purchase2_label">
+                                    @Localizer["delivery_date"]
+                                </label>
+                                <label class="cls_credit_label1">@Winit.Shared.CommonUtilities.Common.CommonFunctions.GetDateTimeInFormat(_manageSalesOrdersViewModel.ViewPresales.ExpectedDeliveryDate)</label>
+                            </div>
+                        }
+                        @if (Status != Winit.Shared.Models.Constants.SalesOrderStatus.PENDING && Status != Winit.Shared.Models.Constants.SalesOrderStatus.ASSIGNED)
+                        {
+                            <div class="cls_state_section_div2">
+                                <label class="cls_section_div_purchase2_label">
+                                    @Localizer["delivered_on"]
+                                </label>
+                                <label class="cls_credit_label1">@Winit.Shared.CommonUtilities.Common.CommonFunctions.GetDateTimeInFormat(_manageSalesOrdersViewModel.ViewPresales.DeliveredDateTime)</label>
+                            </div>
+                        }
+                        <div class="cls_state_section_div2">
+                            <label class="cls_section_div_purchase2_label">
+                                @Localizer["notes"]
+                            </label>
+                            <label class="cls_credit_label1">@(!string.IsNullOrEmpty(_manageSalesOrdersViewModel.ViewPresales.Notes) ? _manageSalesOrdersViewModel.ViewPresales.Notes : "N/A")</label>
+                        </div>
+                 
+              
+                        @* @if (PageName == "ManageUnallocatedOrders")
+                    { *@
+                        
+                            <div class="cls_state_section_div2">
+                                <label class="cls_section_div_purchase2_label">
+                                    @Localizer["amount_inc_tax"]
+                                </label>
+                                <label class="cls_credit_label1">@(_manageSalesOrdersViewModel.ViewPresales.TotalAmount >= 0 ? _manageSalesOrdersViewModel.ViewPresales.TotalAmount : "N/A")</label>
+                            </div>
+
+                            <div class="cls_state_section_div2">
+                                <label class="cls_section_div_purchase2_label">
+                                    @Localizer["discount_amount"]
+                                </label>
+                                <label class="cls_credit_label1">@(_manageSalesOrdersViewModel.ViewPresales.TotalDiscount >= 0 ? _manageSalesOrdersViewModel.ViewPresales.TotalDiscount : "N/A")</label>
+                            </div>
+                        
+                            <div class="cls_state_section_div2">
+                                <label class="cls_section_div_purchase2_label">
+                                    @Localizer["tax"]
+                                </label>
+                                <label class="cls_credit_label1">@(_manageSalesOrdersViewModel.ViewPresales.TotalTax >= 0 ? _manageSalesOrdersViewModel.ViewPresales.TotalTax : "N/A")</label>
+                            </div>
+                        
+                            <div class="cls_state_section_div2">
+                                <label class="cls_section_div_purchase2_label">
+                                    @Localizer["amount_inc_tax"]
+                                </label>
+                                <label class="cls_credit_label1">@(_manageSalesOrdersViewModel.ViewPresales.NetAmount >= 0 ? _manageSalesOrdersViewModel.ViewPresales.NetAmount : "N/A")</label>
+                            </div>
+                        
+                        @* } *@
+                        <div class="cls_state_section_div2">
+                            <label class="cls_section_div_purchase2_label">
+                                @Localizer["qty_count(ea)"]
+                            </label>
+                            <label class="cls_credit_label1">@(_manageSalesOrdersViewModel.ViewPresales.QtyCount >= 0 ? _manageSalesOrdersViewModel.ViewPresales.QtyCount : "N/A")</label>
+                        </div>
+                   
+            </div>
+        </div>
+        <div class="div1">
+        <table >
+            <thead>
+                <tr>
+                    <th>@Localizer["sku_code"]</th>
+                    <th>@Localizer["sku_name"]</th>
+                    <th>@Localizer["item_type"]</th>
+                    <th>@Localizer["uom"]</th>
+                    <th>@Localizer["req_qty"]</th>
+                    @*  @if (PageName == "ViewsalesOrder")
+                { *@
+                    <th>@Localizer["app_qty"]</th>
+                    @* } *@
+                    @* @if (PageName == "ManageUnallocatedOrders")
+                { *@
+                    <th>@Localizer["price"]</th>
+                    <th>@Localizer["discount"]</th>
+                    <th>@Localizer["amount_exc_tax"]</th>
+                    <th>@Localizer["tax"]</th>
+                    <th>@Localizer["amount_inc_tax"]</th>
+                    @*  }*@
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var viewpresales in _manageSalesOrdersViewModel.ViewPresales.sKUViewPreSalesList)
+                {
+                    <tr>
+                        <td>@(string.IsNullOrEmpty(viewpresales.SKUCode) ? "N/A" : viewpresales.SKUCode)</td>
+                        <td>@(string.IsNullOrEmpty(viewpresales.SKUName) ? "N/A" : viewpresales.SKUName)</td>
+                        <td>@(string.IsNullOrEmpty(viewpresales.ItemType) ? "N/A" : viewpresales.ItemType)</td>
+                        <td>@(string.IsNullOrEmpty(viewpresales.UoM) ? "N/A" : viewpresales.UoM)</td>
+                        <td>@((int)viewpresales.DeliveredQty >= 0 ? ((int)viewpresales.DeliveredQty).ToString() : "N/A")</td>
+                     
+                        <td>@(viewpresales.DeliveredQty >= 0 ? viewpresales.DeliveredQty.ToString() : "N/A")</td>
+                        
+                       
+                        <td>@(viewpresales.Price >= 0 ? viewpresales.Price.ToString() : "N/A")</td>
+                        <td>@(viewpresales.Discount >= 0 ? viewpresales.Discount.ToString() : "N/A")</td>
+                        <td>@(viewpresales.AmountExcTax >= 0 ? viewpresales.AmountExcTax.ToString() : "N/A")</td>
+                        <td>@(viewpresales.Tax >= 0 ? viewpresales.Tax.ToString() : "N/A")</td>
+                        <td>@(viewpresales.AmountIncTax >= 0 ? viewpresales.AmountIncTax.ToString() : "N/A")</td>
+                        
+
+                    </tr>
+                }
+            </tbody>
+
+            </table>
+        </div>
+        <div class="cls_button_bottom_purchase">
+            
+                @if (PageName == "ManageUnallocatedOrders")
+                {
+                    @if (Status == Winit.Shared.Models.Constants.SalesOrderStatus.PENDING || Status == Winit.Shared.Models.Constants.SalesOrderStatus.ASSIGNED)
+                    {
+                        
+                        <button class="cls_button_blue ">@Localizer["confirm"]</button>
+                        
+                    }
+                    
+                    <button class="cls_button_light " @onclick="BackBtnClicked">@Localizer["back"]</button>
+                    
+                }
+                else if (PageName == "ViewsalesOrder")
+                {
+                    
+                    <button class="cls_button_light " @onclick="BackBtnClicked">@Localizer["back"]</button>
+                    
+                }
+                else if (PageName == "ManagePresalesOrders")
+                {
+                    
+                    <button class="cls_button_light " @onclick="BackBtnClicked">@Localizer["back"]</button>
+                    
+                }
+                else
+                {
+                    
+                    <button class="cls_button_light " @onclick="BackBtnClicked">@Localizer["back"]</button>
+                    
+                }
+
+            
+        </div>
+    </div>
+}
+@code {
+
+}

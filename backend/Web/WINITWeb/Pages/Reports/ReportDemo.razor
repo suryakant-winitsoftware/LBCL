@@ -1,0 +1,81 @@
+﻿@page "/reportdemo"
+
+<PageTitle>Report Demo</PageTitle>
+<h3>Report Demo</h3>
+<button @onclick=@(()=>_navigationManager.NavigateTo("DashBoard"))>Dash Board</button>
+@if (IsChartReady)
+{
+    <div>
+        <WLineChart Title="Basic Line Chart"
+        XAxisLabels="@xAxisLabels"
+        SeriesData="@seriesDataBasicLineChart"
+        Stacked="false"
+        BackgroundColor="'rgba(0,0,0,0.7)'"
+                    BorderColor="#fff" Callback="ChartsEvent" />
+    </div>
+    <div>
+        <WLineChart Title="Smoothed Line Chart"
+        XAxisLabels="@xAxisLabels"
+        SeriesData="@seriesDataSmoothedLineChart"
+        Stacked="false"
+        BackgroundColor="'rgba(0,0,0,0.7)'"
+        BorderColor="#fff"
+                    Smooth="true" Callback="ChartsEvent" />
+    </div>
+    <div>
+        <WLineChart Title="Basic area chart"
+        XAxisLabels="@xAxisLabels"
+        SeriesData="@seriesDataBasicAreaChart"
+        Stacked="false"
+        BackgroundColor="'rgba(0,0,0,0.7)'"
+        BorderColor="#fff"
+                    HasArea="true" Callback="ChartsEvent" />
+    </div>
+    <div>
+        <WLineChart Title="Stacked Line Chart"
+        XAxisLabels="@xAxisLabels"
+        SeriesData="@seriesDataStackedLine"
+        Stacked="true"
+        TooltipTrigger="Blazor.ECharts.Options.Enum.TooltipTrigger.Axis"
+        AxisPointerType="Blazor.ECharts.Options.Enum.AxisPointerType.Cross"
+        BackgroundColor="rgba(0,0,0,0.7)"
+                    BorderColor="#fff" Callback="ChartsEvent" />
+    </div>
+    <div>
+        <WLineChart Title="Stacked Area Chart"
+        XAxisLabels="@xAxisLabels"
+        SeriesData="@seriesDataStackedArea"
+        Stacked="true"
+        TooltipTrigger="Blazor.ECharts.Options.Enum.TooltipTrigger.Axis"
+        AxisPointerType="Blazor.ECharts.Options.Enum.AxisPointerType.Cross"
+        BackgroundColor="'rgba(0,0,0,0.7)'"
+        BorderColor="#fff"
+                    HasArea="true" Callback="ChartsEvent" />
+    </div> 
+    <div>
+        <h3>Basic Bar Chart</h3>
+        <WBarChart XAxisLabels="@daysBarChart" Data="@salesDataBarChart" BarColors="@barColors" ShowBackground="true"
+                   BackgroundColor="rgba(200, 200, 255, 0.3)" EnableAxisTick="true" BarWidth="60%" Callback="ChartsEvent" />
+    </div>
+    <div>
+        <h3>Group Bar Chart</h3>
+        <WGroupChart ColumnNames="@groupBarColumnNames" DataValues="@groupBarDataValues"
+        ShowBackground="true"
+        BackgroundColor="rgba(200, 200, 255, 0.3)" EnableAxisTick="true"
+                     SeriesConfigurations="@seriesConfigs" Callback="ChartsEvent" />
+    </div>
+    <div>
+        <h3>Bar with Negative</h3>
+        <WChartWithNegative Title="Sales Data" YAxisLabels="@barNegativeYAxisLabels" Data="@barNegativeData"
+                            SeriesConfig="@barLineWithNegativeSeriesConfig" Callback="ChartsEvent" />
+    </div>
+    <div>
+        <h3>Pie Chart</h3>
+        <WPieChart Title="Student Summary" SubText="College Student" DataHeaderText ="No Of Students"
+                   Data="PieChartData" Legend="@pieLegend" Callback="ChartsEvent" />
+    </div>
+}
+else
+{
+    <div>Loading</div>
+}

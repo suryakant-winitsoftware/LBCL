@@ -1,0 +1,408 @@
+﻿@using Microsoft.AspNetCore.Components.Forms
+
+@using Microsoft.Extensions.Localization
+@using Winit.UIComponents.Common.LanguageResources.Web
+@inject Winit.UIComponents.Common.Language.ILanguageService _languageService
+@inject IStringLocalizer<LanguageKeys> Localizer
+@if (IsLoad)
+{
+    <div class="cls_sales_container_outline">
+        <div class="cls_container_div1">
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">@Localizer["sales_organisation"]</label>
+             
+                    
+                    @if (!IsSalesOrgVisible)
+                    {
+                        <button class="cls_select2" @onclick=@(()=>IsSalesOrgVisible=!IsSalesOrgVisible)>
+
+                        <label class="cls_select2_label1"> @_OrganisationConfiguration.SalesOrgLabel</label>
+                        <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+                        </button>
+
+                    }
+                    else
+                    {
+                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="SalesOrgList" _SelectionMode=Winit.Shared.Models.Enums.SelectionMode.Single ShowPopUp=true OnSelect="@((e)=>OnDropDownSelected(e,UIModels.Web.Store.DropDownConstant.SalesOrg))" />
+                    }
+          
+
+
+            </div>
+
+
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">@Localizer["store_group"]</label>
+                
+                   
+                    <button class="cls_select2" @onclick="@(()=>ViewLocation = !ViewLocation)">
+
+                    <label class="cls_select2_label1">   @_OrganisationConfiguration.ChannelSubChannelLabel</label>
+                    <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+                        </button>
+                    @if (ViewLocation)
+                    {
+                        <Winit.UIComponents.Web.Location.LocationMaster ShowPopUp="ViewLocation" OnStoreGroupDataSelected="StoreGroupDataSelected"
+                                                                        SelectedLocationOrStoreGroupUID="@_OrganisationConfiguration.ChannelSubChannelUID" />
+                    }
+                
+            </div>
+            @if (_OrganisationConfiguration.StoreGroupDataFromJsons != null)
+            {
+                foreach (var item in _OrganisationConfiguration.StoreGroupDataFromJsons)
+                {
+                    if (item.Level != _OrganisationConfiguration.StoreGroupDataFromJsons.Count)
+                    {
+                        @* <div class="cls_section_div_purchase2">
+                            <div class="cls_select">
+                                <label>@($"{item.StoreGroupTypeName} : {item.Label}")</label>
+                            </div>
+                        </div> *@
+
+                        <div class="cls_section_div_purchase1 margin_right">
+
+
+                            <label class="cls_section_div_purchase2_label">@($"{item.StoreGroupTypeName} : ")</label>
+                            <div class="cls_main_sign_input_new1 margin_top"></div>
+                            <label class="cls_section_div_purchase2_label">@($" {item.Label}")</label>
+                        </div>
+
+                    }
+                }
+            }
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">@Localizer["customer_chain"]</label>
+               
+                   
+                    @if (!IsChainVisible)
+                    {
+                        <button class="cls_select2" @onclick=@(()=>IsChainVisible=!IsChainVisible)>
+
+                            <label class="cls_select2_label1">   @_OrganisationConfiguration.ChainLabel</label>
+                            <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+                        </button>
+                    }
+                    else
+                    {
+                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="ChainList" _SelectionMode=Winit.Shared.Models.Enums.SelectionMode.Single ShowPopUp=true OnSelect="@((e)=>OnDropDownSelected(e,UIModels.Web.Store.DropDownConstant.Chain))" />
+                    }
+                
+            </div>
+
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">@Localizer["customer_group"]</label>
+                
+                  
+                    @if (!IsCustomerGroupVisible)
+                    {
+                        <button class="cls_select2" @onclick=@(()=>IsCustomerGroupVisible=!IsCustomerGroupVisible)>
+
+                            <label class="cls_select2_label1">  @_OrganisationConfiguration.CustomerGroupLabel</label>
+                            <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+                        </button>
+                    }
+                    else
+                    {
+                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="CustomerGroupList" _SelectionMode=Winit.Shared.Models.Enums.SelectionMode.Single ShowPopUp=true OnSelect="@((e)=>OnDropDownSelected(e,UIModels.Web.Store.DropDownConstant.CustomerGroup))" />
+                    }
+                
+            </div>
+        </div>
+        <div class="cls_container_div4">
+
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">@Localizer["customer_classification"]</label>
+                
+                    
+                    @if (!IsCustomerClassificationVisible)
+                    {
+                        <button class="cls_select2" @onclick=@(()=>IsCustomerClassificationVisible=!IsCustomerClassificationVisible)>
+
+                            <label class="cls_select2_label1">   @_OrganisationConfiguration.CustomerClassificationLabel</label>
+                            <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+                        </button>
+                    }
+                    else
+                    {
+                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="CustomerClassificationList" _SelectionMode=Winit.Shared.Models.Enums.SelectionMode.Single ShowPopUp=true OnSelect="@((e)=>OnDropDownSelected(e,UIModels.Web.Store.DropDownConstant.CustomerClassification))" />
+                    }
+               
+
+
+            </div>
+
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">@Localizer["authorized_item_grp_key"]</label>
+                <div class="cls_select">
+                    
+                    <input type="text" @bind="@_OrganisationConfiguration.AuthorizedItemGRPKey" />
+                </div>
+
+
+            </div>
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">@Localizer["message_key"]</label>
+                <div class="cls_select">
+                 
+                    <input type="text" @bind="@_OrganisationConfiguration.MessageKey" />
+                </div>
+
+
+            </div>
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">@Localizer["tax_key_field"]</label>
+                <div class="cls_select">
+                   
+                    <input type="text" @bind="@_OrganisationConfiguration.TaxKeyField" />
+
+                </div>
+
+            </div>
+
+        </div>
+        <div class="cls_container_div4">
+
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">@Localizer["promotion_key"]</label>
+                <div class="cls_select">
+                   
+                    <input type="text" @bind="@_OrganisationConfiguration.PromotionKey" />
+                </div>
+
+
+            </div>
+            <div class="cls_section_div_purchase2">
+                @* <label for="IsActive">@Localizer["is_active"]</label>
+                <div class="cls_select">
+                    
+                    <input type="checkbox" name="IsActive" checked="@_OrganisationConfiguration.IsActive" @onclick="@(()=>_OrganisationConfiguration.IsActive=!_OrganisationConfiguration.IsActive)" />
+                </div> *@
+
+                <div class="cls_main_sign_input_new1"></div>
+                <div class="cls_main_check_radio margin_top">
+                    <input type="checkbox" name="IsActive" checked="@_OrganisationConfiguration.IsActive" @onclick="@(()=>_OrganisationConfiguration.IsActive=!_OrganisationConfiguration.IsActive)" />
+                    <label for="IsActive">@Localizer["is_active"]</label>
+                </div>
+
+
+            </div>
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">@Localizer["is_blocked"]</label>
+                <div class="cls_main_sign_input_new1">
+
+                    <div class="cls_main_check_radio">
+                        <input type="radio" name="IsBlocked" value="option1" id="option1" checked="@_OrganisationConfiguration.IsBlocked" @onchange="(()=>_OrganisationConfiguration.IsBlocked=true)">
+                        <label for="option1" @onclick="(()=>_OrganisationConfiguration.IsBlocked=true)">@Localizer["yes"]</label>
+                        <input type="radio" name="IsBlocked" value="option2" id="option2" checked="@(!_OrganisationConfiguration.IsBlocked)" @onchange="(()=>_OrganisationConfiguration.IsBlocked=false)">
+                        <label for="option2" @onclick="(()=>_OrganisationConfiguration.IsBlocked=false)">@Localizer["no"]</label>
+                    </div>
+                </div>
+
+                
+
+            </div>
+            <div style="display:none" class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">@Localizer["bill_to"]</label>
+                <div class="cls_select">
+                    
+                    <input type="text" @bind="@_OrganisationConfiguration.BillTo" />
+                </div>
+
+
+            </div>
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">@Localizer["payment_type"]<span style="color: red">*</span></label>
+                
+                   
+                    <button class="cls_select2" @onclick=@(()=>IsPaymentTypeVisible=!IsPaymentTypeVisible)>
+                       
+                    <label class="cls_select2_label1">   @_OrganisationConfiguration.PaymentTypeLabel</label>
+                    <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+                    </button>
+                    @if (IsPaymentTypeVisible)
+                    {
+                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="PaymentTypeList" _SelectionMode=Winit.Shared.Models.Enums.SelectionMode.Single ShowPopUp=true OnSelect="@((e)=>OnDropDownSelected(e,UIModels.Web.Store.DropDownConstant.PaymentType))" />
+                    }
+               
+
+            </div>
+
+        </div>
+        <div class="cls_container_div4">
+
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">@Localizer["payment_method"]<span style="color: red">*</span></label>
+                
+                   
+                    @if (!IsPaymentMethodVisible)
+                    {
+                        <button class="cls_select2" @onclick=@(()=>IsPaymentMethodVisible=!IsPaymentMethodVisible)>
+
+                        <label class="cls_select2_label1">   @_OrganisationConfiguration.PaymentMethodLabel</label>
+                        <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+                        </button>
+                    }
+                    else
+                    {
+                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="PaymentMethodList" _SelectionMode=Winit.Shared.Models.Enums.SelectionMode.Multiple
+                                                                           ShowPopUp=true OnSelect="@((e)=>OnDropDownSelected(e,UIModels.Web.Store.DropDownConstant.PaymentMethod))" />
+                    }
+                
+            </div>
+
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">@Localizer["preffered_payment_method"]</label>
+               
+                   
+                    @if (!IsPreferredPaymentMethodVisible)
+                    {
+                        <button class="cls_select2" @onclick=@(()=>IsPreferredPaymentMethodVisible=!IsPreferredPaymentMethodVisible)>
+
+                        <label class="cls_select2_label1">  @_OrganisationConfiguration.PreferredPaymentMethodLabel</label>
+                        <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+                        </button>
+                    }
+                    else
+                    {
+                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="PreferredPaymentMethodList" _SelectionMode=Winit.Shared.Models.Enums.SelectionMode.Single
+                                                                           ShowPopUp=true OnSelect="@((e)=>OnDropDownSelected(e,UIModels.Web.Store.DropDownConstant.PreferredPaymentMethod))" />
+                    }
+                
+
+            </div>
+
+
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">@Localizer["payment_term"]</label>
+               
+                    
+                    @if (!IsPaymentTermVisible)
+                    {
+                        <button class="cls_select2" @onclick=@(()=>IsPaymentTermVisible=!IsPaymentTermVisible) disabled="@_OrganisationConfiguration.IsPaymentTermDisable">
+
+                        <label class="cls_select2_label1">    @_OrganisationConfiguration.PaymentTermLabel</label>
+                        <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+                        </button>
+                    }
+                    else
+                    {
+                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="PaymentTermList" _SelectionMode=Winit.Shared.Models.Enums.SelectionMode.Single ShowPopUp=true OnSelect="@((e)=>OnDropDownSelected(e,UIModels.Web.Store.DropDownConstant.PaymentTerm))" />
+                    }
+
+            </div>
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">@Localizer["credit_limit"]</label>
+                <div class="cls_select">
+                   
+                    <input type="number" @bind="@_OrganisationConfiguration.CreditLimit" disabled="@_OrganisationConfiguration.IsPaymentTermDisable" />
+                </div>
+            </div>
+
+        </div>
+        <div class="cls_container_div4">
+
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">@Localizer["no_of_outstanding_invoices"]</label>
+                <div class="cls_select">
+                   
+                    <input type="number" @bind="@_OrganisationConfiguration.OutstandingInvoices" disabled="@_OrganisationConfiguration.IsPaymentTermDisable" />
+
+                </div>
+            </div>
+
+
+            @if (_OrganisationConfiguration.IsBlocked)
+            {
+                <div class="cls_section_div_purchase2">
+                    <label class="cls_section_div_purchase2_label">@Localizer["blocked_reason"]</label>
+                    <div class="cls_select">
+                        
+                        <input type="text" @bind="@_OrganisationConfiguration.BlockedReason" />
+                    </div>
+                </div>
+            }
+
+
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">@Localizer["invoice-admin_fee_per_billing_cycle"]</label>
+                <div class="cls_select">
+                    
+                    <input type="number" @bind="@_OrganisationConfiguration.InvoiceAdminFeePerBillingCycle" />
+                </div>
+            </div>
+
+
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label"> @Localizer["invoice-admin_fee_per_delivery"]</label>
+                <div class="cls_select">
+                   
+                    <input type="number" @bind="@_OrganisationConfiguration.InvoiceAdminFeePerDelivery" />
+                </div>
+
+
+            </div>
+
+
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label"> @Localizer["invoice-late_payment_fee"] </label>
+                <div class="cls_select">
+                   
+                    <input type="text" @bind="@_OrganisationConfiguration.InvoiceLatePaymentFeePer" />
+                </div>
+            </div>
+
+        </div>
+        <div class="cls_container_div4">
+
+            <div class="cls_section_div_purchase4">
+                <div class="cls_main_sign_input_new1"></div>
+                
+                <div class="cls_main_check_radio margin_top">
+                   
+
+                    <input type="checkbox" checked="@_OrganisationConfiguration.IsCancellationOfInvoiceAllowed" @onclick="@(()=>_OrganisationConfiguration.IsCancellationOfInvoiceAllowed=!_OrganisationConfiguration.IsCancellationOfInvoiceAllowed)" />
+                    <label class="cls_section_div_purchase2_label"> @Localizer["is_cancellation_of_invoice_allowed"]</label>
+                </div>
+
+
+
+
+
+            </div>
+
+            <div class="cls_section_div_purchase4">
+                <div class="cls_main_sign_input_new1"></div>
+
+                <div class="cls_main_check_radio margin_top">
+                    
+
+                    <input class="cls_main_check_radio" name="ISAllowCashOnCreditExceed" type="checkbox" checked="@_OrganisationConfiguration.IsAllowCashOnCreditExceed" @onclick="@(()=>_OrganisationConfiguration.IsAllowCashOnCreditExceed=!_OrganisationConfiguration.IsAllowCashOnCreditExceed)" />
+                    <label for="ISAllowCashOnCreditExceed">@Localizer["is_allow_cash_on_credit_exceed"]</label>
+                </div>
+
+
+
+            </div>
+            <div class="cls_section_div_purchase4">
+                <div class="cls_main_sign_input_new1"></div>
+
+                <div class="cls_main_check_radio margin_top">
+                    
+                    <input type="checkbox" checked="@_OrganisationConfiguration.IsOutStandingBillControl" @onclick="@(()=>_OrganisationConfiguration.IsOutStandingBillControl=!_OrganisationConfiguration.IsOutStandingBillControl)" />
+                    <label class="cls_section_div_purchase2_label">@Localizer["is_out_standing_bill_control"]</label>
+                </div>
+            </div>
+            <div class="cls_section_div_purchase4">
+                <div class="cls_main_sign_input_new1"></div>
+
+                <div class="cls_main_check_radio margin_top">
+                    
+
+                    <input type="checkbox" checked="@_OrganisationConfiguration.IsNegativeInvoiceAllowed" @onclick="@(()=>_OrganisationConfiguration.IsNegativeInvoiceAllowed=!_OrganisationConfiguration.IsNegativeInvoiceAllowed)" />
+                    <label class="cls_section_div_purchase2_label"> @Localizer["is_negative_invoice_allowed"]  </label>
+                </div>
+            </div>
+
+        </div>
+    </div>
+}

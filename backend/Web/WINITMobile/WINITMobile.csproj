@@ -1,0 +1,312 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+	<PropertyGroup>
+		<TargetFrameworks>net8.0-android;net8.0-maccatalyst</TargetFrameworks>
+		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
+		<!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
+		<!-- <TargetFrameworks>$(TargetFrameworks);net8.0-tizen</TargetFrameworks> -->
+		<OutputType>Exe</OutputType>
+		<RootNamespace>WINITMobile</RootNamespace>
+		<UseMaui>true</UseMaui>
+		<SingleProject>true</SingleProject>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<EnableDefaultCssItems>false</EnableDefaultCssItems>
+		<Nullable>enable</Nullable>
+		<SkipValidateMauiImplicitPackageReferences>true</SkipValidateMauiImplicitPackageReferences>
+		<!-- Display name -->
+		<ApplicationTitle>WINITMobile</ApplicationTitle>
+		<!-- App Identifier -->
+		<ApplicationId>com.companyname.winitmobile</ApplicationId>
+		<ApplicationIdGuid>winitmobile</ApplicationIdGuid>
+		<!-- Versions -->
+		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+		<ApplicationVersion>1</ApplicationVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.2</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">14.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">26.0</SupportedOSPlatformVersion>
+		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.19041.0</SupportedOSPlatformVersion>
+		<Platforms>AnyCPU;x64</Platforms>
+		<GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+		<AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
+		<PackageCertificateThumbprint>794D2F8CFD8BD9C1F6EB9EB5890FD647A975D4C5</PackageCertificateThumbprint>
+		<AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+		<AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+		<AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+		<GenerateTestArtifacts>True</GenerateTestArtifacts>
+		<HoursBetweenUpdateChecks>24</HoursBetweenUpdateChecks>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-android|AnyCPU'">
+		<AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
+		<AndroidEnableMultiDex>True</AndroidEnableMultiDex>
+		<RunAOTCompilation>False</RunAOTCompilation>
+		<AndroidLinkTool>r8</AndroidLinkTool>
+		<AndroidPackageFormat>apk</AndroidPackageFormat>
+		<AndroidKeyStore>False</AndroidKeyStore>
+		<EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
+		<DebugSymbols>True</DebugSymbols>
+		<AndroidEnableProfiledAot>False</AndroidEnableProfiledAot>
+		<Optimize>False</Optimize>
+		<PublishTrimmed>False</PublishTrimmed>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-android|x64'">
+	  <AndroidPackageFormat>apk</AndroidPackageFormat>
+	  <AndroidCreatePackagePerAbi>True</AndroidCreatePackagePerAbi>
+	  <DebugSymbols>True</DebugSymbols>
+	  <AndroidKeyStore>False</AndroidKeyStore>
+	  <Optimize>False</Optimize>
+	  <PublishTrimmed>False</PublishTrimmed>
+	  <RunAOTCompilation>False</RunAOTCompilation>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-android|AnyCPU'">
+		<EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
+		<DebugSymbols>True</DebugSymbols>
+		<!-- Enable debug symbols -->
+		<DebugType>portable</DebugType>
+		<!-- Enable portable PDBs -->
+		<Optimize>False</Optimize>
+		<!-- Disable optimization for debugging -->
+		<AndroidLinkMode>None</AndroidLinkMode>
+		<!-- Optional: prevent code stripping -->
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-android|x64'">
+		<EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
+		<DebugSymbols>True</DebugSymbols>
+		<DebugType>portable</DebugType>
+		<Optimize>False</Optimize>
+		<AndroidLinkMode>None</AndroidLinkMode>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-maccatalyst|AnyCPU'">
+	  <Optimize>False</Optimize>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows10.0.19041.0|AnyCPU'">
+	  <Optimize>False</Optimize>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-maccatalyst|x64'">
+	  <Optimize>False</Optimize>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows10.0.19041.0|x64'">
+	  <Optimize>false</Optimize>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-maccatalyst|AnyCPU'">
+	  <Optimize>False</Optimize>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows10.0.19041.0|AnyCPU'">
+	  <Optimize>False</Optimize>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-maccatalyst|x64'">
+	  <Optimize>False</Optimize>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows10.0.19041.0|x64'">
+	  <Optimize>False</Optimize>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!-- App Icon -->
+		<MauiIcon Include="Resources\AppIcon\appicon.svg" Color="#FFFFFF" />
+		<!-- Splash Screen -->
+		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#FFFFFF" BaseSize="1080,1920" Resize="false" />
+		<!-- Images -->
+		<!-- Custom Fonts -->
+		<MauiFont Include="Resources\Fonts\*" />
+		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
+		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Remove="Pages\Counter.razor.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Remove="Pages\Demo\FilterDialogBox.razor" />
+		<Content Remove="Pages\DialogBoxes\AddProductDialogBox.razor" />
+		<Content Remove="Pages\NavigationServiceComponent.razor" />
+		<Content Remove="Pages\Odometer.razor" />
+		<Content Remove="Pages\Sales\Promotions.razor" />
+		<Content Remove="Pages\StartdayPreRequisties.razor" />
+		<Content Remove="Platforms\Android\google-services.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Remove="Resources\Splash\logo.svg" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<MauiSplashScreen Include="Resources\Splash\logo.svg" BaseSize="128,128">
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</MauiSplashScreen>
+	</ItemGroup>
+
+ <ItemGroup>
+    <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
+    <PackageReference Include="DinkToPdf.Standard" Version="1.1.0" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.1" />
+    <PackageReference Include="bootstrap" Version="5.3.3" />
+    <!--<PackageReference Include="ZXing.Net.Mobile" Version="2.4.1" />-->
+    <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.61" />
+    <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.61" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.6" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.6" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.6" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Modules\Address\Winit.Modules.Address.BL\Winit.Modules.Address.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Address\Winit.Modules.Address.Model\Winit.Modules.Address.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\Auth\Winit.Modules.Auth.BL\Winit.Modules.Auth.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\CaptureCompetitor\Winit.Modules.CaptureCompetitor.BL\Winit.Modules.CaptureCompetitor.BL\Winit.Modules.CaptureCompetitor.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\CaptureCompetitor\Winit.Modules.CaptureCompetitor.DL\Winit.Modules.CaptureCompetitor.DL\Winit.Modules.CaptureCompetitor.DL.csproj" />
+    <ProjectReference Include="..\..\Modules\CaptureCompetitor\Winit.Modules.CaptureCompetitor.Model\Winit.Modules.CaptureCompetitor.Model\Winit.Modules.CaptureCompetitor.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\CollectionModule\Winit.Modules.CollectionModule.BL\Winit.Modules.CollectionModule.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\CollectionModule\Winit.Modules.CollectionModule.DL\Winit.Modules.CollectionModule.DL.csproj" />
+    <ProjectReference Include="..\..\Modules\CollectionModule\Winit.Modules.CollectionModule.Model\Winit.Modules.CollectionModule.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\Common\Winit.Modules.Common.BL\Winit.Modules.Common.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Common\Winit.Modules.Common.Model\Winit.Modules.Common.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\Contact\Winit.Modules.Contact.BL\Winit.Modules.Contact.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Contact\Winit.Modules.Contact.Model\Winit.Modules.Contact.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\CreditLimit\Winit.Modules.CreditLimit.BL\Winit.Modules.CreditLimit.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\CreditLimit\Winit.Modules.CreditLimit.Model\Winit.Modules.CreditLimit.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\DashBoard\Winit.Modules.DashBoard.BL\Winit.Modules.DashBoard.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Distributor\Winit.Modules.Distributor.BL\Winit.Modules.Distributor.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Distributor\Winit.Modules.Distributor.Model\Winit.Modules.Distributor.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\Emp\Winit.Modules.Emp.BL\Winit.Modules.Emp.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Emp\Winit.Modules.Emp.DL\Winit.Modules.Emp.DL.csproj" />
+    <ProjectReference Include="..\..\Modules\ExpiryCheck\Winit.Modules.ExpiryCheck.BL\Winit.Modules.ExpiryCheck.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Invoice\Winit.Modules.Invoice.BL\Winit.Modules.Invoice.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\JobPosition\Winit.Modules.JobPosition.BL\Winit.Modules.JobPosition.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\JobPosition\Winit.Modules.JobPosition.DL\Winit.Modules.JobPosition.DL.csproj" />
+    <ProjectReference Include="..\..\Modules\JobPosition\Winit.Modules.JobPosition.Model\Winit.Modules.JobPosition.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\JourneyPlan\Winit.Modules.JourneyPlan.BL\Winit.Modules.JourneyPlan.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\JourneyPlan\Winit.Modules.JourneyPlan.DL\Winit.Modules.JourneyPlan.DL.csproj" />
+    <ProjectReference Include="..\..\Modules\JourneyPlan\Winit.Modules.JourneyPlan.Model\Winit.Modules.JourneyPlan.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\ListHeader\Winit.Modules.ListHeader.BL\Winit.Modules.ListHeader.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\ListHeader\Winit.Modules.ListHeader.DL\Winit.Modules.ListHeader.DL.csproj" />
+    <ProjectReference Include="..\..\Modules\ListHeader\Winit.Modules.ListHeader.Model\Winit.Modules.ListHeader.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\Location\Winit.Modules.Location.BL\Winit.Modules.Location.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Location\Winit.Modules.Location.Model\Winit.Modules.Location.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\Mapping\Winit.Modules.Mapping.BL\Winit.Modules.Mapping.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Merchandiser\Winit.Modules.Merchandiser.BL\Winit.Modules.Merchandiser.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Org\Winit.Modules.Org.BL\Winit.Modules.Org.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Planogram\Winit.Modules.Planogram.Model\Winit.Modules.Planogram.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\Planogram\Winit.Modules.Planogram.BL\Winit.Modules.Planogram.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\PO\Winit.Modules.PO.BL\Winit.Modules.PO.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\PO\Winit.Modules.PO.Model\Winit.Modules.PO.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\Printing\Winit.Modules.Printing.BL\Winit.Modules.Printing.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Printing\Winit.Modules.Printing.Model\Winit.Modules.Printing.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\ProductFeedback\Winit.Modules.ProductFeedback.BL\Winit.Modules.ProductFeedback.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Promotion\Winit.Modules.Promotion.BL\Winit.Modules.Promotion.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\PurchaseOrder\Winit.Modules.PurchaseOrder.BL\Winit.Modules.PurchaseOrder.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\RabbitMQQueue\Winit.Modules.RabbitMQQueue.Model\Winit.Modules.RabbitMQQueue.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\ReturnOrder\Winit.Modules.ReturnOrder.BL\Winit.Modules.ReturnOrder.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\ReturnOrder\Winit.Modules.ReturnOrder.Model\Winit.Modules.ReturnOrder.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\Role\Winit.Modules.Role.BL\Winit.Modules.Role.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Route\Winit.Modules.Route.BL\Winit.Modules.Route.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\SalesOrder\Winit.Modules.SalesOrder.BL\Winit.Modules.SalesOrder.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\SalesOrder\Winit.Modules.SalesOrder.Model\Winit.Modules.SalesOrder.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\ServiceAndCallRegistration\ServiceAndCallRegistration.Model\Winit.Modules.ServiceAndCallRegistration.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\ServiceAndCallRegistration\Winit.Modules.ServiceAndCallRegistration.BL\Winit.Modules.ServiceAndCallRegistration.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\ShareOfShelf\Winit.Modules.ShareOfShelf.BL\Winit.Modules.ShareOfShelf.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\SKUClass\Winit.Modules.SKUClass.BL\Winit.Modules.SKUClass.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\SKU\Winit.Modules.SKU.BL\Winit.Modules.SKU.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\SKU\Winit.Modules.SKU.DL\Winit.Modules.SKU.DL.csproj" />
+    <ProjectReference Include="..\..\Modules\StockAudit\Winit.Modules.StockAudit.BL\Winit.Modules.StockAudit.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\StockAudit\Winit.Modules.StockAudit.Model\Winit.Modules.StockAudit.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\StoreActivity\Winit.Modules.StoreActivity.BL\Winit.Modules.StoreActivity.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\StoreCheck\Winit.Modules.StoreCheck.BL\Winit.Modules.StoreCheck.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\StoreCheck\Winit.Modules.StoreCheck.Model\Winit.Modules.StoreCheck.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\Store\Winit.Modules.Store.BL\Winit.Modules.Store.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Store\Winit.Modules.Store.DL\Winit.Modules.Store.DL.csproj" />
+    <ProjectReference Include="..\..\Modules\Store\Winit.Modules.Store.Model\Winit.Modules.Store.Model.csproj" />
+    <ProjectReference Include="..\..\Modules\Syncing\Winit.Modules.Syncing.BL\Winit.Modules.Syncing.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\Tax\Winit.Modules.Tax.BL\Winit.Modules.Tax.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\User\Winit.Modules.User.BL\Winit.Modules.User.BL.csproj" />
+    <ProjectReference Include="..\..\Modules\WHStock\Winit.Modules.WHStock.BL\Winit.Modules.WHStock.BL.csproj" />
+    <ProjectReference Include="..\..\SharedObjects\Winit.Shared.CommonUtilities\Winit.Shared.CommonUtilities.csproj" />
+    <ProjectReference Include="..\..\SharedObjects\Winit.Shared.Models\Winit.Shared.Models.csproj" />
+    <ProjectReference Include="..\..\UIComponents\Winit.UIComponents.Common\Winit.UIComponents.Common.csproj" />
+    <ProjectReference Include="..\..\UIComponents\Winit.UIComponents.Mobile\Winit.UIComponents.Mobile.csproj" />
+    <ProjectReference Include="..\..\UIModels\Winit.UIModels.Common\Winit.UIModels.Common.csproj" />
+    <ProjectReference Include="..\..\UIModels\Winit.UIModels.Mobile\Winit.UIModels.Mobile.csproj" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<Content Update="wwwroot\appsettings.Production.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="Pages\Sample\" />
+		<Folder Include="wwwroot\Data\DB\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<GoogleServicesJson Include="Platforms\Android\google-services.json" />
+	</ItemGroup>
+
+	<!-- Android-specific packages - SINGLE VERSION ONLY -->
+	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-android'">
+		<PackageReference Include="Xamarin.Firebase.Messaging" Version="123.3.1.1" />
+		<PackageReference Include="Xamarin.Kotlin.StdLib" Version="1.9.23.3" />
+		<PackageReference Include="Xamarin.AndroidX.Activity" Version="1.9.0.3" />
+		<PackageReference Include="Xamarin.AndroidX.Activity.Ktx" Version="1.9.0.3" />
+		<PackageReference Include="Xamarin.AndroidX.Collection" Version="1.4.0.5" />
+		<PackageReference Include="Xamarin.AndroidX.Collection.Jvm" Version="1.4.0.4" />
+		<PackageReference Include="Xamarin.AndroidX.Collection.Ktx" Version="1.4.0.4" />
+	
+	</ItemGroup>
+
+	<ItemGroup>
+		<MauiImage Include="Platforms\Android\Resources\drawable\ic_notification.jpg" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="Pages\Demo\FilterDialogBox.razor" />
+		<None Include="Pages\NavigationServiceComponent.razor" />
+		<None Include="Pages\Odometer.razor" />
+		<None Include="Pages\Sales\Promotions.razor" />
+		<None Include="Pages\StartdayPreRequisties.razor" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<UpToDateCheckInput Remove="Pages\StartdayPreRequisties.razor" />
+		<UpToDateCheckInput Remove="Pages\Odometer.razor" />
+		<UpToDateCheckInput Remove="Pages\Sales\Promotions.razor" />
+		<UpToDateCheckInput Remove="Pages\Demo\FilterDialogBox.razor" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<_ContentIncludedByDefault Remove="Pages\Demo\FilterDialogBox.razor" />
+		<_ContentIncludedByDefault Remove="Pages\Odometer.razor" />
+		<_ContentIncludedByDefault Remove="Pages\Sales\Promotions.razor" />
+		<_ContentIncludedByDefault Remove="Pages\StartdayPreRequisties.razor" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<RazorComponent Include="Pages\DialogBoxes\AddProductDialogBox.razor">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</RazorComponent>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Pages\DialogBoxes\AddProductDialogBox.razor.cs">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Compile>
+	</ItemGroup>
+
+</Project>

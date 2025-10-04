@@ -1,0 +1,67 @@
+﻿@* @using ZXing.Mobile; *@
+
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+<div class="w-100" @onclick="ScanBarcode">
+    <img style="width:25px;" src="/Images/Barcode.png" />
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback<string> OnBarcodeScanned { get; set; }
+
+    private async Task CheckAndRequestPermissionsAsync()
+    {
+        try
+        {
+            // Check camera permission
+            var status = await Permissions.CheckStatusAsync<Permissions.Camera>();
+
+            if (status != PermissionStatus.Granted)
+            {
+                // Request camera permission
+                status = await Permissions.RequestAsync<Permissions.Camera>();
+            }
+        }
+        catch (Exception ex)
+        {
+            await Microsoft.Maui.Controls.Application.Current.MainPage.DisplayAlert(@Localizer["error"], $"{ex.Message}", @Localizer["ok"]);
+            
+        }
+    }
+
+    private async Task ScanBarcode()
+    {
+        try
+        {
+            await CheckAndRequestPermissionsAsync();
+
+            // Check permission status again after the request
+            var status = await Permissions.CheckStatusAsync<Permissions.Camera>();
+
+            if (status == PermissionStatus.Granted)
+            {
+                // var scanner = new MobileBarcodeScanner();
+                // var result = await scanner.Scan();
+
+                // if (result != null)
+                // {
+                //     await OnBarcodeScanned.InvokeAsync(result.Text);
+                // }
+                // else
+                // {
+                //     await Microsoft.Maui.Controls.Application.Current.MainPage.DisplayAlert("Error", "Failed to decode barcode/QR code.", "OK");
+                // }
+            }
+            else
+            {
+                await Microsoft.Maui.Controls.Application.Current.MainPage.DisplayAlert(@Localizer["permission_denied"], @Localizer["camera_permission_is_required_to_use_this_feature."], @Localizer["ok"] );
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle the error gracefully
+            await Microsoft.Maui.Controls.Application.Current.MainPage.DisplayAlert(@Localizer["error"], @Localizer["an_unexpected_error_occurred."], @Localizer["ok"]);
+        }
+    }
+}
+

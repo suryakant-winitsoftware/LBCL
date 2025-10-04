@@ -1,0 +1,112 @@
+﻿@using Microsoft.Extensions.Localization
+@using Winit.UIComponents.Common.LanguageResources.Mobile
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+@inject IStringLocalizer<LanguageKeys> Localizer
+<div class="container m-0 p-0">
+    <div class="cls_return_order_list">
+        @if (DisplayReturnOrderItemViews != null)
+        {
+            <Virtualize Items="DisplayReturnOrderItemViews" Context="item" OverscanCount="10">
+                <div class="cls_item1">
+
+                    <div class="cls_item_desc1">
+
+                        <div class="cls_item_desc_image1">
+                            <img src="@item.SKUImage" height="38px" width="38px">
+
+                        </div>
+
+                        <div class="cls_item_desc_text1">
+                            <p>@item.SKUName</p>
+                            <span>@item.SKUCode</span>
+                        </div>
+
+                        <div class="cls_item_desc_icon1">
+                            <button type="button" @onclick="() => OnProductDelete(item)">
+                                <img style="width:22px;" src="/Images/delete1.png" b-kixad4cnrw="">
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <div class="cls_item_select1">
+
+                        <div class="cls_item_select_uom1">
+                            <label>@Localizer["uom"]</label>
+                            <span @onclick="() => OnUOMButtonClick(item)" disabled="@IsWithInvoice" class="@(IsWithInvoice? "form-select":"")">
+                                @item.SelectedUOM.Label
+                            </span>
+                        </div>
+
+                        <div class="cls_item_select_uom1 @(IsWithInvoice? "":"dn")">
+                            <label>Available Qty</label>
+                            <input min="0" type="number" id="Quantity" @bind="item.AvailableQty" disabled />
+                        </div>
+
+                        <div class="cls_item_select_uom1">
+                            <label>@(IsWithInvoice ? "Return" : "") Qty</label>
+                            <input min="0" type="number" id="Quantity" @bind="item.OrderQty" max="@(IsWithInvoice ? item.AvailableQty : decimal.MaxValue)" @oninput="(e) => OnSearchInput(item,e)" />
+                        </div>
+
+                    </div>
+
+                    <div class="cls_item_select1">
+
+                        <div class="cls_item_select_uom1">
+                            <label>@Localizer["type"]</label>
+                            <select id="ReasonType" @onchange="(e) => ReasonTypeChanged(item,e)" class="form-select">
+                                <option value="@(Winit.Shared.Models.Enums.StockType.NonSalable)">
+                                    @Winit.Shared.Models.Enums.StockType.NonSalable
+                                </option>
+                                <option value="@(Winit.Shared.Models.Enums.StockType.Salable)">
+                                    @Winit.Shared.Models.Enums.StockType.Salable
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="cls_item_select_uom1">
+                            <label>@Localizer["reason"]</label>
+                            <label>
+                                <label @onclick="() => OnReasonDDLClick(item)" class="form-select">
+                                    @(string.IsNullOrEmpty(item.ReasonText) ? @Localizer["select_reason"] : item.ReasonText)
+                                </label>
+                            </label>
+                        </div>
+
+                        <div class="cls_item_select_uom1">
+                            <label>@Localizer["po_number"]</label>
+                            <input type="text" placeholder="Enter Here" @bind="item.PONumber">
+                        </div>
+                    </div>
+                    <div class="cls_item_select1">
+                        <div class="cls_item_select_uom1" style="width:97.5%;">
+                            <label>Notes</label>
+                            <input type="text" placeholder="Enter Here">
+                        </div>
+                    </div>
+
+                    <div class="cls_item_image1">
+                        <p>@Localizer["upload_image"]</p>
+                        <FileCapture OnImageDeleteClick="OnImageDeleteClick" OnImageCapture="OnImageCapture"
+                                     FolderPath="@(Path.Combine(ImgFolderPath,item.SKUCode))" FileName="@item.SKUCode"
+                                     CaptureData="fileCaptureData" />
+                    </div>
+                </div>
+            </Virtualize>
+        }
+        else
+        {
+            <label>@Localizer["no_items_added"] </label>
+        }
+    </div>
+</div>
+
+@if (IsOpenUOM)
+{
+    <Winit.UIComponents.Common.CustomControls.DropDown Title="UOM" IsSearchable="false" DataSource="UOMSelectionItems"
+                                                       UniqueUID="@SelectedProduct.UID" OnSelect="OnUOMChange"
+                                                       IsButtonVisible="false"
+                                                       ShowPopUp="IsOpenUOM" />
+}
+
+

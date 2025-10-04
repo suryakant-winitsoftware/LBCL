@@ -1,0 +1,46 @@
+﻿@page "/StoreGroupTypeHierarchy"
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.Store.BL.Interfaces.IStoreGroupTypeViewModel _StoreGroupTypeViewModel
+
+<PageTitle>StoreGroupType Hierarchy</PageTitle>
+<button class="cls_add_new_sec" style="float:right;margin-right:0px" @onclick="() => FilterRef?.ToggleFilter()">@Localizer["filter"]</button>
+<Filter @ref="@FilterRef" ColumnsForFilter="@FilterColumns" IsSearchCriteriaNeeded="true"
+        OnFilterApplied="@OnFilterApply" />
+
+
+<button class="cls_add_new_sec" @onclick="() => {Context = new Winit.Modules.Store.Model.Classes.StoreGroupTypeItemView(); Context.LevelNo=1; IsAddStoreGroupType = !IsAddStoreGroupType; } ">@Localizer["add_new"]</button>
+<div class="div1 cls_Hierarchy_1">
+    <table style="table-layout:fixed;">
+        <thead>
+            <tr>
+        <th style="width:5%;">
+        </th>
+        <th style="width:45%;">
+            <span style="cursor:default;">@Localizer["code_&_name"]</span>
+        </th>
+        <th style="width:10%;">
+            <span style="cursor:default;">@Localizer["level"]</span>
+        </th>
+        <th style="width:15%;">
+            <span style="cursor:default;">@Localizer["parent"]</span>
+        </th>
+        <th style="width:25%;">
+            <span style="cursor:default;">@Localizer["action"]</span>
+        </th>
+        </tr>
+        </thead>
+        <tbody>
+
+        
+    <StoreGroupTypeHierarchy HierarchyGrids="@_StoreGroupTypeViewModel.StoreGroupTypeItemViews" OnBtnExpandClick="GetChildGrid"
+                   OnCreateClick="CreateStoreGroupType" OnDeleteStoreGroupType="DeleteStoreGroupType"
+                  OnCreateClone="getClonedIStoreGroupTypeItemView" OnUpdateClick="UpdateStoreGroupType" ></StoreGroupTypeHierarchy>
+        </tbody>
+    </table>
+</div>
+@if (IsAddStoreGroupType)
+{
+    <AddUpdateStoreGroupTypePopUp CancelbtnText=@Localizer["cancel"] OkBtnText=@Localizer["create"] Context="Context" IsAddPopUp="true"
+                            OnCloseClick="AddStoreGroupTypePOPupClosed" OnOkClick="CreateClickedFromHome"
+                                  title=@Localizer["add_store_group_type_hierarchy"] />
+}

@@ -1,0 +1,23 @@
+﻿@page "/routemanagement"
+@using Newtonsoft.Json.Linq
+@using Newtonsoft.Json
+@using System.Collections.Generic
+@using Winit.Modules.Route.Model.Classes
+@using Winit.UIComponents.Web.Table
+@namespace WinIt.Pages.RouteManagementMaster
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+@inject Winit.Modules.Route.BL.Interfaces.IRouteManagement _RouteManagement
+<!-- Add Route button to navigate to the AddRoute page -->
+<button class="cls_add_new_sec" style="float:right;margin-right:0px" @onclick="() => FilterRef?.ToggleFilter()">@Localizer["filter"]</button>
+<Winit.UIComponents.Web.Filter.Filter @ref="FilterRef" ColumnsForFilter="@FilterColumns" IsSearchCriteriaNeeded="true"
+                                      OnFilterApplied="@OnFilterApply" />
+<button class="cls_add_new_sec" @onclick="NavigateToAddRoute">@Localizer["add_route"]</button>
+
+@if (IsInitialized)
+{
+    <PageTitle>@Localizer["route_management"]</PageTitle>
+    <TableGridView DataSource="_RouteManagement.RouteChangeLogs" Columns="productColumns" OnSort="OnSortApply" />
+    <Winit.UIComponents.Web.Paging.Paging CurrentPage="_RouteManagement.PageNumber" OnPageChange="_RouteManagement.PageIndexChanged" PageSize="_RouteManagement.PageSize" TotalItems="_RouteManagement.TotalRouteChangeLogItemsCount" />
+}
+

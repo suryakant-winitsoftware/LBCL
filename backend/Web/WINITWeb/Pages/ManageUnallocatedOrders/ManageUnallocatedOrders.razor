@@ -1,0 +1,85 @@
+﻿@page "/ManageUnallocatedOrders"
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize]
+@using Winit.Shared.Models.Common
+@using Winit.UIComponents.Common.CustomControles
+<PageTitle>Manage UnallocatedOrders</PageTitle>
+@inject Winit.Modules.SalesOrder.BL.Interfaces.IManageSalesOrdersViewModel _manageSalesOrdersViewModel;
+@using Winit.UIComponents.Web.Filter
+@using Winit.UIModels.Common.Filter
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+
+<div>
+   @*  <button class="cls_add_new_sec" style="float:right;margin-right:0px" @onclick="ShowFilter"> @Localizer["filter"]</button>
+        <Filter @ref="filterRef" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+            OnFilterApplied=@OnFilterApply/> *@
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+                         OnFilterApplied="@OnFilterApply" />
+</div>
+<div class="cls_export_main">
+    <button class="cls_add_new_sec dn">@Localizer["export_to_excel"]</button>
+    <button class="cls_add_new_sec dn">@Localizer["export_to_csv"]</button>
+    <button class="cls_add_new_sec dn">@Localizer["export_to_pdf"]</button>
+</div>
+
+@* <Winit.UIComponents.Web.ExportToExcel.ExportToExcel ColumnHeaders="@DataGridColumnsDeliveredlStock" DataSource="@_manageSalesOrdersViewModel.ManageSalesOrderList" FileName="ManageUnallocatedOrders.xlsx" />
+ *@
+<Tabs TabItems="TabSelectionItems" OnTabSelect="OnTabSelect"></Tabs>
+<button class="cls_add_new_sec dn">@Localizer["select_all"]</button>
+<button class="cls_add_new_sec dn">@Localizer["clear_all"] </button>
+ @if (TabSelectionItems[1].IsSelected|| TabSelectionItems[2].IsSelected)
+{
+    <div>
+        <input type="radio" id="route" name="option" value="Route" @onchange="HandleRadioChange" checked="@IsRouteSelected">
+        <label for="route">@Localizer["route"]</label>
+
+        <input type="radio" id="deliverydate" name="option" value="DeliveryDate" @onchange="HandleRadioChange" checked="@IsDeliveryDateSelected">
+        <label for="deliverydate">@Localizer["delivery_date"]</label>
+
+        <input type="radio" id="both" name="option" value="Both" @onchange="HandleRadioChange" checked="@IsBothSelected">
+        <label for="both">@Localizer["route_&_delivery_date"]</label>
+    </div>
+    @if (IsRouteSelected || IsBothSelected)
+    {
+        <div class="row">
+            <div class="col-md-4">
+                <label class="cls_mar_top_10px"><strong>@Localizer["route"]</strong></label>
+                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_manageSalesOrdersViewModel.RouteSelectionItems"
+                                                                   Title=@Localizer["route"]
+                                                                   IsButtonVisible="true"
+                                                                   OnSelect="HandleRouteSelection"
+                                                                   IsSearchable="false" />
+            </div>
+        </div>
+    }
+    @if (IsDeliveryDateSelected || IsBothSelected)
+    {
+        <div class="row align-items-center">
+            <div class="col-md-4 cls_padd_left">
+                <label class="cls_mar_top_10px"> <strong>@Localizer["delivery_date"]</strong></label>
+                <input class="form-control" type="date" @bind="SelectedDeliveryDate">
+            </div>
+        </div>
+    }
+    @if (IsRouteSelected || IsDeliveryDateSelected || IsBothSelected)
+    {
+        <div class="row">
+            <div class="col-md-8 mt-3">
+                <button class="cls_add_new_sec"><strong>@Localizer["assign"]</strong></button>
+            </div>
+        </div>
+    }
+} 
+@if (TabSelectionItems[0].IsSelected || TabSelectionItems[1].IsSelected)
+{
+    <div class="cls_export_main">
+        <button class="cls_add_new_sec">@Localizer["delete_selected"]</button>
+    </div>
+}
+
+@if (IsLoaded)
+{
+    <Winit.UIComponents.Web.Table.TableGridView IsFirstColumnCheckbox="@isFirstColumnCheckbox"
+                                                AfterCheckBoxSelection="Product_AfterCheckBoxSelection" Columns="DataGridColumnsDeliveredlStock" DataSource="_manageSalesOrdersViewModel.ManageSalesOrderList" OnSort="OnSortApply" />
+}

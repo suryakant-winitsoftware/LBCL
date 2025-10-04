@@ -1,0 +1,168 @@
+﻿@page "/createsalesorder"
+@inherits SalesOrderBase
+@inject SideBarService _sidebarService
+@inject Winit.Modules.SalesOrder.BL.Interfaces.ISalesOrderBL _SalesOrderBL
+@using Winit.Modules.SalesOrder.BL.UIInterfaces
+@using Winit.Shared.CommonUtilities.Common
+@using Winit.UIComponents.Common.CustomControls
+@using Microsoft.Maui.Controls;
+@using Microsoft.Extensions.Logging;
+@inject ILogger<CreateSalesOrder> _logger
+@inject IJSRuntime jsRuntime
+
+
+@if (IsPageLoaded)
+{
+    @* Search, Scanner, List/Grid View Section *@
+    <h2 class="cls_main_heading">Daily Sales Report</h2>
+    <div class="flex-row cls_serch_nn_cr">
+        <div class="cls_serch_nn_left">
+            <div class="cls_search_desk">
+                <WinitTextBox Placeholder=@Localizer["search_here..."]
+                              MaxLength="200" DebounceInterval="500" OnDebounceIntervalElapsed="WinitTextBox_OnSearch"
+                              KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+                              IsForSearch="true"
+                              @ref="wtbSearch" />
+            </div>
+        </div>
+        <div class="cls_serch_nn_right">
+            <div @onclick="() => {IsGridView=!IsGridView;}">
+                @if (IsGridView)
+                {
+                    <img style="width:71px;" src="/Images/grid.png" />
+                }
+                else
+                {
+                    <img style="width:71px;" src="/Images/list.png" />
+                }
+            </div>
+        </div>
+        <div class="cls_serch_nn_cen" style="display:none;">
+            <Scanner OnBarcodeScanned="AfterBarcodeScanned" />
+        </div>
+    </div>
+    @* Filter Section *@
+    <div class="cls_main_con_1">
+        <EnterPasscodePopup IsVisible=@showEnterPasscode OnApply="@CheckPasscode" OnClose="@HandleEnterPasscodePopupClosed"></EnterPasscodePopup>
+        <div class="cls_new_filter dn">
+            <div class="cls_fil_left" style="overflow-x: auto;">
+                <div class="d-flex justify-content-between py-0" style="white-space: nowrap;">
+                    <div class="d-flex">
+                        <Winit.UIComponents.Mobile.Common.MobileTabs TabItems="TopScrollSelectionItems.
+                                                                 ToList<Winit.Shared.Models.Common.ISelectionItem>()" OnTabSelect="OnTopScrollItmSelect" />
+                    </div>
+                    <div class="d-flex" style="display:none;">
+                        <div class="form-group mb-3">
+                            <div class="image-capture-area">
+                                <FileCapture OnImageDeleteClick="OnImageDeleteClick"
+                                             OnImageCapture="OnImageCapture"
+                                             FolderPath=@ImgFolderPath
+                                             FileName="ProductFeedback"
+                                             CaptureData="fileCaptureData">
+                                </FileCapture>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <Winit.UIComponents.Mobile.DialogBox.FilterDialog TabDataDictionary="_salesOrderViewModel.FilterDataList" OnFilterChange="ApplyFilterAndSort" @ref="FilterDialog" />
+    </div>
+    <SalesOrderListView @ref="@salesOrderListViewRef" SalesOrderItemViewList="_salesOrderViewModel.DisplayedSalesOrderItemViews"
+                        OnCloneBtnClick="GetCloneUOMSelectionItems"
+                        IsGridView="IsGridView" OnDeleteClonedProduct="DeleteClonedProduct"
+                        OnUOMDDClick="GetSelectionItemsForUOM" OnQtyChange="AddButtonOnQtyChange" OnPreValidateQtyChange="PreValidateQtyChange"
+                        DropDownSelection_OnSingleSelect="DropDownSelection_OnSingleSelect"
+                        DropDownClone_OnSingleSelect="DropDownClone_OnSingleSelect"
+                        OnPromotionClick="HandlePromotionClick"
+                        LeftScrollItems="LeftScrollSelectionItems.ToList<Winit.Shared.Models.Common.ISelectionItem>()"
+                        OnLeftScrollItmSelect="OnLeftScrollItmSelect"
+                        OnUnitPriceChange="HandleUnitPriceChange" SelectedPromotion="SelectedPromotion"
+                        OnPromotionRemoveClick="HandleSpecialPromotionRemove" OnGetPromotionsForItem="OnGetPromotionsForItem" />
+
+    <PlaceOrderPopUp IsOpen="@IsOrderPlacedPopupVisible" Message="Sales Captured Successfully"
+                     OrderNumber="@_salesOrderViewModel.SalesOrderNumber"
+                     CustomerName="@_salesOrderViewModel.SelectedStoreViewModel.Name"
+                     CustomerAddress="@_salesOrderViewModel.SelectedStoreViewModel.Address"
+                     OnClose="OrderPlacedPopup_CloseClicked"
+                     OnCollectPaymentClicked="OrderPlacedPopup_PaymentClicked" OnEmailClicked="OrderPlacedPopup_EmailClicked"
+                     OnShareClicked="OrderPlacedPopup_ShareClicked" OnPrintClicked="OrderPlacedPopup_PrintClicked" />
+    <div style="width:100%;float:left">
+        <FooterSection FinalOrderValue="@_salesOrderViewModel.NetAmount"
+                       LineCount="@_salesOrderViewModel.LineCount"
+                       QtyCount="@_salesOrderViewModel.QtyCount"
+                       AvailableCreditLimit="@_salesOrderViewModel.AvailableCreditLimit"
+                       TotalExciseDuty="@_salesOrderViewModel.TotalExciseDuty"
+                       TotalTax="@_salesOrderViewModel.TotalTax"
+                       OrderValue="@(_salesOrderViewModel.TotalAmount + _salesOrderViewModel.TotalExciseDuty)"
+                       DiscountValue="@(_salesOrderViewModel.TotalDiscount - _salesOrderViewModel.TotalCashDiscount)"
+                       TotalCashDiscount="@_salesOrderViewModel.TotalCashDiscount"
+                       CurrencyLabel="@_salesOrderViewModel.CurrencyLabel"
+                       PreviewBtnText=@Localizer["preview"]
+                       PlaceOrderBtnText=@Localizer["place_order"]
+                       OnPreviewButtonClicked="PreviewButtonClick"
+                       OnPlaceOrderButtonClicked="HandleDontMissOutPromo"
+                       SelectedDistributor="@_salesOrderViewModel?.SelectedDistributor?.Label"
+                       OnDistributorClicked="Distributor_Click" />
+    </div>
+    <!-- Add a modal to display promotions -->
+    @if (ShowPromotionPopUp)
+    {
+        <div class="modal fade show" tabindex="-1" style="display: block;">
+            <div style="margin-top:4%">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">@Localizer["promotion_details"]</h5>
+                        <button type="button" class="close" @onclick="() => ShowPromotionPopUp = false">
+                            <span style="color:black; padding:10px;width:100%">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="cls_promo_list_popup_main">
+                            @foreach (var item in PromotionDetails)
+                            {
+                                <div class="cls_promo_list_popup">
+                                    <div class="cls_promo_list_popup_left">
+                                        <img style="width:16px;" src="/Images/promo.png" />
+                                    </div>
+                                    <div class="cls_promo_list_popup_right">
+                                        <p>@item.Label</p>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    @if (ShowAllPromotions)
+    {
+        <Promotions PromotionsHeaderDict="@_salesOrderViewModel.DMSPromotionDictionary"
+                    PromotionItems="@_salesOrderViewModel.PromotionItemMapDictionary"
+                    OnPromotionsOrderClick="OnPromotionsOrderClick"
+                    OnPromotionsCloseClick="() => ShowAllPromotions = false" />
+    }
+    @if (ShowDontMissOutPromo)
+    {
+        <DonotMissOut OnCloseClick="() =>ShowDontMissOutPromo = false" OnSkipClick="PlaceOrder_Click"
+                      Headers=" MissedPromotionsHeaderSelectionItems"
+                      HeaderDetails=" MissedPromotionsHeaderDetailsSelectionItems" />
+    }
+    @if (IsSignatureView)
+    {
+        <MultiSignature Signature2Footer="@_appUser.Emp?.Name"
+                        Signature1Footer="@_salesOrderViewModel?.SelectedStoreViewModel?.Name"
+                        Signature1Heading=@Localizer["customer_signature"] Signature2Heading=@Localizer["salesman_signature"]
+                        OnProceedClick="HandleSignature_ProceedClick"
+                        OnCloseClick="() => IsSignatureView=false"
+                        Signature1FolderPath="@_salesOrderViewModel.CustomerSignatureFolderPath"
+                        Signature2FolderPath="@_salesOrderViewModel.UserSignatureFolderPath"
+                        Signature1FileName="@_salesOrderViewModel.CustomerSignatureFileName"
+                        Signature2FileName="@_salesOrderViewModel.UserSignatureFileName"
+                        IsLPONumberNeeded="true" LPONumber="@_salesOrderViewModel.CustomerPO"
+                        HandleLPONumber="(e) =>_salesOrderViewModel.CustomerPO = e" />
+    }
+}

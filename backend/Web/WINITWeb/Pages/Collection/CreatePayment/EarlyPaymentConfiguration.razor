@@ -1,0 +1,10 @@
+﻿@page "/configuration"
+@inject Winit.Modules.CollectionModule.BL.Interfaces.IEarlyPaymentConfigurationViewModel _earlyPaymentConfigurationViewModel
+@inject Winit.Modules.CollectionModule.BL.Interfaces.IViewPaymentsViewModel _viewPaymentsViewModel
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+@if (IsInitialised)
+{
+    <button type="submit" class="cls_add_new_sec" @onclick="NavigateToAddNew">@Localizer["add_new"]</button>
+    <Winit.UIComponents.Web.Table.TableGridView Columns="Columns" DataSource="earlyPaymentDiscountConfigurations" />
+}

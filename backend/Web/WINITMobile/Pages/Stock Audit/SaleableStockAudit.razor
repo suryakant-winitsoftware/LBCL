@@ -1,0 +1,177 @@
+﻿@inject Winit.Modules.StockAudit.BL.Interfaces.IAddEditStockAudit AddEditStockAudit
+@using Winit.Modules.StockAudit.Model.Interfaces
+@using Winit.Shared.Models.Events
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+<div class="div1">
+    <table class="table">
+        <thead>
+            <tr>
+            <th class="tblHeader" contenteditable="false">@Localizer["item_code/name"]</th>
+            <th class="tblHeader" contenteditable="false">@Localizer["uom"]</th>
+            <th class="tblHeader" contenteditable="false">@Localizer["qty"]</th>
+            </tr>
+        </thead>
+        <tbody>
+        @if (AddEditStockAudit.DisplaySaleableStockAudit != null)
+            {
+            foreach (var items in AddEditStockAudit.DisplaySaleableStockAudit)
+                {
+                    <tr>
+                        <td>
+                            [<span style="color: #003898; margin-right: 5px;">@items.SKUCode</span>] @items.SKUName
+                        </td>
+                        <td>
+                            <div class="cls_card_footer_bottom_left">
+                                <div class="cls_card_footer_bottom_left_1">
+                                    @if (!IsPreviewClicked)
+                                    {
+                                        <button @onclick="()=> OnUOMButtonClick(items)">@((items.SelectedUOM == null) ? "UOM" : items.SelectedUOM.Label)</button>
+                                    }
+                                    else
+                                    {
+                                        <span>@((items.SelectedUOM == null) ? "UOM" : items.SelectedUOM.Label)</span>
+                                    }
+                                </div>
+                                <div class="cls_card_footer_bottom_left_2">
+                                    @if (!IsPreviewClicked)
+                                    {
+                                        <button @onclick="() => OnCloneUOMButtonClick(items)">
+                                            <img src='@(items.ItemStatus == Winit.Shared.Models.Enums.ItemState.Cloned ? "/Images/delete.png":"/Images/plus.png")' style="width:14px;" />
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <span>
+                                            <img src='@(items.ItemStatus == Winit.Shared.Models.Enums.ItemState.Cloned ? "/Images/delete.png":"/Images/plus.png")' style="width:14px;" />
+                                        </span>
+                                    }
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            @if (!IsPreviewClicked)
+                            {
+                                <input type="number" class="form-control" @bind="items.UOMQty" />
+                            }
+                            else
+                            {
+                                <span>@items.UOMQty</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="3" style="text-align: center;color:red">@Localizer["no_record_found"]</td>
+                </tr>
+            }
+        </tbody>
+
+    </table>
+</div>
+@if (IsOpenUOM)
+{
+    <Winit.UIComponents.Common.CustomControls.DropDown Title="UOM" IsSearchable="false" DataSource="SelectionItems"
+                                                       UniqueUID="@selectedProduct.UID" OnSelect="SelectedValueChanged" IsButtonVisible="false" ShowPopUp="IsOpenUOM" />
+
+}
+@if (IsOpenCloneUOM)
+{
+    <Winit.UIComponents.Common.CustomControls.DropDown Title="UOM" IsSearchable="false" DataSource="CloneSelectionItems"
+                                                       UniqueUID="@selectedProduct.UID" OnSelect="CreateCloneForSkU" IsButtonVisible="false" ShowPopUp="IsOpenCloneUOM" />
+
+}
+
+@code
+{
+    [Parameter]
+    public List<Winit.Shared.Models.Common.ISelectionItem> CloneSelectionItems { get; set; }
+
+    [Parameter]
+    public List<Winit.Shared.Models.Common.ISelectionItem> SelectionItems { get; set; }
+
+    [Parameter]
+    public EventCallback<IStockAuditItemView> GetSelectionItemsForUOM { get; set; }
+
+    [Parameter]
+    public EventCallback<IStockAuditItemView> GetCloneUOMSelectionItems { get; set; }
+
+    [Parameter]
+    public EventCallback<IStockAuditItemView> DeleteClonedProduct { get; set; }
+
+    [Parameter]
+    public EventCallback<DropDownEvent> DropDownSelectionOnSingleSelect { get; set; }
+
+    [Parameter]
+    public EventCallback<DropDownEvent> DropDownCloneOnSingleSelect { get; set; }
+    
+
+    [Parameter]
+    public bool IsPreviewClicked { get; set; }
+
+
+    private IStockAuditItemView selectedProduct;
+    private List<Winit.Shared.Models.Common.ISelectionItem> UomSelectionItemsList;
+    private bool IsOpenUOM = false;
+    private bool IsDelete = false;
+    private bool IsOpenCloneUOM = false;
+    private List<Winit.Shared.Models.Common.ISelectionItem> UomCloneSelectionItemsList;
+
+    private async Task OnUOMButtonClick(IStockAuditItemView stockAuditItemView)
+    {
+        if (stockAuditItemView.ItemStatus.ToString() == "Cloned")
+        {
+        }
+        else
+        {
+            selectedProduct = stockAuditItemView;
+            await GetSelectionItemsForUOM.InvokeAsync(stockAuditItemView);
+            IsOpenUOM = true;
+        }
+    }
+   
+    private async Task OnCloneUOMButtonClick(IStockAuditItemView stockAuditItemView)
+    {
+        selectedProduct = stockAuditItemView;
+        await GetCloneUOMSelectionItems.InvokeAsync(stockAuditItemView);
+        if (selectedProduct.SelectedUOM == null)
+        {
+            Console.WriteLine("Select UOM first");
+        }
+        else
+        {
+            if (stockAuditItemView.ItemStatus.ToString() == "Cloned")
+            {
+                if (await _alertService.ShowConfirmationReturnType(@Localizer["alert"], @Localizer["are_you_sure_you_want_to_delete_the_item?"]))
+                {
+                    await DeleteClonedProduct.InvokeAsync(selectedProduct);
+                }
+            }
+            else
+            {
+                IsOpenCloneUOM = true;
+            }
+        }
+    }
+   
+    public void SelectedValueChanged(DropDownEvent dropDownEvent)
+    {
+        DropDownSelectionOnSingleSelect.InvokeAsync(dropDownEvent);
+        IsOpenUOM = false;
+    }
+
+    
+    public void CreateCloneForSkU(DropDownEvent dropDownEvent)
+    {
+        DropDownCloneOnSingleSelect.InvokeAsync(dropDownEvent);
+        IsOpenCloneUOM = false;
+
+    }
+    //Selva
+    protected override async void OnInitialized()
+    {
+        LoadResources(null, _languageService.SelectedCulture);
+    }
+}

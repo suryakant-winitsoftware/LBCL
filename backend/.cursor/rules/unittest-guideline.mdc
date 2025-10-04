@@ -1,0 +1,106 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# WINITProduct - Unit Testing Guidelines for Module BL
+
+## ✅ Project Structure Summary
+
+The `WINITProduct` project follows a modular architecture. Here's the relevant structure:
+
+```
+WINITXUnitTest/
+└── UnitTest/
+    └── Modules/
+        └── {ModuleName}/
+            ├── BL.Tests/        # Business Layer Unit Tests (keep)
+            └── DL.Tests/        # Data Layer Unit Tests (remove)
+```
+
+- Each module (e.g., Route) has:
+  - **Model**: Data contracts/interfaces
+  - **DL**: Data access logic
+  - **BL**: Business logic (focus of unit testing)
+- Only `BL.Tests` are needed for unit testing.
+
+---
+
+## ✅ Purpose of Unit Testing in BL
+
+Unit tests should:
+- Focus only on **business logic** (BL).
+- Use **mocked DL interfaces** to isolate dependencies.
+- Avoid database or external system interactions.
+
+---
+
+## 🔄 Promptor Rules / Best Practices
+
+| Step | Rule | Description |
+|------|------|-------------|
+| 1 | ✅ Use real interfaces and models | Avoid assumptions, always reflect actual code. |
+| 2 | ✅ Only mock DL interfaces | e.g., `IRouteDL` with Moq |
+| 3 | ✅ Centralize test data | Use `{Module}TestFixture.cs` |
+| 4 | ✅ Follow AAA pattern | Arrange → Act → Assert |
+| 5 | ✅ Clear test names | e.g., `ShouldReturnPagedResult_WhenValidInput` |
+| 6 | ✅ Cover edge cases | Nulls, missing UID, empty results |
+| 7 | ✅ Use `Verify()` on mocks | Check method interactions |
+| 8 | 🚫 Skip DL or DB logic testing here | That’s for integration tests |
+| 9 | ✅ Keep tests isolated | No test should depend on another |
+| 10 | ✅ Use test coverage tools | e.g., Coverlet, Visual Studio explorer |
+
+---
+
+## 📌 Standard Prompt Template
+
+When generating tests for a new module:
+
+```
+"Generate unit tests for `Modules/{Module}/BL` using xUnit. 
+Use only business logic classes and mock the DL interfaces. 
+Ensure all methods in `{Module}BL.cs` are tested. 
+Generate `{Module}TestFixture.cs` using actual model fields only. 
+Follow AAA structure and include positive and negative tests."
+```
+
+---
+
+## ⚠️ Common Issue Noted
+
+- **Problem**: Test fixture had fields (`Description`, `FieldName`, etc.) not found in real models.
+- **Cause**: Assumptions instead of real model validation.
+- **Fix**: Always inspect class definitions before writing fixtures.
+
+---
+
+## ✅ Unit Test Health Checklist
+
+- [ ] Fixtures reflect exact model definitions
+- [ ] No direct DB dependencies
+- [ ] All business logic paths tested
+- [ ] Negative and edge cases covered
+- [ ] Mock behaviors verified
+- [ ] CI/CD pipeline integrated for test runs
+
+---
+
+## 🔧 Tools to Use
+
+- **xUnit**: Test framework
+- **Moq**: Mocking framework
+- **FluentAssertions**: Readable assertions (optional)
+- **Coverlet**: Code coverage
+- **Playwright**: For e2e, not unit testing
+
+---
+
+Let me know if you'd like a reusable starter template or example test generator for other modules.
+
+

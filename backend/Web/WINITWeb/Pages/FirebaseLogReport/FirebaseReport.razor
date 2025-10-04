@@ -1,0 +1,27 @@
+﻿@page "/FirebaseLogReport"
+
+@using Winit.UIComponents.Web.Filter
+@using Winit.UIModels.Common.Filter
+@using Winit.Shared.Models.Common;
+@inherits WinIt.Pages.Base.BaseComponentBase;
+@inject Winit.Modules.FirebaseReport.BL.Interfaces.IFirebaseReportViewModel _firebaseReportViewModel;
+
+
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@FilterColumns" IsSearchCriteriaNeeded="true"
+                     OnFilterApplied="@OnFilterApply" />
+
+@if (IsInitialized)
+{
+
+    <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" DataSource="_firebaseReportViewModel.FirebaseDataReports" />
+}
+@code {
+    private async Task btnSearch_Click()
+    {
+    }
+
+    private async Task btnReset_Click()
+    {
+    }
+}
+

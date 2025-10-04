@@ -1,0 +1,367 @@
+﻿@inherits WINITMobile.Pages.Base.BaseComponentBase
+@inject Winit.Modules.Store.BL.Interfaces.ICustomerDetailsViewModel _customerDetailsViewModel
+@using Winit.Modules.Store.Model.Constants
+@using Winit.UIComponents.Common.WinitDatepicker
+@using Winit.UIModels.Common;
+
+
+@if (Isinitialized)
+{
+    <script>
+        function validateUrl(input) {
+            const pattern = /^https?:\/\/.*$/;
+            if (!pattern.test(input.value)) {
+                input.setCustomValidity('Please enter a valid URL starting with http:// or https://');
+                input.reportValidity();
+            } else {
+                input.setCustomValidity(''); // Clear the error message
+            }
+        }
+    </script>
+    <div class="card">
+        <div class="cls_cust_information">
+            <div class="card-body">
+                <div class="row g-3 mb-3">
+                    <!-- g-3 adds gaps between columns -->
+                    <div class="col-md-3">
+                        <p class="fw-bold mb-1 cls_customer_label">Channel Partner Code</p>
+                        <span class="d-block cls_customer_span">@(CustomerCode = IsEditOnBoardDetails ? _onBoardCustomerDTO.Store.CustomerCode : CustomerCode)</span>
+                    </div>
+                    <div class="col-md-3">
+                        <p class="fw-bold mb-1 cls_customer_label">GST Number</p>
+                        <span class="d-block cls_customer_span">@(GSTINDetailsDataSource.GSTIN)</span>
+
+                        @*   <span class="d-block cls_customer_span">33GSPTN2101G1ZP</span> *@
+                    </div>
+                    <div class="col-md-3">
+                        <p class="fw-bold mb-1 cls_customer_label">Legal Name of Application</p>
+                        <span class="d-block cls_customer_span">@(GSTINDetailsDataSource.LegalName)</span>
+
+                        @* <span class="d-block cls_customer_span">Perennial TN TaxPayer 1 Ltd</span> *@
+                    </div>
+                    <div class="col-md-3">
+                        <p class="fw-bold mb-1 cls_customer_label">Owner Name</p>
+                        <span class="d-block cls_customer_span">@(GSTINDetailsDataSource.TradeName)</span>
+
+                        @*  <span class="d-block cls_customer_span">Perennial TN TaxPayer 1 Ltd</span> *@
+                    </div>
+                </div>
+                <div class="row g-3 mb-3">
+                    <!-- g-3 adds gaps between columns -->
+                    <div class="col-md-3">
+                        <p class="fw-bold mb-1 cls_customer_label">GST IN/UIN Status</p>
+                        <span class="d-block cls_customer_span">@(GSTINDetailsDataSource.Status)</span>
+
+                        @*  <span class="d-block cls_customer_span">Active</span> *@
+                    </div>
+                    <div class="col-md-3">
+                        <p class="fw-bold mb-1 cls_customer_label">Nature of Business</p>
+                        <span class="d-block cls_customer_span">@(GSTINDetailsDataSource.PR_NatureOfBusiness)</span>
+
+                        @* <span class="d-block cls_customer_span">Regular</span> *@
+                    </div>
+                    <div class="col-md-3">
+
+                        <p class="fw-bold mb-1 cls_customer_label">State</p>
+                        <span class="d-block cls_customer_span">@(GSTINDetailsDataSource.PR_ADR_State)</span>
+
+                        @* <span class="d-block cls_customer_span">Haryana</span> *@
+
+
+
+
+
+
+                    </div>
+                    <div class="col-md-3">
+                        <p class="fw-bold mb-1 cls_customer_label">PAN</p>
+                        <span class="d-block cls_customer_span">@GetPanFromGst(GSTINDetailsDataSource.GSTIN)</span>
+                    </div>
+                    <div class="col-md-3">
+                        <p class="fw-bold mb-1 cls_customer_label">Pin Code</p>
+                        <span class="d-block cls_customer_span">@(GSTINDetailsDataSource.PR_ADR_Pincode)</span>
+
+                        @*  <span class="d-block cls_customer_span">634698</span> *@
+                    </div>
+                    <div class="col-md-3">
+                        <p class="fw-bold mb-1 cls_customer_label">Date of Registration</p>
+                        <span class="d-block cls_customer_span">@(GSTINDetailsDataSource.RegistrationDate)</span>
+
+                        @*  <span class="d-block cls_customer_span">01/04/2016</span> *@
+                    </div>
+                    <div class="col-md-3">
+                        <p class="fw-bold mb-1 cls_customer_label">Tax Payment Type</p>
+                        <span class="d-block cls_customer_span">@(GSTINDetailsDataSource.Duty)</span>
+
+                        @* <span class="d-block cls_customer_span">Regular</span> *@
+                    </div>
+                </div>
+
+                <!-- g-3 adds gaps between columns -->
+                @*  <div class="col-md-3">
+            <p class="fw-bold mb-1 cls_customer_label">Registration Type</p>
+            <span class="d-block cls_customer_span">GSTINDetailsDataSource</span>
+            </div> *@
+
+
+                @*  <div class="row g-3">
+            <!-- g-3 adds gaps between columns -->
+            <div class="col-md-3">
+            <p class="fw-bold mb-1 cls_customer_label">HSN & Description</p>
+            <span class="d-block cls_customer_span"></span>
+            </div>
+            <div class="col-md-3">
+            <p class="fw-bold mb-1 cls_customer_label">Address</p>
+            <span class="d-block cls_customer_span"></span>
+            </div>
+            </div> *@
+                <div class="row g-3 mb-3">
+                    <div class="col-md-3">
+                        <p class="fw-bold mb-1 cls_customer_label">Address:</p>
+                        <span class="d-block cls_customer_span">
+                            @(GstAddressMapping())
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="card mb-4">
+        <div class="cls_cust_information">
+            <div style="width:100%;float:left;margin:0px 0px;">
+                @if (!string.IsNullOrWhiteSpace(ValidationMessage))
+                {
+                    <div class="alert alert-danger">
+                        <div class="col-md-12">
+                            <div style="color: red;">@ValidationMessage</div>
+                        </div>
+                    </div>
+                }
+
+                <div class="card-body" style="border-top:1px solid #ccc;">
+                    <div class="row">
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-12 mb-3">
+                            <label class="fw-bold mb-1 cls_customer_label">Trade Name</label>
+                            <span class="d-block cls_customer_span">@(GSTINDetailsDataSource.TradeName) </span>
+
+                            @*                         <span class="d-block cls_customer_span">@("Perennial TN TaxPayer 1 Ltd") </span>
+                        *@
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4 d-flex flex-column">
+                                <label style="font-weight: bold;" class="margin_bottom cls_customer_label">
+                                 Broad Customer Classification<i class="cls_section_div_purchase2_span">*</i>
+                            </label>
+                            <div class="flex-grow-1">
+                                <!-- Wrap the custom dropdown in a container div -->
+                                @*    <div class="@(!IsBroadCustomerClassificationSelectionValid() && IsSaveAttempted ? "custom-dropdown-invalid" : "")"> *@
+                                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="CustomerClassificationselectionItems"
+                                                                                   IsButtonVisible="true"
+                                                                                   Title=" Broad Customer Classification"
+                                                                                   OnSelect="OnBroadCustomerClassificationSelection"
+                                                                                   IsSearchable="true" />
+                                @* </div> *@
+                                @* @if (!IsBroadCustomerClassificationSelectionValid() && IsSaveAttempted)
+                            {
+                            <div class="invalid-feedback"></div>
+                            } *@
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4 d-flex flex-column">
+                                <label style="font-weight: bold;" class="margin_bottom cls_customer_label"> Classification Type</label>
+                            <div class="flex-grow-1 ">
+                                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="ClassificationTypeselectionItems" IsButtonVisible="true" OnSelect="OnBroadCustomerClassificationTypeSelection" Title=" Customer Classification Type" />
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4 d-flex flex-column">
+                                 <label title="Firm Registration Number (With Register of Firm)" class="cls_customer_label"> <i class="cls_section_div_purchase2_span1">@ShowValidationStar()</i> Firm Registration Number (With Register of Firm)</label>
+                            <div class="flex-grow-1">
+                                    <input class="cls_select2_button"
+                                       autocomplete="off"
+                                       type="text"
+                                       placeholder="Enter here"
+                                       @bind="_onBoardCustomerDTO.StoreAdditionalInfo.FirmRegNo"
+                                       oninput="this.value = this.value.replace(/[^a-zA-Z0-9]/g, '')" />
+
+
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4 d-flex flex-column">
+                        
+                                        <label title="Company Registration Number (As Allocated By Reg. of Company)" class="cls_customer_label">  <i class="cls_section_div_purchase2_span1">@ShowValidationStar()</i> Company Registration Number (As Allocated By Reg. of Company)</label>
+                                
+                            <div class="flex-grow-1">
+                                <input class="cls_select2_button"
+                                       autocomplete="off"
+                                       type="text"
+                                       placeholder="Enter here"
+                                       @bind="_onBoardCustomerDTO.StoreAdditionalInfo.CompanyRegNo"
+                                       oninput="this.value = this.value.replace(/[^a-zA-Z0-9]/g, '')" />
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <div>
+                                    <label style="font-weight: bold;" class="cls_customer_label cls_mar_btm_10px" for="mcmeOptions">Are you MSME?</label>
+                                <div id="mcmeOptions" style="float:left;">
+                                    <div class="cls_btn_y_n">
+                                        <input class=""
+                                               type="radio" name="mcme" id="mcmeYes" value="yes"
+                                               checked="@(_onBoardCustomerDTO.StoreAdditionalInfo.IsMSME == true )"
+                                               @onchange="((e) => OnMCMEChange(true))" />
+                                        <label for="mcmeYes">Yes</label>
+                                    </div>
+                                    <div class="cls_btn_y_n">
+                                        <input class=""
+                                               type="radio" name="mcme" id="mcmeNo" value="no"
+                                               checked="@(_onBoardCustomerDTO.StoreAdditionalInfo.IsMSME ==  false)"
+                                               @onchange="((e) => OnMCMEChange(false))"
+                                                />
+                                        <label for="mcmeNo">No</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                            <div>
+                                <label style="font-weight: bold;" for="vendorOptions" class="cls_customer_label cls_mar_btm_10px">Is Vendor?</label>
+                                <div id="vendorOptions" style="float:left;">
+                                    <div class="cls_btn_y_n">
+                                        <input class=""
+                                               type="radio" name="vendor" id="vendorYes" value="yes"
+                                               checked="@(_onBoardCustomerDTO.StoreAdditionalInfo.IsVendor == true )"
+                                               @onchange="((e) => OnVendorChange(true))"
+                                                />
+                                        <label for="vendorYes">Yes</label>
+                                    </div>
+                                    <div class="cls_btn_y_n">
+                                        <input class=""
+                                               type="radio" name="vendor" id="vendorNo" value="no"
+                                               checked="@(_onBoardCustomerDTO.StoreAdditionalInfo.IsVendor ==  false)"
+                                               @onchange="(() => OnVendorChange(false))" />
+                                        <label for="vendorNo">No</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                                <label style="font-weight: bold;" class="margin_bottom cls_customer_label">Type of Firm<i class="cls_section_div_purchase2_span">*</i></label>
+                            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="FirmTypeselectionItems" IsButtonVisible="true"
+                                                                               Title=" Firm Type"
+                                                                               OnSelect="OnFirmTypeSelection"
+                                                                               IsSearchable="true" />
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                                <label style="font-weight: bold;" class="cls_customer_label"> Office/Showroom Area Sq.Ft</label>
+                            <input autocomplete="off" class="cls_select2_button" type="number" placeholder="Enter here" @bind="_onBoardCustomerDTO.Store.StoreSize" />
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                                <label style="font-weight: bold;" for="DateOfFoundation" class="cls_customer_label">Date & Year Founded</label>
+                            @* <input class="cls_select2_button" type="date" placeholder="Select here" @bind="_onBoardCustomerDTO.StoreAdditionalInfoCMI.DateOfFoundation"> *@
+                            <WinitCalendar id="DateOfFoundation" MaxDate="0" selectedDate="@_onBoardCustomerDTO.StoreAdditionalInfoCMI.DateOfFoundation?.ToString("dd/MM/yyyy")" OnChange="OnDateChange">
+
+                            </WinitCalendar>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                                <label style="font-weight: bold;" for="DateOfBirth" class="cls_customer_label">Date of Birth</label>
+                            <WinitCalendar id="DateOfBirth" MaxDate="0" selectedDate="@_onBoardCustomerDTO.StoreAdditionalInfoCMI.DateOfBirth?.ToString("dd/MM/yyyy")" OnChange="OnDateChange">
+
+                            </WinitCalendar>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                                <label style="font-weight: bold;" class="cls_customer_label">Wedding Date</label>
+                            <input class="cls_select2_button" type="date" placeholder="Select here" @bind="_onBoardCustomerDTO.StoreAdditionalInfoCMI.WeddingDate">
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                                <label style="font-weight: bold;" class="cls_customer_label">Accounting Software</label>
+                            <input autocomplete="off" class="cls_select2_button" type="text" placeholder="Enter here" @bind="_onBoardCustomerDTO.StoreAdditionalInfo.AccSoftName" />
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                                <label style="font-weight: bold;" class="cls_customer_label">Accounting Software Licence Number</label>
+                            <input class="cls_select2_button "
+                                   autocomplete="off"
+                                   type="text"
+                                   placeholder="Enter here"
+                                   @bind="_onBoardCustomerDTO.StoreAdditionalInfo.AccSoftLicenseNo"
+                                  />
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                                <label style="font-weight: bold;" class="cls_customer_label">Accounting Software Version Number</label>
+                            <input class="cls_select2_button"  @bind="_onBoardCustomerDTO.StoreAdditionalInfo.AccSoftVersionNo" autocomplete="off" type="text" placeholder="Enter here" />
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                                <label style="font-weight: bold;" class="cls_customer_label">Website</label>
+                            <input class="cls_select2_button " id="websiteInput" oninput="validateUrl(this)" @bind="_onBoardCustomerDTO.StoreAdditionalInfo.WebSite" autocomplete="off" type="text" placeholder="Enter here" pattern="https?://.*" title="Please enter a valid URL starting with http:// or https://" />
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                                    <label style="font-weight: bold;" class="cls_customer_label cls_mar_btm_4px">Upload Image</label>
+                            <Winit.UIComponents.Common.FileUploader.FileUploader @ref=fileUploader FileExtension=".jpg,.jpeg,.pdf,.png,.doc"
+                                                                                 RelativePath="@FilePath" FileSize="500000" AllowMultipleFiles="true" FileSysList=@_onBoardCustomerDTO.FileSys.Where(s => s.FileSysType == Winit.Modules.Store.Model.Constants.FileSysTypeConstants.CustomerInformation).ToList()
+                                                                                 LinkedItemUID="@_onBoardCustomerDTO.Store.UID"
+                                                                                 LinkedItemType="store" UploadEventCallBack="GetsavedImagePath" DeleteEventCallBack="AfterDeleteImage"
+                                                                                 FileSysType="@Winit.Modules.Store.Model.Constants.FileSysTypeConstants.CustomerInformation"
+                                                                                 FileType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.Image" />
+
+                        </div>
+                        @if (!IsSelfRegistration)
+                        {
+                            <div class="col-12 col-sm-12 col-md-12 col-lg-12 mb-3">
+                                @* <label class="fw-bold mb-1 cls_customer_label">Division Mapping</label> *@
+                                <span class="d-block cls_customer_span" style="font-size:16px; font-weight:700;">Division Mapping</span>
+
+
+                            </div>
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                                        <label style="font-weight: bold;" class="margin_bottom cls_customer_label">Select Division<i class="cls_section_div_purchase2_span">*</i></label>
+                                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="DivisionselectionItems" IsButtonVisible="true"
+                                                                                   Title="Division"
+                                                                                   OnSelect="OnDivisionSelection"
+                                                                                   _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Multiple"
+                                                                                   IsSearchable="true" />
+                            </div>
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                                <div class="cls_btn_y_n" style="margin-top:30px;">
+                                    <input type="checkbox" class="" checked="@(_onBoardCustomerDTO.Store.IsAsmMappedByCustomer)" @onchange="((e)=>IsAsmMappedChanged(e))">
+                                    <label>Is ASM Mapped By Customer?</label>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-12 col-md-12 col-lg-12 mb-3">
+                                <span style="font-size: small; font-weight: 500;"><b>Selected Division</b> :- @SelectedDivisions</span>
+                            </div>
+                        }
+                            <div class="cls_button_bottom_purchase">
+                                <button class="cls_button_light" type="button">Cancel</button>
+                                <button class="cls_button_blue" type="submit" @onclick=SaveOrUpdate >@ButtonName</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<style>
+    .custom-dropdown-invalid {
+        border: 2px solid red; /* Red border for invalid state */
+        padding: 0.5rem; /* Optional: adjust padding as needed */
+        border-radius: 0.25rem; /* Optional: adjust border-radius as needed */
+    }
+
+        .custom-dropdown-invalid .custom-dropdown {
+            border-color: red; /* Apply red border color to the dropdown */
+        }
+</style>
+@code {
+
+
+
+}

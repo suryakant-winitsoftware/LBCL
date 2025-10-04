@@ -1,0 +1,61 @@
+﻿@page "/ReturnSummaryList"
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+
+
+<div class="container m-0 p-0">
+    <div class="cls_customer_call_procedure">
+        <Virtualize Items="Data" Context="item" OverscanCount="10">
+            <div class="cls_customer_call_procedure_rep" @onclick="()=>OnCardClick.InvokeAsync(item.UID)">
+                <div class="cls_customer_call_procedure_rep1">
+                    <div class="cls_customer_call_procedure_rep1_left">
+                        <h3>@item.OrderNumber</h3>
+                        <p>@item.StoreCode</p>
+                        <label> @item.OrderDate.ToString("MMM dd, yyyy")</label>
+                        <p>@item.OrderType</p>
+                        <span class="@(item.IsPosted ? "text-success" : "text-danger")"> @(item.IsPosted ? "" : @Localizer["not"]) @Localizer["delivered"] </span>
+                        <h3>SKU</h3>
+                        <h4>@item.LineCount</h4>
+                    </div>
+                    <div class="cls_customer_call_procedure_rep1_right">
+                        <label>@item.CurrencyLabel</label>
+                        <p>@item.OrderAmount</p>
+                    </div>
+
+                </div>
+                @if (!string.IsNullOrEmpty(item.SalesOrderNumber))
+                {
+                    <label>Invoice No:@item.SalesOrderNumber </label>
+                }
+                <div class="cls_customer_call_procedure_rep2">
+                    <p>@item.StoreName</p>
+                    <p>@item.Address</p>
+                    <span></span>
+                </div>
+                @*  <div class="position-absolute top-0 start-0 px-1 @(item.IsPosted ? "bg-success" : "bg-danger") rounded-start h-100"></div>*@
+                <div class="card-body p-3" style="display:none">
+                    <div class="d-flex justify-content-end">
+                        <p>
+                            <span class="badge bg-secondary rounded-end ">@Localizer["topup"]</span><br />
+                            <span class="@(item.IsPosted ? "text-success" : "text-danger")"> @(item.IsPosted ? "" : @Localizer["not"]) @Localizer["delivered"] </span>
+                        </p>
+                    </div>
+                    <div class="position-absolute top-0 start-0 p-1 pl-3">
+                        <p>
+                            <span class="text-primary fw-bold">@item.StoreName</span>&nbsp; &nbsp;
+                            <br />
+                            <span class="text-secondary text-muted fs-6" style="font-size:15px">@item.StoreCode</span><br>
+                            <span class="text-primary fw-bolder">@item.OrderNumber</span><br />
+                            <span class="text-secondary text-muted" style="font-size:15px"> @(item.OrderDate.ToString("MMM dd, yyyy"))</span>
+                            <span class="text-secondary text-muted" style="font-size:15px"> @item.CurrencyLabel</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </Virtualize>
+    </div>
+</div>
+
+
+@code {
+
+}

@@ -1,0 +1,40 @@
+﻿@page "/AddScheme"
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" />
+<div class="cls_main1">
+    <div class="cls_section">
+        <div class="cls_add_scheme">
+            <div class="cls_add_scheme_left">
+                <div class="cls_comman_input">
+                    <label>Select Scheme Type</label>
+                    <select @onchange=OnSelectionChange>
+                        <option value="SellInSchemeBranchView">Sell In</option>
+                        <option value="SellOutScheme">Sell Out</option>
+                        <option value="AddQPSOrSelloutrealSecondaryScheme/true">QPS Scheme</option>
+                        <option value="salespromotion">Sales Promotion</option>
+                    </select>
+                </div>
+            </div>
+            <div class="cls_add_scheme_right">
+                <button class="cls_comman_btn" @onclick="@(()=>_navigationManager.NavigateTo($"{scheme}?{PageType.Page}={PageType.New}"))">Proceed</button>
+            </div>
+            <div class="cls_add_scheme_right1">
+                <button class="cls_comman_btn1" @onclick="@(()=>_navigationManager.NavigateTo("executepromotion"))">Execute Promotion</button>
+                <button class="cls_comman_btn" @onclick="@(()=>_navigationManager.NavigateTo("salespromotion/true"))">Approve New Sales Promotion</button>
+            </div>
+
+        </div>
+@*      <div class="cls_add_scheme">
+            <div class="cls_add_scheme_right1">
+                <button class="cls_comman_btn" @onclick="@(()=>_navigationManager.NavigateTo("executepromotion"))">Execute Promotion</button>
+                <button class="cls_comman_btn" @onclick="@(()=>_navigationManager.NavigateTo("salespromotion/true"))">Approve New Sales Promotion</button>
+            </div>
+        </div> *@
+   
+    </div>
+</div>
+
+@code {
+   
+}

@@ -1,0 +1,93 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Winit.Shared.Models.Constants
+{
+    public class DbTableName
+    {
+        public const string SalesOrder = "sales_order";
+        public const string SalesOrderLine = "sales_order_line";
+        public const string WHStockLedger = "wh_stock_ledger";
+        public const string StoreHistory = "store_history";
+        public const string StoreHistoryStats = "store_history_stats";
+        public const string AccPayable = "acc_payable";
+        public const string WHStockRequest = "wh_stock_request";
+        public const string WHStockRequestLine = "wh_stock_request_line";
+        public const string ReturnOrder = "return_order";
+        public const string ReturnOrderLine = "return_order_line";
+        public const string AccCollection = "acc_collection";
+        public const string AccCollectionPaymentMode = "acc_collection_payment_mode";
+        public const string AccStoreLedger = "acc_store_ledger";
+        public const string AccCollectionAllotment = "acc_collection_allotment";
+        public const string AccCollectionCurrencyDetails = "acc_collection_currency_details";
+        public const string AccCollectionDeposit = "acc_collection_deposit";
+        public const string AsmDivisionMapping = "asm_division_mapping";
+        public const string JobPositionAttendance = "job_position_attendance";
+        public const string UserJourney = "user_journey";
+        public const string ExceptionLog = "exception_log";
+        public const string BeatHistory = "beat_history";
+        public const string StoreActivityHistory = "store_activity_history";
+        public const string CustomSKUFields = "custom_sku_fields";
+        public const string Org = "org";
+        public const string Store = "store";
+        public const string StoreAdditionalInfo = "store_additional_info";
+        public const string StoreAdditionalInfoCMI = "store_additional_info_cmi";
+        public const string StoreCredit = "store_credit";
+        public const string Address = "address";
+        public const string Contact = "contact";
+        public const string StoreDocument = "store_document";
+        public const string ErrorDetailsLocalization = "error_details_localization";
+        public const string LocationTemplate = "location_template";
+        public const string LocationTemplateLine = "location_template_line";
+        public const string MobileAppAction = "mobile_app_action";
+        public const string MailRequest = "mail_request";
+        public const string SmsRequest = "sms_request";
+        public const string TaxSKUMap = "tax_sku_map";
+        public const string TaxGroupTaxes = "tax_group_taxes";
+        public const string SKUSequence = "sku_sequence";
+        public const string RouteLoadTruckTemplateLine = "route_load_truck_template_Line";
+        public const string RouteCustomer = "route_customer";
+        public const string RouteUser = "route_user";
+        public const string Promotion = "promotion";
+        public const string PromoOrder = "promo_order";
+        public const string PromoOrderItem = "promo_order_item";
+        public const string PromoOffer = "promo_offer";
+        public const string PromoOfferItem = "promo_offer_item";
+        public const string PromoCondition = "promo_condition";
+        public const string ItemPromotionMap = "item_promotion_map";
+        public const string SellInSchemeHeader = "sell_in_scheme_header";
+        public const string StandingProvisionScheme = "standing_provision_scheme";
+        public const string StandingProvisionSchemeApplicableOrg = "standing_provision_scheme_applicable_org";
+        public const string StandingProvisionSchemeBranch = "standing_provision_scheme_branch";
+        public const string StandingProvisionSchemeBroadClassification = "standing_provision_scheme_broad_classification";
+        public const string StandingProvisionSchemeBroadDivision = "standing_provision_scheme_division";
+        public const string PurchaseOrderHeader = "purchase_order_header";
+        public const string SkuClassGroup = "sku_class_group";
+        public const string SkuClass = "sku_class";
+        public const string StoreCheckHistory = "store_check_history";
+        public const string StoreCheckGroupHistory = "store_check_group_history";
+        public const string StoreCheckItemHistory = "store_check_item_history";
+        public const string StoreCheckItemExpiryDerHistory = "store_check_item_expiry_der_history";
+        public const string StoreCheckItemUOMQty = "store_check_item_uom_qty";
+        public const string SurveyResponse = "survey_response";
+        public const string FileSys = "file_sys";
+        public const string CaptureCompetitor = "capture_competitor";
+        public const string CategoryBrandMapping = "category_brand_mapping";
+        public const string CategoryBrandCompetitorMapping = "category_brand_competitor_mapping";
+        public const string PlanogramSetup = "planogram_setup";
+        public const string PlanogramExecutionHeader = "planogram_execution_header";
+        public const string PlanogramExecutionDetail = "planogram_execution_detail";
+        public const string POExecution = "po_execution";
+        public const string POExecutionLine = "po_execution_line";
+        public const string ProductFeedback = "product_feedback";
+        public const string BroadcastInitiative = "broadcast_initiative";
+        public const string ExpiryCheckExecution = "expiry_check_execution";
+        public const string ExpiryCheckExecutionLine = "expiry_check_execution_line";
+        public const string PlanogramExecutionV1 = "planogram_execution_v1";
+        public const string ProductSampling = "product_sampling";
+
+    }
+}

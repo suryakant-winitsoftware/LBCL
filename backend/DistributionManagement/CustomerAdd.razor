@@ -1,0 +1,89 @@
+﻿@page "/ac"
+
+<h3>Add Product</h3>
+
+@if (showtoggle)
+{
+    <div class="modal fade show" style="display: block;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">View Customer Details</h5>
+                    
+                        <span aria-hidden="true">&times;</span>
+                    
+                </div>
+                <div class="modal-body">
+                    
+                </div>
+                <div class="modal-footer">
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+    
+}
+<button @onclick="ShowPopup" class="btn btn-primary align-self-start" style="margin-top: 31px; background-color:#003898;">
+    Add Customer
+</button>
+<!-- Rest of the dialog content -->
+@code {
+    private bool showtoggle = false;
+    private void ShowPopup()
+    {
+        showtoggle = !showtoggle;
+    }
+    //private List<DropdownItem> ParentList = new List<DropdownItem>
+    //{
+    //    new DropdownItem { Id = 1, Name = "Category Type 1" },
+    //    new DropdownItem { Id = 2, Name = "Category Type 2" },
+    //    // Add more parent items as needed
+    //};
+
+    //private List<DropdownItem> ChildList = new List<DropdownItem>
+    //{
+    //    new DropdownItem { Id = 1, Name = "Category 1" },
+    //    new DropdownItem { Id = 2, Name = "Category 2" },
+    //    // Add more child items as needed
+    //};
+
+    //private DropdownItem selectedParent;
+    //private DropdownItem selectedChild;
+    //private bool isParentDropdownOpen = false;
+    //private bool isChildDropdownOpen = false;
+
+    //private string ParentDropdownStyle => isParentDropdownOpen ? "block" : "none";
+    //private string ChildDropdownStyle => isChildDropdownOpen ? "block" : "none";
+
+    //private void ToggleParentDropdown()
+    //{
+    //    isParentDropdownOpen = !isParentDropdownOpen;
+    //}
+
+    //private void ToggleChildDropdown()
+    //{
+    //    isChildDropdownOpen = !isChildDropdownOpen;
+    //}
+
+    //private void SelectParent(DropdownItem parent)
+    //{
+    //    selectedParent = parent;
+    //    isParentDropdownOpen = false;
+    //    // Clear selected child when a new parent is selected
+    //    selectedChild = null;
+    //}
+
+    //private void SelectChild(DropdownItem child)
+    //{
+    //    selectedChild = child;
+    //    isChildDropdownOpen = false;
+    //}
+
+    //private class DropdownItem
+    //{
+    //    public int Id { get; set; }
+    //    public string Name { get; set; }
+    //}
+}

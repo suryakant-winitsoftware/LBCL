@@ -1,0 +1,1299 @@
+﻿@page "/DashBoardV1"
+@using Winit.UIModels.Common.GraphModels
+@attribute [Authorize]
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+@inject Winit.Modules.Common.Model.Interfaces.IDataManager dataManager;
+@inject ILocalStorageService _localStorageService
+@inject IJSRuntime JSRuntime;
+<PageHeaderAndFilter IDataBreadcrumbService="iDataBreadcrumbService"></PageHeaderAndFilter>
+
+<div class="cls_graph_top">
+    <div class="cls_container_div1" style="text-align:right;">
+
+        <button class="cls_add_new_sec2" style="@(IsPrimary ? "" : "display:none;")" @onclick="() => IsDateRange = !IsDateRange">Date Range</button>
+        <button class="cls_add_new_sec2 " @onclick="() => IsFilterOpen = !IsFilterOpen">Filter</button>
+
+    </div>
+    <div class="cls_container_div1">
+        @if (IsPrimary)
+        {
+            <label style="font-size:13px; font-weight:500; color:#4C515B; margin-top:9px;">Search Criteria:  <span style="margin-left:3px;font-weight:700;">Selected Year</span>: 2024  <span style="margin-left:3px;font-weight:700;"> Selected Month</span>: November <span style="margin-left:3px;font-weight:700;"> Region</span>: All  <span style="margin-left:3px;font-weight:700;"> State</span>: All <span style="margin-left:3px;font-weight:700;">  Area</span>: All <span style="margin-left:3px;font-weight:700;">  Distributor</span>: All</label>
+        }
+        else
+        {
+            <label style="font-size:13px; font-weight:500; color:#4C515B; margin-top:9px;">Search Criteria:  <span style="margin-left:3px;font-weight:700;">Selected Year</span>: 2024  <span style="margin-left:3px;font-weight:700;"> Selected Month</span>: November <span style="margin-left:3px;font-weight:700;"> Region</span>: East  <span style="margin-left:3px;font-weight:700;"> State</span>: West Bengal <span style="margin-left:3px;font-weight:700;">  Area</span>: Alipurduar District <span style="margin-left:3px;font-weight:700;">  Distributor</span>: SUDHA</label>
+        }
+
+    </div>
+
+    <div class="cls_btn_y_n">
+        <input class=""
+               type="radio" name="vendor" id="vendorYes" value="yes" checked
+               @onchange="((e) => OnVendorChange(true))" />
+        <label for="vendorYes">Area Manager View</label>
+    </div>
+    <div class="cls_btn_y_n">
+        <input class=""
+               type="radio" name="vendor" id="vendorNo" value="no"
+               @onchange="(() => OnVendorChange(false))" />
+        <label for="vendorNo">Secondary</label>
+    </div>
+
+    <div class="cls_section" style="display:@(IsFilterOpen ? "block" : "none");">
+        <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label">Selected Year</label>
+            <input type="text" name="name" value="2024" class="cls_select2_button" placeholder="Enter Here" />
+
+        </div>
+
+        <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label">Selected Month</label>
+            <input type="text" name="name" value="November" class="cls_select2_button" placeholder="Enter Here" />
+
+        </div>
+
+        <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label">Region</label>
+            <input type="text" name="name" value="@(IsPrimary ? "All" : "East")" class="cls_select2_button" placeholder="Enter Here" />
+
+        </div>
+
+        <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label">State</label>
+            <input type="text" name="name" value="@(IsPrimary ? "All" : "West Bengal")" class="cls_select2_button" placeholder="Enter Here" />
+
+        </div>
+
+        <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label">Area</label>
+            <input type="text" name="name" value="@(IsPrimary ? "All" : "Alipurduar District")" class="cls_select2_button" placeholder="Enter Here" />
+
+        </div>
+        <div class="cls_container_div4">
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">Distributor</label>
+                <input type="text" name="name" value="@(IsPrimary ? "All" : "SUDHA")" class="cls_select2_button" placeholder="Enter Here" />
+
+            </div>
+
+        </div>
+
+
+        <div class="cls_button_bottom_purchase">
+            <button class="cls_button_blue">Search</button>
+
+        </div>
+
+    </div>
+
+</div>
+@if (IsPrimary)
+{
+    <div class="cls_container_div4">
+
+        <div class="cls_graph">
+
+            <div class="cls_graph_container" style="text-align:center;">
+                <div class="cls_container_div1" style="padding: 0px 2%;">
+                    <label class="cls_graph_container_label1">@("Distributor Sales Performance Value")</label>
+
+
+                </div>
+                <div class="cls_container_div1">
+                    <label class="cls_graph_select1">Nov-2024 </label>
+
+                </div>
+                <img src="./Images/ds_graph88.jpg" alt="Alternate Text" width="486px" />
+
+
+            </div>
+
+            <div class="cls_graph_container" style="text-align:center;">
+                <div class="cls_container_div1" style="padding: 0px 2%;">
+                    <label class="cls_graph_container_label1">@("Distributor Sales Target Vs Ach & Growth ")</label>
+
+                </div>
+                <div class="cls_container_div1">
+                    <label class="cls_graph_select1">Nov-2024 Vs Nov-2023</label>
+                </div>
+                <img src="./Images/ds_Growth.jpg" alt="Alternate Text" width="" />
+
+
+            </div>
+
+        </div>
+
+        <div class="cls_graph">
+
+            <div class="cls_graph_container1">
+                <div class="cls_container_div1" style="padding: 11px 2% 0px 2%;">
+                    <label class="cls_graph_container_label1">Distributor Sales Target Vs Ach & Growth by Volume</label>
+
+                </div>
+                <div class="cls_container_div1">
+                    <label class="cls_graph_select1">Nov-2024 Vs Nov-2023</label>
+                </div>
+
+                <div class="cls_dsb_table">
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Distributors</th>
+                                <th>Target</th>
+                                <th>Ach</th>
+                                <th>Ach %</th>
+                                <th style="text-align:center;">Growth %</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    AMAN ELETRONICS
+                                </td>
+                                <td>845</td>
+                                <td>807</td>
+                                <td>95%</td>
+
+                                <td style="text-align:center;"><label style="margin-right:2px;">27%</label><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" />  </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    ELECTRONICS CENTRE PVT.LTD.
+                                </td>
+                                <td>734</td>
+                                <td>700</td>
+                                <td>95%</td>
+                                <td style="text-align:center;"><label style="margin-right:2px;">26%</label><img src="./Images/Arrow_red.png" width="9px" alt="Alternate Text" /></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    SHEES MAHAL
+                                </td>
+                                <td>719</td>
+                                <td>695</td>
+                                <td>96%</td>
+                                <td style="text-align:center;"><label style="margin-right:2px;">28%</label><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" /></td>
+                            </tr>
+                            <tr>
+                                <td>NEW SUBHADIP ELECTRONICS</td>
+                                <td>735</td>
+                                <td>688</td>
+                                <td>93%</td>
+                                <td style="text-align:center;"><label style="margin-right:2px;">21%</label><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" /></td>
+                            </tr>
+                            <tr>
+                                <td>ANURAG INFOMART</td>
+                                <td>789</td>
+                                <td>625</td>
+                                <td>93%</td>
+                                <td style="text-align:center;"><label style="margin-right:2px;">21%</label><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" /></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    AMAN ELETRONICS
+                                </td>
+                                <td>845</td>
+                                <td>807</td>
+                                <td>95%</td>
+
+                                <td style="text-align:center;"><label style="margin-right:2px;">27%</label><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" />  </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    ELECTRONICS CENTRE PVT.LTD.
+                                </td>
+                                <td>734</td>
+                                <td>700</td>
+                                <td>95%</td>
+                                <td style="text-align:center;"><label style="margin-right:2px;">26%</label><img src="./Images/Arrow_red.png" width="9px" alt="Alternate Text" /></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    SHEES MAHAL
+                                </td>
+                                <td>719</td>
+                                <td>695</td>
+                                <td>96%</td>
+                                <td style="text-align:center;"><label style="margin-right:2px;">28%</label><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" /></td>
+                            </tr>
+                            <tr>
+                                <td>NEW SUBHADIP ELECTRONICS</td>
+                                <td>735</td>
+                                <td>688</td>
+                                <td>93%</td>
+                                <td style="text-align:center;"><label style="margin-right:2px;">21%</label><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" /></td>
+                            </tr>
+                            <tr>
+                                <td>ANURAG INFOMART</td>
+                                <td>789</td>
+                                <td>625</td>
+                                <td>93%</td>
+                                <td style="text-align:center;"><label style="margin-right:2px;">21%</label><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" /></td>
+                            </tr>
+
+                            <tr class="cls_table_footer">
+                                <td style="font-size:16px;font-weight:700;color:#000;">
+                                    Total
+                                </td>
+                                <td style="font-size:16px;font-weight:700;color:#000;">3822</td>
+                                <td style="font-size:16px;font-weight:700;color:#000;">3515</td>
+                                <td style="font-size:16px;font-weight:700;color:#000;">91%</td>
+                                <td style="text-align:center;font-size:16px;font-weight:700;color:#000;"><label style="margin-right:2px;">27%</label><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" /></td>
+                            </tr>
+
+
+
+
+                        </tbody>
+
+                    </table>
+
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+        <div class="cls_graph">
+
+            <div class="cls_graph_container" style="text-align:center;">
+                <div class="cls_container_div1" style="padding: 0px 2%;">
+                    <label class="cls_graph_container_label1">@("Category Sales Performance Volume")</label>
+                    @* <select class="cls_graph_select">
+                <option value="November">2024</option>
+                </select> *@
+
+                </div>
+                <div class="cls_container_div1">
+                    <label class="cls_graph_select1">Nov-2024 </label>
+
+                </div>
+                <img src="./Images/ds_graph4.png" alt="Alternate Text" width="100%" />
+
+
+            </div>
+
+            <div class="cls_graph_container1">
+                <div class="cls_container_div1" style="padding: 11px 3% 0px 3%;">
+                    <label class="cls_graph_container_label1">Category Sales Target Vs Ach & Growth by Volume</label>
+                </div>
+                <div class="cls_container_div1" style="padding-left:1%">
+                    <label class="cls_graph_select1">Nov-2024 Vs Nov-2023</label>
+
+                </div>
+
+                <div class="cls_dsb_table" style="height:450px;">
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Target</th>
+                                <th>Ach</th>
+                                <th>Ach %</th>
+                                <th style="text-align:center;">Growth %</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    18k3StarFS
+                                </td>
+                                <td>217</td>
+                                <td>213</td>
+                                <td>98%</td>
+
+                                <td style="text-align:center;"><label style="margin-right:2px;">21%</label><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" />  </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    12K3starInv
+                                </td>
+                                <td>736</td>
+                                <td>721</td>
+                                <td>98%</td>
+                                <td style="text-align:center;"><label style="margin-right:2px;">32%</label><img src="./Images/Arrow_red.png" width="9px" alt="Alternate Text" /></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    24K3StarFS
+                                </td>
+                                <td>719</td>
+                                <td>709</td>
+                                <td>98%</td>
+                                <td style="text-align:center;"><label style="margin-right:2px;">42%</label><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" /></td>
+                            </tr>
+                            <tr>
+                                <td>18k5StarInv</td>
+                                <td>705</td>
+                                <td>664</td>
+                                <td>94%</td>
+                                <td style="text-align:center;"><label style="margin-right:2px;">33%</label><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" /></td>
+                            </tr>
+                            <tr>
+                                <td>18k3StarInv</td>
+                                <td>812</td>
+                                <td>712</td>
+                                <td>87%</td>
+                                <td style="text-align:center;"><label style="margin-right:2px;">29%</label><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" /></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    18k3StarFS
+                                </td>
+                                <td>217</td>
+                                <td>213</td>
+                                <td>98%</td>
+
+                                <td style="text-align:center;"><label style="margin-right:2px;">21%</label><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" />  </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    12K3starInv
+                                </td>
+                                <td>736</td>
+                                <td>721</td>
+                                <td>98%</td>
+                                <td style="text-align:center;"><label style="margin-right:2px;">32%</label><img src="./Images/Arrow_red.png" width="9px" alt="Alternate Text" /></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    24K3StarFS
+                                </td>
+                                <td>719</td>
+                                <td>709</td>
+                                <td>98%</td>
+                                <td style="text-align:center;"><label style="margin-right:2px;">42%</label><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" /></td>
+                            </tr>
+                            <tr>
+                                <td>18k5StarInv</td>
+                                <td>705</td>
+                                <td>664</td>
+                                <td>94%</td>
+                                <td style="text-align:center;"><label style="margin-right:2px;">33%</label><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" /></td>
+                            </tr>
+                            <tr>
+                                <td>18k3StarInv</td>
+                                <td>812</td>
+                                <td>712</td>
+                                <td>87%</td>
+                                <td style="text-align:center;"><label style="margin-right:2px;">29%</label><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" /></td>
+                            </tr>
+                            <tr class="cls_table_footer">
+                                <td style="font-size:16px;font-weight:700;color:#000;">
+                                    Total
+                                </td>
+                                <td style="font-size:16px;font-weight:700;color:#000;">3189</td>
+                                <td style="font-size:16px;font-weight:700;color:#000;">3019</td>
+                                <td style="font-size:16px;font-weight:700;color:#000;">94%</td>
+                                <td style="text-align:center;font-size:16px;font-weight:700;color:#000;"><label style="margin-right:2px;">27%</label><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" /></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="cls_graph">
+
+            <div class="cls_graph_container" style="text-align:center;">
+                <div class="cls_container_div1" style="padding: 0px 2%;">
+                    <label class="cls_graph_container_label1">@("Top 10 Channel Partners")</label>
+
+
+                </div>
+                <div class="cls_container_div1">
+                    <label class="cls_graph_select1">Nov-2024 Vs Nov-2023</label>
+
+                </div>
+                <img src="./Images/ds_graph6.png" alt="Alternate Text" width="100%" />
+
+
+            </div>
+
+            <div class="cls_graph_container1">
+                <div class="cls_container_div1" style="padding: 11px 3% 0px 3%;">
+                    <label class="cls_graph_container_label1">Top 10 Channel Partners</label>
+
+                </div>
+                <div class="cls_container_div1" style="padding-left:1%">
+                    <label class="cls_graph_select1">Nov-2024 Vs Nov-2023</label>
+
+                </div>
+
+                <div class="cls_dsb_table">
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Channel Partners</th>
+                                <th>Current</th>
+                                <th>Previous</th>
+                                <th style="text-align:center;">Growth %</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    Aman Electronics
+                                </td>
+                                <td>345L</td>
+                                <td>221L</td>
+
+                                <td style="text-align:center;"><label style="margin-right:2px;">56%</label><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" />  </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    BM & Sons
+                                </td>
+                                <td>338L</td>
+                                <td>244L</td>
+                                <td style="text-align:center;"><label style="margin-right:2px;">98%</label><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" /></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Vinayak Sales
+                                </td>
+                                <td>284L</td>
+                                <td>166L</td>
+                                <td style="text-align:center;"><label style="margin-right:2px;">71%</label><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" /></td>
+                            </tr>
+                            <tr>
+                                <td>SB Electronics</td>
+                                <td>261L</td>
+                                <td>194L</td>
+                                <td style="text-align:center;"><label style="margin-right:2px;">34%</label><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" /></td>
+                            </tr>
+                            <tr>
+                                <td>Jyothi Electronics</td>
+                                <td>243L</td>
+                                <td>206L</td>
+                                <td style="text-align:center;"><label style="margin-right:2px;">18%</label><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" /></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Aman Electronics
+                                </td>
+                                <td>345L</td>
+                                <td>221L</td>
+
+                                <td style="text-align:center;"><label style="margin-right:2px;">56%</label><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" />  </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    BM & Sons
+                                </td>
+                                <td>338L</td>
+                                <td>244L</td>
+                                <td style="text-align:center;"><label style="margin-right:2px;">98%</label><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" /></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Vinayak Sales
+                                </td>
+                                <td>284L</td>
+                                <td>166L</td>
+                                <td style="text-align:center;"><label style="margin-right:2px;">71%</label><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" /></td>
+                            </tr>
+                            <tr>
+                                <td>SB Electronics</td>
+                                <td>261L</td>
+                                <td>194L</td>
+                                <td style="text-align:center;"><label style="margin-right:2px;">34%</label><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" /></td>
+                            </tr>
+                            <tr>
+                                <td>Jyothi Electronics</td>
+                                <td>243L</td>
+                                <td>206L</td>
+                                <td style="text-align:center;"><label style="margin-right:2px;">18%</label><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" /></td>
+                            </tr>
+                            <tr class="cls_table_footer">
+                                <td style="font-size:16px;font-weight:700;color:#000;">
+                                    Total
+                                </td>
+                                <td style="font-size:16px;font-weight:700;color:#000;">1471L</td>
+                                <td style="font-size:16px;font-weight:700;color:#000;">1031L</td>
+                                <td style="text-align:center;font-size:16px;font-weight:700;color:#000;"><label style="margin-right:2px;">43%</label><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" /></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="cls_graph" style="display:none;">
+
+            <div class="cls_graph_container" style="text-align:center;">
+                <div class="cls_container_div1" style="padding: 0px 2%;">
+                    <label class="cls_graph_container_label1">@("Distributor Sell In vs Sell Through ")</label>
+
+                    @*  <select class="cls_graph_select">
+                <option value="All">All</option>
+                </select> *@
+
+                </div>
+                <div class="cls_container_div1">
+                    <label class="cls_graph_select1">Nov-2024 Vs Nov-2023</label>
+                </div>
+                @*  <div class="cls_container_div1">
+            <label class="cls_graph_select1">Nov-2024 </label>
+
+            </div> *@
+                <img src="./Images/ds_graph7.png" alt="Alternate Text" width="100%" />
+
+
+            </div>
+
+            <div class="cls_graph_container1">
+                <div class="cls_container_div1" style="padding: 11px 3% 0px 3%;">
+                    <label class="cls_graph_container_label1">Distributor Sell In vs Sell Through</label>
+                    @* <select class="cls_graph_select">
+                <option value="All" >All</option>
+
+                </select> *@
+                </div>
+                <div class="cls_container_div1" style="padding-left:1%">
+                    <label class="cls_graph_select1">Nov-2024 Vs Nov-2023</label>
+
+                </div>
+
+                <div class="cls_dsb_table">
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Location</th>
+                                <th>Sell In</th>
+                                <th>Sell Through</th>
+                                <th style="text-align:center;">Sell %</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    CENTRAL
+                                </td>
+                                <td>91106.24</td>
+                                <td>0.0</td>
+
+                                <td style="text-align:center;"><label style="margin-right:2px;">24.32%</label><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" />  </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    EAST
+                                </td>
+                                <td>111481.64</td>
+                                <td>0.0</td>
+                                <td style="text-align:center;"><label style="margin-right:2px;">15.86%</label><img src="./Images/Arrow_red.png" width="9px" alt="Alternate Text" /></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    HO
+                                </td>
+                                <td>49233.57</td>
+                                <td>0.0</td>
+                                <td style="text-align:center;"><label style="margin-right:2px;">100%</label><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" /></td>
+                            </tr>
+                            <tr>
+                                <td>NORTH_1</td>
+                                <td>92337.4</td>
+                                <td>0.0</td>
+                                <td style="text-align:center;"><label style="margin-right:2px;">13.27%</label><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" /></td>
+                            </tr>
+                            <tr>
+                                <td style="font-size:16px;font-weight:700;color:#000;">
+                                    Total
+                                </td>
+                                <td style="font-size:16px;font-weight:700;color:#000;">789687.59</td>
+                                <td style="font-size:16px;font-weight:700;color:#000;">0.0</td>
+                                <td style="text-align:center;font-size:16px;font-weight:700;color:#000;"><label style="margin-right:2px;">10.44%</label><img src="./Images/Arrow_green.png" width="9px" alt="Alternate Text" /></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="cls_container_div4">
+
+        <!-- Top Row (2 Graphs) -->
+        <div class="cls_graph">
+            <!-- Clustered Bar Chart -->
+            <div class="cls_graph_container">
+                <div class="cls_container_div1" style="padding: 0px 2%;">
+                    <label class="cls_graph_container_label1">Primary Qty vs Sell Through Qty by Month</label>
+                    @* <label class="cls_graph_container_label2">November</label> *@
+                    <select class="cls_graph_select">
+                        <option value="2023">2023</option>
+                        <option value="2024" selected>2024</option>
+                    </select>
+                </div>
+
+                @* <Winit.UIComponents.Common.Graphs.ClusteredBarChart DataSource="ClusteredBarDataSource" BarLabels="BarLabels"></Winit.UIComponents.Common.Graphs.ClusteredBarChart> *@
+                <img src="./Images/ds_graph9.png" alt="Alternate Text" width="100%" @onclick="@(() => ShowBarGraphPopUp = true)" />
+            </div>
+
+            <!-- Doughnut Graph -->
+            <div class="cls_graph_container">
+                <div class="cls_container_div1" style="padding: 0px 2%;">
+                    <label class="cls_graph_container_label1">YTD Primary Qty vs Sell Through Qty</label>
+                </div>
+
+                <img src="./Images/ds_graph101.png" alt="Alternate Text" width="100%" />
+
+            </div>
+        </div>
+
+        <div class="cls_graph">
+            <!-- Clustered Bar Chart -->
+            <!-- Doughnut Graph -->
+            <div class="cls_graph_container">
+
+                <div class="cls_container_div1" style="padding: 0px 2%;">
+                    <label class="cls_graph_container_label1">@("Quantity by Top 5 Dealers Contribution")</label>
+                    <select class="cls_graph_select">
+                        <option value="2023">2023</option>
+                        <option value="2024" selected>2024</option>
+                    </select>
+                    <select class="cls_graph_select">
+                        <option value="">Jan</option>
+                        <option value="">Feb</option>
+                        <option value="">Mar</option>
+                        <option value="">Apr</option>
+                        <option value="">May</option>
+                        <option value="">Jun</option>
+                        <option value="">Jul</option>
+                        <option value="">Aug</option>
+                        <option value="">Sep</option>
+                        <option value="">Oct</option>
+                        <option value="" selected>Nov</option>
+                    </select>
+                </div>
+                @* <Winit.UIComponents.Common.Graphs.DoughNutGraph DataSource="DoghnutGraphDataSource"></Winit.UIComponents.Common.Graphs.DoughNutGraph> *@
+                <div class="cls_graph_container_left">
+                    <img src="./Images/ds_graph100.png" width="100%" @onclick="@(() => ShowDoughNutPopUp = true)" />
+
+                </div>
+                <div class="cls_graph_container_right">
+                    <label class="cls_graph_container_header">Other Dealers</label>
+                    <div class="cls_graph_cont_right_con_hd">
+                        <div class="cls_graph_cont_right_con">
+                            <div class="cls_graph_color_yellow"></div>
+                            <label class="cls_graph_container_right_label">Aman Electronics</label>
+
+                        </div>
+
+                        <div class="cls_graph_cont_right_con">
+                            <div class="cls_graph_color_liblue"></div>
+                            <label class="cls_graph_container_right_label">Burnwal Telecom</label>
+
+                        </div>
+
+                        <div class="cls_graph_cont_right_con">
+                            <div class="cls_graph_color_green"></div>
+                            <label class="cls_graph_container_right_label">Monika Electronics</label>
+
+                        </div>
+
+                        <div class="cls_graph_cont_right_con">
+                            <div class="cls_graph_color_liblue1"></div>
+                            <label class="cls_graph_container_right_label">Electronics Central PVT.l</label>
+
+                        </div>
+
+                        <div class="cls_graph_cont_right_con">
+                            <div class="cls_graph_color_brown"></div>
+                            <label class="cls_graph_container_right_label">BB Electronics</label>
+
+                        </div>
+
+                        <div class="cls_graph_cont_right_con">
+                            <div class="cls_graph_color_other"></div>
+                            <label class="cls_graph_container_right_label">PEE BEE ELECTRICALS</label>
+
+                        </div>
+
+                        <div class="cls_graph_cont_right_con">
+                            <div class="cls_graph_color_other"></div>
+                            <label class="cls_graph_container_right_label">BASUNDHARA</label>
+
+                        </div>
+
+                        <div class="cls_graph_cont_right_con">
+                            <div class="cls_graph_color_other"></div>
+                            <label class="cls_graph_container_right_label">DIPAK PCO</label>
+
+                        </div>
+                        <div class="cls_graph_cont_right_con">
+                            <div class="cls_graph_color_other"></div>
+                            <label class="cls_graph_container_right_label">MOHAN MULTI TRADERS</label>
+
+                        </div>
+                        <div class="cls_graph_cont_right_con">
+                            <div class="cls_graph_color_other"></div>
+                            <label class="cls_graph_container_right_label">DHARMARAJ ENTERPRISE</label>
+
+                        </div>
+                        <div class="cls_graph_cont_right_con">
+                            <div class="cls_graph_color_other"></div>
+                            <label class="cls_graph_container_right_label">SHYAMA WATCH & ELECTRONICS</label>
+
+                        </div>
+                        <div class="cls_graph_cont_right_con">
+                            <div class="cls_graph_color_other"></div>
+                            <label class="cls_graph_container_right_label">ANURAG INFOMART</label>
+
+                        </div>
+                        <div class="cls_graph_cont_right_con">
+                            <div class="cls_graph_color_other"></div>
+                            <label class="cls_graph_container_right_label">B B C ELECTRONICS</label>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="cls_graph_container" style="text-align:center;">
+
+                @* <label class="cls_graph_container_label1">Primary Qty vs Sell Through Qty by Month</label> *@
+                <div class="cls_container_div1" style="padding: 0px 2%;">
+                    <label class="cls_graph_container_label1">@("Month wise Total Dealer Billed ")</label>
+                    <select class="cls_graph_select">
+                        <option value="2023">2023</option>
+                        <option value="2024" selected>2024</option>
+                    </select>
+                    <select class="cls_graph_select">
+                        <option value="">Jan</option>
+                        <option value="">Feb</option>
+                        <option value="">Mar</option>
+                        <option value="">Apr</option>
+                        <option value="">May</option>
+                        <option value="">Jun</option>
+                        <option value="">Jul</option>
+                        <option value="">Aug</option>
+                        <option value="">Sep</option>
+                        <option value="">Oct</option>
+                        <option value="" selected>Nov</option>
+                    </select>
+                </div>
+                @* <div class="toggle-container">
+            <input type="radio" id="ytd" name="toggle" checked="@isYTDSelected" @onclick="() => ToggleOption(true)">
+            <label for="ytd" class="toggle-label @(isYTDSelected ? "active" : "")">YTD</label>
+
+            <input type="radio" id="mtd" name="toggle" checked="@(!isYTDSelected)" @onclick="() => ToggleOption(false)">
+            <label for="mtd" class="toggle-label @(!isYTDSelected ? "active" : "")">MTD</label>
+            </div> *@
+
+
+                <img src="./Images/ds_graph222.png" width="499px" @onclick="@(() => ShowDealersPopUp = true)" />
+
+            </div>
+
+        </div>
+
+        <div class="cls_graph">
+            <div class="cls_graph_container" style="text-align:center;">
+                <div class="cls_container_div1" style="padding: 0px 2%;">
+                    <label class="cls_graph_container_label1">@("Number of  Dealer Billed <5 Quantity ")</label>
+                    <select class="cls_graph_select">
+                        <option value="2023">2023</option>
+                        <option value="2024" selected>2024</option>
+                    </select>
+                    <select class="cls_graph_select">
+                        <option value="">Jan</option>
+                        <option value="">Feb</option>
+                        <option value="">Mar</option>
+                        <option value="">Apr</option>
+                        <option value="">May</option>
+                        <option value="">Jun</option>
+                        <option value="">Jul</option>
+                        <option value="">Aug</option>
+                        <option value="">Sep</option>
+                        <option value="">Oct</option>
+                        <option value="" selected>Nov</option>
+                    </select>
+
+
+                </div>
+                @* <Winit.UIComponents.Common.Graphs.HallowGraph></Winit.UIComponents.Common.Graphs.HallowGraph> *@
+                <img src="./Images/ds_graph333.png" alt="Alternate Text" width="504px" @onclick="@(() => ShowDealersBelow5PopUp = true)" />
+            </div>
+
+            <div class="cls_graph_container" style="text-align:center;">
+                <div class="cls_container_div1" style="padding: 0px 2%;">
+                    <label class="cls_graph_container_label1">@("Average of Unit Price For Top 10 Sold SKU")</label>
+                    <select class="cls_graph_select">
+                        <option value="2023">2023</option>
+                        <option value="2024" selected>2024</option>
+                    </select>
+                    <select class="cls_graph_select">
+                        <option value="">Jan</option>
+                        <option value="">Feb</option>
+                        <option value="">Mar</option>
+                        <option value="">Apr</option>
+                        <option value="">May</option>
+                        <option value="">Jun</option>
+                        <option value="">Jul</option>
+                        <option value="">Aug</option>
+                        <option value="">Sep</option>
+                        <option value="">Oct</option>
+                        <option value="" selected>Nov</option>
+                    </select>
+                </div>
+
+                <img src="./Images/ds_graph11.png" alt="Alternate Text" width="100%" />
+            </div>
+
+        </div>
+    </div>
+}
+
+
+
+
+
+
+<style>
+    .toggle-container {
+        display: flex;
+        width: 120px;
+        border: 1px solid #2663AA;
+        border-radius: 5px;
+        overflow: hidden;
+        height: 31px;
+        text-align: center;
+        float: right;
+    }
+
+        .toggle-container input[type="radio"] {
+            display: none;
+        }
+
+    .toggle-label {
+        flex: 1;
+        padding: 3px 0;
+        text-align: center;
+        font-weight: bold;
+        cursor: pointer;
+        color: #2663AA;
+        transition: background-color 0.3s, color 0.3s;
+        margin-bottom: 0px;
+    }
+
+        .toggle-label.active {
+            background-color: #007bff;
+            color: white;
+            margin-bottom: 0px;
+        }
+
+</style>
+@if (ShowBarGraphPopUp)
+{
+    <PopUpStatic Title="Primary Qty vs Sell Through Qty by Month" OkbtnText="Ok" CancelbtnText="Close"
+                 OnOkClick="() => ShowBarGraphPopUp = false"
+                 OnCloseClick="() => ShowBarGraphPopUp = false">
+        <div class="cls_graph_container1">
+            <div class="cls_dsb_table cls_center cls_table_static">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th> Qty </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                24K
+                            </td>
+                            <td>62</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                18K
+                            </td>
+                            <td>23</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                12K
+                            </td>
+                            <td>7</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                24K
+                            </td>
+                            <td>62</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                18K
+                            </td>
+                            <td>23</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                12K
+                            </td>
+                            <td>7</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                24K
+                            </td>
+                            <td>62</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                18K
+                            </td>
+                            <td>23</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                12K
+                            </td>
+                            <td>7</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+            </div>
+
+        </div>
+    </PopUpStatic>
+}
+@if (ShowDoughNutPopUp)
+{
+    <PopUpStatic Title="Quantity by Top 5 Dealers Contribution" OkbtnText="Ok" CancelbtnText="Close"
+                 OnOkClick="() => ShowDoughNutPopUp = false"
+                 OnCloseClick="() => ShowDoughNutPopUp = false">
+        <div class="cls_graph_container1">
+            <div class="cls_dsb_table cls_center cls_table_static">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Dealers</th>
+                            <th>Qty</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                Aman Electronics
+                            </td>
+                            <td>28</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Burnwal Telecom
+                            </td>
+                            <td>17</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Monika Electronics
+                            </td>
+                            <td>9</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Electronics Central PVT.Ltd
+                            </td>
+                            <td>13</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                BB Electronics
+                            </td>
+                            <td>11</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                PEE BEE ELECTRICALS
+                            </td>
+                            <td>7</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                BASUNDHARA
+                            </td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                DIPAK PCO
+                            </td>
+                            <td>1</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
+            </div>
+
+        </div>
+    </PopUpStatic>
+}
+@if (ShowDealersPopUp)
+{
+    <PopUpStatic Title="Month wise Total Dealer Billed" OkbtnText="Ok" CancelbtnText="Close"
+                 OnOkClick="() => ShowDealersPopUp = false"
+                 OnCloseClick="() => ShowDealersPopUp = false">
+        <div class="cls_graph_container1">
+            <div class="cls_dsb_table cls_center cls_table_static">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Dealers</th>
+                            <th>Qty</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                NEW SUBHADIP ELECTRONICS
+                            </td>
+                            <td>14</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                AMAN ELETRONICS
+                            </td>
+                            <td>28</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                BISWAKARMA MOBILE AND ELECTRONICS
+                            </td>
+                            <td>11</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                BISHWAKARMA RADIO MART
+                            </td>
+                            <td>9</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                DIPAK PCO
+                            </td>
+                            <td>16</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                ARADHYA ELECTRONICS
+                            </td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                NEW LOKENATH TRADERS
+                            </td>
+                            <td>4</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                PEE BEE ELECTRICALS
+                            </td>
+                            <td>10</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                ELECTRONICS CENTRE PVT.LTD.
+                            </td>
+                            <td>27</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                BASUNDHARA
+                            </td>
+                            <td>11</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                ELECTRONICS WORLD
+                            </td>
+                            <td>5</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </PopUpStatic>
+}
+@if (ShowDealersBelow5PopUp)
+{
+    <PopUpStatic Title="@("No of Dealers Billed < 5 Qty")" OkbtnText="Ok" CancelbtnText="Close"
+                 OnOkClick="() => ShowDealersBelow5PopUp = false"
+                 OnCloseClick="() => ShowDealersBelow5PopUp = false">
+        <div class="cls_graph_container1">
+            <div class="cls_dsb_table cls_center cls_table_static">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Dealers</th>
+                            <th>Qty</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                NEW SUBHADIP ELECTRONICS
+                            </td>
+                            <td>4</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                BISWAKARMA MOBILE AND ELECTRONICS
+                            </td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                BISHWAKARMA RADIO MART
+                            </td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                DIPAK PCO
+                            </td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                ARADHYA ELECTRONICS
+                            </td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                PEE BEE ELECTRICALS
+                            </td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                ELECTRONICS CENTRE PVT.LTD.
+                            </td>
+                            <td>1</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </PopUpStatic>
+}
+@if (IsDateRange)
+{
+    <PopUpStatic1 Title="@("Filter")" OkbtnText="Ok" CancelbtnText="Close"
+                  OnOkClick="() => IsDateRange = false"
+                  OnCloseClick="() => IsDateRange = false">
+        <img src="./Images/ds_filter.png" alt="Alternate Text" width="100%" />
+    </PopUpStatic1>
+}
+
+
+@code {
+    public bool IsDateRange { get; set; }
+    public bool IsPrimary { get; set; } = true;
+    public bool ShowBarGraphPopUp { get; set; }
+    public bool ShowDoughNutPopUp { get; set; }
+    public bool ShowDealersPopUp { get; set; }
+    public bool ShowDealersBelow5PopUp { get; set; }
+    Winit.UIModels.Web.Breadcrum.Interfaces.IDataService? iDataBreadcrumbService;
+    public List<ClusteredBarModel> ClusteredBarDataSource = new List<ClusteredBarModel>
+{
+    new ClusteredBarModel { Label = "Primary Qty", Data = new[] { 673, 505, 900, 500,500,500,800 }, Color = "#E56C37" },
+    new ClusteredBarModel { Label = "Sell Through Qty", Data = new[] { 764, 625, 700, 400,400,400,820 }, Color = "#2C9E12" }
+};
+    private string[] BarLabels = { "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov" };
+
+    public List<BarChartModel> BarDataSource = new List<BarChartModel>
+{
+    new BarChartModel { Label = "Product A", Data = new[] { 70,80,70,80,70,80,80,80,80,70,80,70,80,70}, Color = "#077ADF" }
+};
+    private string[] SingleBarLabels = { "18k3StarFS", "18k5StarInv", "12K3starInv", "18k3StarInvWRAC", "24K3StarFS", "24K3StarWRAC", "18k5StarInv", "18k3StarInvWRA", "18k5StarInv", "24K3StarFS", "18k3StarInv", "12K3starInv", "18k3StarFS", "12K3starInv" };
+
+
+    private List<DoughNutGraphModel> DoghnutGraphDataSource { get; set; } = new List<DoughNutGraphModel>
+{
+    new DoughNutGraphModel { Label = "Aman Electronics", Value = 25, Color = "#01A1FF" },
+    new DoughNutGraphModel { Label = "Burnwal Telecom", Value = 30, Color = "#BE9502" },
+    new DoughNutGraphModel { Label = "Monika Electronics", Value = 20, Color = "#FFAA00" },
+    new DoughNutGraphModel { Label = "Electronics Central Pvt.Ltd", Value = 5, Color = "#498CC5" },
+    new DoughNutGraphModel { Label = "BB Electronics", Value = 20, Color = "#4CD964" },
+
+};
+    private bool isYTDSelected = true;
+
+    private void ToggleOption(bool selectYTD)
+    {
+        isYTDSelected = selectYTD;
+    }
+    protected override void OnInitialized()
+    {
+        SetHeaderName();
+        base.OnInitialized();
+    }
+    protected void SetHeaderName()
+    {
+        iDataBreadcrumbService = new Winit.UIModels.Web.Breadcrum.Classes.DataServiceModel()
+            {
+                HeaderText = "Dashboard",
+                BreadcrumList = new List<Winit.UIModels.Web.Breadcrum.Interfaces.IBreadCrum>()
+                {
+                    new Winit.UIModels.Web.Breadcrum.Classes.BreadCrumModel() { SlNo = 1, Text = "Dashboard", IsClickable = false, URL = "maintainUserRole" },
+                }
+            };
+    }
+    string url = @"E:\Projects2023\WinitAppV1\WINITAPI\Data\TempData\Demo\0d5ba2b1-ea9f-4f00-b58a-f47c31040738\2024\4\17\PROMOTION_20240417072909526.pdf";
+    public async Task GraphOnClick(string SelectedGraph)
+    {
+        try
+        {
+            _navigationManager.NavigateTo("extendedgraphs?SelectedGraph=" + SelectedGraph);
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+    private void OnVendorChange(bool Isvendor)
+    {
+        if (Isvendor)
+        {
+            IsPrimary = true;
+        }
+        else
+        {
+            IsPrimary = false;
+        }
+        StateHasChanged();
+    }
+   
+}
+

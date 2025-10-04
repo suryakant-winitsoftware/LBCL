@@ -1,0 +1,46 @@
+﻿@page "/SessionExpired"
+@layout WinIt.Shared.EmptyLayout
+
+
+<div class="container cls_bbg" style="max-width: 100%;padding: 0px;">
+    <div class="cls_bgg">
+        <div class="cls_new_image_left">
+            <img alt="" src="./Images/bg.jpg?v=1">
+        </div>
+        <div class="cls_log_main">
+            <div class="loginbg">
+                <div style="width: 100%; float: left; position: relative;">
+                    <div class="dvname">
+                        <img alt="" style="width:250px" src="./Images/logo_m.png" class="img-responsive">
+                    </div>
+                    <h2 class="cls_n_h2">Customer Self Service</h2>
+                </div>
+                <div style="width: 100%; float: left;"> 
+                    <div class="cls_session">
+                        <div style="float: left;width: 100%;margin:30px 0px;">
+                            <h2 style="text-align: center;">Your session is expired.</h2>
+                            <h2 style="text-align: center;">Please&nbsp;<a @onclick='() => _navigationManager.NavigateTo("")'>click here</a>&nbsp;to login again.</h2>
+                            <div class="clearboth" style="line-height: 150px;">
+                                &nbsp;
+                            </div>
+                        </div>
+                    </div>
+                </div>
+              
+                
+              
+            </div>
+        </div>
+   
+    </div>
+</div>
+
+
+
+@code{
+    protected override void OnInitialized()
+    {
+        _loadingService.HideLoading();
+        base.OnInitialized();
+    }
+}

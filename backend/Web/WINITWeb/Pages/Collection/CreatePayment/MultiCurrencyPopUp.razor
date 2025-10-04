@@ -1,0 +1,123 @@
+﻿@using Winit.Modules.CollectionModule.Model.Classes
+@using Winit.Modules.CollectionModule.Model.Interfaces
+@inject Winit.Modules.CollectionModule.BL.Interfaces.ICreatePaymentViewModel _createPaymentViewModel;
+
+
+@if (IsShow)
+{
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show" tabindex="-1" style="display: block; overflow:auto;">
+        <div class="modal-dialog cls_pop_up_style1">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"> Enter Amount Currency Wise</h5>
+                    <span class="close" @onclick="Close">&times;</span>
+                </div>
+
+                <div class="modal-body">
+                    <div class="div1">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>
+                                        Currency
+                                    </th>
+                                    <th>
+                                        Rate
+                                    </th>
+                                    <th>
+                                        Amount
+                                    </th>
+                                    <th rowspan="2">
+                                        <label>Amount</label>
+                                        <label>INR</label>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+
+                                @if (_currencyCls.Count != 0)
+                                {
+                                    @foreach (var item in _currencyCls)
+                                    {
+
+                                        <tr>
+
+                                            <td>@item.FromCurrencyUID</td>
+                                            <td>@(CommonFunctions.RoundForSystem(item.Rate))</td>
+
+
+                                            <td>
+                                                @if (IsReadOnly)
+                                                {
+                                                    @CommonFunctions.RoundForSystem(item.CurrencyAmount_Temp)
+                                                }
+                                                else
+                                                {
+                                                    <input type="number" @bind="@item.CurrencyAmount_Temp" class="cls_account_table_box" @oninput="@(async e => await AmountCalculation(e, "CurrencyAmount", item))">
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (IsReadOnly)
+                                                {
+                                                    @CommonFunctions.RoundForSystem(item.ConvertedAmount_Temp)
+                                                }
+                                                else
+                                                {
+                                                    <input type="number" @bind="@item.ConvertedAmount_Temp" class="cls_account_table_box">
+                                                }
+                                            </td>
+
+                                        </tr>
+
+
+                                    }
+                                }
+                                else
+                                {
+
+                                    <tr>
+                                        <td colspan="8" style="text-align: center; font-weight:lighter;color:seagreen">
+                                            No Records Available
+                                        </td>
+                                    </tr>
+
+                                }
+
+
+                            </tbody>
+                        </table>
+                    </div>
+
+
+
+                    <div class="cls_container_div1" style="margin-top:40px;">
+
+
+                        <div class="cls_pop_up_div1">
+                            <label class="cls_section_div_purchase2_label"> @(IsReadOnly ? "" : "Invoice Total")</label>
+                            <label class="cls_credit_label2">@(IsReadOnly ? "" : CommonFunctions.RoundForSystem(Invoice))<span class="down_header_cls">@(IsReadOnly ? "" : "")</span></label>
+                                </div>
+                        <div class="cls_pop_up_div1">
+                            <label class="cls_section_div_purchase2_label">Total Collected Amount</label>
+                            <label class="cls_credit_label2">@CommonFunctions.RoundForSystem(_currencyCls.Sum(p => p.ConvertedAmount_Temp), 3)<span class="down_header_cls"></span></label>
+                                </div>
+                            
+                       
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div style="float:left">
+                        <button class="cls_comman_sec_btn cls_mar_right_10px" @onclick="CancelBtn">
+                            CANCEL
+                        </button>
+                        <button class="cls_comman_btn" @onclick="OkCloseBtn">
+                            OK
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

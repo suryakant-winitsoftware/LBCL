@@ -1,0 +1,10 @@
+﻿@namespace Winit.UIComponents.SnackBar
+<div @attributes="@UserAttributes" id="toast-container" class="@ClassName" style="@Style; display:flex;flex-direction:column;gap:10px;position:fixed;bottom:20px;z-index;1050;right:0;">
+    @if (Toast != null)
+    {
+        @foreach (var toast in Toast)
+        {
+            <ToastElement @key="toast" Toast="@toast"></ToastElement>
+        }
+    }
+</div>

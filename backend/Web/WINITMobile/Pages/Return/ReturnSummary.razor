@@ -1,0 +1,41 @@
+﻿@page "/ReturnSummary"
+@inject Winit.Modules.ReturnOrder.BL.Interfaces.IReturnSummaryViewModel _ReturnSummeryViewModel
+@inject Winit.Modules.ReturnOrder.BL.Interfaces.IReturnOrderBL _ReturnOrderBL
+@using Microsoft.Extensions.Localization
+@using Winit.UIComponents.Common.LanguageResources.Mobile
+@inject IStringLocalizer<LanguageKeys> Localizer
+<div class="cls_main_top_text1">
+    <h3>Return<label>  Order Summary</label> </h3>
+</div>
+@if (IsInitialized)
+{
+    <div class="">
+        <div style="width:100%;float:left;background:#fff;padding:5px 2%;margin-top:5px;margin-bottom:5px;">
+        <div style="display: flex; align-items: center;">
+            <InputDate @bind-Value="_ReturnSummeryViewModel.StartDate" id="txttStartdate" class="form-control cls_new_form" @onselect="OnDateChange"></InputDate>
+            <span style="margin:10px 10px;font-weight:700; font-size:13px;">TO</span>
+                <InputDate @bind-Value="_ReturnSummeryViewModel.EndDate" id="txtEndtdate" class="form-control cls_new_form" @onselect="OnDateChange"></InputDate>
+            </div>
+        </div>
+        <div class="cls_serch_nn">
+            <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder=@Localizer["enter_customer_name/code_here.."] MaxLength="200" DebounceInterval="500" OnDebounceIntervalElapsed="OnSearching"
+                                                               KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+                                                                   Value="" IsForSearch="true" />
+        </div>
+        <div style="width:100%;float:left;margin-top:5px;">
+        <Winit.UIComponents.Common.CustomControles.Tabs OnTabSelect="ActiveTabChanged" TabItems="_ReturnSummeryViewModel?.TabList"/>
+        </div>
+        @if (_ReturnSummeryViewModel.DisplayedReturnSummaryItemViews != null && _ReturnSummeryViewModel.DisplayedReturnSummaryItemViews.Any())
+        {
+            <ReturnSummaryListView Data="_ReturnSummeryViewModel.DisplayedReturnSummaryItemViews " OnCardClick="CardClicked"></ReturnSummaryListView>
+        }
+        else
+        {
+            <p style="width:100%;float:left;text-align:center;padding:15px 0px;">@Localizer["no_results_found"].</p>
+        }
+    </div>
+}
+        @* <Winit.UIComponents.Common.CustomControles.Tabs OnTabSelect="ActiveTabChanged" TabItems="_ReturnSummeryViewModel.TabList" /> *@
+
+
+

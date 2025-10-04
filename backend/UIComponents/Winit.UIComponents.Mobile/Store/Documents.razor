@@ -1,0 +1,38 @@
+﻿@inject Winit.Modules.StoreDocument.BL.Interfaces.IStoreDocumentBL StoreDocumentBL
+@inject Winit.Modules.StoreDocument.Model.Interfaces.IStoreDocument _StoreDocument
+@inject Winit.Modules.ListHeader.BL.Interfaces.IListHeaderBL ListHeaderBL
+@using Microsoft.Extensions.Localization
+@using Winit.UIComponents.Common.LanguageResources.Mobile
+@inject Winit.UIComponents.Common.Language.ILanguageService _languageService
+@inject IStringLocalizer<LanguageKeys> Localizer
+<div>
+    <div>@Localizer["store_document"]<sup style="color:red">*</sup></div>
+    <div>
+        @if (showDocument)
+        {
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_documentType" Title="Invoice Delivery Method"
+                                                                OnSelect="OnSelected" />
+        }
+        else
+        {
+            <button @onclick="@(()=>showDocument=!showDocument)">@DocumentLabel</button>
+        }
+    </div>
+</div>
+<div>
+    <div>@Localizer["account_number"]<sup style="color:red">*</sup></div>
+    <div>
+        <select>
+            <input type="text" />
+        </select>
+    </div>
+</div>
+<div>
+    <div>@Localizer["expiry_date"]<sup style="color:red">*</sup></div>
+    <div>
+        <select>
+            <input type="date" />
+        </select>
+    </div>
+</div>
+<div><button class="btn" @onclick="Save">@SaveOrUpdate</button></div>

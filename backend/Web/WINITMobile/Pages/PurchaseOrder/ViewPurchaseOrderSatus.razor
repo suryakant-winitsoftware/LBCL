@@ -1,0 +1,35 @@
+﻿@page "/ViewPurchaseOrderStatus"
+@using Winit.UIComponents.Common.CustomControles
+@using Winit.UIComponents.Web.Table
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+@inject Winit.Modules.PurchaseOrder.BL.Interfaces.IViewPurchaseOrderStatusViewModel _viewModel
+
+
+<div class="cls_main1">
+<div class="dn">
+
+    <div class="cls_full_width">
+        <button class="cls_comman_btn" @onclick="CreateNewPurchaseOrder">Create New Purchase Order</button>
+    </div>
+
+</div>
+<div class="cls_container_div4">
+    <Tabs TabItems="TabSelectionItems" OnTabSelect="OnTabSelect" IsCountRequired="true" />
+</div>
+
+@if (_viewModel.DisplayHeaderList != null && GridColumns != null)
+{
+    <TableGridView Columns="GridColumns" DataSource="_viewModel.DisplayHeaderList" OnSort="OnSortClick"
+                   PageNumber="_viewModel.PageNumber" PageSize="_viewModel.PageSize" TotalItemsCount="_viewModel.TotalCount"
+                   ShowRecordsCount="true"
+                   IsPaginationRequired="true" OnPageChange="PageIndexChanged" />
+    @* <Winit.UIComponents.Web.Paging.Paging CurrentPage="_viewModel.PageNumber" *@
+    @*                                       OnPageChange="PageIndexChanged" *@
+    @*                                       PageSize="_viewModel.PageSize" *@
+    @*                                       TotalItems="_viewModel.TotalCount"/> *@
+}
+else
+{
+    <p>Loading...</p>
+}
+</div>

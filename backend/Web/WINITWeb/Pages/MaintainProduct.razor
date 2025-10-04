@@ -1,0 +1,117 @@
+﻿@using MudBlazor
+@using System.Net.Http.Json
+@inject HttpClient httpClient
+@inject NavigationManager NavManager
+@using System;
+@using System.ComponentModel.DataAnnotations;
+@using Winit.UIModels.Common;
+@using Winit.UIModels.Common.Product;
+
+@page "/maintainproduct"
+
+
+<MudTable ServerData="ServerReload" Dense="true" Hover="true" @ref="table">
+    <!-- Table header content -->
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortLabel="code_field" T="customer">UID</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="name_field" T="customer">Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="type_field" T="customer">Type</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="type_field" T="customer">Code</MudTableSortLabel></MudTh>
+        <!-- Add more columns here based on the CustomerDataNew class properties -->
+    </HeaderContent>
+    <!-- Table row template -->
+    <RowTemplate>
+        <MudTd DataLabel="UID" @onclick="() => RedirectToDetailsPage(context.UID)">@context.UID</MudTd>
+        <MudTd DataLabel="Name">@context.Code</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Type">@context.Type</MudTd>
+        <!-- Add more MudTd elements here based on the CustomerDataNew class properties -->
+    </RowTemplate>
+    <!-- Optional content for the table footer -->
+    <FooterContent>
+        <!-- Add the custom styled pagination -->
+        <MudPagination Color="Color.Primary" Count="totalItems / 10" SelectedChanged="OnPageChanged" @bind-Page="currentPage" />
+        <MudText Align="Align.Center">Selected page: @currentPage</MudText>
+    </FooterContent>
+</MudTable>
+
+
+
+@code {
+    private IEnumerable<customer> pagedData;
+    private MudTable<customer> table;
+
+    private int totalItems = 10000;
+    private string searchString = null;
+    private int currentPage = 1;
+    private string selectedCode;
+
+    private async Task<TableData<customer>> ServerReload(TableState state)
+    {
+
+
+        // Fetch data from the API for the current page using currentPage
+        customer[] data = await httpClient.GetFromJsonAsync<customer[]>($"https://netcoretest.winitsoftware.com/api/Store/SelectAllStore?pageNumber={currentPage}&pageSize={state.PageSize}");
+
+        /// Apply filtering based on the search stringp98j
+        data = data.Where(customer =>
+        {
+            if (string.IsNullOrWhiteSpace(searchString))
+                return true;
+            if (customer.Code?.Contains(searchString, StringComparison.OrdinalIgnoreCase) == true)
+                return true;
+            if (customer.Name?.Contains(searchString, StringComparison.OrdinalIgnoreCase) == true)
+                return true;
+            if (customer.Type?.Contains(searchString, StringComparison.OrdinalIgnoreCase) == true)
+                return true;
+            return false;
+        }).ToArray();
+
+        // Total number of items after filtering
+        // totalItems = data.Length;
+
+        // Apply sorting based on the selected column
+        switch (state.SortLabel)
+        {
+            case "code_field":
+                data = data.OrderByDirection(state.SortDirection, o => o.Code).ToArray();
+                break;
+            case "name_field":
+                data = data.OrderByDirection(state.SortDirection, o => o.Name).ToArray();
+                break;
+            case "type_field":
+                data = data.OrderByDirection(state.SortDirection, o => o.Type).ToArray();
+                break;
+        }
+
+
+        // Apply paging and get the data for the current page
+        //pagedData = data.Skip((currentPage - 1) * state.PageSize).Take(state.PageSize).ToArray();
+
+        // Return the paged data along with the total count for pagination
+        return new TableData<customer>() { TotalItems = totalItems, Items = data };
+    }
+
+    private async Task RedirectToDetailsPage(string uid)
+    {
+       // var detailsData = await httpClient.GetFromJsonAsync<StoreDataModel>($"https://netcoretest.winitsoftware.com/api/store/SelectStoreByUID?UID={uid}");
+
+ 
+
+        // Navigate to the MaintainProductEdit page with the detailsData as a route parameter
+        NavManager.NavigateTo($"/MaintainProductEdit?UID={uid}", forceLoad: true);
+        
+      
+    }
+
+    private async Task OnPageChanged(int newPage)
+    {
+        currentPage = newPage;
+        await table.ReloadServerData();
+    }
+
+    
+
+  
+
+}

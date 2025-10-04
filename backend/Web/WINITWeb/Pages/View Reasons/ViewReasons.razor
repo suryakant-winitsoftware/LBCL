@@ -1,0 +1,199 @@
+﻿@page "/ViewReasons"
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize]
+@using Winit.Shared.Models.Common
+@using Winit.UIComponents.Common.CustomControles
+<PageTitle>View Reasons</PageTitle>
+@inject Winit.UIComponents.Common.IAlertService _AlertMessgae;
+@inject Winit.Modules.ListHeader.BL.Interfaces.IViewReasonsViewModel _viewReasonsViewModel;
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+                    
+@if (IsLoaded)
+{
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" />
+
+    <div class="container-fluid d-flex flex-row">
+        <div class="col-md-3 p-3" style="background-color: #f5f5f5;">
+            @if (_viewReasonsViewModel.ListHeaders != null)
+            {
+                <ul class="list-group" style="background-color:#555;">
+                    @foreach (var item in _viewReasonsViewModel.ListHeaders)
+                    {
+                        <button class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                                style="@(item.UID == ListItemHeaderUID ? "background-color:#1B478A;color:white;" : "")"
+                                @onclick='() => GetListItemData(item)'>
+                            <span>@item.Name</span>
+                            <span>&gt;</span>
+                        </button>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p>@Localizer["no_data_available."]</p>
+            }
+        </div>
+
+        
+        @* <div class="container border">
+    <div class="col-md-1 p-3"> </div>
+    <span class="fw-bold">@ListItemHeaderUID</span>
+    <div class="cls_export_main">
+    <button class="cls_add_new_sec" @onclick="()=>AddNewReasons()">
+    Add New
+    </button>
+    </div>
+    @if (_viewReasonsViewModel.listItems != null && _viewReasonsViewModel.listItems.Count > 0)
+    {
+    //<Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" DataSource="_viewReasonsViewModel.listItems" />
+    }
+    </div> *@
+        <div class="container border">
+            <div class="col-md-1 p-3"> </div>
+            <div style="width:100%; float:left;margin-bottom:10px;">
+            <span class="fw-bold">@_viewReasonsViewModel.ListHeaders?.FirstOrDefault().Name</span>
+            @if (ISEditablelListHeaders)
+            {
+                    <div style="float:right;">
+                        <button class="btn btn-primary cls_add_new_sec" style="margin:0px;" @onclick="()=>AddNewReasons()">
+                        @Localizer["add_new"]
+                        </button>
+                    </div>
+            }
+            </div>
+            @if (_viewReasonsViewModel.listItems != null && _viewReasonsViewModel.listItems.Count > 0)
+            {
+              
+                    @* <table class="table table-hover">
+                        <thead class="table-dark">
+                        <tr>
+                            <th>Code</th>
+                            <th>Description</th>
+                            <th>Sequence</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in _viewReasonsViewModel.listItems)
+                        {
+                            <tr>
+                                <td>@item.Code</td>
+                                <td>@item.Name</td>
+                                <td>@item.SerialNo</td>
+                                <td>
+                                    @if (item.IsEditable)
+                                    {
+                                        <button class="btn btn-link" style="color: #003898;" title="Edit" @onclick="() => OnEditClick(item)">
+                                            <img src="Images/edit.png" />
+                                        </button>
+                                        <button class="btn btn-link" style="color: #003898;" title="Delete" @onclick="() => OnDeleteClick(item)">
+                                            <img src="Images/delete.png" />
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-link" style="color: #003898;" title="View"  @onclick="() => OnViewClick(item)">
+                                            <img src="Images/view.png" />
+                                        </button>
+                                    }
+
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table> *@
+                <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" DataSource="_viewReasonsViewModel.listItems"  PageNumber="_viewReasonsViewModel.PageNumber" PageSize="_viewReasonsViewModel.PageSize" TotalItemsCount="_viewReasonsViewModel.TotalItemsCount" ShowRecordsCount="true" />
+                  <Winit.UIComponents.Web.Paging.Paging CurrentPage="_viewReasonsViewModel.PageNumber" OnPageChange="_viewReasonsViewModel.PageIndexChanged" PageSize="_viewReasonsViewModel.PageSize" TotalItems="_viewReasonsViewModel.TotalItemsCount" />
+  
+               
+            }
+            else
+            {
+                <p>@Localizer["no_items_to_display"]</p>
+            }
+        </div>
+
+    </div>
+}
+<style>
+    .container border {
+        border: 4px solid black;
+    }
+</style>
+
+@if (IsAddPopUp || IsEditPopUp || IsViewPopUp)
+{
+    <PopUp Title="@(IsAddPopUp ? @Localizer["add"]+" "+(_viewReasonsViewModel.ListHeaders?.FirstOrDefault()?.Name)+" "+@Localizer["item"] : (_viewReasonsViewModel.listItem.IsEditable ? @Localizer["edit"] : @Localizer["view"]) + " " + _viewReasonsViewModel.ListHeaders?.FirstOrDefault()?.Name + @Localizer["item"])" OkbtnText="@(IsAddPopUp?@Localizer["save"]:@Localizer["update"])" CancelbtnText=@Localizer["back"] OnOkClick="SaveUpdateReason" OnCloseClick="OnCancelFromBackBTnPopUpClick">
+        @if (!string.IsNullOrWhiteSpace(validationMessage))
+        {
+            <div class="alert alert-danger">
+                <div class="col-md-12">
+                    <div style="color: red;">@validationMessage</div>
+                </div>
+            </div>
+        }
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="cls_new_lab">@Localizer["header_code"]</label>
+
+                    <input class="form-control" type="text" @bind="_viewReasonsViewModel.listItem.ListHeaderUID" disabled="">
+
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="cls_new_lab"><span style="color:red;">*</span>@Localizer["code"]</label>
+                    <input class="form-control" type="text" @bind-value="_viewReasonsViewModel.listItem.Code" disabled='@(IsEditPopUp ? "disabled" : null)'>
+
+                    @*                     <input class="form-control" type="text" @bind-value="_viewReasonsViewModel.listItem.Code" disabled="">
+                *@
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="cls_new_lab"><span style="color:red;">*</span>@Localizer["description"]</label>
+                    <input class="form-control" type="text" @bind-value="_viewReasonsViewModel.listItem.Name" disabled='@(IsViewPopUp ? "disabled" : null)'>
+                </div>
+            </div>
+            <div class="col-md-4 margin_top">
+                <div class="form-group">
+                    <label class="cls_new_lab">
+                        <span style="color:red;">*</span>@Localizer["sequence_no"]
+                    </label>
+                    <input class="form-control" type="text" maxlength="11" required
+                           value="@_viewReasonsViewModel.listItem.SerialNo"
+                           @oninput="ValidateSequenceNumber"
+                           disabled='@(IsViewPopUp ? "disabled" : null)' />
+                </div>
+            </div>
+            <div class="col-md-4 margin_top">
+                <div class="form-group">
+                    <label class="cls_new_lab">@Localizer["is_editable"]</label>
+                    <input type="checkbox" class="" @bind="_viewReasonsViewModel.listItem.IsEditable" disabled='@(IsViewPopUp ? "disabled" : null)'>
+                </div>
+            </div>
+        </div>
+    </PopUp>
+}
+@if (IsBackBtnPopUp)
+{
+    <WinIt.Pages.PopUp Title=@Localizer["back"] OkbtnText=@Localizer["ok"] CancelbtnText=@Localizer["cancel"] OnOkClick="OnOkFromUpdateBTnPopUpClick" OnCloseClick="OnBackFromUpdateBTnPopUpClick">
+        <label>
+            @Localizer["are_you_sure_you_want_to_cancel?_your_work_will_be_lost."]
+        </label>
+    </WinIt.Pages.PopUp>
+}
+@* @if (IsDeleteBtnPopUp)
+{
+    <PopUp Title="Delete" OnCloseClick="() => IsDeleteBtnPopUp = false" OkbtnText="Delete" CancelbtnText="Cancel" OnOkClick="OnOkFromDeleteBTnPopUpClick">
+        <label>
+            Are you sure you want to Delete?
+        </label>
+    </PopUp>
+} *@
+@code
+{
+
+}

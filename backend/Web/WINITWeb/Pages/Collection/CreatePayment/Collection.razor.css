@@ -1,0 +1,35 @@
+﻿/* Apply styles to the inline-dropdown container */
+.inline-dropdown {
+    display: inline-block;
+    margin-bottom: 20px; /* Add some spacing between rows */
+}
+
+/* Apply styles to the custom-dropdown container */
+.custom-dropdown, .custom-dropdown1 {
+    display: inline-block;
+    margin-right: 20px; /* Adjust the margin as needed */
+}
+
+    .custom-dropdown select, .custom-dropdown1 select {
+        width: 100%;
+        padding: 5px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 2px;
+        height: 38px;
+    }
+
+/* Adjust styles for responsiveness */
+@media (max-width: 768px) {
+    .inline-dropdown {
+        display: block;
+        margin-bottom: 20px; /* Add some spacing between rows */
+    }
+
+    .custom-dropdown, .custom-dropdown1 {
+        display: block;
+        margin-right: 0;
+    }
+
+
+}

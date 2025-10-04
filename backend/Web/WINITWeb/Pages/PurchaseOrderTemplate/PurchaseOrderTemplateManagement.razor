@@ -1,0 +1,23 @@
+﻿@namespace WinIt.Pages.PurchaseOrderTemplate
+@page "/purchaseordertemplate"
+@using Winit.UIComponents.Common.CustomControles
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.PurchaseOrder.BL.Interfaces.IMaintainPurchaseOrderTemplateViewModel _viewModel;
+
+<PageTitle>Maintain PO Template</PageTitle>
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+                     OnFilterApplied="@OnFilterApply"></PageHeaderAndFilter>
+<div class="cls_full_width">
+    <button class="cls_comman_btn" @onclick='() => _navigationManager.NavigateTo("addeditpotemplate")'>Create New PO Template</button>
+</div>
+@if (_viewModel.PurchaseOrderTemplateHeaders != null && GridColumns != null)
+{
+    <TableGridView Columns="GridColumns"
+                   DataSource="_viewModel.PurchaseOrderTemplateHeaders"
+                   OnSort="OnSortClick" />
+    <Winit.UIComponents.Web.Paging.Paging CurrentPage="_viewModel.PageNumber"
+                                          OnPageChange="OnPageIndexChange"
+                                          PageSize="_viewModel.PageSize"
+                                          TotalItems="_viewModel.TotalCount" />
+
+}

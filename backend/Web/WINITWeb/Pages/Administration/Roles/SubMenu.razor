@@ -1,0 +1,68 @@
+﻿@using Winit.Modules.Role.Model.Classes
+@using Winit.Modules.Role.Model.Interfaces
+@using Winit.Modules.Role.Model.Constants
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+
+
+<div class=" cls_container_div1">
+    <div class="cls_container_div4">
+
+        @if (SubSubModule.SubModule != null)
+        {
+            <label class="cls_container_p_half">@SubSubModule.SubModule.SubModuleNameEn</label>
+           @*  <input type="checkbox" name="@SubSubModule.SubModule.submodule_name_en" checked="@SubSubModule.SubModule.show_in_menu" @onclick=@(()=>SubSubModule.SubModule.show_in_menu=!SubSubModule.SubModule.show_in_menu) />
+            <label @onclick=@(()=>SubSubModule.SubModule.show_in_menu=!SubSubModule.SubModule.show_in_menu) for="@SubSubModule.SubModule.submodule_name_en">@Localizer["view_in_menu"]</label> *@
+        }
+
+
+        <div class="cls_webMenu_check_label">
+        @Localizer["check_all"]  <input type="checkbox" checked="@isCheckAll" @onclick=@(()=>OnCheckUncheckAll()) />
+    </div>
+    </div>
+    <div class="div1">
+    <table style="table-layout:fixed;">
+        <thead>
+            <tr>
+                <th style="width:37%">@Localizer["name"]</th>
+                    <th style="width:9%"><input style="vertical-align:middle;" type="checkbox" checked=@_PermissionHeaderChecks.FullAccess @onclick=@(()=>CheckAllSinglePermission(MenuConstants.FullAccess )) /><label style="margin-left: 5px;margin-bottom: 0px;"> @Localizer["full_access"] </label> </th>
+                    <th style="width:9%"><input style="vertical-align:middle;" type="checkbox" disabled=@_PermissionHeaderChecks.FullAccess checked=@_PermissionHeaderChecks.Add @onclick=@(()=>CheckAllSinglePermission(MenuConstants.Add )) /><label style="margin-left: 5px;margin-bottom: 0px;">@Localizer["add"]</label></th>
+                    <th style="width:9%"><input style="vertical-align:middle;" type="checkbox" disabled=@_PermissionHeaderChecks.FullAccess checked=@_PermissionHeaderChecks.Edit @onclick=@(()=>CheckAllSinglePermission(MenuConstants.Edit )) /><label style="margin-left: 5px;margin-bottom: 0px;">@Localizer["edit"]</label></th>
+                    <th style="width:9%"><input style="vertical-align:middle;" type="checkbox" disabled=@_PermissionHeaderChecks.FullAccess checked=@_PermissionHeaderChecks.View @onclick=@(()=>CheckAllSinglePermission(MenuConstants.View )) /><label style="margin-left: 5px;margin-bottom: 0px;">@Localizer["view"]</label></th>
+                    <th style="width:9%"><input style="vertical-align:middle;" type="checkbox" disabled=@_PermissionHeaderChecks.FullAccess checked=@_PermissionHeaderChecks.Delete @onclick=@(()=>CheckAllSinglePermission(MenuConstants.Delete )) /><label style="margin-left: 5px;margin-bottom: 0px;">@Localizer["delete"]</label></th>
+                    <th style="width:9%"><input style="vertical-align:middle;" type="checkbox" disabled=@_PermissionHeaderChecks.FullAccess checked=@_PermissionHeaderChecks.Download @onclick=@(()=>CheckAllSinglePermission(MenuConstants.Download )) /><label style="margin-left: 5px;margin-bottom: 0px;">@Localizer["download"]</label></th>
+                    <th style="width:9%"><input style="vertical-align:middle;" type="checkbox" disabled=@_PermissionHeaderChecks.FullAccess checked=@_PermissionHeaderChecks.Approval @onclick=@(()=>CheckAllSinglePermission(MenuConstants.Approval)) /> <label style="margin-left: 5px;margin-bottom: 0px;">@Localizer["approval"]</label></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (SubSubModule.SubSubModules != null)
+            {
+                @foreach (SubSubModuleMasterHierarchy item in SubSubModule.SubSubModules)
+                {
+                    @if (item.SubSubModule != null && item.Permissions != null)
+                    {
+                        <tr>
+                            <td>@item.SubSubModule.SubSubModuleNameEn</td>
+                            <td><input type="checkbox" checked="@CommonFunctions.GetBooleanValue(item.Permissions.FullAccess)" @onclick=@(()=>CheckUncheckSingleValue(MenuConstants.FullAccess,item)) /></td>
+                            <td><input type="checkbox" disabled="@item.Permissions.FullAccess" checked="@item.Permissions.AddAccess" @onclick=@(()=>CheckUncheckSingleValue(MenuConstants.Add,item)) /></td>
+                            <td><input type="checkbox" disabled="@item.Permissions.FullAccess" checked="@item.Permissions.EditAccess" @onclick=@(()=>CheckUncheckSingleValue(MenuConstants.Edit,item)) /></td>
+                            <td><input type="checkbox" disabled="@item.Permissions.FullAccess" checked="@item.Permissions.ViewAccess" @onclick=@(()=>CheckUncheckSingleValue(MenuConstants.View,item)) /></td>
+                            <td><input type="checkbox" disabled="@item.Permissions.FullAccess" checked="@item.Permissions.DeleteAccess" @onclick=@(()=>CheckUncheckSingleValue(MenuConstants.Delete,item)) /></td>
+                            <td><input type="checkbox" disabled="@item.Permissions.FullAccess" checked="@item.Permissions.DownloadAccess" @onclick=@(()=>CheckUncheckSingleValue(MenuConstants.Download,item)) /></td>
+                            <td><input type="checkbox" disabled="@item.Permissions.FullAccess" checked="@item.Permissions.ApprovalAccess" @onclick=@(()=>CheckUncheckSingleValue(MenuConstants.Approval,item)) /></td>
+                        </tr>
+                    }
+                }
+            }
+            else
+            {
+                <tr>
+                    <td style="text-align: center;color:red">@Localizer["no_record_found"]</td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+    </div>
+</div>
+

@@ -1,0 +1,129 @@
+﻿@using Winit.UIModels.Common.Mapping;
+@using static System.Collections.Specialized.BitVector32;
+    <style>
+    .container {
+        position: relative;
+        /* Other container styles */
+    }
+
+    .overlay {
+        position: fixed;
+        
+        width:auto;
+        height: 150px;
+        background-color: rgba(0,0,0, 0.3); /* Semi-transparent black background */
+        z-index: 1000; /* Higher z-index to appear on top */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .w-20{
+        width:20%;
+    }
+
+    .btn-hover-color:hover {
+        background-color: rgba(0,0,0,0.4); /* Change to your desired hover color */
+    }
+
+    
+    </style>
+<input type="button" value="@SelectedText" @onclick="ToggleOverlay" id="@Id" class="w-75 text-center bg-light border" />
+<div id="" class="overlay" style="display: @overlayDisplay; width:15%;" >
+    <input type="text" style="width:100%; height:30px; "  @oninput="UpdateInputValue" placeholder="Search Here" class="border"/>
+    <div class="multiselect-dropdown-all-selector"><input type="checkbox" @onclick="ToggleSelection"><label>All</label></div>
+    <div style="overflow-y:scroll;height:100px; " class="w-100  ">
+        @if (Items != null)
+        {
+            @foreach (var i in SortedCountryList)
+            {
+                <div class="btn-hover-color" style="display: block;"><input type="checkbox" id="@i.UID" @bind="i.IsSelected"><label for="@i.UID">@i.Label</label></div>
+            }
+        }
+    </div>
+ </div>
+ @* <script>
+    document.addEventListener("click", function (e) {
+        var dropdown = document.querySelector(".overlay");
+        var id = "@Id";
+        // Check if the click occurred outside of the dropdown and the button
+        if (dropdown && !dropdown.contains(e.target) && e.target.id !== id) {
+            dropdown.style.display = "none"; // Close the dropdown
+        }
+    });
+    var myId = ""; // Define a JavaScript variable to store the Id value
+
+    function setId(id) {
+        myId = id;
+    }
+ </script> *@
+ 
+@code {
+    [Parameter] public IEnumerable<SelectionMapView>? Items { get; set; }
+    [Parameter] public string Id { get; set; }
+    [Parameter] public string Text { get; set; }
+    [Parameter]
+    public EventCallback onDropDown { get; set; }
+    private bool All = false;
+    private string searchText= "";
+    private string overlayDisplay = "none";
+    public List<string> Message = new List<string>();
+    public int count = 0;
+    private string SelectedText
+    { 
+        get
+        {
+            count = Items.Count(item => item.IsSelected);
+            Message.Clear();
+            foreach(var J in Items)
+            {
+                if (J.IsSelected)
+                {
+                    Message.Add(J.UID);
+                }
+            }
+            return (count > 0) ? $"{count} {Text}"+((count>1)?"s":"" )+" selected" : $"Select {Text}";   
+        }
+    }
+    private List<SelectionMapView> SortedCountryList
+    {
+        get
+        {
+            return string.IsNullOrWhiteSpace(searchText)
+                 ? Items.OrderBy(item => item.Label).ToList()
+                 : Items
+                       .Where(item => item.Label.ToLower().Contains(searchText.ToLower()))
+                       .OrderBy(item => item.Label)
+                       .ToList();
+        }
+    }
+    private async void ToggleOverlay()
+    {
+        overlayDisplay = overlayDisplay == "none" ? "block" : "none";
+        if (overlayDisplay == "none")
+        {
+            await onDropDown.InvokeAsync();
+        }
+    }
+
+    private void ToggleSelection()
+    {
+        All = !All;
+        foreach (var item in Items)
+        {
+            item.IsSelected = All;
+        }
+    }
+
+    private void UpdateInputValue(ChangeEventArgs e)
+    {
+        searchText = e.Value.ToString();
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+        }
+    }
+    [Inject] private IJSRuntime JSRuntime { get; set; }
+ 
+}

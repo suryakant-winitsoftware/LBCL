@@ -1,0 +1,111 @@
+﻿@page "/ItemSupplier"
+<PageTitle>Item Supplier</PageTitle>
+
+@using System.ComponentModel.DataAnnotations
+@using System.Linq
+@using Microsoft.JSInterop
+@inject NavigationManager NavManager
+@using Newtonsoft.Json;
+
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.Org.BL.Interfaces.IOrgViewModel _orgViewModel;
+@inject Winit.UIComponents.Common.IAlertService _AlertMessgae;
+@if (IsInitialized)
+{
+    <div style="width: 100%;float: left;">
+        <h6 style="color: #003898; font-weight: bold; margin: 0;">Item Supplier</h6>
+    </div>
+    <div style="width: 100%;float: left;">
+        <nav style="width: 100%;float: left;" aria-label="breadcrumb">
+            <ol class="breadcrumb" style="margin:0;">
+                <li class="breadcrumb-item" style="color:#003898 !important; font-weight:bold"><a href="#">Home</a></li>
+                <li class="separator" style="margin: 0 0.2rem;color:#003898;">>></li>
+                <li class="breadcrumb-item active" aria-current="page" style="color:#003898; font-weight:bold">Item Supplier</li>
+            </ol>
+        </nav>
+    </div>
+    <div>
+        <span>
+            Search Criteria:All
+        </span>
+        <button class="btn btn-primary" style="float:right;margin-right:0px;background-color:#003898" @onclick="ToggleFilter">
+            Filter
+        </button>
+    </div>
+    @if (showFilter)
+    {
+        <div class="fadeout fadein storeupper">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="control-label" for="code">@Localizer["code"]</label>
+                        <input class="form-control" type="text" @bind-value="CodeFilter" placeholder="Code">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="control-label" for="name">@Localizer["name"]</label>
+                        <input class="form-control" type="text" @bind-value="NameFilter" placeholder="Name">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <button class="btn btn-primary" type="submit" @onclick="ApplyFilter">@Localizer["search"]</button>
+                        <button class="btn btn-secondary ml-2" @onclick="ResetFilter">Reset</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    <div class="storeupper">
+        <div class="tab-content">
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <button class="btn btn-primary" @onclick="AddNewItem" style="background-color:#003898">
+                            @Localizer["add_new"]
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <div class="form-group">
+                            <button class="btn common-button">@Localizer["export_to_excel"]</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <div class="form-group">
+                            <button class="btn common-button">@Localizer["export_to_csv"]</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <button class="btn common-button">@Localizer["export_to_pdf"]</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <Winit.UIComponents.Web.Table.DivGridView Columns="DataGridColumns" DataSource="_orgViewModel.OrgItemViews" />
+
+    @if (IsDeleteBtnPopUp)
+    {
+        <PopUp Title="Delete" OnCloseClick="() => IsDeleteBtnPopUp = false" OkbtnText="Delete" CancelbtnText="Cancel" OnOkClick="OnOkFromDeleteBTnPopUpClick">
+            <label>
+                @Localizer["are_you_sure_you_want_to_cancel?_your_work_will_be_lost."]
+            </label>
+        </PopUp>
+
+    }
+}
+
+@code {
+
+
+}

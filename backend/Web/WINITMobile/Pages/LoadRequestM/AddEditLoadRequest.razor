@@ -1,0 +1,273 @@
+﻿@page "/addeditloadrequest/{RequestLoadType}"
+@page "/addeditloadrequest"
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+@inject IJSRuntime JSRuntime
+@inject SideBarService _sidebarService
+@using Winit.Shared.CommonUtilities.Common
+@using Winit.UIComponents.Common.CustomControls
+@using Winit.Shared.Models.Common
+@using Winit.UIComponents.Common.WinitDatepicker
+@inject NavigationManager NavManager
+@inject Winit.Modules.WHStock.BL.Interfaces.IAddEditLoadRequest _AddEditLoadRequest
+@inject Winit.Modules.Common.BL.Interfaces.IAppUser _iAppUser
+<div style="width:100%;float:left;padding:8px;">
+    <h3>@Heading</h3> 
+<div class="cls_load_add_eidt_top">
+    <p>@(_AddEditLoadRequest.DisplayLoadRequestItemView?.WHStockRequest?.RequestCode)</p>
+    <p>@CommonFunctions.GetDateTimeInFormat(currentDate)</p>
+</div>
+      @* <WinitCalendar id="requiredByDate" selectedDate="@RequestedDate" MinDate="0" OnChange="OnRequiredByDateChange"></WinitCalendar> *@
+<div class="cls_serch_nn" style="margin-top:10px;">
+<Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder=@Localizer["search_by_item_code_/_description"] MaxLength="200" DebounceInterval="500" OnDebounceIntervalElapsed="ItemSearch"
+                                                       KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+                                                           Value="" IsForSearch="true" />
+                                                           <div class="cls_serch_nn_cen">
+    <Scanner OnBarcodeScanned="AfterBarcodeScanned" />
+</div>
+</div>
+
+<div class="cls_table_main">
+    <div class="table_design">
+        <div class="div1">
+<table class="table">
+    <thead>
+
+
+        @if (_AddEditLoadRequest.WHStockRequestItemview?.Status == StockRequestStatus.Requested || _AddEditLoadRequest.WHStockRequestItemview?.Status == StockRequestStatus.Rejected || _AddEditLoadRequest.WHStockRequestItemview?.Status == StockRequestStatus.Draft || uid == null)
+        {
+            <tr>
+
+                <th rowspan="2" class="tblHeader">@Localizer["item_description"]</th>
+                <th style="text-align:center" colspan="2" class="tblHeader">@Localizer["requested_qty"]</th>
+
+            </tr>
+            <tr>
+                <th class="tblHeader" contenteditable="false">@Localizer["outer"]</th>
+                <th class="tblHeader" contenteditable="false">@Localizer["each"]</th>
+            </tr>
+        }
+        @if (_AddEditLoadRequest.WHStockRequestItemview?.Status == StockRequestStatus.Collected)
+        {
+            <tr>
+
+                <th rowspan="2" class="tblHeader">@Localizer["item_description"]</th>
+                <th colspan="2" class="tblHeader">@Localizer["approved_qty"]</th>
+                <th colspan="2" class="tblHeader">@Localizer["collected_qty"]</th>
+
+            </tr>
+            <tr>
+                <th class="tblHeader" contenteditable="false">@Localizer["outer"]</th>
+                <th class="tblHeader" contenteditable="false">@Localizer["each"]</th>
+                <th class="tblHeader" contenteditable="false">@Localizer["outer"]</th>
+                <th class="tblHeader" contenteditable="false">@Localizer["each"]</th>
+            </tr>
+        }
+        else if (_AddEditLoadRequest.WHStockRequestItemview?.Status == StockRequestStatus.Approved)
+        {
+            <tr>
+
+                <th rowspan="2" class="tblHeader">@Localizer["item_description"]</th>
+                <th colspan="2" class="tblHeader">@Localizer["requested_qty"] </th>
+                <th colspan="2" class="tblHeader">@Localizer["approved_qty"] </th>
+
+
+            </tr>
+            <tr>
+                <th class="tblHeader" contenteditable="false">@Localizer["outer"]</th>
+                <th class="tblHeader" contenteditable="false">@Localizer["each"]</th>
+                <th class="tblHeader" contenteditable="false">@Localizer["outer"]</th>
+                <th class="tblHeader" contenteditable="false">@Localizer["each"]</th>
+            </tr>
+        }
+        else if (_AddEditLoadRequest.WHStockRequestItemview?.Status == StockRequestStatus.Processed)
+        {
+            <tr>
+                @* <th rowspan="2" class="tblHeader"><input type="checkbox" @onchange="ToggleAllRows" checked="@CheckAllRows" /></th> *@
+
+                <th rowspan="2" class="tblHeader">@Localizer["item_description"]</th>
+
+                <th colspan="2" class="tblHeader">@Localizer["approved_qty"]</th>
+                <th colspan="2" class="tblHeader">@Localizer["collected_qty"]</th>
+
+
+            </tr>
+            <tr>
+                <th class="tblHeader" contenteditable="false">@Localizer["outer"]</th>
+                <th class="tblHeader" contenteditable="false">@Localizer["each"]</th>
+                <th class="tblHeader" contenteditable="false">@Localizer["outer"]</th>
+                <th class="tblHeader" contenteditable="false">@Localizer["each"]</th>
+
+
+
+            </tr>
+        }
+
+
+
+    </thead>
+    <tbody>
+        @if (_AddEditLoadRequest.DisplayWHStockRequestLineItemview == null)
+        {
+            @if (_AddEditLoadRequest.WHStockRequestItemview?.Status == StockRequestStatus.Requested || _AddEditLoadRequest.WHStockRequestItemview?.Status == StockRequestStatus.Rejected)
+            {
+                <tr>
+                    <td colspan="4" style="text-align: center;color:red">@Localizer["no_record_found"]</td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td colspan="7" style="text-align: center;color:red">@Localizer["no_record_found"]</td>
+                </tr>
+            }
+        }
+        else
+        {
+
+
+
+            @foreach (var row in _AddEditLoadRequest.DisplayWHStockRequestLineItemview)
+            {
+
+                <tr>
+                    <td>
+                        <span style="color: #003898; margin-right: 5px;">@row.SKUCode</span>
+                        @row.SKUName
+                        <div>Van Qty: <span style="color: #003898;">@VanQty</span></div>
+                    </td>
+
+
+                    @if (_AddEditLoadRequest.WHStockRequestItemview?.Status == StockRequestStatus.Requested)
+                    {
+                        <td><label class="form-control" style="background-color: #dee2e6;">@row.RequestedQty2</label></td>
+                        <td><label class="form-control" style="background-color: #dee2e6;">@row.RequestedQty1</label></td>
+
+                    }
+                    else if (_AddEditLoadRequest.WHStockRequestItemview?.Status == StockRequestStatus.Draft || uid == null)
+                    {
+                        if (IsPreviewBtnClicked)
+                        {
+                            <td><label class="form-control" style="background-color: #dee2e6;">@row.RequestedQty2</label></td>
+                            <td><label class="form-control" style="background-color: #dee2e6;">@row.RequestedQty1</label></td>
+                        }
+                        else
+                        {
+                            <td>
+                                <input style="width:100%;" type="number" @bind="row.RequestedQty2" @onblur="CalculateTotQty" />
+                            </td>
+                            <td>
+                                <input style="width:100%;" type="number" @bind="row.RequestedQty1" @onblur="CalculateTotQty" />
+                            </td>
+                            row.RequestedQty = (row.RequestedQty1 * 1 + row.RequestedQty2 * row.UOM2CNF);
+                        }
+
+                    }
+                    else if (_AddEditLoadRequest.WHStockRequestItemview?.Status == StockRequestStatus.Approved)
+                    {
+
+                        <td><label class="form-control" style="background-color: #dee2e6;">@row.CPEApprovedQty2</label></td>
+
+
+                        <td><label class="form-control" style="background-color: #dee2e6;">@row.CPEApprovedQty1</label></td>
+
+                        <td><label class="form-control" style="background-color: #dee2e6;">@row.CPEApprovedQty2</label></td>
+
+
+                        <td><label class="form-control" style="background-color: #dee2e6;">@row.CPEApprovedQty1</label></td>
+
+                    }
+                    else if (_AddEditLoadRequest.WHStockRequestItemview?.Status == StockRequestStatus.Processed)
+                    {
+
+                        if (count != 0)
+                        {
+                            row.CollectedQty2 = row.ApprovedQty2;
+                            row.CollectedQty1 = row.ApprovedQty1;
+                        }
+
+                        <td><label class="form-control" style="background-color: #dee2e6;">@row.ApprovedQty2</label></td>
+                        <td><label class="form-control" style="background-color: #dee2e6;">@row.ApprovedQty1</label></td>
+                        <td>
+                            <input style="width:100%;" type="number" @bind="row.CollectedQty2" @oninput="()=> CollectedQtyChange(row.UID)" />
+                        </td>
+                        <td>
+                            <input style="width:100%;" type="number" @bind="row.CollectedQty1" @oninput="()=> CollectedQtyChange(row.UID)" />
+                        </td>
+
+                        row.CollectedQty = (row.CollectedQty1 * 1 + row.CollectedQty2 * row.UOM2CNF);
+
+
+                    }
+                    else if (_AddEditLoadRequest.WHStockRequestItemview?.Status == StockRequestStatus.Collected)
+                    {
+
+
+                        <td><label class="form-control" style="background-color: #dee2e6;">@row.ApprovedQty2</label></td>
+                        <td><label class="form-control" style="background-color: #dee2e6;">@row.ApprovedQty1</label></td>
+                        <td><label class="form-control" style="background-color: #dee2e6;">@row.CollectedQty2</label></td>
+                        <td><label class="form-control" style="background-color: #dee2e6;">@row.CollectedQty1</label></td>
+                    }
+
+
+                </tr>
+            }
+
+        }
+    </tbody>
+    </table></div>
+</div></div>
+@if (_AddEditLoadRequest.WHStockRequestItemview?.Status == StockRequestStatus.Draft || uid == null)
+{
+    <div class="cls_load_add_eidt_bottom">
+        <div class="cls_load_add_eidt_bottom_rep">
+            <p>@Localizer["total_sku's"]:</p>
+            <label>@_AddEditLoadRequest.DisplayWHStockRequestLineItemview?.Count</label>
+        </div>
+         <div class="cls_load_add_eidt_bottom_rep">
+            <p>@Localizer["sku's_qty"]:</p>
+            <label>@totQty</label>
+        </div>
+
+    </div>
+}
+</div>
+@* <div class="d-flex justify-content-center mt-3">
+    <button class="btn btn-primary mr-2" @onclick="BackToViewPage">Back</button> 
+</div> *@
+
+@if (_AddEditLoadRequest.SkuList != null && _AddEditLoadRequest.SkuList.Count != 0 && IsSKUDialogBoxOpen == true)
+{
+    <div class="col-md-1">
+        <div class="form-group">
+            <Winit.UIComponents.Mobile.DialogBox.AddSKU @ref="AddSKURef" SKUAttributesDataSource="_AddEditLoadRequest.SkuAttributesList"
+                                                        SKUDataSource="_AddEditLoadRequest.SkuList" GetSelectedSKU="GetSelectedSKUs" />
+        </div>
+    </div>
+}
+<div class="position-fixed bottom-0 end-0 p-3">
+    <div class="d-flex align-items-center">
+        <img src="/Images/plus.png" alt="Add"  @onclick="OpenDialogueSku"/>
+    </div>
+</div>
+    <div class="cls_dashboard_7">
+    @if (!IsPreviewBtnClicked)
+    {
+        <button class="cls_continue_btn" @onclick="PreviewBtnClicked">@Localizer["preview"]</button>
+    }else
+    {
+    @if(_AddEditLoadRequest.WHStockRequestItemview?.Status == StockRequestStatus.Processed)
+    {
+          <button class="cls_continue_btn" @onclick="UpdateLoadRequestAsCollect">@Localizer["collect"]</button>   
+    }
+        <button class="cls_continue_btn" @onclick="UpdateLoadRequestAsConfirm">@Localizer["confirm"]</button>
+        <button class="cls_continue_btn" @onclick="UpdateLoadRequestAsDraft">@Localizer["draft"]</button> 
+    }
+
+</div>
+
+@code {
+
+
+
+}
+

@@ -1,0 +1,135 @@
+﻿@inherits LayoutComponentBase
+@inject Winit.UIComponents.Common.IAlertService AlertService
+
+<style>
+    .alert-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1000;
+    }
+
+    .alert-content {
+        margin-top: 20px;
+    }
+</style>
+<div class="page">
+    <div class="sidebar @(collapseNavMenu ? null : "collapse")">
+        <div>
+            <NavMenu CloseMenu="CollapseNavMenu"></NavMenu> 
+           @*  <MenuNavigation CloseMenu="@CollapseNavMenu"></MenuNavigation> *@
+        </div>
+    </div>
+    @if (collapseNavMenu)
+    {
+        <div class="sidebar-overlay" @onclick="CollapseNavMenu"></div>
+    }
+    <main>
+        <div class="top-row navbar navbar-dark">
+            <div class="cls_main_container">
+                <div class="cls_mobile_menu">
+                    <div class="cls_mobile_menu_left">
+                        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+                            <img style="width:25px;" src="/Images/m_img.png" />
+                        </button>
+                    </div>
+                    <div class="cls_mobile_menu_cen"> <img style="width:165px;" src="/Images/Winitlogo1.png" />
+                        
+                    
+                    </div>
+                
+                    @if (button != null)
+                    {
+                        <div class="cls_mobile_menu_right">
+                            @if (_appUser != null && _appUser.Emp.ProfileImage != null)
+                            {
+                                <img style="width: 40px;float: right;border-radius: 50px;border: 1px solid #ccc;padding: 5px;margin-top: 5px;" src='@(Path.Combine(_appConfigs.ApiDataBaseUrl,_appUser.Emp.ProfileImage))' />
+                            }
+                            <div class="cls_mobile_menu_right_top" style="width:auto;">
+                                <div style="display:none;" class="cls_mobile_menu_right_top_left">
+                                    @if (button.TopLabel != null)
+                                    {
+                                        <h3>@button.TopLabel</h3>
+                                    }
+                                </div>
+                                <div class="cls_mobile_menu_right_top_right">
+                                    @if (button.UIButton1 != null && button.UIButton1.IsVisible) 
+                                    {
+                                        <a style="margin-top:9px;" @onclick="button.UIButton1.Action">
+                                            @if (button.UIButton1.ButtonType == Models.TopBar.ButtonType.Image)
+                                            {
+                                                <img style="width:25px;" src="@button.UIButton1.URL" />
+                                            }
+                                            else
+                                            {
+                                                <div class="cls_wastage_btn">@button.UIButton1.ButtonText</div>
+                                            }
+
+                                        </a>
+                                    }
+                                    @if (button.UIButton2 != null && button.UIButton2.IsVisible)
+                                    {
+                                        <a style="margin-top:9px;" @onclick=@button.UIButton2.Action>
+                                            @if (button.UIButton2.ButtonType == Models.TopBar.ButtonType.Image)
+                                            {
+                                                <img style="width:25px;" src="@button.UIButton2.URL" />
+                                            }
+                                            else
+                                            {
+                                                <div class="cls_wastage_btn">@button.UIButton2.ButtonText</div>
+                                            }
+
+                                        </a>
+                                    }
+                                    @if (button.UIButton3 != null && button.UIButton3.IsVisible)
+                                    {
+                                        <a style="margin-top:9px;" @onclick="@button.UIButton3.Action">
+                                            @if (button.UIButton3.ButtonType == Models.TopBar.ButtonType.Image)
+                                            {
+                                                <img style="width:25px;" src="@button.UIButton3.URL" />
+                                            }
+                                            else
+                                            {
+                                                <div class="cls_wastage_btn">@button.UIButton3.ButtonText</div>
+                                            }
+
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+                            <div class="cls_mobile_menu_right_bottom" style="display:none">
+                                @if (button.BottomLabel != null)
+                                {
+                                    <p>@button.BottomLabel</p>
+                                }
+
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div style="width:100%;float:left;margin-top:64px;" @onclick="CollapseNavMenu">
+            
+            <Winit.UIComponents.Common.Common.AlertComponent />
+            <Winit.UIComponents.Common.Common.DropDownService />
+            <Winit.UIComponents.Mobile.Common.MobilePopUpDropDown/>
+            <Winit.UIComponents.Common.Common.Loader Color="text-info" />
+            <CascadingValue Value="event_DataService">
+                <CascadingValue Value="MainErrorBoundary">
+                    <ErrorBoundary @ref="MainErrorBoundary">
+                        <ChildContent>
+                            @Body
+                        </ChildContent>
+                        <ErrorContent Context="ex">
+                            <CustomError Context="ex" />
+                            <div><button @onclick="@(() => ResolveError(false))">Reload</button></div>
+                            <div><button @onclick="@(() => ResolveError(true))">Home</button></div>
+                        </ErrorContent>
+                    </ErrorBoundary>
+                </CascadingValue>
+            </CascadingValue>
+        </div>
+    </main>
+</div>

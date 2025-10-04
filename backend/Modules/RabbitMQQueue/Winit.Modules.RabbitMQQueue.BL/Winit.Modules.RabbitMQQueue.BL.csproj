@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\RabbitMQService\RabbitMQService.csproj" />
+    <ProjectReference Include="..\..\Syncing\Winit.Modules.Syncing.Model\Winit.Modules.Syncing.Model.csproj" />
+    <ProjectReference Include="..\Winit.Modules.RabbitMQQueue.DL\Winit.Modules.RabbitMQQueue.DL.csproj" />
+  </ItemGroup>
+
+</Project>

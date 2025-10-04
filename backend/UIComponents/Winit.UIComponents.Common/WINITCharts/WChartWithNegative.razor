@@ -1,0 +1,6 @@
+﻿@inject JsInterop JS
+<div id="myChartContainer">
+    <EBar Style="height: 415px !important; " @ref="chart"
+          Option="@ChartOption" 
+        Class="chart-fill" EventTypes="EventTypes" OnEventCallback="@OnEchartsEvent"></EBar>
+</div>

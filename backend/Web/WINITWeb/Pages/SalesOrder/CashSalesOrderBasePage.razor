@@ -1,0 +1,172 @@
+﻿@page "/SalesOrder"
+@using Winit.Modules.SKU.BL.Interfaces
+@using Winit.Modules.SalesOrder.BL.UIClasses
+@using Winit.Modules.SalesOrder.Model.UIInterfaces
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.SalesOrder.BL.UIInterfaces.ISalesOrderViewModelFactory _SalesOrderViewModelFactory
+@*  *@
+@inject IJSRuntime _JS ;
+@inject IAddProductPopUpDataHelper _addProductPopUpDataHelper;
+<PageTitle>@((IsNewOrder ? @Localizer["create"] : @Localizer["edit"])) @pageTitle @Localizer["order"] </PageTitle>
+@if (IsInitialized && _SalesOrderViewModel != null)
+{
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" />
+    <div class="cls_section">
+        <div class="cls_container_div1">
+            <div class="cls_section_div_sku">
+                <label class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span">*</span>@Localizer["route"]</label>
+                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_SalesOrderViewModel.RouteSelectionItems" IsButtonVisible="true" Title="Route"
+                                                                   OnSelect="OnRouteSelected" _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single" Disabled="!IsNewOrder" />
+            </div>
+            <div class="cls_section_div_sku">
+                <label for="customerDropdown" class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span">*</span>@Localizer["customer"]</label>
+                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_SalesOrderViewModel.StoreSelectionItems" IsButtonVisible="true" Title="Customer"
+                                                                   OnSelect="OnStoreSelected" _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single" Disabled="!IsNewOrder" />
+            </div>
+            @if (_SalesOrderViewModel.StoreCreditsSelectionItems != null && _SalesOrderViewModel.StoreCreditsSelectionItems.Count > 1)
+            {
+                <div class="cls_section_div_sku">
+                    <label for="customerDropdown" class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span">*</span>@Localizer["organization"]</label>
+                    <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_SalesOrderViewModel.StoreCreditsSelectionItems" IsButtonVisible="true" Title="Organiztion"
+                                                                       OnSelect="OnStoreDistributionChannelSelect" _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single" Disabled="!IsNewOrder" />
+                </div>
+            }
+            <div class="cls_section_div_sku">
+                <label for="orderDate" class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span">*</span>@Localizer["order_date"]</label>
+                <input type="date" class="cls_select_date" id="orderDate" @bind="_SalesOrderViewModel.OrderDate" disabled />
+            </div>
+
+
+            <div class="cls_section_div_sku">
+                <label for="DeliveryDate" class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span">*</span>@Localizer["delivery_date"]</label>
+                <input type="date" class="cls_select_date" id="DeliveryDate" min="@DateTime.Now.Date.ToString("yyyy-MM-dd")" placeholder="dd-mm-yyyy" @bind="_SalesOrderViewModel.ExpectedDeliveryDate" />
+            </div>
+            <div class="cls_section_div_sku">
+                <label for="customerpo" class="cls_section_div_purchase2_label">@Localizer["customer_po_number"]</label>
+                <input type="text" class="cls_select2_button" id="cutomerpo" @bind="_SalesOrderViewModel.CustomerPO" />
+            </div>
+            @if (_SalesOrderViewModel.PresalesDeliveryDistributorEnabled)
+            {
+                <div class="cls_section_div_sku">
+                    <label for="customerDropdown" class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span">*</span>@Localizer["DeliveryDistributor"]</label>
+                    <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_SalesOrderViewModel.DeliveryDistributor" IsButtonVisible="true" Title="@Localizer["DeliveryDistributor"]"
+                                                                       OnSelect="_SalesOrderViewModel.OnDeliveryDistributorSelect" _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single" Disabled="!IsNewOrder" />
+                </div>
+            }
+            @if (SalesType == Winit.Shared.Models.Constants.OrderType.Cashsales)
+            {
+                <div class="cls_section_div_sku">
+                    <label for="customerName" class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span">*</span>@Localizer["customer_name"]</label>
+                    <input type="text" class="cls_select2_button" id="cutomerName" @bind="_SalesOrderViewModel.CustomerName" />
+                </div>
+                <div class="cls_section_div_sku">
+                    <label for="address" class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span">*</span>@Localizer["address"]</label>
+                    <textarea class="form-control" id="address" @bind="_SalesOrderViewModel.Address"></textarea>
+                </div>
+            }
+
+        </div>
+    </div>
+    <div class="cls_container_div4">
+        @if(!DisableAfterFinalize){
+
+        <button class="cls_add_new_sec" @onclick="() => AddProductDialogBox?.OnOpenClick()">Add Product</button>
+        }
+
+        @*    <Winit.UIComponents.Web.DialogBox.ProductDialogBox T="Winit.Modules.SalesOrder.Model.UIInterfaces.ISalesOrderItemView"
+                                                     DataSource="_SalesOrderViewModel.SalesOrderItemViews"
+                                                     SKUCode="@(e => e.SKUCode )"
+                                                     SKUHeader="@(e => e.SKUName)"
+                                                     OnCancelClick="() => AddProductDialogBox?.OnCloseClick()"
+                                                     OnOkClick="OnaddProductClose"
+                                                     @ref="AddProductDialogBox"></Winit.UIComponents.Web.DialogBox.ProductDialogBox>
+ *@
+        <WinIt.Pages.DialogBoxes.AddProductDialogBoxV1 T="Winit.Modules.SKU.Model.Interfaces.ISKUV1"
+                                                       DataSource="_SalesOrderViewModel.SKUs"
+                                                       L1="@(e => e.L1)"
+                                                       L2="@(e => e.L2)"
+                                                       L3="@(e => e.L3)"
+                                                       L4="@(e => e.L4)"
+                                                       L5="@(e => e.L5)"
+                                                       L6="@(e => e.L6)"
+                                                       L7="@(e => e.Code)"
+                                                       L8="@(e => e.Name)"
+                                                       UID="@(e => e.UID)"
+                                                       SKUImage="@(e => e.SKUImage)"
+                                                       DropDownDataSource="_SalesOrderViewModel.SKUAttributeData"
+                                                       OnDropdownValueSelectSKUAtrribute="@(async (e) => await _addProductPopUpDataHelper.OnSKuAttributeDropdownValueSelect(e.UID))"
+                                                       FilterAction=@_addProductPopUpDataHelper.FilterAction
+                                                       OnCancelClick="() => AddProductDialogBox?.OnCloseClick()"
+                                                       OnOkClick="OnAddProductClick"
+                                                       @ref="AddProductDialogBox" />
+    </div>
+    <div class="cls_container_div1">
+
+        <CashSalesOrderGridView OnCloneItem="AddItemToList" DisableAfterFinalize="@DisableAfterFinalize"
+                                DisplayedSKUList="_SalesOrderViewModel.SalesOrderItemViews.FindAll(e => e.IsCartItem)" OnSelectUOM="OnUOMSelection"
+                                OnGetCloneSelectionItem="GetCloneUOMSForSelectedProduct" OnGetDDLSelectionItem="GetUOMSForSelectedProduct"
+                                UOMselectionItems="UOMselectionItems" UOMCloneselectionItems="UOMCloneselectionItems"
+                                OnClonedItemDelete="DeleteClonedItem" OnQtyChanged="QtyChanged" IsViewMode="false"
+                                IsBasePriceRequired="IsBasePriceRequired" OnUnitPriceChanged="OnUnitPriceChange" />
+    </div>
+
+    <div class="cls_button_bottom_purchase">
+
+
+        @if (SalesType == Winit.Shared.Models.Constants.OrderType.Presales &&
+            _SalesOrderViewModel.Status == Winit.Shared.Models.Constants.SalesOrderStatus.FINALIZED && !IsNewOrder)
+        {
+            <button class="cls_button_blue" @onclick="() => UpdateSalesOrderStatus(Winit.Shared.Models.Constants.SalesOrderStatus.APPROVED)">
+                @Localizer["approved"]
+            </button>
+            <button class="cls_button_light" @onclick="() => UpdateSalesOrderStatus(Winit.Shared.Models.Constants.SalesOrderStatus.REJECTED)">
+                @Localizer["rejected"]
+            </button>
+        }
+        else if (_SalesOrderViewModel.Status == Winit.Shared.Models.Constants.SalesOrderStatus.DRAFT || IsNewOrder)
+        {
+            <button class="cls_button_light" @onclick="Handel_deleteSelectedItems">
+                @Localizer["delete_selected_items"]
+            </button>
+            <button class="cls_button_light" @onclick="HandleSave_SaveClick">
+                @Localizer["save_as_draft"]
+            </button>
+            <button class="cls_button_blue" @onclick="HandleSaveAndFinalize_SaveAndFinalizeClick">
+                @Localizer["finalize"]
+            </button>
+
+        }
+        else
+        {
+              <button class="cls_button_blue" @onclick="@(()=>_navigationManager.NavigateTo("ManagePresalesOrders"))">
+                @Localizer["back"]
+            </button>
+        }
+    </div>
+    <div style="float: right;    width: 20%;">
+        <table style="border: 0px solid #ccc; width: 100%;">
+            <tbody style="border-style: solid;">
+                <tr style="border: 1px solid #ccc;">
+                    <td style="width:60%;text-align: left;font-weight:bold;">@Localizer["total_sku"]</td>:
+                    <td style="width:30%;text-align: right;font-weight:bold;">@_SalesOrderViewModel.SalesOrderItemViews?.FindAll(e => e.IsCartItem).Count</td>
+                </tr>
+                <tr style="border: 1px solid #ccc;">
+                    <td style="text-align: left;font-weight:bold;width:60%;">@Localizer["amount_exc_tax"]: @(_SalesOrderViewModel.CurrencyLabel)</td>:
+                    <td style="text-align: right;width:30%;font-weight:bold;"> @_SalesOrderViewModel.NetAmount</td>
+                </tr>
+                <tr style="border: 1px solid #ccc;">
+                    <td style="text-align: left;font-weight:bold;width:60%;">@Localizer["total_discount"]:(@(_SalesOrderViewModel.CurrencyLabel))</td>:
+                    <td style="text-align: right;width:30%;font-weight:bold;">@_SalesOrderViewModel.TotalDiscount</td>
+                </tr>
+                <tr style="border: 1px solid #ccc;">
+                    <td style="text-align: left;font-weight:bold;width:60%;">@Localizer["total_tax"]:(@(_SalesOrderViewModel.CurrencyLabel))</td>:
+                    <td style="text-align: right;width:30%;font-weight:bold;">@_SalesOrderViewModel.TotalTax</td>
+                </tr>
+                <tr style="border: 1px solid #ccc;">
+                    <td style="text-align: left;font-weight:bold;width:60%;">@Localizer["amount_inc_tax"]: (@(_SalesOrderViewModel.CurrencyLabel))</td>:
+                    <td style="text-align: right;width:30%;font-weight:bold;">@_SalesOrderViewModel.TotalAmount</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+}

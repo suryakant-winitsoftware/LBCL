@@ -1,0 +1,18 @@
+﻿@page "/signature"
+@using SignaturePad
+@using Microsoft.Extensions.Localization
+@using Winit.UIComponents.Common.LanguageResources.Mobile
+@inject IStringLocalizer<LanguageKeys> Localizer
+@inject Winit.UIComponents.Common.Language.ILanguageService _languageService
+<div class="cls_signature_pop">
+   
+    <div>
+        <label class="m-0">@Localizer["sign_here"]</label>
+    </div>
+    <SignaturePad ValueChanged="OnSignatureChange" Value="Signature" ClearButtonText=@Localizer["clear"] Class="border border-4px h-110">
+    </SignaturePad>
+    @if (!DisableSaveBtn)
+    {
+        <button class="" @onclick="Save">@Localizer["save"]</button>
+    }
+</div>

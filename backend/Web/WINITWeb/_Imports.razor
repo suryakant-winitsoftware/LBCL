@@ -1,0 +1,50 @@
+﻿@using System.Net.Http
+@using System.Net.Http.Json
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.AspNetCore.Components.WebAssembly.Http
+@using Microsoft.Extensions.Localization
+@using Microsoft.JSInterop
+@using WinIt
+@using Winit.UIComponents.Common.LanguageResources.Web
+@using WinIt.Shared
+@using Microsoft.Extensions.Configuration
+@using Winit.Shared.Models.Common
+@using Winit.Shared.CommonUtilities.Common
+@using Winit.Shared.CommonUtilities.Extensions
+@using Newtonsoft.Json
+@using Winit.Modules.Common.BL.Interfaces
+@using Winit.UIComponents.Common.Common.LocalStorage 
+@using Winit.UIComponents.Web.Table
+@using Winit.UIComponents.Web.Paging
+@using Microsoft.AspNetCore.Components.Authorization
+@using Winit.UIComponents.Common.WINITCharts
+
+@inject IServiceProvider _serviceProvider
+@inject NavigationManager NavigationManager
+@inject Winit.Shared.Models.Common.IAppConfig _appConfigs
+@inject Winit.Modules.Base.BL.ApiService _apiService
+@inject Winit.Shared.CommonUtilities.Common.CommonFunctions _commonFunctions
+@inject NavigationManager _navigationManager
+@inject IAppUser _iAppUser
+@inject Winit.UIComponents.Common.IAlertService _alertService
+@inject Winit.UIComponents.Common.Services.ILoadingService _loadingService
+@inject Winit.UIComponents.SnackBar.IToast _tost
+@inject WinIt.BreadCrum.Interfaces.IDataService _IDataService
+@inject Winit.Modules.Setting.BL.Interfaces.IAppSetting _appSetting
+@inject Winit.UIComponents.Common.Services.IDropDownService _dropdownService
+@inject Winit.Modules.ErrorHandling.BL.Interfaces.IErrorHandlerBL _errorHandlerBL
+@inject ILocalStorageService _localStorage
+@* @inherits WinIt.Pages.Base.BaseComponentBase *@
+
+@using Winit.UIModels.Common.Filter
+@using Winit.Shared.Models.Events
+@using Winit.Shared.Models.Constants
+@using Winit.UIComponents.Web.Filter
+@inject IJSRuntime _JSRuntime
+@inject Winit.UIComponents.Common.Language.ILanguageService _languageService
+
+@inject Winit.UIComponents.Web.Location.Services.ILocationMasterService _locationMaster

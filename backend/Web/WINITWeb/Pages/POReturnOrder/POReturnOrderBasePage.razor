@@ -1,0 +1,98 @@
+﻿@page "/poreturnorder"
+@using Winit.Modules.Store.Model.Interfaces
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.ReturnOrder.BL.Interfaces.IPOReturnOrderViewModel _viewModel
+
+<PageTitle>Purchase Order</PageTitle>
+<PageHeaderAndFilter IDataBreadcrumbService="_dataService"></PageHeaderAndFilter>
+@if (IsDistributorSelect)
+{
+    <PopUp Title="Select Channel Partner" OkbtnText="Proceed" CancelbtnText="Close"
+           OnOkClick="OnDistributorSelect"
+           OnCloseClick="() => IsDistributorSelect = false">
+        <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder="Search by Channel Partner Code / Name"
+                                                               MaxLength="200" DebounceInterval="500"
+                                                               OnDebounceIntervalElapsed="e => _viewModel.StoreSearchString = e"
+                                                               KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+                                                               Value="@_viewModel.StoreSearchString"
+                                                               IsForSearch="true"/>
+        <div class="div1">
+            <table>
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>
+                        Channel Partner Code
+                    </th>
+                    <th>
+                        Channel Partner Namee
+                    </th>
+                    <th>
+                        Broad Classification
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                @if (_viewModel.FilteredStores != null && _viewModel.FilteredStores.Any())
+                {
+                    @foreach (IStore store in _viewModel.FilteredStores)
+                    {
+                        <tr @onclick="() => _viewModel.SelectedDistributor = store.UID">
+                            <td>
+                                <input type="radio" name="store"
+                                       checked="@(_viewModel.SelectedDistributor == store.UID)" id="@store.UID"/>
+                            </td>
+                            <td>@(store.Code ?? "N/A")</td>
+                            <td>@(store.Name ?? "N/A")</td>
+                            <td>@(store.BroadClassification ?? "N/A")</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="4" style="text-align: center; font-weight:700;font-size:14px; color:red;">No
+                            Records Found..
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </PopUp>
+}
+
+@if (IsInvoiceSelect)
+{
+    <POReturnOrderInvoicePOPUP  Invoices="_viewModel.FilteredInvoiceViews" 
+                                InvoiceSearchString="@_viewModel.InvoiceSearchString" 
+                                OnInvoiceSelect="OnInvoiceSelect"
+                                OnCloseClick="() => IsInvoiceSelect = false"
+                                SelectedInvoice="@_viewModel.SelectedInvoiceUID"/>
+    
+}
+
+@if (IsAuthorized)
+{
+    <div class="cls_main1">
+        <div class="cls_section">
+            <div class="cls_container_div1">
+
+                <div class="cls_section_div_purchase2">
+                    <label class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span">*</span>Channel
+                        Partner</label>
+                    <input type="button" class="cls_select2_button" @onclick="() => IsDistributorSelect = true"
+                           disabled="@(_iAppUser.Role.IsDistributorRole || _viewModel.IsDraftOrder || !_viewModel.IsNewOrder)"
+                           value="@(_viewModel.SelectedStoreMaster?.Store?.Code == null ? "Select Channel Partner" : $"[{_viewModel.SelectedStoreMaster?.Store?.Code}] {_viewModel.SelectedStoreMaster?.Store?.Name}") "/>
+                </div>
+
+                <div class="cls_section_div_purchase2">
+                    <label class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span">*</span>Order
+                        Date</label>
+                    <input type="date" class="cls_select2_input1" id="orderDate"
+                           @bind="_viewModel.ReturnOrder.OrderDate" disabled/>
+                </div>
+            </div>
+        </div>
+    </div>
+}

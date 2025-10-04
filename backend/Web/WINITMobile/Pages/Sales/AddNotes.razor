@@ -1,0 +1,167 @@
+﻿@inherits WINITMobile.Pages.Base.BaseComponentBase
+
+<div class="">
+    <div class="cls_delivary_date_main dn">
+        <div class="cls_delivary_date_main_right">
+
+
+            <label for="pastDate">@Localizer["delivery_date"] </label>
+            <InputDate id="pastdate" @bind-Value="DefaultDate" min="@MinDate.ToString("yyyy-MM-dd")" max="@MaxDate.ToString("yyyy-MM-dd")"></InputDate>
+
+
+        </div>
+        <div class="cls_delivary_date_main_left">
+            <!-- Button for Add Notes -->
+            <button class="cls_btn_primary_note @(string.IsNullOrEmpty(Notes)?"":" active") " @onclick="OpenAddNotesPopup">
+                @if (!string.IsNullOrEmpty(Notes))
+                {
+                    @Notes
+                }
+                else
+                {
+                    @Localizer["add_notes"]
+                }
+            </button>
+
+
+            <!-- Button for LPO Number -->
+            <button class="cls_btn_primary_note @(string.IsNullOrEmpty(LPONumber)?"":" active") dn" @onclick="OpenLpoNumberPopup">
+                @if (!string.IsNullOrEmpty(LPONumber))
+                {
+                    <p>@LPONumber</p>
+                }
+                else
+                {
+                    @Localizer["lpo_number"]
+                }
+            </button>
+        </div>
+
+    </div>
+    <!-- Add Notes Popup -->
+    @if (_showAddNotesPopup)
+    {
+        <div class="overlay"></div>
+        <div cclass="alert alert-dismissible fade show">
+            <div class="modal-container">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="font-size: 16px; flex: 1;">@Localizer["add_notes"]1</h5>
+                    <button type="button" class="close" @onclick="CloseAddNotesPopup">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="custom-dialog-content">
+                    <div class="custom-dialog-body cls_content_alert">
+                        <textarea class="form-control" @bind="Notes"></textarea>
+                    </div>
+                </div>
+                <div class="custom-dialog-footer cls_fil_footer">
+                    <div class="cls_log_main66">
+                        <div style="float:left">
+                            <button class="cls_btn_primary" @onclick="SaveNotes">@Localizer["save"]</button>
+                            <button style=" margin-left:5px" class="cls_btn_secondary" @onclick="ClearNotes">@Localizer["clear"]</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- LPO Number Popup -->
+    @if (_showLpoNumberPopup)
+    {
+        <div class="overlay"></div>
+        <div cclass="alert alert-dismissible fade show">
+            <div class="modal-container">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="font-size: 16px; flex: 1;">@Localizer["lpo_number"]</h5>
+                    <button type="button" class="close w-16 h-16" @onclick="CloseLpoNumberPopup">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="custom-dialog-content">
+                    <div class="custom-dialog-body cls_content_alert">
+                        <input type="text" class="form-control" @bind="LPONumber" />
+                    </div>
+                    <div class="custom-dialog-footer cls_fil_footer">
+                        <div class="cls_log_main66">
+                            <div style="float:left">
+                                <button class="cls_btn_primary" @onclick="SaveLpoNumber">@Localizer["save"]</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+
+</div>
+
+
+@code {
+    [Parameter]
+    public string Notes { get; set; }
+    [Parameter]
+    public string LPONumber { get; set; }
+    [Parameter]
+    public DateTime DefaultDate { get; set; }
+    [Parameter]
+    public DateTime MinDate { get; set; }
+    [Parameter]
+    public DateTime MaxDate { get; set; }
+    [Parameter]
+    public EventCallback<string> OnNotesSaved { get; set; }
+    [Parameter]
+    public EventCallback<string> OnLPONumberSaved { get; set; }
+    private bool _showAddNotesPopup = false;
+    private bool _showLpoNumberPopup = false;
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        if (DefaultDate == DateTime.MinValue)
+        {
+            DefaultDate = DateTime.Now.Date;
+        }
+        if (MinDate == DateTime.MinValue)
+        {
+            MinDate = DateTime.Now.Date;
+        }
+        if (MaxDate == DateTime.MinValue)
+        {
+            MaxDate = DateTime.Now.Date.AddDays(30);
+        }
+        LoadResources(null, _languageService.SelectedCulture);
+
+    }
+    private void OpenAddNotesPopup()
+    {
+        _showAddNotesPopup = true;
+    }
+    private void CloseAddNotesPopup()
+    {
+        _showAddNotesPopup = false;
+    }
+    private void OpenLpoNumberPopup()
+    {
+        _showLpoNumberPopup = true;
+    }
+    private void CloseLpoNumberPopup()
+    {
+        _showLpoNumberPopup = false;
+    }
+    private void SaveNotes()
+    {
+        OnNotesSaved.InvokeAsync(Notes);
+        CloseAddNotesPopup();
+    }
+    private void ClearNotes()
+    {
+        Notes = string.Empty;
+    }
+    private void SaveLpoNumber()
+    {
+        OnLPONumberSaved.InvokeAsync(LPONumber);
+        CloseLpoNumberPopup();
+    }
+}

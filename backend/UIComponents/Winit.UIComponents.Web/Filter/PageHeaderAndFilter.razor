@@ -1,0 +1,129 @@
+﻿@using Microsoft.Extensions.Localization
+@using Winit.UIComponents.Common.LanguageResources.Web
+@using Winit.UIModels.Common.Filter
+@using Winit.Shared.Models.Common
+@using Winit.Shared.Models.Events
+@using Winit.Shared.Models.Constants
+@using Microsoft.JSInterop
+@inject IJSRuntime JSRuntime
+@using Winit.UIComponents.Common.WinitDatepicker
+@using Winit.UIModels.Common
+@inject IStringLocalizer<LanguageKeys> Localizer
+@inject Winit.UIComponents.Common.Language.ILanguageService _languageService
+
+<div class="content">
+    <div class="cls_main_page_style">
+        <div class="cls_main_page_style_header">
+            <div class="cls_breadcrum_main">
+                <div class="cls_breadcrum_main_left">
+
+
+                    @if (IDataBreadcrumbService != null)
+                    {
+
+                        @if (!string.IsNullOrEmpty(IDataBreadcrumbService.HeaderText))
+                        {
+                            <h3>@IDataBreadcrumbService.HeaderText</h3>
+                        }
+                        @if (IDataBreadcrumbService.BreadcrumList != null)
+                        {
+                            <div class="cls_breadcrum">
+                                <a href="DashBoard">Dashboard</a>
+                                @foreach (var itm in IDataBreadcrumbService.BreadcrumList)
+                                {
+                                    <span>></span>
+                                    if (itm.IsClickable)
+                                    {
+                                        <a href="@itm.URL">@itm.Text</a>
+                                    }
+                                    else
+                                    {
+                                        <label>@itm.Text</label>
+                                    }
+                                }
+                            </div>
+                        }
+
+                    }
+                </div>
+                <div class="cls_breadcrum_main_right">
+                    @if (IsShowFilter)
+                    {
+                        <button class="cls_add_new_sec" style="float:right;margin-right:0px" @onclick="@(()=>showFilter=!showFilter)">@Localizer["filter"]</button>
+                    }
+                </div>
+            </div>
+            @if (showFilter)
+            {
+                <div class="cls_filter_container">
+
+
+                    @for (int i = 0; i < ColumnsForFilter.Count; i++)
+                    {
+                        var columnProperties = ColumnsForFilter[i];
+                        var columnName = ColumnsForFilter[i].ColumnName;
+
+                        <div class="cls_section_div_sku">
+
+                            <label for="@columnName" class="cls_section_div_purchase2_label"> @ColumnsForFilter[i].Label:</label>
+
+                            @switch (ColumnsForFilter[i].FilterType)
+                            {
+                                case FilterConst.TextBox:
+                                    @*  <input type="text" class="cls_select2_button @ColumnsForFilter[i].Class" style="@ColumnsForFilter[i].Style" placeholder="@ColumnsForFilter[i].PlaceHolder" id="@columnName"
+                    @bind="columnProperties.SelectedValue" /> *@
+                                    <div class="cls_filter_input">
+                                    <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder="@columnProperties.PlaceHolder"
+                                                                                               MaxLength="@(columnProperties.Width)" DebounceInterval="10"
+                                                                                           OnDebounceIntervalElapsed="e => columnProperties.SelectedValue = e"
+                                                                                           KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+                                                                                           Value="@columnProperties.SelectedValue" IsForSearch="@columnProperties.IsForSearch" />
+                                    </div>
+
+                                    break;
+                                case FilterConst.DropDown:
+                                    string columnNameKey = ColumnsForFilter[i].ColumnName;
+                                    <Winit.UIComponents.Common.CustomControls.DropDown @ref="DropDownRefs[columnNameKey]" DataSource="ColumnsForFilter[i].DropDownValues"
+                                                                                       Title="@ColumnsForFilter[i].Label"
+                                                                                       IsButtonVisible=true
+                                                                                       OnSelect="(e) => HandleSelectionChange(columnNameKey, e)"
+                                                                                       IsSearchable=true _SelectionMode="ColumnsForFilter[i].SelectionMode" />
+                                    break;
+                                case FilterConst.Date:
+
+                                    <WinitCalendar id="@columnName" selectedDate="@columnProperties.SelectedValue" OnChange="OnDateChange">
+
+                                    </WinitCalendar>
+                                    break;
+                                case FilterConst.CheckBox:
+                                    <input type="checkbox" class="cls_section_div_purchase2_input" @bind="columnProperties.SelectedBoolValue" />
+                                    break;
+                            }
+
+                        </div>
+                    }
+
+                    <div style="float:left;margin-top:20px;">
+
+                        <button class="cls_button_blue" @onclick="ApplyFilter">@Localizer["search"]</button>
+                        <button class="cls_button_light" @onclick="ResetFilter">@Localizer["reset"]</button>
+
+                    </div>
+
+
+                </div>
+                <div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+@if (IsSearchCriteriaNeeded)
+{
+    <div class="search-criteria cls_search_criteria">
+        @Localizer["search_criteria"] : @((MarkupString)GetSearchCriteriaDisplay())
+    </div>
+}
+<div class="filter-content">
+    @ChildContent
+</div>

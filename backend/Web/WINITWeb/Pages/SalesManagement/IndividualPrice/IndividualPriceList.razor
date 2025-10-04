@@ -1,0 +1,22 @@
+﻿@page "/IndividualPrice"
+@using Winit.Modules.SKU.BL.Interfaces
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject WinIt.BreadCrum.Interfaces.IDataService _IDataService
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@inject ISKUPriceViewModel _viewModel
+
+@if (isLoad)
+{
+
+    <PriceListComponent IsIndividualPricelist=true
+                        IsNew=_viewModel.IsNew
+                        SKUPriceList=_viewModel.SKUPriceView.SKUPriceList
+                        SKUPriceGroup=_viewModel.SKUPriceView.SKUPriceGroup
+                        @ref=_priceListComponent
+                        PriceListUID="@_viewModel.SKUPriceView.SKUPriceGroup.UID" />
+    <div>
+        <button @onclick=@SaveOrUpdate>@Localizer["confirm"]</button>
+        <button @onclick=@(()=>_navigationManager.NavigateTo("ManageCustomers"))>@Localizer["back"]Back</button>
+    </div>
+}
+

@@ -1,0 +1,33 @@
+﻿.cls_add_new_sec {
+    background: #fff;
+    padding: 5px 25px;
+    color: #013799;
+    text-decoration: none;
+    font-size: 16px;
+    margin: 0 15px 0 0;
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    float: left;
+    border: 1px solid #013799;
+    font-weight: 700;
+    cursor: pointer
+}
+
+    .cls_add_new_sec:hover {
+        background-color: #003898;
+        color: white;
+        border-color: white;
+    }
+
+.storeupper {
+    width: 100%;
+    float: left;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    webkit-box-shadow: 0 1px #fff inset,0 1px 5px rgba(34,25,25,.4);
+    -webkit-box-shadow: 0 1px #fff inset,0 1px 5px rgba(34,25,25,.4);
+    box-shadow: 0 1px #fff inset,0 1px 5px rgba(34,25,25,.4);
+    padding: 10px;
+    border-bottom: 3px solid #2298c4 !important;
+    border-top: 1px solid #ccc !important
+}

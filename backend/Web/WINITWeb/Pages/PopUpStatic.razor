@@ -1,0 +1,51 @@
+﻿
+<div class="modal-backdrop fade show"></div>
+<div class="modal fade show" tabindex="-1" style="display: block; overflow:auto; ">
+    <div class="modal-dialog cls_pop_up_style1_static">
+        <div class="modal-content">
+            <div class="modal-header" style="border-bottom:0px;">
+                <h5 class="modal-title">@Title</h5>
+                @if (!DisableCrossBtn)
+                {
+                    <span class="close" @onclick="()=> { if(!DisableCancelBtn) OnCloseClick.InvokeAsync();}">&times;</span>
+                }
+            </div>
+            <div class="modal-body" style="padding: 0px;">
+                @ChildContent
+            </div>
+            <div class="modal-footer">
+                <div style="float:left">
+                    @if (!DisableCancelBtn)
+                    {
+                        <button type="button" class="cls_comman_sec_btn cls_mar_right_10px" @onclick="() => OnCloseClick.InvokeAsync()">@CancelbtnText</button>
+                    }
+                    @if (!DisableOkBtn)
+                    {
+                        <button type="button" class="cls_comman_btn" @onclick="()=>{OnOkClick.InvokeAsync();}">@OkbtnText</button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string? Title { get; set; }
+    [Parameter]
+    public EventCallback OnOkClick { get; set; }
+    [Parameter]
+    public EventCallback OnCloseClick { get; set; }
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+    [Parameter]
+    public string? OkbtnText { get; set; }
+    [Parameter]
+    public string? CancelbtnText { get; set; }
+    [Parameter]
+    public bool DisableOkBtn { get; set; }
+    [Parameter]
+    public bool DisableCancelBtn { get; set; }
+    [Parameter]
+    public bool DisableCrossBtn { get; set; }
+}

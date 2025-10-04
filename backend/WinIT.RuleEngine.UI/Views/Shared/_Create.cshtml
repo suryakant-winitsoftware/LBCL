@@ -1,0 +1,57 @@
+﻿@model RuleMaster
+
+<form id="createForm">
+    <div>
+        <label>Name:</label>
+        <input type="text" id="Name" name="Name" data-val="true" data-val-required="The Name field is required." />
+        @Html.ValidationMessageFor(m => m.Name)
+    </div>
+
+    <div>
+        <label>Description:</label>
+        <input type="text" id="Description" name="Description" data-val="true" data-val-required="The Description field is required." />
+        @Html.ValidationMessageFor(m => m.Description)
+    </div>
+
+    <div>
+        <label>Created On:</label>
+        <input type="text" id="CreatedOn" name="CreatedOn" readonly />
+    </div>
+
+    <div>
+        <label>Created By:</label>
+        <input type="text" id="CreatedBy" name="CreatedBy" readonly />
+    </div>
+
+    <div>
+        <input type="submit" value="Create" />
+    </div>
+</form>
+
+<script>
+    $(function () {
+        $.validator.unobtrusive.parse($('#createForm')); // Enable client-side validation
+
+        $('#createForm').submit(function (event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            if ($(this).valid()) {
+                var formData = $(this).serialize(); // Serialize form data
+
+                $.ajax({
+                    url: '@Url.Action("Create", "RuleMaster")', // Replace with the actual URL of your controller action
+                    type: 'POST',
+                    data: formData,
+                    success: function (response) {
+                        // Handle the success response, if needed
+                        console.log(response);
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle the error, if needed
+                        console.log(xhr.responseText);
+                    }
+                });
+            }
+        });
+    });
+</script>

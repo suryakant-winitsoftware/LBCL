@@ -1,0 +1,136 @@
+@page "/escalation-matrix"
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+
+<div class="escalation-matrix-container">
+    <div class="escalation-header">
+        <h2>Escalation Matrix</h2>
+    </div>
+    @if (isLoading)
+    {
+        <div style="text-align:center; margin:20px;">Loading...</div>
+    }
+    else if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div style="color:red; text-align:center;">@errorMessage</div>
+    }
+    else if (matrixList != null)
+    {
+        foreach (var group in matrixList.GroupBy(x => x.Level))
+        {
+            <div class="escalation-section @(group.Key.ToLower())-section">
+                @if (group.Key != "User")
+                {
+                    <div class="escalation-title">@group.Key</div>
+                }
+                @foreach (var person in group)
+                {
+                    <div class="escalation_main">
+                    <div class="escalation-label">Name:</div>
+                        <div class="escalation-value">@(person.Name ?? "--")</div>
+                    </div>
+                    <div class="escalation_main">
+                    <div class="escalation-label">Designation:</div>
+                        <div class="escalation-value">@(person.Designation ?? "--")</div>
+                    </div>
+                    <div class="escalation_main">
+                    <div class="escalation-label">Mobile No:</div>
+                    <div class="escalation-value">
+                        @if (!string.IsNullOrEmpty(person.Mobile))
+                        {
+                            <a href="tel:@person.Mobile" class="escalation-link">@person.Mobile</a>
+                        }
+                        else
+                        {
+                            <span>--</span>
+                        }
+                        </div>
+                    </div>
+                    <div class="escalation_main">
+                    <div class="escalation-label">Code:</div>
+                        <div class="escalation-value">@(person.Code ?? "--")</div>
+                    </div>
+                }
+            </div>
+        }
+    }
+</div>
+
+<style>
+.escalation-matrix-container {
+        max-width: 100%;
+        margin: 10px;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        padding: 15px 0px;
+        font-family: inherit;
+        border: 1px solid #ccc;
+}
+
+      
+.escalation-header {
+    text-align: center;
+    margin-bottom:7px;
+}
+.escalation-header h2 {
+margin: 0;
+    font-size: 20px;
+    color: #2a3b4c;
+    letter-spacing: 1px;
+    text-align: left;
+            font-weight: 700;
+            padding-left: 10px;
+        }
+}
+.escalation-section {
+    margin-bottom: 18px;
+    padding: 12px 0 0 0;
+    border-top: 1px solid #e0e0e0;
+}
+.escalation-section.user-section {
+    border-top: none;
+    padding-top: 0;
+}
+.escalation-title {
+    font-weight: 600;
+    color: #1976d2;
+    margin-bottom: 6px;
+    font-size: 1.1rem;
+}
+.escalation-label {
+    display: inline-block;
+    width: 38%;
+    color: #888;
+    font-size:14px;
+    vertical-align: top;
+    margin-bottom: 2px;
+}
+
+    .escalation_main {
+        width: 100%;
+        display: flex;
+        border-bottom: 1px solid #ccc;
+        padding: 7px 0px 4px 0px;
+        margin-bottom: 0px;
+        font-size: 13px;
+        padding: 7px 10px 4px 10px;
+    }
+.escalation-value {
+        display: inline-block;
+        width: 60%;
+        color: #222;
+        font-size: 14px;
+        margin-bottom: 2px;
+        word-break: break-all;
+        font-weight: 600;
+}
+.escalation-link {
+    color: #1976d2;
+    text-decoration: underline;
+    word-break: break-all;
+}
+
+    .escalation-matrix-container .escalation_main:last-child {
+        border-bottom: 1px solid #ccc;
+    }
+</style>

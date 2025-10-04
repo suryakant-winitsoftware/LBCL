@@ -1,0 +1,114 @@
+﻿@page "/ViewCallRegistration"
+@inject Winit.Modules.ServiceAndCallRegistration.BL.Interfaces.IServiceAndCallRegistrationViewModel _serviceAndCallRegistrationViewModel;
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+@if (IsInitialised)
+{
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="false"/>
+    <div class="cls_container_div1">
+        <div class="cls_pop_up_div">
+            <label class="cls_section_div_purchase2_label"> Customer Type </label>
+            <label class="cls_credit_label2">@CustomerType</label>
+        </div>
+        <div class="cls_pop_up_div">
+            <label class="cls_section_div_purchase2_label"> Product Category </label>
+            <label class="cls_credit_label2">@_serviceAndCallRegistrationViewModel.CallRegisteredItemDetails?.ProductCategoryCode</label>
+        </div>
+        <div class="cls_pop_up_div">
+            <label class="cls_section_div_purchase2_label"> Brand </label>
+            <label class="cls_credit_label2">@BrandCode</label>
+        </div>
+    </div>
+    <div class="cls_popup_outline">
+        <div class="cls_pop_up_div">
+            <label class="cls_section_div_purchase2_label"> Service Type </label>
+            <label class="cls_credit_label2">@ServiceTypeCode</label>
+        </div>
+        <div class="cls_pop_up_div">
+            <label class="cls_section_div_purchase2_label"> Warranty Status </label>
+            <label class="cls_credit_label2">@WarrantyStatus</label>
+        </div>
+        <div class="cls_pop_up_div">
+            <label class="cls_section_div_purchase2_label"> Customer Name </label>
+            <label class="cls_credit_label2">@_serviceAndCallRegistrationViewModel.CallRegisteredItemDetails.CustomerName </label>
+        </div>
+    </div>
+    <div class="cls_popup_outline">
+        <div class="cls_pop_up_div">
+            <label class="cls_section_div_purchase2_label"> Contact Person</label>
+            <label class="cls_credit_label2">@_serviceAndCallRegistrationViewModel.CallRegisteredItemDetails.ContactPerson </label>
+        </div>
+        <div class="cls_pop_up_div">
+            <label class="cls_section_div_purchase2_label"> Contact Number </label>
+            <label class="cls_credit_label2">@_serviceAndCallRegistrationViewModel.CallRegisteredItemDetails.MobileNumber </label>
+        </div>
+        <div class="cls_pop_up_div">
+            <label class="cls_section_div_purchase2_label"> Pincode </label>
+            <label class="cls_credit_label2">@_serviceAndCallRegistrationViewModel.CallRegisteredItemDetails.Pincode </label>
+        </div>
+    </div>
+    <div class="cls_popup_outline">
+        <div class="cls_pop_up_div">
+            <label class="cls_section_div_purchase2_label"> Email </label>
+            <label class="cls_credit_label2">@(@_serviceAndCallRegistrationViewModel.CallRegisteredItemDetails.EmailID) </label>
+        </div>
+
+        <div class="cls_pop_up_div">
+            <label class="cls_section_div_purchase2_label"> Purchase Date </label>
+            <label class="cls_credit_label2">@(@_serviceAndCallRegistrationViewModel.CallRegisteredItemDetails.PurchaseDate) </label>
+        </div>
+
+        <div class="cls_pop_up_div">
+            <label class="cls_section_div_purchase2_label"> Reseller </label>
+            <label class="cls_credit_label2">@_serviceAndCallRegistrationViewModel.CallRegisteredItemDetails.ResellerName </label>
+        </div>
+    </div>
+    <div class="cls_popup_outline">
+        <div class="cls_pop_up_div">
+            <label class="cls_section_div_purchase2_label"> Remarks </label>
+            <label class="cls_credit_label2">@_serviceAndCallRegistrationViewModel.CallRegisteredItemDetails.Remarks </label>
+        </div>
+        <div class="cls_pop_up_div">
+            <label class="cls_section_div_purchase2_label"> Address </label>
+            <label class="cls_credit_label2">@_serviceAndCallRegistrationViewModel.CallRegisteredItemDetails.Address </label>
+        </div>
+
+        @*  <div class="cls_pop_up_div">
+                    <label class="cls_section_div_purchase2_label"> Country of Residence </label>
+                    <label class="cls_credit_label2">@_serviceAndCallRegistrationViewModel.CallRegisteredItemDetails.FileSys </label>
+                </div> *@
+    </div>
+    <div class="cls_button_bottom_purchase">
+        <button class="cls_button_blue" @onclick="CheckCallRegistrationStatus">Check Status</button>
+    </div>
+    @if (ShowCallStatus)
+    {
+        <PopUp Title="Call Status" DisableCancelBtn="true" OkbtnText="Back"
+               OnOkClick="() => ShowCallStatus = false" DisableCrossBtn="true"
+               OnCloseClick="() => ShowCallStatus = false">
+            <div class="card" style="max-width: 800px; margin: 2rem auto; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);">
+                <div class="card-header" style="font-weight: bold; font-size: 1.2rem;">
+                    Check your Service Request Status
+                </div>
+                <table class="table table-bordered" style="text-align: center; font-size: 14px;">
+                    <thead style="background-color: #f8f9fa;">
+                        <tr>
+                            <th>Complain Number</th>
+                            @* <th>Customer Name</th> *@
+                            <th>Service Status</th>
+                            <th>Call Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>@ServiceCallID</td>
+                            @* <td>@_serviceAndCallRegistrationViewModel.serviceRequestStatusResponce.ItemName</td> *@
+                            <td>@_serviceAndCallRegistrationViewModel.serviceRequestStatusResponce.ServiceStatus</td>
+                            <td>@_serviceAndCallRegistrationViewModel.serviceRequestStatusResponce.CallStatus</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </PopUp>
+    }
+}

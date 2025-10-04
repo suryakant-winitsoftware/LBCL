@@ -1,0 +1,155 @@
+﻿@page "/expirycheck"
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+@using WINITMobile.Pages.DialogBoxes;
+@using Winit.Modules.ExpiryCheck.BL.Interfaces
+@inject IExpiryCheckViewModel _expiryCheckViewModel
+@inject Winit.Modules.ExpiryCheck.BL.Interfaces.IExpiryCheckExecutionBL _expiryCheckExecutionBL
+@inject Winit.Modules.StoreActivity.BL.Interfaces.IStoreActivityViewModel _StoreActivityViewmodel
+ 
+<div class="container-fluid">
+    <div class="page-header" style="margin-top: 10px;">
+        <h2 style="width:70%" class="cls_main_heading">Ageing/Near Expiry Data</h2>     
+  <button style="float: right;" class="btn-add" @onclick="ShowAddProductDialog">
+       Add
+    </button>
+    </div>
+    <!-- Header with Add button -->
+    <div class="expiry-check-header">
+        <div class="store-info">
+            @* <div class="store-name">@(SelectedStoreItemView?.Name ?? "N/A")</div>
+            <div class="store-code">@(SelectedStoreItemView?.Code ?? "N/A")</div> *@
+        </div>
+    
+    </div>
+
+    <!-- Data Table -->
+ </div>
+    <div class="div1">
+        <table class="table" style="table-layout:fixed;">
+            <thead>
+                <tr>
+                    <th style="width:50%">Item Code / Description</th>
+                    <th style="width:16%">Qty</th>
+                    <th>Expiry Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                   @if (displayItems?.Any() == true)
+                    {
+                        @foreach (var item in displayItems)
+                        {
+                            <tr>
+                                <td>@item.SKUCode - @item.SKUName</td>
+                                <td>
+                                    <input type="number"
+                                           class="table-input"
+                                           @bind="item.Qty" />
+                                </td>
+                                <td>
+                                    <input type="date"
+                                           class="table-input"
+                                           @bind="item.ExpiryDate"
+                                           @bind:format="yyyy-MM-dd" />
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                       <tr>
+                    <td colspan="3"> <p style="display: flex; justify-content: center; align-items: center;margin:0px;">No items added</p></td>
+                   
+                         </tr>
+                    }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="cls_dashboard_7">
+    <button class="cls_continue_btn" @onclick="OnSubmitExpiryData">Submit</button>
+    </div>
+
+
+
+<!-- Dialog Box -->
+<AddProductDialogBox T="Winit.Modules.ExpiryCheck.Model.Classes.ExpiryCheckItem"
+                     DataSource="@_expiryCheckViewModel.availableProducts.OrderBy(p => p.SKUName).ToList()"
+                         FilterAction="filterAction"
+                         SKUCode="@(e => e.SKUCode)"
+                         SKUHeader="@(e => e.SKUName)"
+                         ImageUrl="@(e => e.SKUImage)"
+                         OnCancelClick="CancelAddProducts"
+                         OnOkClick="AddProducts"
+                         FilterDataList="filterDataList"
+                         Rerender="true"
+                         @ref="addProductDialog" />
+
+    <style>
+    .expiry-check-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding:0px;
+        background: white;
+        border-bottom: 0px solid #eee;width:100%;
+    }
+
+    .store-info {
+        flex: 1;
+    }
+
+    .store-name {
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: #333;
+    }
+
+    .store-code {
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .btn-add {
+        background-color: #1B478A;
+        color: white;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        gap: 8px;font-size:13px;
+    }
+
+    
+    .table-input {
+        width: 100%;
+        padding: 6px 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .submit-section {
+        padding: 16px;
+        background: white;
+        border-top: 1px solid #eee;
+        position: sticky;
+        bottom: 0;
+    }
+
+    .btn-submit {
+        width: 100%;
+        background-color: #1B478A;
+        color: white;
+        padding: 12px;
+        border: none;
+        border-radius: 6px;
+        font-weight: 500;
+    }
+
+    .no-data {
+        padding: 32px;
+        text-align: center;
+        color: #666;
+    }
+</style>
+

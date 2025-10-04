@@ -1,0 +1,138 @@
+﻿@page "/CallRegistration"
+@inject Winit.Modules.ServiceAndCallRegistration.BL.Interfaces.IServiceAndCallRegistrationViewModel _serviceAndCallRegistrationViewModel;
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+@using Winit.UIComponents.Common.WinitDatepicker;
+
+<div class="cls_main1">
+
+@if (OnInitialised)
+{
+    <div class="cls_container_div1">
+        <div class="cls_reg_heading">
+            <div class="cls_border"></div>
+            <label  class="cls_reg_heading_label">RAISE A SERVICE REQUEST</label>
+            <div class="cls_border"></div>
+        </div>
+
+            <div class="cls_container_div1 cls_flex cls_flex_column cls_flex_row_gap_6px">
+            <p class="cls_reg_heading_p">CMI understands the value of time and strives to ensure that the customer’s experience with us is hassle-free and satisfactory. To facilitate a swift response,kindly reach out to our dedicated customer support team with any inquiries or concerns.</p>
+            <p class="cls_reg_heading_p">Once we have received and understood your requirements, we will promptly provide the necessary resolution and assistance.</p>
+            </div>
+
+        <div class="cls_section">           
+            <h3 class="cls_container_p_full">Call Registration</h3>
+                <div class="cls_container_div4 cls_flex cls_flex_column cls_flex_row_gap_14px">
+                    <div class="cls_container_div1">
+                        <label class="cls_section_div_purchase2_label"> <span class="cls_section_div_purchase2_span">*</span>Customer Type</label>
+                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_serviceAndCallRegistrationViewModel.CustTypeSelectionList" Title="Customer Type" _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single"
+                        IsButtonVisible="true" OnSelect="HandleCallRegistrationCustTypeSelection" IsSearchable="true" />
+                    </div>
+                    <div class="cls_container_div1">
+                        <label class="cls_section_div_purchase2_label"> <span class="cls_section_div_purchase2_span">*</span>Product Category Name</label>
+                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_serviceAndCallRegistrationViewModel.ProductCategorySelectionList" Title="Product Category Name" _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single"
+                        IsButtonVisible="true" OnSelect="HandleCallRegistrationProductCategorySelection" IsSearchable="true" />
+                    </div>
+                    <div class="cls_container_div1">
+                        <label class="cls_section_div_purchase2_label"> <span class="cls_section_div_purchase2_span">*</span>Brand Code</label>
+                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_serviceAndCallRegistrationViewModel.BrandCodeSelectionList" Title="Brand Code" _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single"
+                        IsButtonVisible="true" OnSelect="HandleCallRegistrationBrandCodeSelection" IsSearchable="true" />
+                    </div>
+
+                    <div class="cls_container_div1">
+                        <label class="cls_section_div_purchase2_label"> <span class="cls_section_div_purchase2_span">*</span>Service Type Code</label>
+                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_serviceAndCallRegistrationViewModel.ServiceTypeCodeSelectionList" Title="Service Type Code" _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single"
+                        IsButtonVisible="true" OnSelect="HandleCallRegistrationServiceTypeCodeSelection" IsSearchable="true" />
+                    </div>
+                    <div class="cls_container_div1">
+                        <label class="cls_section_div_purchase2_label"> <span class="cls_section_div_purchase2_span">*</span>Warranty Status</label>
+                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_serviceAndCallRegistrationViewModel.WarrentyStatusSelectionList" Title="Warranty Status" _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single"
+                        IsButtonVisible="true" OnSelect="HandleCallRegistrationWarrentyStatusSelection" IsSearchable="true" />
+                    </div>
+                    <div class="cls_container_div1">
+                        <label class="cls_section_div_purchase2_label"> <span class="cls_section_div_purchase2_span">*</span>Customer Name</label>
+                        <input class="cls_select2_button" type="text" @bind="_serviceAndCallRegistrationViewModel.CallRegistrationDetails.CustomerName"  />
+                    </div>
+
+                    <div class="cls_container_div1">
+                        <label class="cls_section_div_purchase2_label"> <span class="cls_section_div_purchase2_span">*</span>Contact Person</label>
+                        <input type="text" @bind="_serviceAndCallRegistrationViewModel.CallRegistrationDetails.ContactPerson" class="cls_select2_button" />
+                    </div>
+                    <div class="cls_container_div1">
+                        <label class="cls_section_div_purchase2_label"> <span class="cls_section_div_purchase2_span">*</span>Mobile No.</label>
+                        <input type="number" value="@_serviceAndCallRegistrationViewModel.CallRegistrationDetails.MobileNumber" @oninput="OnMobileNumberInput" inputmode="numeric" class="cls_select2_button" />
+                        <span id="error" style="color: red; display: @(IsMobileNumberValid ? "none" : "inline");">
+                            @MobileNumberValidationError
+                        </span>
+                    </div>
+                    <div class="cls_container_div1">
+                        <label class="cls_section_div_purchase2_label"> <span class="cls_section_div_purchase2_span">*</span>Pin Code</label>
+                        <input type="number" @bind="_serviceAndCallRegistrationViewModel.CallRegistrationDetails.Pincode" @oninput="OnPincodeInput" inputmode="numeric" class="cls_select2_button" />
+                        <span id="error" style="color: red; display: @(IsPincodeValid ? "none" : "inline");">
+                            Please enter a valid 6-digit pincode.
+                        </span>
+                    </div>
+
+                    <div class="cls_container_div1">
+                        <label class="cls_section_div_purchase2_label"> <span class="cls_section_div_purchase2_span">*</span>Email Id</label>
+                        <input type="email" @bind="_serviceAndCallRegistrationViewModel.CallRegistrationDetails.EmailID" inputmode="email" class="cls_select2_button" />
+                    </div>
+                    <div class="cls_container_div1">
+                        <label class="cls_section_div_purchase2_label"> Date</label>
+                        <WinitCalendar id="EffectiveFrom" MinDate="10000"
+                                       selectedDate="@_serviceAndCallRegistrationViewModel.CallRegistrationDetails.PurchaseDate?.ToString("dd/MM/yyyy")"
+                                       OnChange="OnDateChange">
+                        </WinitCalendar>
+                    </div>
+                    <div class="cls_container_div1">
+                        <label class="cls_section_div_purchase2_label"> Reseller Name</label>
+                        <input type="text" @bind="_serviceAndCallRegistrationViewModel.CallRegistrationDetails.ResellerName" class="cls_select2_button" />
+                    </div>
+
+                    <div class="cls_container_div1">
+                        <label class="cls_section_div_purchase2_label"> Remarks</label>
+                        <textarea @bind="_serviceAndCallRegistrationViewModel.CallRegistrationDetails.Remarks" class="cls_select2_button"></textarea>
+                    </div>
+                    <div class="cls_container_div1">
+                        <label class="cls_section_div_purchase2_label"> <span class="cls_section_div_purchase2_span">*</span>Address</label>
+                        <textarea @bind="_serviceAndCallRegistrationViewModel.CallRegistrationDetails.Address" class="cls_select2_button"></textarea>
+                    </div>
+                    @* <div class="cls_container_div1">
+                        <label class="cls_section_div_purchase2_label"> <span class="cls_section_div_purchase2_span">*</span>Upload Invoice </label>
+
+                        <Winit.UIComponents.Common.FileUploader.FileUploader @ref=fileUploader FileExtension=".jpg,.jpeg,.pdf,.png,.doc"
+                        RelativePath="@FilePath" FileSize="500000" 
+                        AllowMultipleFiles="true" 
+                        FileSysList=@_serviceAndCallRegistrationViewModel.FileSys?.Where(s => s.FileSysType == Winit.Modules.Store.Model.Constants.FileSysTypeConstants.CallRegistration).ToList()
+                        LinkedItemUID="123123"
+                        LinkedItemType="CallRegistration" UploadEventCallBack="GetsavedImagePath" DeleteEventCallBack="AfterDeleteImage"
+                        FileSysType="@Winit.Modules.Store.Model.Constants.FileSysTypeConstants.CallRegistration"
+                        FileType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.Image" />
+                    </div> *@
+            </div>
+            
+        </div>
+
+            <div class="cls_button_bottom_purchase">
+                <button class="cls_button_blue" @onclick="SubmitCallRegistrationDetails">Submit</button>
+            </div>
+
+    </div>
+    @if (IsSubmitSuccess)
+    {
+        <PopUp Title="Call Registration Details Saved" OnCloseClick="() => IsSubmitSuccess = false" OkbtnText="OK" DisableCancelBtn="true" OnOkClick="() => IsSubmitSuccess = false">
+            <div>
+                <label style="display: block;">
+                    Call registration details submitted successfully
+                </label>
+                <div style="display: flex; align-items: center; gap: 5px;">
+                    <label>Reference Number :</label>
+                    <label>@_serviceAndCallRegistrationViewModel.CallRegistrationDetails.ServiceCallNo</label>
+                </div>
+                
+            </div>
+            
+        </PopUp>
+    }
+}
+
+</div>

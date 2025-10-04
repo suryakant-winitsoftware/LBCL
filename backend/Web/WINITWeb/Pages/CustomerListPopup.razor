@@ -1,0 +1,108 @@
+﻿@page "/CustomerListPopup"
+@using System.Collections.Generic
+@using Winit.Modules.Route.Model.Classes
+@using System.Threading.Tasks
+@using Winit.Modules.Store.Model.Classes
+
+@if (IsVisible)
+{
+    <div class="modal fade show" tabindex="-1" role="dialog" style="display: block; height:">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="height:600px;">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Customer</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="HidePopup">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex flex-row">
+                        <div class="form-group w-25">
+                            <label class="form-label">Customer Group Type:</label>
+                            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="GroupTypeSelectionItems"  IsButtonVisible=true/>
+                        </div>
+                        <div class="form-group w-25 ml-2">
+                            <label class="form-label">Customer Group:</label>
+                            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="GroupSelectionItems" IsButtonVisible=true />
+                        </div>
+                        <button class="btn btn-secondary ml-2" @onclick="Reset">Reset</button>
+                    </div>
+                    <Winit.UIComponents.Common.CustomControls.WinitTextBox Value="@searchQuery" OnDebounceIntervalElapsed="OnSearch" />
+                </div>
+                <div class="div1">
+                    <!-- Customer list table -->
+                    <table class="table">
+                        <thead style="position:fixed;">
+                            <tr>
+                                <th scope="col">Select</th>
+                                <th scope="col">Customer Name</th>
+                                <th scope="col">Customer Number</th>
+                                <th scope="col">Address</th>
+                                <!-- Add more columns as needed -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (CustomerList != null && CustomerList.Any())
+                            {
+                                @foreach (var customer in CustomerList)
+                                {
+                                    var selected = customer.IsSelected;
+                                    <tr>
+                                        <td><input type="checkbox" @bind="customer.IsSelected" /></td>
+                                        <td>@customer.Label</td>
+                                        <td>@customer.Code</td>
+                                        <td>@(customer.Address ?? "N/A")</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" @onclick="AddSelectedCustomers">Add Selected Customers</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+@code {
+
+    [Parameter]
+    public bool IsVisible { get; set; }
+    public string searchQuery = "";
+    [Parameter] 
+    public IEnumerable<Winit.Modules.Store.Model.Interfaces.IStoreCustomer>? CustomerList { get; set; }
+    [Parameter] 
+    public EventCallback<List<Winit.Modules.Store.Model.Interfaces.IStoreCustomer>> SelectedCustomersChanged { get; set; }
+    [Parameter]
+    public EventCallback<bool> IsVisibleChanged { get; set; }
+    [Parameter]
+    public List<ISelectionItem> GroupTypeSelectionItems { get; set; } = new();
+    [Parameter]
+    public List<ISelectionItem> GroupSelectionItems { get; set; } = new();
+
+    protected override void OnInitialized()
+    {
+    }
+    private async Task AddSelectedCustomers()
+    {
+        await SelectedCustomersChanged.InvokeAsync(CustomerList?.Where(c => c.IsSelected).ToList());
+        HidePopup();
+    }
+    private void HidePopup()
+    {
+        IsVisible = false;
+        IsVisibleChanged.InvokeAsync(IsVisible);
+    }
+    private void Reset()
+    {
+
+    }
+    private void OnSearch(string searchString)
+    {
+        searchQuery = searchString;
+    }
+}

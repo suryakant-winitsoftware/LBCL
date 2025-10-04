@@ -1,0 +1,213 @@
+﻿@page "/UserJourney_AttendanceReportDetails"
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize]
+@using Winit.Shared.Models.Common
+@using Winit.UIComponents.Common.CustomControls
+@inject Winit.Modules.JourneyPlan.BL.Interfaces.IUserJourney_AttendanceReportViewModel _userJourneyViewModel;
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" />
+
+@if (IsIntialized)
+{
+    <div class="storeupper">
+        <div style="width:100%;float:left;border-top: 0px solid #cac9c9;margin-top: 16px;position: relative;">
+            <h4 class="cls_head_cust" style="background: #fff;width: auto;margin-bottom: 0px;margin-top: 0px;">
+                @Localizer["journey_info"]
+            </h4>
+            <div style="width:100%;float:left;margin-top:0px;margin-bottom:0px;">
+                <div>
+                    <div class="inputfild">
+                        <div class="input_tile">
+                            @Localizer["user"] 
+                        </div>
+                        <span>@(_userJourneyViewModel.userJourneyView.User ?? "N/A")</span>
+                    </div>
+                    <div class="inputfild">
+                        <div class="input_tile">
+                            @Localizer["journey_date"] 
+                        </div>
+                        <span>@Winit.Shared.CommonUtilities.Common.CommonFunctions.GetDateTimeInFormat(_userJourneyViewModel.userJourneyView.JourneyDate)</span>
+                    </div>
+                    <div class="inputfild">
+                        <div class="input_tile">
+                            @Localizer["eot_status"] 
+                        </div>
+                        <span>@(_userJourneyViewModel.userJourneyView.EOTStatus ?? "N/A")</span>
+                    </div>
+                    <div class="inputfild">
+                        <div class="input_tile">
+                            @Localizer["start_time"]
+                        </div>
+                        <span>@Winit.Shared.CommonUtilities.Common.CommonFunctions.GetDateTimeInFormat(_userJourneyViewModel.userJourneyView.StartTime,"dd MMM, yyyy HH:mm")</span>
+                    </div>
+                    <div class="inputfild">
+                        <div class="input_tile">
+                            @Localizer["end_time"]
+                        </div>
+                        <span>@Winit.Shared.CommonUtilities.Common.CommonFunctions.GetDateTimeInFormat(_userJourneyViewModel.userJourneyView.EndTime,"dd MMM, yyyy HH:mm")</span>
+                    </div>
+                    <div class="inputfild">
+                        <div class="input_tile">
+                            @Localizer["journey_time"] 
+                        </div>
+                        <span>@(_userJourneyViewModel.userJourneyView.JourneyTime)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <div style="width:100%;float:left;border-top: 0px solid #cac9c9;margin-top:0px;">
+                <h4 class="cls_head_cust" style="background: #fff;width: 100%;margin-bottom:0px;margin-top:5px;">
+                    @Localizer["odometer_reading_(km)"] 
+                </h4>
+                <div style="width:100%;float:left;margin-top:0px;margin-bottom: 0px;">
+                    <div class="inputfild">
+                        <div class="input_tile">
+                            @Localizer["start_reading"] 
+                        </div>
+                        <span>@(_userJourneyViewModel.userJourneyView.StartOdometerReading)</span>
+                    </div>
+                    <div class="inputfild">
+                        <div class="input_tile">
+                            @Localizer["end_reading"] 
+                        </div>
+                        <span>@(_userJourneyViewModel.userJourneyView.EndOdometerReading)</span>
+                    </div>
+                    <div class="inputfild">
+                        <div class="input_tile">
+                            @Localizer["total_reading"]  
+                        </div>
+                        <span>@(_userJourneyViewModel.userJourneyView.TotalReading)</span>
+                    </div>
+                    
+                </div>
+                
+            </div>
+        </div>
+
+          <div>
+            <div style="width:100%;float:left;border-top: 0px solid #cac9c9;margin-top:0px;">
+                <h4 class="cls_head_cust" style="background: #fff;width: 100%;margin-bottom:0px;margin-top:5px;">
+                    @Localizer["start_day_info"] 
+                </h4>
+                <div style="width:100%;float:left;margin-top:0px;margin-bottom: 0px;">
+                    <div class="inputfild">
+                        <div class="input_tile">
+                            @Localizer["synchronizing"]
+                        </div>
+                        <span>@(_userJourneyViewModel.userJourneyView.is_synchronizing ? @Localizer["yes"] : @Localizer["no"])</span>
+                    </div>
+                    <div class="inputfild">
+                        <div class="input_tile">
+                            @Localizer["location_enabled"] 
+                        </div>
+                        <span>@(_userJourneyViewModel.userJourneyView.is_location_enabled ? @Localizer["yes"] : @Localizer["no"])</span>
+                    </div>
+                    <div class="inputfild">
+                        <div class="input_tile">
+                            @Localizer["network_available"] 
+                         </div>
+                        <span>@(_userJourneyViewModel.userJourneyView.has_mobile_network ? @Localizer["yes"] : @Localizer["no"])</span>
+                    </div>
+                    <div class="inputfild">
+                        <div class="input_tile">
+                            @Localizer["internet_available"] 
+                        </div>
+                        <span>@(_userJourneyViewModel.userJourneyView.has_internet ? @Localizer["yes"] : @Localizer["no"])</span>
+                    </div>
+                    <div class="inputfild">
+                        <div class="input_tile">
+                            @Localizer["internet_type"] 
+                        </div>
+                        <span>@(_userJourneyViewModel.userJourneyView.internet_type ?? "N/A")</span>
+                    </div>
+                    <div class="inputfild">
+                        <div class="input_tile">
+                            @Localizer["speed_(download/upload_mbps)"] 
+                        </div>
+                        <span>@(_userJourneyViewModel.userJourneyView.download_speed)/@(_userJourneyViewModel.userJourneyView.upload_speed)</span>
+                    </div>
+                    <div class="inputfild">
+                        <div class="input_tile">
+                            @Localizer["battery_status"] 
+                        </div>
+                        <span>@(_userJourneyViewModel.userJourneyView.BatteryStatus)</span>
+                    </div>
+                    <div class="inputfild">
+                        <div class="input_tile">
+                            @Localizer["battery_recommended"] %
+                        </div>
+                        <span>@(_userJourneyViewModel.userJourneyView.battery_percentage_target)</span>
+                    </div>
+                    <div class="inputfild">
+                        <div class="input_tile">
+                            @Localizer["battery_available"] %
+                        </div>
+                        <span>@(_userJourneyViewModel.userJourneyView.battery_percentage_available)</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div>
+            <div style="width:100%;float:left;border-top: 0px solid #cac9c9;margin-top:0px;">
+                <h4 class="cls_head_cust" style="background: #fff;width: 100%;margin-bottom:0px;margin-top:5px;">
+                    @Localizer["attendance"] 
+                </h4>
+                <div style="width:100%;float:left;margin-top:0px;margin-bottom: 0px;">
+                    <div class="inputfild">
+                        <div class="input_tile">
+                            @Localizer["status"]  
+                        </div>
+                        <span>@(_userJourneyViewModel.userJourneyView.attendance_status ?? "N/A")</span>
+                    </div>
+                    <div class="inputfild">
+                        <div class="input_tile">
+                            @Localizer["latitude"] 
+                        </div>
+                        <span>@(_userJourneyViewModel.userJourneyView.attendance_latitude)</span>
+                    </div>
+                    <div class="inputfild">
+                        <div class="input_tile">
+                            @Localizer["longitude"] 
+                        </div>
+                        <span>@(_userJourneyViewModel.userJourneyView.attendance_longitude)</span>
+                    </div>
+                    <div class="inputfild">
+                        <div class="input_tile">
+                            @Localizer["selfie"] 
+                        </div>
+                        <div class="image-container">
+                            <img src="@(_userJourneyViewModel.userJourneyView.ImagePath)" alt="User Journey Image" class="img-thumbnail" data-toggle="modal" data-target="#imageModal" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="buttons" style="width:59%;float:left;margin-left: 40%;padding-top:7px;margin-bottom: 10px;">
+        <button class="cls_add_new_sec" style="margin-right:10px" type="button" @onclick="BackBtnClicked">
+            @Localizer["back"] 
+        </button>
+    </div>
+}
+<div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <img src="@(_userJourneyViewModel.userJourneyView.ImagePath)" alt="User Journey Image" class="img-fluid" />
+            </div>
+        </div>
+    </div>
+</div>
+@code {
+
+}

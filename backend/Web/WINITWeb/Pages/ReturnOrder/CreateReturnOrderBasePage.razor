@@ -1,0 +1,101 @@
+﻿@page "/ReturnOrder/{returnOrderUID}/{IsViewMode:bool}" 
+@page "/ReturnOrder" 
+@page "/ReturnOrder/{IsWithInvoice:bool}"
+@page "/ReturnOrder/{IsWithInvoice:bool}/{returnOrderUID}/{IsViewMode:bool}" 
+@using System.ComponentModel.DataAnnotations
+@using System.Linq
+@using Winit.Modules.ReturnOrder.BL.Interfaces
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.ReturnOrder.BL.Interfaces.IReturnOrderViewModelFactory _viewModelFactory;
+
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" />
+
+@if (IsInitialized)
+{
+    <div class="cls_section">
+
+        <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span">*</span>@Localizer["route"]</label>
+                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_returnOrderViewModel.RouteSelectionItems" IsButtonVisible="true" Title="Route"
+                                                                   OnSelect="OnRouteSelected" _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single" />
+            </div>
+        <div class="cls_section_div_purchase2">
+                <label for="customerDropdown" class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span">*</span>@Localizer["customer"]</label>
+                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_returnOrderViewModel.StoreSelectionItems" IsButtonVisible="true" Title="Customer"
+                                                                   OnSelect="OnStoreSelected" _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single" />
+            </div>
+            @if (IsShowOrganazation)
+            {
+            <div class="cls_section_div_purchase2">
+                    <label for="customerDropdown" class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span">*</span>@Localizer["Distribution_Channel"]</label>
+                    <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_returnOrderViewModel.StoreCreditsSelectionItems" IsButtonVisible="true" Title="Distribution Channel"
+                                                                       OnSelect="OnStoreDistributionChannelSelect" _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single" />
+                </div>
+            }
+            @if (IsWithInvoice)
+            {
+            <div class="cls_section_div_purchase2">
+                    <label for="customerDropdown" class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span">*</span>@Localizer["Invoice"]</label>
+                    <Winit.UIComponents.Common.CustomControls.DropDown DataSource="(_returnOrderViewModel as IReturnOrderWithInvoiceViewModel).SalesOrdersInvoiceSelectionItems" IsButtonVisible="true" Title="Invoice Channel"
+                                                                       OnSelect="OnInvoiceSelction" _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single" />
+                </div>
+            }
+        <div class="cls_section_div_purchase2">
+                <label for="orderDate" class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span">*</span>@Localizer["date"]</label>
+                <input type="date" class="cls_select_date" id="orderDate" max="@DateTime.Now.Date" @bind="_returnOrderViewModel.OrderDate" />
+            </div>
+        
+    </div>
+   @*  <div>
+        <Winit.UIComponents.Common.DialogBoxes.AddProductDialogBox Disabled="IsViewMode"
+                                                                   SKUAttributesDataSource="_returnOrderViewModel.SkuAttributesList" SKUDataSource="_returnOrderViewModel.SKUList"
+                                                                   GetSelectedSKU="OnaddProductClose" @ref="addProductDialogBoxReffrenece" />
+    </div> *@
+    <div>
+        <WinIt.Pages.DialogBoxes.AddProductDialogBox T="Winit.Modules.ReturnOrder.Model.Interfaces.IReturnOrderItemView"
+                                                     DataSource="_returnOrderViewModel.ReturnOrderItemViewsRawdata"
+                                                     SKUCode="@(e => e.SKUCode )"
+                                                     SKUHeader="@(e => e.SKUName)"
+                                                     OnCancelClick="() => AddProductDialogBox?.OnCloseClick()"
+                                                     OnOkClick="OnaddProductClose"
+                                                     @ref="AddProductDialogBox" />
+    </div>
+    <div class="cls_export_main mt-4">
+        <button Disabled="@IsViewMode" class="cls_add_new_sec" @onclick="() => AddProductDialogBox?.OnOpenClick()">Add Product</button>
+        <button Disabled="@IsViewMode" class="cls_add_new_sec" @onclick="SaveAndApprove">@Localizer["save_and_approve"]</button>
+        <button Disabled="@IsViewMode" class="cls_add_new_sec" @onclick="Save">@Localizer["save"]</button>
+    </div>
+
+    <WinIt.Pages.ReturnOrder.CreateReturnOrderGridview OnSKUTypeChanged="SkuTypeChanged" OnCloneItem="AddItemToList"
+                                                       DisplayedSKUList="_returnOrderViewModel.DisplayedReturnOrderItemViews" OnSelectUOM="OnUOMSelection"
+                                                       OnGetCloneSelectionItem="GetCloneUOMSForSelectedProduct" OnGetDDLSelectionItem="GetUOMSForSelectedProduct"
+                                                       UOMCloneselectionItems="UOMCloneselectionItems"
+                                                       OnClonedItemDelete="DeleteClonedItem" OnQtyChanged="QtyChanged" IsViewMode="IsViewMode" IsWithInvoice="@IsWithInvoice" />
+
+    <div style="float: right; width: 20%;" class="mt-5">
+        <table style="border: 0px solid #ccc;    width: 100%;">
+            <tbody style="border-style: solid;">
+                <tr style="border: 1px solid #ccc;">
+                    <td style="width:60%;text-align: left;font-weight:bold;">@Localizer["total_sku"]</td>:
+                    <td style="width:30%;text-align: right;font-weight:bold;">@_returnOrderViewModel.DisplayedReturnOrderItemViews?.Count</td>
+                </tr>
+                <tr style="border: 1px solid #ccc;">
+                    <td style="text-align: left;font-weight:bold;width:60%;">@Localizer["amount_exc_tax"] (@(_returnOrderViewModel.CurrencyLabel))</td>:
+                    <td style="text-align: right;width:30%;font-weight:bold;"> @_returnOrderViewModel.NetAmount</td>
+                </tr>
+                <tr style="border: 1px solid #ccc;">
+                    <td style="text-align: left;font-weight:bold;width:60%;">@Localizer["total_discount"] (@(_returnOrderViewModel.CurrencyLabel))</td>:
+                    <td style="text-align: right;width:30%;font-weight:bold;">@_returnOrderViewModel.TotalDiscount</td>
+                </tr>
+                <tr style="border: 1px solid #ccc;">
+                    <td style="text-align: left;font-weight:bold;width:60%;">@Localizer["total_tax"] (@(_returnOrderViewModel.CurrencyLabel))</td>:
+                    <td style="text-align: right;width:30%;font-weight:bold;">@_returnOrderViewModel.TotalTax</td>
+                </tr>
+                <tr style="border: 1px solid #ccc;">
+                    <td style="text-align: left;font-weight:bold;width:60%;">@Localizer["amount_inc_tax"] (@(_returnOrderViewModel.CurrencyLabel))</td>:
+                    <td style="text-align: right;width:30%;font-weight:bold;">@_returnOrderViewModel.TotalAmount</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+}

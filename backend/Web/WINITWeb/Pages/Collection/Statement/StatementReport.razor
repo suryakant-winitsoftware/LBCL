@@ -1,0 +1,154 @@
+﻿@page "/statement"
+@inject IJSRuntime Js
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.CollectionModule.BL.Interfaces.IAccountStatementViewModel _accountStatementViewModel
+
+
+
+<div class="cls_container_div1" >
+    <div class="cls_section" >
+        <div class="cls_container_div1">
+
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">Total Due Amount:</label>
+                <label class="cls_credit_label">@FormatNumberInIndianStyle(oStatementPayDisplay.Sum(p => p.BalanceAmount))</label>
+            </div>
+
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">@Localizer["from"] :</label>
+                <input class="cls_select_date" @bind="From" max="@DateTime.Now.ToString("yyyy-MM-dd")" type="date" />
+            </div>
+
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label">@Localizer["to"] :</label>
+                <input class="cls_select_date" @bind="To" max="@DateTime.Now.ToString("yyyy-MM-dd")" type="date" />
+            </div>
+
+            <div class="cls_button_bottom_purchase">
+
+                
+                    <button class="cls_button_blue" @onclick='Search'>@Localizer["search"]</button>
+           
+                    <button class="cls_button_blue" @onclick="@(async => _navigationManager.NavigateTo("collection"))">Pay Now</button>
+            
+            </div>
+
+        </div>
+    </div>
+
+    @if (ShowFields)
+    {
+        <div class="">
+
+            <div class="mr-3">
+                <button class="btn btn-primary" @onclick='GeneratePDFFile'>@Localizer["generate_pdf"]</button>
+            </div>
+
+            <div class="mr-3">
+                @* <select class="form-control" @onchange="((ChangeEventArgs e)=>GetCustomer(e))">
+            <option>-- @Localizer["select_customer"] --</option>
+            @foreach (var list in _UsersList)
+            {
+            <option value="@list.UID">@list.Name</option>
+            }
+            @if (ShowCustomers)
+            {
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="customerData" ShowPopUp=@ShowCustomers Title="Select Customer" OnSelect="@((e)=>OnSelected(e,"CustomerType"))" />
+            }
+            else
+            {
+            <button class="form-select" style="width: 1000%;margin-left: -55px;" @onclick="@(()=>ShowCustomers = !ShowCustomers)">
+            @selectedValueText
+            </button>
+            }
+            </select> *@
+                @if (_iAppUser.Emp.Code != "DIST001_Admin")
+                {
+                    <p>@Localizer["select_customer"]<span style="color: red">*</span></p>
+
+                    @if (ShowCustomers)
+                    {
+                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="customerData" ShowPopUp=@ShowCustomers Title="Select Customer" OnSelect="@((e)=>OnSelected(e,"CustomerType"))" />
+                    }
+                }
+                else
+                {
+                    <label>@_iAppUser.Emp.Code</label>
+                }
+            </div>
+
+            <div class="mr-auto">
+                <label class="mr-1">@Localizer["from"] :</label>
+                <input class="cls_select_date" @bind="From" max="@DateTime.Now.ToString("yyyy-MM-dd")" type="date" />
+            </div>
+
+            <div class="mr-3">
+                <label class="mr-1">@Localizer["to"] :</label>
+                <input class="cls_select_date" @bind="To" max="@DateTime.Now.ToString("yyyy-MM-dd")" type="date" />
+            </div>
+
+            <div class="mr-3">
+                <button class="btn btn-primary" @onclick='Search'>@Localizer["search"]</button>
+            </div>
+            <div class="mr-3" style="float:right;">
+                <label style="font-weight:700;">@Localizer["openingbalance"] : <span style="color:green; font-weight:700;">@OpeningBalance</span></label>
+            </div>
+        </div>
+    }
+</div>
+
+
+
+
+<div class="div1">
+    <table >
+        <thead >
+            <tr>
+                <th style="text-decoration:underline;cursor:pointer;" @onclick="@(() => Sorting("TransactionDate"))">
+                    @Localizer["transaction_date"]
+                    @if (isDateArrowShow)
+                    {
+                        <span>@(isDateAscending ? "▼" : "▲")</span>
+                    }
+                </th>
+                <th>Due Date</th>
+                <th style="text-decoration:underline;cursor:pointer;" @onclick="@(() => Sorting("ReceiptNumber"))">
+                    Document No
+                    @if (isReceiptArrowShow)
+                    {
+                        <span>@(isReceiptAscending ? "▼" : "▲")</span>
+                    }
+                </th>
+                <th>Type</th>
+                <th>@Localizer["amount"]</th>
+            </tr>
+        </thead>
+        <tbody style="font-weight:700;" class="overflow-auto">
+            @if (oStatementPay.Count > 0 )
+            {
+                @foreach (var item in oStatementPay)
+                {
+                    <tr>
+                        <td>@CommonFunctions.GetDateTimeInFormat(item.TransactionDate)</td>
+                        <td>@CommonFunctions.GetDateTimeInFormat(item.DueDate)</td>
+                        <td>@item.ReferenceNumber</td>
+                        <td>@(item.SourceType.Contains("INVOICE") ? "Debit" : "Credit")</td>
+                        <td style="@(IsNegative(SetAmountPay(item)) ? "color: red;" : "color: green;")">@(SetAmountPay(item))</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="5" style="color:red; text-align: center;">@Localizer["no_records_available"]</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@if (ShowFields)
+{
+    <div class="mr-3" style="float:right;">
+        <label style="font-weight:700;">@Localizer["closingbalance"] : <span style="color:green; font-weight:700;">@ClosingBalance</span></label>
+    </div>
+}

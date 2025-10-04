@@ -1,0 +1,73 @@
+﻿@page "/ManageHOProvisionStandingConfiguration"
+
+@layout MainLayout
+@inject Winit.Modules.Scheme.BL.Interfaces.IManageStandingProvisionViewModel _viewModel
+@inherits WinIt.Pages.Base.BaseComponentBase
+@* <AuthorizeView Roles="@(HasFullAccess)">
+    <Authorized> *@
+
+<PageTitle>Standing HO Provision</PageTitle>
+<PageHeaderAndFilter IDataBreadcrumbService="dataService"
+                     IsShowFilter="true"
+                     ColumnsForFilter="ColumnsForFilter"
+                     IsSearchCriteriaNeeded="true" OnFilterApplied="OnFilterApply" />
+<div class="cls_container_div1">
+    <button class="cls_add_new_sec" @onclick="@(()=>{_navigationManager.NavigateTo($"AddHOProvisionStandingConfiguration?{PageType.Page}={PageType.New}");})">Add New</button>
+</div>
+<div class="cls_container_div1">
+    <TableGridView Columns="Columns"
+                   DataSource="_viewModel.StandingProvisionSchemes"
+                   IsPaginationRequired=true
+                   PageNumber="_viewModel.PageNumber"
+                   PageSize="_viewModel.PageSize"
+                   TotalItemsCount="_viewModel.TotalItems" ShowRecordsCount="true"
+                   OnPageChange="OnPageChange" />
+
+</div>
+@* </Authorized> *@
+@* <NotAuthorized>
+        <p>you are not authorized to view this page</p>
+    </NotAuthorized> *@
+@* </AuthorizeView> *@
+
+
+@if (IsShowPopup)
+{
+
+    <PopUp Title=@Title OkbtnText="Save" CancelbtnText="Cancel" OnOkClick="@(async()=>await HandleOkClick())"
+           OnCloseClick="@(() => IsShowPopup=false)">
+        <div class="cls_container_div4">
+            <div class="cls_container_div1">
+                <div class="cls_section_div_purchase4">
+                <label for="title" class="cls_section_div_purchase2_label">Original End Date</label>
+                    <label class="cls_credit_label">@CommonFunctions.GetDateTimeInFormat(OriginalEndDate)</label>
+            </div>
+            @if (IsExtend)
+            {
+                    <div class="cls_section_div_purchase4">
+                    <label for="title" class="cls_section_div_purchase2_label">Original End Date</label>
+                        <input type="date" min="@OriginalEndDate.ToString("yyyy-MM-dd")" @bind=@NewEndDate class="cls_select_date" />
+                </div>
+            }
+            </div>
+            <div class="cls_container_div4">
+            <div class="cls_container_div1">
+                <label for="title" class="cls_section_div_purchase2_label">Title</label>
+                    <textarea id="title" name="title" @bind=@scheme.EndDateRemarks placeholder="Enter Reason" class="cls_scheme_textarea"></textarea>
+            </div>
+            </div>
+        </div>
+
+
+    </PopUp>
+}
+@if (IsShowViewHistoryPopup)
+{
+    <PopUp Title=@Title OkbtnText="Ok" DisableCancelBtn="true" CancelbtnText="Cancel" OnOkClick="@(() => IsShowViewHistoryPopup=false)"
+           OnCloseClick="@(() => IsShowViewHistoryPopup=false)">
+        <TableGridView Columns="historyColumns"
+                       datasource="_viewModel.SchemeExtendHistories">
+
+        </TableGridView>
+    </PopUp>
+}

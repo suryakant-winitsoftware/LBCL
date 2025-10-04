@@ -1,0 +1,23 @@
+﻿@page "/doughnut"
+
+@using Winit.UIModels.Common.GraphModels
+
+
+<WINITMobile.Shared.DougnutGraph DataSource="data"/>
+
+
+@code {
+    public List<DoughnutModel> data = new List<DoughnutModel>();
+    protected override async Task OnInitializedAsync()
+    {
+        data = new List<DoughnutModel>()
+        {
+            new DoughnutModel { Label = "Label 1", Value = 30  },
+            new DoughnutModel { Label = "Label 2", Value = 50 },
+           
+
+        };
+    }
+
+}
+

@@ -1,0 +1,170 @@
+﻿@page "/PriceLaddering"
+@using Winit.Modules.PriceLadder.Model.Interfaces
+@inherits Pages.Base.BaseComponentBase
+@inject Winit.Modules.PriceLadder.BL.Interfaces.IPriceLadderingViewModel _viewModel
+@if (!IsLoading)
+{
+    <div>
+        <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true"
+                             ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true" OnFilterApplied="@OnFilterApply" />
+
+    </div>
+    <div class="cls_container_div1">
+        <div class="col-md-12 d-flex justify-content-end cls_padding_0px">
+            @if (!string.IsNullOrEmpty(_viewModel.ViewingMessage))
+            {
+                <p class="cls_table_page_split_count">@_viewModel.ViewingMessage</p>
+            }
+        </div>
+    </div>
+    <div class="div1">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th @onclick='() => SortColumn("OperatingUnit")'>
+                        <div>
+                            Org Unit
+                            @if (currentSortField == "OperatingUnit")
+                            {
+                                <span>@(isAscending ? "▲" : "▼")</span>
+                            }
+                        </div>
+                    </th>
+                    <th @onclick='() => SortColumn("Division")'>
+                        <div>
+                            Division
+                            @if (currentSortField == "Division")
+                            {
+                                <span>@(isAscending ? "▲" : "▼")</span>
+                            }
+                        </div>
+                    </th>
+                    <th @onclick='() => SortColumn("BranchName")'>
+                        <div>
+                            Branch
+                            @if (currentSortField == "BranchName")
+                            {
+                                <span>@(isAscending ? "▲" : "▼")</span>
+                            }
+                        </div>
+                    </th>
+                    <th @onclick='() => SortColumn("SalesOfficeName")'>
+                        <div>
+                            Sales Office
+                            @if (currentSortField == "SalesOfficeName")
+                            {
+                                <span>@(isAscending ? "▲" : "▼")</span>
+                            }
+                        </div>
+                    </th>
+                    <th @onclick='() => SortColumn("BroadCustomerClassification")'>
+                        <div>
+                            Broad Classification
+                            @if (currentSortField == "BroadCustomerClassification")
+                            {
+                                <span>@(isAscending ? "▲" : "▼")</span>
+                            }
+                        </div>
+                    </th>
+
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (_viewModel.PriceLadderingsListToShowInGrid != null && _viewModel.PriceLadderingsListToShowInGrid.Any())
+                {
+                    @foreach (var item in _viewModel.PriceLadderingsListToShowInGrid)
+                    {
+                        <tr>
+                            <td>@item.OperatingUnit</td>
+                            <td>@item.Division</td>
+                            <td>@item.BranchName</td>
+                            <td>@item.SalesOfficeName</td>
+                            <td>@item.BroadCustomerClassification</td>
+                            <td>
+                                <button class="cls_comman_btn " @onclick="() => OnRowClick(item)">
+                                    @(IsRowExpanded(item) ? "Hide Details" : "View Details")
+                                </button>
+                            </td>
+                        </tr>
+
+                        @if (IsRowExpanded(item))
+                        {
+                            <tr>
+                                <td colspan="6">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Product Category</th>
+                                                <th>Discount Type</th>
+                                                <th>Percentage Discount</th>
+                                                <th>Start Date</th>
+                                                <th>End Date</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var subItem in _viewModel.PriceLadderingSubList)
+                                            {
+                                                <tr>
+                                                    <td><a href="#" style="text-decoration:underline;" @onclick:preventDefault @onclick="() => OnProductCategoryClick(item, subItem)">@subItem.ProductCategoryId</a></td>
+                                                    <td>@subItem.DiscountType</td>
+                                                    <td>@Winit.Shared.CommonUtilities.Common.CommonFunctions.RoundForSystemWithoutZero(subItem.PercentageDiscount!, _appSetting.RoundOffDecimal)</td>
+                                                    <td>@Winit.Shared.CommonUtilities.Common.CommonFunctions.GetDateTimeInFormat(subItem.StartDate)</td>
+                                                    <td>@Winit.Shared.CommonUtilities.Common.CommonFunctions.GetDateTimeInFormat(subItem.EndDate)</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        }
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6" style="text-align:center; color:red;">No records found</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <Winit.UIComponents.Web.Paging.Paging CurrentPage="_viewModel.PageNumber" OnPageChange="_viewModel.PageIndexChanged" PageSize="_viewModel.PageSize" TotalItems="_viewModel.TotalPriceLadderRecord" />
+    @if(IsProductCategoryIdClicked)
+    {
+        <PopUp Title="Product List" OkbtnText="Ok" DisableCancelBtn="true" OnCloseClick="() => OpenClosePopUp()" OnOkClick="() => OpenClosePopUp()">
+            <div class="cls_popup_outline">
+                <div class="cls_pop_up_div">
+                    <label class="cls_section_div_purchase2_label"> Product Category </label>
+                    <label class="cls_credit_label2">@(_viewModel.PopUpPriceLadderingObj.ProductCategoryId ?? 0)</label>
+                </div>
+                <div class="cls_pop_up_div">
+                    <label class="cls_section_div_purchase2_label"> Org Unit </label>
+                    <label class="cls_credit_label2">@(_viewModel.PopUpPriceLadderingObj.OperatingUnit ?? "N/A")</label>
+                </div>
+                <div class="cls_pop_up_div">
+                    <label class="cls_section_div_purchase2_label"> Division </label>
+                    <label class="cls_credit_label2">@(_viewModel.PopUpPriceLadderingObj.Division ?? "N/A")</label>
+                </div>
+            </div>
+            <div class="cls_popup_outline" style="margin-bottom: 1rem;">
+                <div class="cls_pop_up_div">
+                    <label class="cls_section_div_purchase2_label"> Branch </label>
+                    <label class="cls_credit_label2">@(_viewModel.PopUpPriceLadderingObj.Branch ?? "N/A") </label>
+                </div>
+                <div class="cls_pop_up_div">
+                    <label class="cls_section_div_purchase2_label"> Sales Office </label>
+                    <label class="cls_credit_label2">@(_viewModel.PopUpPriceLadderingObj.SalesOffice ?? "N/A")</label>
+                </div>
+                <div class="cls_pop_up_div">
+                    <label class="cls_section_div_purchase2_label"> Broad Classification </label>
+                    <label class="cls_credit_label2">@(_viewModel.PopUpPriceLadderingObj.BroadCustomerClassification ?? "N/A")</label>
+                </div>
+            </div>
+            <TableGridView DataSource="@_viewModel.PopUpSkuDetailsList" Columns="@DataGridColumns"></TableGridView>
+        </PopUp>
+    }
+}
+@code {
+
+}

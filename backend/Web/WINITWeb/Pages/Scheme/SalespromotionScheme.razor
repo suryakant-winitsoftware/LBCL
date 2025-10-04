@@ -1,0 +1,229 @@
+﻿@page "/salespromotion"
+@page "/salespromotion/{UID}"
+@using Winit.Modules.Scheme.Model.Constants
+@using Winit.Modules.User.Model.Constants
+@inject Winit.Modules.Scheme.BL.Interfaces.ISalesPromotionSchemeViewModel _viewModel
+
+@inherits SchemeBaseComponent
+
+<PageTitle>Sales Promotion</PageTitle>
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" />
+
+@if (_viewModel.IsIntialize)
+{
+    <div class="cls_section1">
+
+        <div class="cls_div3">
+            <label class="cls_section_div_purchase2_label">Channel Partner:<sup class="cls_section_div_purchase2_span">*</sup></label>
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_viewModel.ChannelPartner"
+                                                               OnSelect="HandleChannelSelection"
+                                                               Title="Channel Partner"
+                                                               Disabled="@(!_viewModel.IsNew)" IsSearchable="true"
+                                                               _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single"
+                                                               IsButtonVisible="true" />
+        </div>
+
+        <div class="cls_div1" style="display:none">
+            <p class="cls_logo_div_p1">Available Provision Amount</p>
+            <span class="cls_logo_span">₹ @CommonFunctions.RoundForSystem(_viewModel.SalesPromotion.AvailableProvision2Amount)</span>
+            <span class="cls_logo_span1">(P2)</span>
+        </div>
+        <div class="cls_div" style="width:16%;margin-top:38px;">
+            <input type="checkbox" class="cls_btn_radio_input" name="POCreation" checked="@_viewModel.SalesPromotion.IsPOHandledByDMS" @onclick=@(()=>_viewModel.SalesPromotion.IsPOHandledByDMS=!_viewModel.SalesPromotion.IsPOHandledByDMS) />
+            <label class="cls_btn_radio_label" for="POCreation">PO Creation</label>
+        </div>
+
+        @*  <div class="cls_logo_div3">
+    <p class="cls_logo_div1_p">Source of Funding</p>
+    <div class="cls_logo_div1_sub">
+    <span class="cls_logo_div1_sub_span">Branch Contribution</span>
+    <input type="number" @bind="_viewModel.SalesPromotion.ContributionLevel1"
+    class="cls_logo_div1_sub_input"
+    readonly="@_viewModel.IsViewMode" />
+    <label class="cls_logo_div1_sub_label">%</label>
+    </div>
+    <div class="cls_logo_div1_sub">
+    <span class="cls_logo_div1_sub_span">HO Contribution</span>
+    <input type="number" @bind="_viewModel.SalesPromotion.ContributionLevel2"
+    class="cls_logo_div1_sub_input"
+    readonly="@_viewModel.IsViewMode" />
+    <label class="cls_logo_div1_sub_label">%</label>
+    </div>
+    </div> *@
+
+        <div class="cls_div2" style="display:@(_viewModel.SalesPromotion.IsPOHandledByDMS?"none":"block"); width:44%;">
+            @if (_iAppUser.Role.HasP2Access || _iAppUser.Role.HasP3Access)
+            {
+
+                <p class="cls_div_p1">Source of Funding</p>
+                @if (_iAppUser.Role.HasP2Access)
+                {
+                    <div class="cls_sales_section3_sub2">
+                        <span class="cls_sales_section3_sub1_span">Branch Contribution</span>
+                        <input type="number" min="0" max="100" placeholder=""
+                               @bind="@_viewModel.SalesPromotion.ContributionLevel1"
+                               class="cls_sales_section3_sub1_input">
+                        <label class="cls_sales_section3_sub1_label">%</label>
+                    </div>
+                }
+                @if (_iAppUser.Role.HasP3Access)
+                {
+                    <div class="cls_sales_section3_sub2">
+                        <span class="cls_sales_section3_sub1_span">HO(P3) Contribution Type</span>
+                        <input type="number" min="0" max="100" placeholder=""
+                               @bind="_viewModel.SalesPromotion.ContributionLevel2"
+                               class="cls_sales_section3_sub1_input">
+                        <label class="cls_sales_section3_sub1_label">%</label>
+                    </div>
+                    <div class="cls_sales_section3_sub2">
+                        <span class="cls_sales_section3_sub1_span">HO(S) Contribution</span>
+                        <input type="number" min="0" max="100" placeholder=""
+                               @bind="_viewModel.SalesPromotion.ContributionLevel3"
+                               class="cls_sales_section3_sub1_input">
+                        <label class="cls_sales_section3_sub1_label">%</label>
+                    </div>
+                }
+            }
+        </div>
+
+    </div>
+
+    <div class="cls_section2">
+        <p class="cls_sales_sectionp">Details</p>
+        <div class="cls_container_div4">
+            <div class="cls_section_div3">
+                <span class="cls_section_div2_span">Code</span>
+                <label class="cls_credit_label">@_viewModel.SalesPromotion.Code</label>
+            </div>
+            <div class="cls_section_div3">
+                <span class="cls_section_div2_span"><sup class="cls_section_div_purchase2_span">*</sup> Activity Type</span>
+                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="@_viewModel.ActivityType"
+                                                                   Title="Activity Type"
+                                                                   IsButtonVisible=true IsSearchable="true"
+                                                                   OnSelect="_viewModel.OnActivityTypeChanged" />
+            </div>
+            <div class="cls_section_div3">
+                <span class="cls_section_div2_span"><sup class="cls_section_div_purchase2_span">*</sup>From Date</span>
+                <div class="cls_select2">
+                    <input type="date" @bind="_viewModel.SalesPromotion.FromDate"
+                           class="cls_select2_input"
+                           readonly="@_viewModel.IsViewMode" />
+                </div>
+            </div>
+            <div class="cls_section_div3">
+                <span class="cls_section_div2_span"><sup class="cls_section_div_purchase2_span">*</sup>To Date</span>
+                <div class="cls_select2">
+                    <input type="date" @bind="_viewModel.SalesPromotion.ToDate"
+                           class="cls_select2_input"
+                           readonly="@_viewModel.IsViewMode" />
+                </div>
+            </div>
+            <div class="cls_section_div3">
+                <span class="cls_section_div2_span"><sup class="cls_section_div_purchase2_span">*</sup>Amount</span>
+                <div class="cls_select2">
+                    <input type="number" @bind="_viewModel.SalesPromotion.Amount"
+                           class="cls_select2_input"
+                           readonly="@_viewModel.IsViewMode" />
+                    <label class="cls_select2_label">₹</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="cls_container_div4">
+            <div class="cls_file_upload_qps">
+                <h3 class="cls_file_upload_label">Attach Document</h3>
+                <Winit.UIComponents.Common.FileUploader.FileUploader @ref=fileUploader
+                                                                     RelativePath="@FilePath"
+                                                                     FileSysList="_viewModel.SalesPromotionFiles"
+                                                                     LinkedItemType="store" FileSysType="@SchemeConstants.SalesPromotion"
+                                                                     LinkedItemUID="@_viewModel.PromotionUID"
+                                                                     FileExtension=".jpg,.jpeg,.png,.pdf,.doc,.docx" UploadEventCallBack="_viewModel.OnFilesUpload" />
+            </div>
+            <div class="cls_text_div">
+                <span class="cls_section_div2_span">Description</span>
+                <div class="cls_text_div_text">
+                    <textarea @bind="_viewModel.SalesPromotion.Description"
+                              class="cls_text_div_input"
+                              readonly="@_viewModel.IsViewMode"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @if (_viewModel.ShowPOTab)
+    {
+        <div class="cls_section2">
+            <div class="cls_section_div3">
+                <span class="cls_section_div2_span">Enter PO Number created in Oracle</span>
+                <div class="cls_select2">
+                    <input type="text" @bind="_viewModel.SalesPromotion.PoNumber" placeholder="Enter" class="cls_select2_input" />
+                </div>
+            </div>
+            <div class="cls_section_div3">
+                <span class="cls_section_div2_span">Date</span>
+                <div class="cls_select2">
+                    <input type="date" @bind="_viewModel.SalesPromotion.PoDate" class="cls_select2_input" />
+                </div>
+            </div>
+            <div class="cls_text_div">
+                <span class="cls_section_div2_span">Remakes [Optional]</span>
+                <div class="cls_text_div_text">
+                    <textarea @bind="_viewModel.SalesPromotion.Remarks" class="cls_text_div_input"></textarea>
+                </div>
+            </div>
+
+            <div class="cls_file_upload_qps">
+                <h3 class="cls_file_upload_label">Attach Document</h3>
+                <Winit.UIComponents.Common.FileUploader.FileUploader @ref=fileUploaderApproveMode
+                                                                     RelativePath="@FilePath"
+                                                                     FileSysList="_viewModel.ApprovedFiles"
+                                                                     LinkedItemType="store"
+                                                                     LinkedItemUID="@_viewModel.PromotionUID"
+                                                                     FileSysType="@SchemeConstants.ApprovedFilesysType"
+                                                                     AllowMultipleFiles="true"
+                                                                     FileExtension=".jpg,.jpeg,.png,.pdf,.doc,.docx"
+                                                                     UploadEventCallBack="@((e)=>_viewModel.ModifiedFileSysList.AddRange(e.Except(_viewModel.ModifiedFileSysList)))"
+                                                                     DeleteEventCallBack="@((e)=>_viewModel.ModifiedFileSysList.RemoveAll(p=>p.UID==e))" />
+            </div>
+
+        </div>
+
+        @*   <div class="cls_section_level1">
+        <div class="cls_button_bottom_purchase">
+            <button class="cls_button_light">Cancel</button>
+            <button class="cls_button_blue" @onclick="HandleUpdate">Save</button>
+        </div>
+    </div> *@
+    }
+    @* else if (_viewModel.IsEditMode)
+{
+       <div class="cls_section_level">
+        <div class="cls_section_level_left">
+            <p>Level 1 Approval</p>
+        </div>
+        <div class="cls_section_level_right">
+            <button class="cls_sales_left_btn" @onclick="RejectSalesPromotion">Reject</button>
+            <button class="cls_sales_right_btn" @onclick="ApproveSalesPromotion">Approve</button>
+        </div>
+
+    </div>
+} *@
+    else
+    {
+        <div class="cls_button_bottom_purchase">
+            <button class="cls_button_light" @onclick="_viewModel.DeleteSalesPromotion">Cancel</button>
+            <button class="cls_button_blue" @onclick="HandleSubmit">Submit</button>
+        </div>
+    }
+    <WinIt.Pages.ApprovalRoleEngine.ApprovalEngine ShowApprovalEngine="@(true)"
+                                                   RuleId="@_viewModel.RuleId"
+                                                   RequestId="@_viewModel.RequestId.ToString()"
+                                                   ApprovalUsercodes="_viewModel.ApprovalUserCodes"
+                                                   @ref="childComponentRef"
+                                                   IsRejectButtonNeeded="_appSetting.IsRejectNeededInScheme"
+                                                   IsReassignButtonNeeded="_appSetting.IsReassignNeededInScheme"
+                                                   OnApprovalTracker="OnApprovalTracker"
+                                                   HandleApprovalAction="HandleApprovalAction">
+    </WinIt.Pages.ApprovalRoleEngine.ApprovalEngine>
+}

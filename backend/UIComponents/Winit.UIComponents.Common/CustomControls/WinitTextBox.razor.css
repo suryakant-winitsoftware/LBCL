@@ -1,0 +1,15 @@
+﻿/* Add your styles in your project's CSS file or a dedicated CSS file */
+.textfield-clearable {
+    position: relative;
+    /* Add other styling as needed */
+}
+
+.clear-button {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+}

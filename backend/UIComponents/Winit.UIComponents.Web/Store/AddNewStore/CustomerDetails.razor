@@ -1,0 +1,105 @@
+﻿@using Microsoft.AspNetCore.Components.Forms
+
+<EditForm Model="_CustomerDetails" OnInvalidSubmit="(()=>ONCustomerDetailsSaved.InvokeAsync(_CustomerDetails))">
+    <div class="row">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="cls_main_sign_input_new1">
+                <p>Customer Field1</p>
+                <input type="text" @bind="@_CustomerDetails.CustomerField1" />
+                <ValidationMessage For="@(() => _CustomerDetails.CustomerField1)" />
+            </div>
+
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="cls_main_sign_input_new1">
+                <p>Customer Field2</p>
+                <input type="text" @bind="@_CustomerDetails.CustomerField2" />
+                <ValidationMessage For="@(() => _CustomerDetails.CustomerField2)" />
+            </div>
+
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="cls_main_sign_input_new1">
+                <p>Customer Field3</p>
+                <input type="text" @bind="@_CustomerDetails.CustomerField3" />
+                <ValidationMessage For="@(() => _CustomerDetails.CustomerField3)" />
+            </div>
+
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="cls_main_sign_input_new1">
+                <p>Customer Field4</p>
+                <input type="text" @bind="@_CustomerDetails.CustomerField4" />
+                <ValidationMessage For="@(() => _CustomerDetails.CustomerField4)" />
+            </div>
+
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="cls_main_sign_input_new1">
+                <p>Customer Field5</p>
+                <input type="text" @bind="@_CustomerDetails.CustomerField5" />
+                <ValidationMessage For="@(() => _CustomerDetails.CustomerField5)" />
+            </div>
+
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="cls_main_sign_input_new1">
+                <p>Customer Field6</p>
+                <input type="text" @bind="@_CustomerDetails.CustomerField6" />
+                <ValidationMessage For="@(() => _CustomerDetails.CustomerField6)" />
+            </div>
+
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="cls_main_sign_input_new1">
+                <p>Customer Field7</p>
+                <input type="text" @bind="@_CustomerDetails.CustomerField7" />
+                <ValidationMessage For="@(() => _CustomerDetails.CustomerField7)" />
+            </div>
+
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="cls_main_sign_input_new1">
+                <p>Customer Field8</p>
+                <input type="text" @bind="@_CustomerDetails.CustomerField8" />
+                <ValidationMessage For="@(() => _CustomerDetails.CustomerField8)" />
+            </div>
+
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="cls_main_sign_input_new1">
+                <p>Customer Field9</p>
+                <input type="text" @bind="@_CustomerDetails.CustomerField9" />
+                <ValidationMessage For="@(() => _CustomerDetails.CustomerField9)" />
+            </div>
+
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="cls_main_sign_input_new1">
+                <p>Customer Field10</p>
+                <input type="text" @bind="@_CustomerDetails.CustomerField10" />
+                <ValidationMessage For="@(() => _CustomerDetails.CustomerField10)" />
+            </div>
+
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="cls_main_sign_input_new1">
+                <p>Customer Group</p>
+                <input type="text" @bind="@_CustomerDetails.CustomerGroup" />
+                <ValidationMessage For="@(() => _CustomerDetails.CustomerGroup)" />
+            </div>
+
+        </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="cls_main_sign_input_new1">
+                <p>Customer Clasiification</p>
+                <input type="text" @bind="@_CustomerDetails.CustomerClassification" />
+                <ValidationMessage For="@(() => _CustomerDetails.CustomerClassification)" />
+            </div>
+
+        </div>
+       
+        <div style="align-content:center;"> <button class="btn btn-secondary" type="submit" style="margin-left: 50%;">Save</button></div>
+
+    </div>
+</EditForm>

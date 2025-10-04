@@ -1,0 +1,132 @@
+﻿@inherits WINITMobile.Pages.Base.BaseComponentBase
+@inject Winit.UIComponents.Common.IAlertService _AlertMessgae;
+
+
+<div style="width:100%;float:left;">
+    @if (!string.IsNullOrWhiteSpace(ValidationMessage))
+    {
+        <div class="alert alert-danger">
+            <div class="col-md-12">
+                <div style="color: red;">@ValidationMessage</div>
+            </div>
+        </div>
+    }
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3" style="padding:1rem 1rem 0px 1rem;">
+        <label class="cls_copy_adress_span cls_mar_right_4px">Firm's Name</label>
+        @if (FirmName != null)
+        {
+            <span class="cls_copy_adress_span">@FirmName</span>
+        }
+    </div>
+    <div class="card cls_shadow mt-1" >
+        <div class="card-body">
+            <div class="cls_cust_information">
+                <div class="row">
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <label class="cls_customer_label">Bank Account Number<span class="cls_section_div_purchase2_span">*</span></label>
+                        <input autocomplete="off" class="cls_select2_button" id="BAN" type="text" placeholder="Enter here" @bind="SelectedBanking.BankAccountNo1" @oninput="ValidateAccountNumber" onkeypress="allowSpecificKeys(event, '0123456789 ,.-')" />
+                        <div class="invalid-feedback" style="display: @(string.IsNullOrEmpty(AccountNumbervalidationMessage) ? "none" : "block")">
+                            @AccountNumbervalidationMessage
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <label class="cls_customer_label">Bank Name<span class="cls_section_div_purchase2_span">*</span></label>
+                        <input autocomplete="off" class="cls_select2_button" type="text" placeholder="Enter here" @bind="SelectedBanking.BankName1" />
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <label class="cls_customer_label">Bank Address 1<span class="cls_section_div_purchase2_span">*</span></label>
+                        <input autocomplete="off" class="cls_select2_button" type="text" placeholder="Enter here" @bind="SelectedBanking.BankAddressFirst1" onkeypress="allowSpecificKeys(event, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ,.-')" />
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <label class="cls_customer_label">Bank Address 2<span class="cls_section_div_purchase2_span">*</span></label>
+                        <input autocomplete="off" class="cls_select2_button" type="text" placeholder="Enter here" @bind="SelectedBanking.BankAddressFirst2" />
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <label class="cls_customer_label">IFSC Code<span class="cls_section_div_purchase2_span">*</span></label>
+                        <input autocomplete="off" class="cls_select2_button" type="text" placeholder="Enter here" @bind="SelectedBanking.IFSCCode1" onkeypress="allowSpecificKeys(event, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <label class="cls_customer_label">Bank Account Number</label>
+                    <input autocomplete="off" class="cls_select2_button" type="text" placeholder="Enter here" @bind="SelectedBanking.BankAccountNo2" @oninput="ValidateAccountNumber2" onkeypress="allowSpecificKeys(event, '0123456789 ,.-')" />
+                    <div class="invalid-feedback" style="display: @(string.IsNullOrEmpty(AccountNumbervalidationMessage2) ? "none" : "block")">
+                        @AccountNumbervalidationMessage2
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <label class="cls_customer_label">Bank Name</label>
+                    <input autocomplete="off" class="cls_select2_button" type="text" placeholder="Enter here" @bind="SelectedBanking.BankName2" />
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <label class="cls_customer_label">Bank Address 1</label>
+                    <input autocomplete="off" class="cls_select2_button" type="text" placeholder="Enter here" @bind="SelectedBanking.BankAddressSecond1" />
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <label class="cls_customer_label">Bank Address 2</label>
+                    <input autocomplete="off" class="cls_select2_button" type="text" placeholder="Enter here" @bind="SelectedBanking.BankAddressSecond2" />
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <label class="cls_customer_label">IFSC Code</label>
+                    <input autocomplete="off" class="cls_select2_button" type="text" placeholder="Enter here" @bind="SelectedBanking.IFSCCode2" />
+                </div>
+ @*            </div>
+        </div>
+    </div>
+
+    <div class="card cls_shadow mt-1">
+        <div class="card-body">
+            <div class="cls_cust_information"> *@
+                
+                    <div class="col-12 col-sm-12 col-md-12 col-lg-12 mb-12">
+                    <h6 class="cls_copy_adress_span">Details For bank documents and issuing cheques</h6>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <label class="cls_customer_label">Name<span class="cls_section_div_purchase2_span">*</span></label>
+                        <input @ref="BankingInput" autocomplete="off" class="cls_select2_button" type="text" placeholder="Enter here" @bind="StoreSignatory.Name" />
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <label class="cls_customer_label">Address</label>
+                        <input autocomplete="off" class="cls_select2_button" type="text" placeholder="Enter here" @bind="StoreSignatory.Address" />
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <label class="cls_customer_label">PAN No<span class="cls_section_div_purchase2_span">*</span></label>
+                    <input autocomplete="off" class="cls_select2_button" type="text" placeholder="Enter here" @bind="StoreSignatory.PanNo" maxlength="10" oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '')" />
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                    <label class="cls_customer_label">Present O/D Limit(Rs in Lacs)<span class="cls_section_div_purchase2_span">*</span></label>
+                        <input autocomplete="off" class="cls_select2_button" type="text" placeholder="Enter here" @bind="StoreSignatory.ODLimit" maxlength="4" onkeypress="allowSpecificKeys(event, '0123456789')" />
+                    </div>
+                
+                <div class="cls_container_div1">
+
+                    <button class="cls_button_blue" type="submit" @onclick="AddBankingDetails">Add</button>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="cls_button_bottom_purchase">
+        <button class="cls_button_light" type="submit" @onclick="OnClean">Clear</button>
+            @* <button class="cls_comman_btn mr-2" type="submit" @onclick="AddBankingDetails">Add</button> *@
+        <button class="cls_button_blue" type="submit" @onclick="SaveOrUpdate">@ButtonName</button>
+    </div>
+</div>
+<div style="width:100%;float:left;margin:10px 0px;">
+    <div class="card">
+        <div class="card-body">
+            <button class="cls_comman_btn" style="margin-bottom:15px;" type="submit" @onclick="GetAllBankersDetails">View All</button>
+
+            @if (IsShowAllBanking)
+            {
+                <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" DataSource="SignatoryDetails" />
+            }
+        </div>
+    </div>
+</div>
+@code {
+
+}

@@ -1,0 +1,98 @@
+﻿@using System.ComponentModel.DataAnnotations
+@using System.Linq
+@using Microsoft.JSInterop
+@inject NavigationManager NavManager
+@using Newtonsoft.Json
+@using Winit.UIComponents.Common.CustomControls
+
+@inject IStringLocalizer<LanguageKeys> Localizer
+@using Microsoft.Extensions.Localization
+@using Winit.UIComponents.Common.LanguageResources.Mobile
+@inject Winit.UIComponents.Common.Language.ILanguageService _languageService
+@if (isDialogOpen)
+{
+    <div class="dialog-overlay">
+        <div class="dialog-container" style="width:98%;">
+            <div class="dialog-header">
+                <h2 class="dialog-title">@Localizer["add_product"]</h2>
+                <span class="close-button" @onclick="CloseDialog">&times;</span>
+            </div>
+            <div style="width:100%;float:left;padding:8px;">
+                <div class="d-flex">
+                    <div class="form-group">
+
+
+                        <label> @((SelectedCategoryType != null) ? @Localizer["selected_category_type_:"] + " " + $"{SelectedCategoryType}" : @Localizer["no_category_selected"])</label>
+
+                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="ListForddlCatType" Title=@Localizer["category_type"] IsButtonVisible="true" OnSelect="OnselectCategoryType" IsSearchable="true" />
+
+                    </div>
+                    <div class="spacer"></div>
+                    <div class="form-group">
+
+
+                        <label>@((SelectedCategory != 0) ? @Localizer["selected_category:"] + " " + $"{SelectedCategory}" : @Localizer["no_category_selected"])</label>
+                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="SelectedListForCategory" Title=@Localizer["category"] IsButtonVisible="true" OnSelect="OnselectCategory" IsSearchable="true" _SelectionMode="Shared.Models.Enums.SelectionMode.Multiple" />
+                        @* <Winit.UIComponents.Common.CustomControls.DropDown DataSource="ListForddlCatType" IsButtonVisible="true" OnSelect="OnselectCategoryType" IsSearchable="true" /> *@
+                    </div>
+
+                </div>
+                @* <div>
+                    <input type="checkbox" @onchange="PromoCheckboxChange" />
+                    <label for="promoCheckbox">Show Promo Records</label>
+                </div> *@
+                <div style="margin-top: 10px" class="cls_serch_nn">
+                    <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder=@Localizer["search_by_sku_code/name"] MaxLength="50" DebounceInterval="500" OnDebounceIntervalElapsed="ApplySearch"
+                                                                           KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+                                                                           Value="" IsForSearch="true" />
+                </div>
+
+
+            </div>
+            <div class="div1">
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th class="tblHeader">
+                                <input type="checkbox" @onchange="ToggleAllRows" checked="@CheckAllRows" />
+                            </th>
+                            <th class="tblHeader">@Localizer["sku_name"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (DisplaySKUs == null || DisplaySKUs.Count == 0)
+                        {
+                            <tr>
+                                <td colspan="2">@Localizer["no_sku_available"]</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var row in DisplaySKUs)
+                            {
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" @bind="row.IsSelected" @onclick="() => ToggleRow(row)" />
+                                    </td>
+                                    <td>@($"[{row.Code}] {row.Label}")</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+
+             
+            </div>
+            <div style="width:100%;float:left;margin-bottom:15px;">
+                <div class="cls_log_main66">
+                    <button class="cls_btn_primary" @onclick="AddSelectedProduct">
+                        @Localizer["add_selected_product"]
+                    </button>
+                </div>
+            </div>
+          
+        </div>
+    </div>
+}
+

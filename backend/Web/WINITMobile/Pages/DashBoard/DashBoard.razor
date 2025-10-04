@@ -1,0 +1,355 @@
+﻿@page "/DashBoard"
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+@using WINITMobile.Models.TopBar;
+@inject Winit.Modules.ListHeader.BL.Interfaces.IListHeaderBL _listheaderBL
+@inject Winit.Modules.JourneyPlan.BL.Interfaces.IBeatHistoryViewModel _beatHistoryViewModel;
+@inject Winit.Modules.DashBoard.BL.Interfaces.IDashBoardViewModel _dashBoardViewModel;
+@inject Winit.Modules.DashBoard.BL.Classes.UserConfig _userConfig
+@inject IJSRuntime _jSRuntime
+
+
+@{
+    string blank = "";
+    string JourneyPlan = "JourneyPlan";
+    string StockAudit = "stockaudit";
+    string TemporaryCreditEnhancement = "TemporaryCreditEnhancement";
+    string MaintainWareHouseStock = "MaintainWareHouseStock";
+    string CheckServiceStatus = "CheckServiceStatus";
+    string MaintainCallRegistration = "MaintainCallRegistration";
+    string ManageInvoice = "manageinvoice";
+    string ViewInvoice = "viewinvoice";
+    string MyCustomers = "CustomerList";
+    string MaintainCashCollection = "maintaincashcollection";
+    string ProductFeedback = "product-feedback";
+    string BroadcastInitiative = "broadcast-initiative";
+    string ProductSampling = "product-sampling";
+    string EscalationMatrix = "escalation-matrix";
+    string CustomerDetails = "CustomerDetails";
+    string ViewPurchaseOrderStatus = "ViewPurchaseOrderStatus";
+    string PurchaseOrder = "purchaseorder";
+    string PaymentSummary = "paymentsummary";
+    string ReturnSummary = "ReturnSummary";
+    string createsalesorder = "createsalesorder";
+    string StockRequest = "ViewRequest/Load";
+    string UnLoadRequest = "ViewRequest/Unload";
+    string demodashboard = "demodashboard";
+    string ViewVanStock = "ViewVanStock";
+    string DialogTest = "DialogTest";
+    string Store = "Store";
+    string BarGraph = "bargraph";
+    string CFD = "CloseOfTheDay";
+    string StartdayPreRequisties = "StartdayPreRequisties";
+    string Summary_DeliverySummary = "Summary_DeliverySummary";
+}
+
+@* <button type="button" @onclick="TriggerClientSideError">Generate Error</button> *@
+
+<div class="cls_dashboard">
+    <div class="cls_dashboard_2_1  dn" style="background:#fff;padding:10px 10px;margin:0px;">
+        <div class="cls_dashboard_2_1_left">
+            <h3>@Localizer["zone"]</h3>
+            <p>@Localizer["view_for"]: North, Afifi 17512, Dubai</p>
+        </div>
+        <div class="cls_dashboard_2_1_right dn"><img style="width:24px;" src="/Images/carbon_filter.png"></div>
+
+    </div>
+    <div class="cls_dashboard_1 dn" >
+        <h3>@Localizer["sales_performance"]</h3>
+    </div>
+    
+
+    <div class="cls_dashboard_2 dn">
+        
+        
+        
+        <div class="cls_dashboard_2_4">
+            <div style="border-left:2px solid #24336B" class="cls_dashboard_2_4_rep">
+                    <label style="color:#24336B">@Localizer["target"]</label>
+                <p>INR</p><h3>2,233</h3>
+            </div>
+            <div style="border-left:2px solid #E74F48" class="cls_dashboard_2_4_rep">
+                    <label style="color:#E74F48">Short Fall</label>
+                <p>INR</p><h3>2,233</h3>
+            </div>
+            <div class="cls_dashboard_2_4_rep">
+                    <label>Achievement</label>
+                <p>INR</p><h3>2,233</h3>
+            </div>
+        </div>
+        <div class="dn">
+            <img style="width:100%;" src="/Images/chart1.png">
+        </div>
+    </div>
+    <div class="container">
+    <div class="cls_dashboard_3 dn">
+            <h2>@Localizer["call_coverage"]</h2>
+    </div>
+    
+    <div class="cls_dashboard_4 dn" >
+        <div class="cls_dashboard_4_1">
+            <div class="cls_dashboard_4_1_rep">
+                    <label>@Localizer["todays_scheduled_visits"]</label>
+                <h3>2</h3>
+            </div>
+            <div class="cls_dashboard_4_1_rep" style="margin-right:0px;border-left:2px solid #FF9728;">
+                    <label>@Localizer["actual_visits"]</label>
+                <div class="cls_dashboard_4_1_rep_inner">
+                    <h4 style="color:#FF9728">3</h4>
+                        <p>@Localizer["planned"]</p>
+                </div>
+                <div class="cls_dashboard_4_1_rep_inner">
+                    <h4 style="color:#FF9728">3</h4>
+                        <p>@Localizer["unplanned"]</p>
+                </div>
+
+
+            </div>
+        </div>
+        <div class="cls_dashboard_4_1">
+            <div class="cls_dashboard_4_1_rep" style="border-left:2px solid #3AC3A9;">
+                    <label>@Localizer["visit_service_compliance"] </label>
+                <h3 style="color:#3AC3A9">2</h3>
+            </div>
+            <div class="cls_dashboard_4_1_rep" style="margin-right:0px;border-left:2px solid #99C796;">
+                    <label>@Localizer["positive_calls"]</label>
+                <div class="cls_dashboard_4_1_rep_inner">
+                    <h4 style="color:#99C796">2</h4>
+                        <p>@Localizer["planned"]</p>
+                </div>
+                <div class="cls_dashboard_4_1_rep_inner">
+                    <h4 style="color:#99C796">1</h4>
+                        <p>@Localizer["unplanned"]</p>
+                </div>
+
+            </div>
+        </div>
+        <div class="cls_dashboard_4_2">
+                <label>@Localizer["zero_quotation_outlet"]</label>
+            <div class="cls_dashboard_4_2_rep">
+                    <h3>1</h3><label>@Localizer["out_of"]</label><h3>3</h3>
+                    <p>@Localizer["planned"]</p>
+            </div>
+            <div class="cls_dashboard_4_2_rep">
+                    <h3>1</h3><label>@Localizer["out_of"]</label><h3>2</h3>
+                    <p>@Localizer["unplanned"]</p>
+            </div>
+        </div>
+    </div>
+        <div class="cls_dashboard_3 dn">
+            <h2>Coverage and productivity</h2>
+    </div>
+     <div class="cls_dashboard_4" >
+        <div class="cls_dashboard_4_1">
+            <div class="cls_dashboard_4_1_rep">
+                    <label>Total Assigned Stores</label>
+                    <h3>@jobPositionAttendance.TotalAssignedStores</h3>
+            </div>
+            <div class="cls_dashboard_4_1_rep" style="margin-right:0px;border-left:2px solid #FF9728;">
+        
+                   <label>Total Covered Stores</label>
+                    <h3>@jobPositionAttendance.TotalVisitedStores</h3>
+
+            </div>
+             </div>
+      <div class="cls_new_dash_wid_100">
+          <h2>Tasks</h2>
+        <ul>
+            <li @onclick="OpenRazorpayDashboard">
+                <span><img style="width:25px;" src="/Images/check-in.png"></span>
+                <label>
+                    Razor pay Check-in/out
+                </label>
+            </li>
+              <li @onclick="(e => returnpath(MyCustomers, true))">
+                <span><img style="width:25px;" src="/Images/document.png"></span>
+                <label>
+                    My Store(s)
+                </label>
+            </li>
+              
+                    <li @onclick="TogglePopupBrandTraining" style="cursor: pointer;">
+                    <span><img style="width:25px;" src="/Images/training.png" /></span>
+                    <label>Brand Training</label>
+                </li>
+
+                @if (showPopupBrandTraining)
+                {
+                    <div class="popup-overlay" @onclick="ClosePopupBrandTraining">
+                        <div class="popup-content" @onclick:stopPropagation>
+                            <ul class="popup-list">
+                                <li >
+                                    <span><img style="width:25px;" src="/Images/product-review.png" /></span>
+                                    <label>Product Training</label>
+                                </li>
+                                <li >
+                                    <span><img style="width:25px;" src="/Images/television.png" /></span>
+                                    <label>Product Quiz</label>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                }
+                <li @onclick="TogglePopup" style="cursor: pointer;">
+                    <span><img style="width:25px;" src="/Images/interactional.png" /></span>
+                    <label>Customer Interaction</label>
+                </li>
+
+                @if (showPopup)
+                {
+                    <div class="popup-overlay" @onclick="ClosePopup">
+                        <div class="popup-content" @onclick:stopPropagation>
+                            <ul class="popup-list">
+                                <li @onclick='@(e => returnpath(ProductFeedback, true))'>
+                                    <span><img style="width:25px;" src="/Images/product-review.png" /></span>
+                                    <label>Product Feedback</label>
+                                </li>
+                                <li @onclick='@(e => returnpath(BroadcastInitiative, true))'>
+                                    <span><img style="width:25px;" src="/Images/television.png" /></span>
+                                    <label>Broadcast Initiative</label>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                }
+              <li @onclick='(e => returnpath(ProductSampling, true))'>
+                <span><img style="width:25px;" src="/Images/sampling.png"></span>
+                <label>
+                    Product Sampling
+                </label>
+            </li>
+              <li  @onclick='(e => returnpath(EscalationMatrix))'>
+                <span><img style="width:25px;" src="/Images/escalation.png"></span>
+                <label>
+                   Escalation Matrix
+                </label>
+            </li>
+              <li @onclick='(e=>returnpath($"rota/{_appUser.Emp.UID}"))'>
+                <span><img style="width:25px;" src="/Images/calendar.png"></span>
+                <label>
+                 ROTA
+                </label>
+            </li>
+             
+        </ul>
+    </div>  
+        
+        
+        </div>
+    <div class="cls_dashboard_5 dn">
+            <h3>@Localizer["leaderboard"]</h3>
+        <div style="width:100%;float:left">
+            <img style="width:100%;" src="/Images/chart2.png">
+        </div>
+    </div>
+        <div class="cls_dashboard_5 dn">
+            <h3>@Localizer["commission_tracker"]</h3>
+            <div style="width:100%;float:left">
+                <img style="width:100%;" src="/Images/chart3.png">
+            </div>
+        </div>
+        <div class="cls_dashboard_5 dn">
+            <h3>@Localizer["perfect_score"]</h3>
+            <div style="width:100%;float:left">
+                <img style="width:100%;" src="/Images/chart4.png">
+            </div>
+        </div> 
+  @*   <div class="cls_dashboard_6">
+            <h3>@Localizer["attendance_summary"]</h3>
+        <div class="cls_dashboard_6_rep">
+            <label>
+                    @Localizer["total_working"]<br>
+                    @Localizer["days"] 
+            </label>
+            <h3>27</h3>
+        </div>
+        <div class="cls_dashboard_6_rep">
+            <label>
+                    @Localizer["total_workingdays"] <br>
+                    @Localizer["passed"] 
+            </label>
+            <h3>27</h3>
+        </div>
+        <div class="cls_dashboard_6_rep" style="border:0px;margin-right:0px;width:27%">
+            <label>
+                    @Localizer["time_gone"] <br>&nbsp;
+            </label>
+            <h3 style="color:#E74F48">92%</h3>
+        </div>
+    </div> *@
+        <div class="cls_dashboard_6 dn">
+            <h3>@Localizer["attendance_summary"]</h3>
+            <div class="cls_dashboard_6_rep">
+                <label>
+                    @Localizer["total_working"]<br>
+                    @Localizer["days"]
+                </label>
+                <h3>@(_dashBoardViewModel.JobPositionAttendance?.NoOfDays ?? 0)</h3>
+            </div>
+            <div class="cls_dashboard_6_rep">
+                <label>
+                    @Localizer["days_present"]<br>
+                    &nbsp;
+                </label>
+                <h3>@(_dashBoardViewModel.JobPositionAttendance?.DaysPresent ?? 0)</h3>
+            </div>
+            <div class="cls_dashboard_6_rep" style="border:0px;margin-right:0px;width:27%">
+                <label>
+                    @Localizer["attendance_percentage"]<br>&nbsp;
+                </label>
+                <h3 style="color:@GetAttendanceColor(@_dashBoardViewModel.JobPositionAttendance?.AttendancePercentage ?? 0)">
+                    @(_dashBoardViewModel.JobPositionAttendance?.AttendancePercentage ?? 0)%
+                </h3>
+            </div>
+        </div>
+    
+    </div>
+</div>
+<div class="cls_dashboard_7">
+            <button class="cls_continue_btn" @onclick="OnStartDayClick">
+                @(_dashBoardViewModel.StartDayBtnText == "Start Day" ? @Localizer["start_day"] : @Localizer["continue"])
+            </button>
+
+        </div>
+<style>
+    .popup-overlay {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.4);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+
+    .popup-content {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        width: 95%;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    .popup-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+  
+
+    .popup-list li:hover {
+        background-color: #f0f0f0;
+    }
+
+    .popup-list label {
+        font-size: 14px;
+        color: #333;
+    }
+
+    .popup-list img {
+        width: 18px;
+        height: 18px;
+    }
+</style>

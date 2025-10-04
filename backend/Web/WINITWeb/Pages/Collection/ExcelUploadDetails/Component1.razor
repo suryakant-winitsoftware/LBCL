@@ -1,0 +1,42 @@
+﻿@page "/reversal"
+@using Microsoft.JSInterop;
+@inject IJSRuntime JSRuntime;
+@inject HttpClient http;
+@using Newtonsoft.Json;
+@using OfficeOpenXml;
+@using Newtonsoft.Json.Linq
+@using System.Collections.Generic;
+@using System.IO;
+@using System.Linq;
+@using System.Threading.Tasks;
+@using Microsoft.AspNetCore.Components;
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+@using OfficeOpenXml.Table;
+@using System.Data;
+@using Microsoft.AspNetCore.Components.Forms;
+@using Winit.Modules.CollectionModule.Model.Classes;
+@using Winit.Modules.CollectionModule.Model.Interfaces;
+
+
+<InputFile @ref="fileInput" OnChange="HandleFileUpload" />
+
+
+@if (showAlert)
+{
+    <MudAlert Severity="Severity.Success">@Localizer["successfully_updated"]</MudAlert>
+}
+@if (showAlert1)
+{
+    <MudAlert Severity="Severity.Error">@Localizer["internal_server_error"]</MudAlert>
+}
+@if (showAlert2)
+{
+    <MudAlert Severity="Severity.Error">@Localizer["bad_request"]</MudAlert>
+}
+
+
+@code {
+    
+}
+

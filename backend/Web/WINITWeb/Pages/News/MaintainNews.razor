@@ -1,0 +1,22 @@
+﻿@page "/MaintainNewsActivity"
+@using Winit.Modules.NewsActivity.BL.Interfaces
+@inject IManageNewsActivityViewModel _viewModel
+@inherits Base.BaseComponentBase
+
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true"
+                     ColumnsForFilter="@ColumnsForFilter"
+                     IsSearchCriteriaNeeded="true"
+                     OnFilterApplied="@OnFilterApply" />
+<Winit.UIComponents.Common.CustomControles.Tabs TabItems="_viewModel.TabItems" OnTabSelect="OnTabSelect"></Winit.UIComponents.Common.CustomControles.Tabs>
+
+<div class="cls_container_div1">
+    <button class="cls_add_new_sec" @onclick="@(()=>{_navigationManager.NavigateTo($"Activity?{PageType.Type}={_viewModel.TabItems.FirstOrDefault(p=>p.IsSelected)?.Code}&{PageType.Page}={PageType.New}");})">Add New</button>
+</div>
+<TableGridView Columns="GridColumns"
+               DataSource="_viewModel.NewsActivities"
+               TotalItemsCount="_viewModel.TotalItems"
+               PageSize="_viewModel.PageSize"
+               PageNumber="_viewModel.CurrentPage"
+               ShowRecordsCount="true" 
+               IsPaginationRequired=true
+               OnPageChange="_viewModel.OnPageChange" />

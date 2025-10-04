@@ -1,0 +1,91 @@
+﻿@inject Winit.Modules.Store.BL.Interfaces.IStoreAdditionalInfoBL PaymentBl
+@inject Winit.Modules.Store.Model.Interfaces.IPayment payment
+@inject Winit.Modules.ListHeader.BL.Interfaces.IListHeaderBL ListHeader
+@inject Winit.Modules.Bank.BL.Interfaces.IBankBL BankBl 
+@using Microsoft.Extensions.Localization
+@using Winit.UIComponents.Common.LanguageResources.Mobile
+@inject Winit.UIComponents.Common.Language.ILanguageService _languageService
+@inject IStringLocalizer<LanguageKeys> Localizer
+<div>
+    <div>@Localizer["preffered_payment_mode"]<sup style="color:red">*</sup></div>
+    <div>
+        @if (showPaymentMode)
+        {
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_paymentMode" Title="Payment Mode"
+                                                                OnSelect="@((e)=>OnSelected(e,Winit.Shared.Models.Constants.ListHeaderType.PaymentMode))" />
+        }
+        else
+        {
+            <button @onclick="@(()=>showPaymentMode=!showPaymentMode)">@PaymentModeLabel</button>
+        }
+    </div>
+</div>
+<div>
+    <div>@Localizer["price_type"]<sup style="color:red">*</sup></div>
+    <div>
+        @if (showPriceType)
+        {
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_priceType" Title="Price Type"
+                                                                OnSelect="@((e)=>OnSelected(e,Winit.Shared.Models.Constants.ListHeaderType.PriceType))" />
+        }
+        else
+        {
+            <button @onclick="@(()=>showPriceType=!showPriceType)">@PriceTypeLabel</button>
+        }
+    </div>
+</div>
+<div>
+    <div>@Localizer["expected_avg_monthly_income"]<sup style="color:red">*</sup></div>
+    <div>
+        <input type="text" @bind="@payment.AverageMonthlyIncome" />
+    </div>
+</div>
+<div>
+    <div>@Localizer["invoice_delivery_method"] <sup style="color:red">*</sup></div>
+    <div>
+
+        @if (showInvoiceDelivery)
+        {
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_invoiceDelivery" Title="Invoice Delivery Method" 
+                  OnSelect="@((e)=>OnSelected(e,Winit.Shared.Models.Constants.ListHeaderType.InvoiceDelivery))"/>
+        }
+        else
+        {
+            <button @onclick="@(()=>showInvoiceDelivery=!showInvoiceDelivery)">@InvoiceDeliveryLabel</button>
+        }
+
+
+    </div>
+</div>
+<div>
+    <div>@Localizer["default_bank"]<sup style="color:red">*</sup></div>
+    <div>
+        @if (showBanks)
+        {
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_banks" Title="Default Bank"
+                                                                OnSelect="@((e)=>OnSelected(e,Winit.Shared.Models.Constants.ListHeaderType.Bank))" />
+        }
+        else
+        {
+            <button @onclick="@(()=>showBanks=!showBanks)">@BanksLabel</button>
+        }
+    </div>
+</div>
+<div>
+    <div>@Localizer["account_number"]<sup style="color:red">*</sup></div>
+    <div>
+       
+            <input type="text" @bind="@payment.AccountNumber"/>
+       
+    </div>
+</div>
+<div>
+    <div>@Localizer["number_of_cash_counters"] <sup style="color:red">*</sup></div>
+    <div>
+      
+            <input type="number" @bind="@payment.NoOfCashCounters"/>
+       
+    </div>
+</div>
+<div><button class="btn" @onclick="Save">@SaveOrUpdate</button></div>
+

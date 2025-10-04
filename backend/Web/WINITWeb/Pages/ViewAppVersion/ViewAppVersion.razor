@@ -1,0 +1,59 @@
+﻿@page "/viewappversion"
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize]
+<PageTitle>View App Version</PageTitle>
+@using System.ComponentModel.DataAnnotations
+@using System.Linq
+@using Microsoft.JSInterop
+@using Newtonsoft.Json;
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.Mobile.BL.Interfaces.IDeviceManagementViewModel _appVersionViewModel;
+@inject Winit.UIComponents.Common.IAlertService _AlertMessgae;
+@using Winit.UIComponents.Web.Filter
+@using Winit.UIModels.Common.Filter
+
+<div>
+  @*   <button class="cls_add_new_sec" style="float:right;margin-right:0px" @onclick="ShowFilter">@Localizer["filter"]</button>
+    <Filter @ref="filterRef" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+            OnFilterApplied=@OnFilterApply /> *@
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+                         OnFilterApplied="@OnFilterApply" />
+</div>
+@if (IsInitialized)
+{
+    <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" DataSource="_appVersionViewModel.DeviceManagementLists" OnSort="OnSortApply" PageNumber="_appVersionViewModel.PageNumber" PageSize="_appVersionViewModel.PageSize" TotalItemsCount="_appVersionViewModel.TotalItemsCount" ShowRecordsCount="true" />
+    <Winit.UIComponents.Web.Paging.Paging CurrentPage="_appVersionViewModel.PageNumber" OnPageChange="_appVersionViewModel.PageIndexChanged" PageSize="_appVersionViewModel.PageSize" TotalItems="_appVersionViewModel.TotalItemsCount" />
+
+}
+    @if (IsEditPopUp)
+    {
+    <PopUp Title=@Localizer["edit"] OkbtnText=@Localizer["update"] CancelbtnText=@Localizer["back"] OnOkClick="SaveAppVersionItem" OnCloseClick="OnCancelFromBackBTnPopUpClick">
+            <div class="cls_pop_up_style_div1" >
+            <label class="cls_section_div_purchase2_label"> <span class="cls_section_div_purchase2_span">*</span>@Localizer["user"] </label>
+                <input class="cls_select2_button" placeholder="Enter Here" type="text" @bind-value="_appVersionViewModel.DeviceManagement.EmpUID" disabled="" >
+            </div>
+            <div class="cls_pop_up_style_div1">
+            <label class="cls_section_div_purchase2_label">@Localizer["devivce_type"]</label>
+            <input class="cls_select2_button" placeholder="Enter Here" type="text" @bind-value="_appVersionViewModel.DeviceManagement.DeviceType" disabled="">
+            </div>
+            <div class="cls_pop_up_style_div1">
+            <label class="cls_section_div_purchase2_label">@Localizer["device_id"]</label>
+            <input class="cls_select2_button" placeholder="Enter Here" type="text" @bind-value="_appVersionViewModel.DeviceManagement.DeviceId">
+        </div>
+            <div class="cls_pop_up_style_div1">
+            <label class="cls_section_div_purchase2_label">@Localizer["app_version"]</label>
+            <input class="cls_select2_button" placeholder="Enter Here" type="text" @bind-value="_appVersionViewModel.DeviceManagement.AppVersion" disabled="">
+            </div>
+        </PopUp>
+    }
+    @if (IsBackBtnPopUp)
+    {
+    <WinIt.Pages.PopUp Title=@Localizer["back"] OkbtnText=@Localizer["ok"] CancelbtnText=@Localizer["cancel"] OnOkClick="OnOkFromUpdateBTnPopUpClick" OnCloseClick="OnCloseFromUpdateBTnPopUpClick">
+            <label>
+            @Localizer["are_you_sure_you_want_to_cancel?_your_work_will_be_lost."]
+            </label>
+        </WinIt.Pages.PopUp>
+    }
+@code {
+
+}

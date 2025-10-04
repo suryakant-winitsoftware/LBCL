@@ -1,0 +1,367 @@
+﻿@page "/newsboard1"
+@using Winit.Modules.NewsActivity.BL.Interfaces
+@using Winit.Modules.NewsActivity.Models.Constants
+@inject IManageNewsActivityViewModel _viewModel
+@inherits Base.BaseComponentBase
+<div class="cls_container_div4" style="margin-top:34px;">
+    <Winit.UIComponents.Common.CustomControles.Tabs TabItems="TabItems" OnTabSelect="OnTabSelect">
+
+    </Winit.UIComponents.Common.CustomControles.Tabs>
+</div>
+@if (TabName == NewsActivityConstants.news)
+{
+    <div class="cls_container_div4">
+        <div class="cls_reg_heading">
+            <div class="cls_border"></div>
+            <label class="cls_reg_heading_label">The Legacy of Innovation and Expertise</label>
+            <div class="cls_border"></div>
+        </div>
+
+        <p style="text-align:center;padding:0px 8%; ">Carrier Midea India (CMI) takes pride in delivering innovative and industry-leading products. It is honored to have received recognition and appreciation from various media outlets, and is delighted to share these accomplishments with the customers.</p>
+        <p style="text-align:center">CMI believes in maintaining transparency and keeping our customers informed about our brand and products. This page serves as a platform to showcase the accomplishments and share the news with the customers. Explore below to stay up-to-date with the latest happenings.</p>
+
+    </div>
+    <div class="cls_container_div4">
+        <div class="cls_news_outline">
+            <div class="cls_news_div" @onclick="@(() => OnImageClick(Url1))">
+                <img src=@Url1 alt="" class="cls_news_img">
+                <div class="cls_news_container">
+                    <label for="" class="cls_news_label">Customer Experience And Fulfilment Are Two Fundamental Buliding Blocks Of Our Business</label>
+                    <label for="" class="cls_news_label1">Jun 17, 2024</label>
+                    @*<label for="" class="cls_news_label2"><span class="cls_news_span">New Delhi:</span> Air-conditioner seller Carrier Midea India Pvt. Ltd. has launched its first store Midea Cooling Solutions ProShop in Gurugram, a press release said on Tuesday. The new store features a variety of split air conditioners, alongside ducted units, cassette units, tower units, and a complete range of VRF (Variable Refrigerant Flow) systems for residential as well as commercial purposes.</label>*@
+                </div>
+
+            </div>
+
+            <div class="cls_news_div" @onclick="@(() => OnImageClick(Url2))">
+                <img src=@Url2 alt="" class="cls_news_img">
+                <div class="cls_news_container">
+                    <label for="" class="cls_news_label">Consumer Durables Firms Hope For Demand Revival in May-June</label>
+                    <label for="" class="cls_news_label1">Jun 17, 2024</label>
+                    @*<label for="" class="cls_news_label2"><span class="cls_news_span">New Delhi:</span> Air-conditioner seller Carrier Midea India Pvt. Ltd. has launched its first store Midea Cooling Solutions ProShop in Gurugram, a press release said on Tuesday. The new store features a variety of split air conditioners, alongside ducted units, cassette units, tower units, and a complete range of VRF (Variable Refrigerant Flow) systems for residential as well as commercial purposes.</label>*@
+                </div>
+
+            </div>
+
+
+            <div class="cls_news_div" @onclick="@(() => OnImageClick(Url3))">
+                <img src=@Url3 alt="" class="cls_news_img">
+                <div class="cls_news_container">
+                    <label for="" class="cls_news_label">Demand For Summer Products Set To Get Hit</label>
+                    <label for="" class="cls_news_label1">Jun 17, 2024</label>
+                    @*<label for="" class="cls_news_label2"><span class="cls_news_span">New Delhi:</span> Air-conditioner seller Carrier Midea India Pvt. Ltd. has launched its first store Midea Cooling Solutions ProShop in Gurugram, a press release said on Tuesday. The new store features a variety of split air conditioners, alongside ducted units, cassette units, tower units, and a complete range of VRF (Variable Refrigerant Flow) systems for residential as well as commercial purposes.</label>*@
+                </div>
+
+            </div>
+
+            <div class="cls_news_div" @onclick="@(() => OnImageClick(Url4))">
+                <img src=@Url4 alt="" class="cls_news_img">
+                <div class="cls_news_container">
+                    <label for="" class="cls_news_label">Firms Count Losses As Summer Products Face Pandemic Heat</label>
+                    <label for="" class="cls_news_label1">Jun 17, 2024</label>
+                    @*<label for="" class="cls_news_label2"><span class="cls_news_span">New Delhi:</span> Air-conditioner seller Carrier Midea India Pvt. Ltd. has launched its first store Midea Cooling Solutions ProShop in Gurugram, a press release said on Tuesday. The new store features a variety of split air conditioners, alongside ducted units, cassette units, tower units, and a complete range of VRF (Variable Refrigerant Flow) systems for residential as well as commercial purposes.</label>*@
+                </div>
+
+            </div>
+
+            <div class="cls_news_div" @onclick="@(() => OnImageClick(Url5))">
+                <img src=@Url5 alt="" class="cls_news_img">
+                <div class="cls_news_container">
+                    <label for="" class="cls_news_label">Ac Makers Brace For Challenging Times,Hope Demand Will Pick up As Temparature Soars</label>
+                    <label for="" class="cls_news_label1">Jun 17, 2024</label>
+                    @*<label for="" class="cls_news_label2"><span class="cls_news_span">New Delhi:</span> Air-conditioner seller Carrier Midea India Pvt. Ltd. has launched its first store Midea Cooling Solutions ProShop in Gurugram, a press release said on Tuesday. The new store features a variety of split air conditioners, alongside ducted units, cassette units, tower units, and a complete range of VRF (Variable Refrigerant Flow) systems for residential as well as commercial purposes.</label>*@
+                </div>
+
+            </div>
+        </div>
+    </div>
+}
+else if (TabName == NewsActivityConstants.advertisement)
+{
+    <div class="cls_container_div4">
+        <div class="cls_reg_heading">
+            <div class="cls_border"></div>
+            <label class="cls_reg_heading_label">The Legacy of Innovation and Expertise</label>
+            <div class="cls_border"></div>
+        </div>
+
+        <p style="text-align:center; padding:0px 8%;">Carrier Midea India (CMI) takes pride in delivering innovative and industry-leading products. It is honored to have received recognition and appreciation from various media outlets, and is delighted to share these accomplishments with the customers.</p>
+        <p style="text-align:center">CMI believes in maintaining transparency and keeping our customers informed about our brand and products. This page serves as a platform to showcase the accomplishments and share the news with the customers. Explore below to stay up-to-date with the latest happenings.</p>
+
+    </div>
+    <div class="cls_container_div4">
+        <div class="cls_news_outline">
+            <div class="cls_news_div" @onclick="(() => OnVideoClick(VUrl1))">
+                <!-- <img src="./Images/cmi_news1.jpg" alt=""  class="cls_news_img"> -->
+                <video controls="" width="100%" height="100%">
+                    <source src=@VUrl1 type="video/mp4">
+                </video>
+                <div class="cls_news_container">
+
+                    <label for="" class="cls_news_label1">Jun 17, 2024</label>
+                </div>
+
+            </div>
+
+            <div class="cls_news_div" @onclick="(() => OnVideoClick(VUrl2))">
+                <!-- <img src="./Images/cmi_news1.jpg" alt=""  class="cls_news_img"> -->
+                <video controls="" width="100%" height="100%">
+                    <source src=@VUrl2 type="video/mp4">
+                </video>
+                <div class="cls_news_container">
+
+                    <label for="" class="cls_news_label1">Jun 17, 2024</label>
+                </div>
+
+            </div>
+
+            <div class="cls_news_div" @onclick="(() => OnVideoClick(VUrl3))">
+                <!-- <img src="./Images/cmi_news1.jpg" alt=""  class="cls_news_img"> -->
+                <video controls="" width="100%" height="100%">
+                    <source src=@VUrl3 type="video/mp4">
+                </video>
+                <div class="cls_news_container">
+
+                    <label for="" class="cls_news_label1">Jun 17, 2024</label>
+                </div>
+
+            </div>
+
+            <div class="cls_news_div" @onclick="(() => OnVideoClick(VUrl4))">
+                <!-- <img src="./Images/cmi_news1.jpg" alt=""  class="cls_news_img"> -->
+                <video controls="" width="100%" height="100%">
+                    <source src=@VUrl4 type="video/mp4">
+                </video>
+                <div class="cls_news_container">
+
+                    <label for="" class="cls_news_label1">Jun 17, 2024</label>
+                </div>
+
+            </div>
+
+            <div class="cls_news_div" @onclick="@(() => OnImageClick(Url12))">
+                <img src=@Url12 alt="" class="cls_news_img1">
+                <div class="cls_news_container">
+
+                    <label for="" class="cls_news_label1">Jun 17, 2024</label>
+                </div>
+
+            </div>
+
+            <div class="cls_news_div" @onclick="@(() => OnImageClick(Url13))">
+                <img src=@Url13 alt="" class="cls_news_img1">
+                <div class="cls_news_container">
+
+                    <label for="" class="cls_news_label1">Jun 17, 2024</label>
+                </div>
+
+            </div>
+
+            <div class="cls_news_div" @onclick="@(() => OnImageClick(Url14))">
+                <img src=@Url14 alt="" class="cls_news_img1">
+                <div class="cls_news_container">
+
+                    <label for="" class="cls_news_label1">Jun 17, 2024</label>
+                </div>
+
+            </div>
+
+            <div class="cls_news_div" @onclick="@(() => OnImageClick(Url15))">
+                <img src=@Url15 alt="" class="cls_news_img1">
+                <div class="cls_news_container">
+
+                    <label for="" class="cls_news_label1">Jun 17, 2024</label>
+                </div>
+
+            </div>
+
+            <div class="cls_news_div" @onclick="@(() => OnImageClick(Url16))">
+                <img src=@Url16 alt="" class="cls_news_img1">
+                <div class="cls_news_container">
+
+                    <label for="" class="cls_news_label1">Jun 17, 2024</label>
+                </div>
+
+            </div>
+
+            <div class="cls_news_div" @onclick="@(() => OnImageClick(Url17))">
+                <img src=@Url17 alt="" class="cls_news_img1">
+                <div class="cls_news_container">
+
+                    <label for="" class="cls_news_label1">Jun 17, 2024</label>
+                </div>
+
+            </div>
+
+            <div class="cls_news_div" @onclick="@(() => OnImageClick(Url18))">
+                <img src=@Url18 alt="" class="cls_news_img1">
+                <div class="cls_news_container">
+
+                    <label for="" class="cls_news_label1">Jun 17, 2024</label>
+                </div>
+
+            </div>
+
+            <div class="cls_news_div" @onclick="@(() => OnImageClick(Url19))">
+                <img src=@Url19 alt="" class="cls_news_img1">
+                <div class="cls_news_container">
+
+                    <label for="" class="cls_news_label1">Jun 17, 2024</label>
+                </div>
+
+            </div>
+
+
+
+
+        </div>
+
+    </div>
+
+    <div class="cls_container_div1">
+        <label class="cls_container_p_full">Midea</label>
+        <div class="cls_container_div4">
+            <div class="cls_news_outline">
+                <div class="cls_news_div" @onclick="@(() => OnImageClick(Url20))">
+                    <img src=@Url20 alt="" class="cls_news_img1">
+                    <div class="cls_news_container">
+
+                        <label for="" class="cls_news_label1">Jun 17, 2024</label>
+                    </div>
+
+                </div>
+
+                <div class="cls_news_div" @onclick="@(() => OnImageClick(Url21))">
+                    <img src=@Url21 alt="" class="cls_news_img1">
+                    <div class="cls_news_container">
+
+                        <label for="" class="cls_news_label1">Jun 17, 2024</label>
+                    </div>
+
+                </div>
+
+                <div class="cls_news_div" @onclick="@(() => OnImageClick(Url22))">
+                    <img src=@Url22 alt="" class="cls_news_img1">
+                    <div class="cls_news_container">
+
+                        <label for="" class="cls_news_label1">Jun 17, 2024</label>
+                    </div>
+
+                </div>
+
+                <div class="cls_news_div" @onclick="@(() => OnImageClick(Url23))">
+                    <img src=@Url23 alt="" class="cls_news_img1">
+                    <div class="cls_news_container">
+
+                        <label for="" class="cls_news_label1">Jun 17, 2024</label>
+                    </div>
+
+                </div>
+
+                <div class="cls_news_div" @onclick="@(() => OnImageClick(Url24))">
+                    <img src=@Url24 alt="" class="cls_news_img1">
+                    <div class="cls_news_container">
+
+                        <label for="" class="cls_news_label1">Jun 17, 2024</label>
+                    </div>
+
+                </div>
+
+                <div class="cls_news_div" @onclick="@(() => OnImageClick(Url25))">
+                    <img src=@Url25 alt="" class="cls_news_img1">
+                    <div class="cls_news_container">
+
+                        <label for="" class="cls_news_label1">Jun 17, 2024</label>
+                    </div>
+
+                </div>
+
+                <div class="cls_news_div" @onclick="@(() => OnImageClick(Url26))">
+                    <img src=@Url26 alt="" class="cls_news_img1">
+                    <div class="cls_news_container">
+
+                        <label for="" class="cls_news_label1">Jun 17, 2024</label>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+}
+else
+{
+    <div class="cls_container_div4">
+        <div class="cls_reg_heading">
+            <div class="cls_border"></div>
+            <label class="cls_reg_heading_label">The Legacy of Innovation and Expertise</label>
+            <div class="cls_border"></div>
+        </div>
+
+        <p style="text-align:center;padding:0px 8%; ">Carrier Midea India (CMI) takes pride in delivering innovative and industry-leading products. It is honored to have received recognition and appreciation from various media outlets, and is delighted to share these accomplishments with the customers.</p>
+        <p style="text-align:center">CMI believes in maintaining transparency and keeping our customers informed about our brand and products. This page serves as a platform to showcase the accomplishments and share the news with the customers. Explore below to stay up-to-date with the latest happenings.</p>
+
+    </div>
+    <div class="cls_container_div4">
+        <div class="cls_news_outline">
+
+            <div class="cls_news_div" @onclick="@(() => OnImageClick(Url6))">
+                <img src=@Url6 alt="" class="cls_news_img">
+                <div class="cls_news_container">
+                    <label for="" class="cls_news_label">Consumer Durable Firms Stare At Uncertain Future</label>
+                    <label for="" class="cls_news_label1">Jun 17, 2024</label>
+                    @*<label for="" class="cls_news_label2"><span class="cls_news_span">New Delhi:</span> Air-conditioner seller Carrier Midea India Pvt. Ltd. has launched its first store Midea Cooling Solutions ProShop in Gurugram, a press release said on Tuesday. The new store features a variety of split air conditioners, alongside ducted units, cassette units, tower units, and a complete range of VRF (Variable Refrigerant Flow) systems for residential as well as commercial purposes.</label>*@
+                </div>
+
+            </div>
+
+            <div class="cls_news_div" @onclick="@(() => OnImageClick(Url7))">
+                <img src=@Url7 alt="" class="cls_news_img">
+                <div class="cls_news_container">
+                    <label for="" class="cls_news_label">Carrier Midea India Urges Suppliers To Set Up Base In India</label>
+                    <label for="" class="cls_news_label1">Jun 17, 2024</label>
+                    @*<label for="" class="cls_news_label2"><span class="cls_news_span">New Delhi:</span> Air-conditioner seller Carrier Midea India Pvt. Ltd. has launched its first store Midea Cooling Solutions ProShop in Gurugram, a press release said on Tuesday. The new store features a variety of split air conditioners, alongside ducted units, cassette units, tower units, and a complete range of VRF (Variable Refrigerant Flow) systems for residential as well as commercial purposes.</label>*@
+                </div>
+
+            </div>
+
+
+
+            <div class="cls_news_div" @onclick="@(() => OnImageClick(Url9))">
+                <img src=@Url9 alt="" class="cls_news_img">
+                <div class="cls_news_container">
+                    <label for="" class="cls_news_label">One Star Ac Sales </label>
+                    <label for="" class="cls_news_label1">Jun 17, 2024</label>
+                    @*<label for="" class="cls_news_label2"><span class="cls_news_span">New Delhi:</span> Air-conditioner seller Carrier Midea India Pvt. Ltd. has launched its first store Midea Cooling Solutions ProShop in Gurugram, a press release said on Tuesday. The new store features a variety of split air conditioners, alongside ducted units, cassette units, tower units, and a complete range of VRF (Variable Refrigerant Flow) systems for residential as well as commercial purposes.</label>*@
+                </div>
+
+            </div>
+
+
+
+        </div>
+    </div>
+}
+
+@if (ShowPopUp)
+{
+    <PopUp Title="@Title" OkbtnText="Ok" DisableCancelBtn="true"
+           OnOkClick="() => ShowPopUp = false"
+           OnCloseClick="() => ShowPopUp = false">
+        @if (IsImgTag)
+        {
+            <div class="cls_news_popup">
+                <img src="@ImageSrc" alt="" class="cls_news_popup_img" />
+            </div>
+        }
+        else
+        {
+            <div class="cls_news_popup">
+                <video controls="" width="100%" height="100%">
+                    <source src="@VideoSrc" type="video/mp4">
+                </video>
+            </div>
+        }
+    </PopUp>
+}

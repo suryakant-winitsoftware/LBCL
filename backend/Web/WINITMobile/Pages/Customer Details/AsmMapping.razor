@@ -1,0 +1,49 @@
+﻿@page "/asmmapping"
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+
+<div class="cls_container_div4" style="padding:0px 2%;margin-bottom:20px;">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3" style="padding-left:0px;">
+        <label style="font-weight: bold;">ASM Details<i class="cls_section_div_purchase2_span">*</i></label>
+        <button class="cls_select2" @onclick="OpenAsmPopUp">
+            <label class="cls_select2_label1">Select ASM</label>
+            <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+        </button>
+
+    </div>
+    <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumnsForAsm" DataSource="AsmDivisionDetails" />
+</div>
+
+<div class="col-12 d-flex justify-content-center" style="margin-bottom:20px;">
+    <button class="cls_comman_btn" type="submit" @onclick="SaveOrUpdateAsmMapping">Save</button>
+</div>
+
+@if (IsAsmAdd)
+{
+    <PopUp Title="ASM Details" CancelbtnText="Ok" DisableOkBtn="true"
+           OnCloseClick="() => IsAsmAdd = false">
+
+        <div class="cls_container_div1">
+            <div class="cls_section_div_purchase2">
+                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="DivisionselectionItems.OrderBy(item => item.Label.ToLower()).ToList()"
+                                                                   IsButtonVisible="true"
+                                                                   Title="Division"
+                                                                   IsSearchable="true" OnSelect="DivisionSelection" />
+            </div>
+
+            <div class="cls_section_div_purchase2">
+                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="ASMselectionItems.OrderBy(item => item.Label.ToLower()).ToList()"
+                                                                   IsButtonVisible="true"
+                                                                   Title="ASM"
+                                                                   IsSearchable="true" OnSelect="ASMSelection" />
+            </div>
+            <div class="cls_section_div_purchase2">
+                <button class="cls_comman_btn " @onclick="AddAsmDivisionDetails"> Add </button>
+            </div>
+
+        </div>
+        <div class="cls_container_div4">
+            <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumnsForAsmPopUp" DataSource="AsmDivisionDetails" />
+        </div>
+
+    </PopUp>
+}

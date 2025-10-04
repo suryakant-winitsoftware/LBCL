@@ -1,0 +1,136 @@
+﻿@inject Winit.Modules.Distributor.BL.Interfaces.ICreateDistributorBaseViewModel _distributorBaseViewModel
+@inherits WinIt.Pages.Base.BaseComponentBase
+<div style="width:100%;float:left;margin:0px 0px;">
+    @if (!string.IsNullOrWhiteSpace(ValidationMessage))
+    {
+        <div class="alert alert-danger">
+            <div class="col-md-12">
+                <div style="color: red;">@ValidationMessage</div>
+            </div>
+        </div>
+    }
+    <div class="card mt-1">
+        <div class="cls_cust_information">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <label style="font-weight: bold;">No of Total Sub Dealers<i class="cls_section_div_purchase2_span">*</i></label>
+                        <input autocomplete="off" class="form-control" type="text" placeholder="Enter here" @bind="storeAdditionalInfoCMI.DistNoOfSubDealers" />
+                    </div>
+                    <div class="col-12 col-sm-12 col-md-12 col-lg-12 mb-1">
+                        <h6>IF IN RETAILING (ALSO)- CITY TO BE GIVEN AS PER ABOVE MENTIONED SHOWROOMS & AVERAGE MONTHLY SALE (IN NOS)</h6>
+                    </div>
+
+                    <div class="col-12 col-sm-12 col-md-12 col-lg-12 mb-1">
+                        <h6 style="font-size:14px;">Top 4 Cities</h6>
+                    </div>
+
+                    <!-- Small Inputs in a Single Row -->
+
+                    <div class="col-12 col-sm-3 mb-2">
+                        <label style="font-weight: bold;">City 1(Sub Dealer)</label>
+                        <input class="form-control" autocomplete="off" type="text" placeholder="Enter here" @bind="RetailingCityMonthlySales.CitySD1" />
+                    </div>
+                    <div class="col-12 col-sm-3 mb-2">
+                        <label style="font-weight: bold;">City 1(Avg Monthly Sales)</label>
+                        <input class="form-control" autocomplete="off" type="number" placeholder="Enter here" @bind="RetailingCityMonthlySales.CityAMS1" />
+                    </div>
+                    <div class="col-12 col-sm-3 mb-2">
+                        <label style="font-weight: bold;">City 2(Sub Dealer)</label>
+                        <input class="form-control" autocomplete="off" type="text" placeholder="Enter here" @bind="RetailingCityMonthlySales.CitySD2" />
+                    </div>
+                    <div class="col-12 col-sm-3 mb-2">
+                        <label style="font-weight: bold;">City 2(Avg Monthly Sales)</label>
+                        <input class="form-control" autocomplete="off" type="number" placeholder="Enter here" @bind="RetailingCityMonthlySales.CityAMS2" />
+                    </div>
+                    <div class="col-12 col-sm-3 mb-2">
+                        <label style="font-weight: bold;">City 3(Sub Dealer)</label>
+                        <input class="form-control" autocomplete="off" type="text" placeholder="Enter here" @bind="RetailingCityMonthlySales.CitySD3" />
+                    </div>
+                    <div class="col-12 col-sm-3 mb-2">
+                        <label style="font-weight: bold;">City 3(Avg Monthly Sales)</label>
+                        <input class="form-control" autocomplete="off" type="number" placeholder="Enter here" @bind="RetailingCityMonthlySales.CityAMS3" />
+                    </div>
+                    <div class="col-12 col-sm-3 mb-2">
+                        <label style="font-weight: bold;">City 4(Sub Dealer)</label>
+                        <input class="form-control" autocomplete="off" type="text" placeholder="Enter here" @bind="RetailingCityMonthlySales.CitySD4" />
+                    </div>
+                    <div class="col-12 col-sm-3 mb-2">
+                        <label style="font-weight: bold;">City 4(Avg Monthly Sales)</label>
+                        <input class="form-control" autocomplete="off" type="number" placeholder="Enter here" @bind="RetailingCityMonthlySales.CityAMS4" />
+                    </div>
+                </div>
+
+
+
+                <!-- Add a gap or spacer between sections -->
+                <div class="my-4"></div>
+                <h6>Other City</h6>
+                <div class="row">
+                    <div class="col-12 col-sm-3 mb-2">
+                        <label style="font-weight: bold;">City (Sub Dealer)</label>
+                        <input class="form-control" autocomplete="off" type="text" placeholder="Enter here" @bind="RetailingCityMonthlySales.CitySD5" />
+                    </div>
+                    <div class="col-12 col-sm-3 mb-2">
+                        <label style="font-weight: bold;">City (Avg Monthly Sales)</label>
+                        <input class="form-control" autocomplete="off" type="number" placeholder="Enter here" @bind="RetailingCityMonthlySales.CityAMS5" />
+                    </div>
+                </div>
+
+                <!-- Add a gap or spacer between sections -->
+                <div class="my-4"></div>
+                <h6>RAC SALE IN LAST THREE YEARS T/O (IF FROM SAME INDUSTRY, OTHERWISE GIVE N/A)</h6>
+                <div class="row">
+                    <div class="col-12 col-sm-6 col-md-4 mb-4">
+                        <label class="d-block font-weight-bold">Year</label>
+                        <input class="form-control" autocomplete="off" type="number" placeholder="Enter here" @bind="RACSalesByYear.Year1" @oninput="@((e) => ValidateYear1(e , 1))" />
+                        <div class="invalid-feedback" style="display: @(string.IsNullOrEmpty(Year1validationMessage) ? "none" : "block")">
+                            @Year1validationMessage
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4 mb-4">
+                        <label class="d-block font-weight-bold text-break">Qty</label>
+                        <input class="form-control" autocomplete="off" type="number" placeholder="Enter here" @bind="RACSalesByYear.Qty1" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-6 col-md-4 mb-4">
+                        <label class="d-block font-weight-bold">Year</label>
+                        <input class="form-control" autocomplete="off" type="number" placeholder="Enter here" @bind="RACSalesByYear.Year2" @oninput="@((e) => ValidateYear1(e , 2))" />
+                        <div class="invalid-feedback" style="display: @(string.IsNullOrEmpty(Year2validationMessage) ? "none" : "block")">
+                            @Year2validationMessage
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4 mb-4">
+                        <label class="d-block font-weight-bold text-break">Qty</label>
+                        <input class="form-control" autocomplete="off" type="number" placeholder="Enter here" @bind="RACSalesByYear.Qty2" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-6 col-md-4 mb-4">
+                        <label class="d-block font-weight-bold">Year</label>
+                        <input class="form-control" autocomplete="off" type="number" placeholder="Enter here" @bind="RACSalesByYear.Year3" @oninput="@((e) => ValidateYear1(e , 3))" />
+                        <div class="invalid-feedback" style="display: @(string.IsNullOrEmpty(Year3validationMessage) ? "none" : "block")">
+                            @Year3validationMessage
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4 mb-4">
+                        <label class="d-block font-weight-bold text-break">Qty</label>
+                        <input class="form-control" autocomplete="off" type="number" placeholder="Enter here" @bind="RACSalesByYear.Qty3" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div style="width:100%;float:left;margin:0px 0px 20px 0px;">
+    <div class="col-12 d-flex justify-content-center">
+        <button class="cls_comman_sec_btn mr-2" type="submit" @onclick="OnClean">Clear</button>
+        @*         <button class="cls_comman_btn mr-2" type="submit" @onclick="AddDistBusinessDetails">Add</button>
+        *@        <button class="cls_comman_btn" type="submit" @onclick="SaveUpdateDistBusiness">@ButtonName</button>
+    </div>
+</div>
+
+@code {
+
+}

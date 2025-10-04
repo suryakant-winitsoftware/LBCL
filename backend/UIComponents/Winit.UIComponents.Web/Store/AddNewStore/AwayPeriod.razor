@@ -1,0 +1,70 @@
+﻿    @using Microsoft.AspNetCore.Components.Forms
+    @using Microsoft.Extensions.Localization
+@using Winit.UIComponents.Common.LanguageResources.Web
+@inject Winit.UIComponents.Common.Language.ILanguageService _languageService
+@inject IStringLocalizer<LanguageKeys> Localizer
+<div class="card mt-3">
+    <div class="card-header">
+        @Localizer["away_period_details"]
+    </div>
+    <div class="container">
+        <div class="row mb-3" style="color: #19298B;">
+            <!-- Away Period Details Fields -->
+            <div class="col-md-6 col-lg-4 col-xl-3">
+                <label>@Localizer["from_date"]</label>
+                <input type="date" @oninput="ChangeIsEditedOrNot" class="form-control" id="fromDate" @bind="@_AwayPeriod.FromDate" />
+            </div>
+            <div class="col-md-6 col-lg-4 col-xl-3">
+                <label>@Localizer["to_date"]</label>
+                <input type="date" @oninput="ChangeIsEditedOrNot" class="form-control" id="toDate" @bind="@_AwayPeriod.ToDate" />
+            </div>
+            <div class="col-md-6 col-lg-4 col-xl-3">
+                <label>@Localizer["description"]</label>
+                <input type="text" @oninput="ChangeIsEditedOrNot" required class="form-control" id="toDateField" placeholder=@Localizer["enter_here"] @bind="@_AwayPeriod.Description" />
+            </div>
+            <!-- More rows go here -->
+        </div>
+    </div>
+    <div style="align-content:center;"> <button class="btn btn-secondary" type="submit" style="margin-left: 50%;" @onclick=SaveOrUpdate>@Localizer["save"]</button></div>
+
+</div>
+@if (AwayPeriodList != null)
+{
+    <Winit.UIComponents.Web.Table.TableGridView DataSource="AwayPeriodList" Columns="Columns"/>
+}
+
+@* @if (AwayPeriodList?.Count > 0)
+{
+
+    <div>
+        <table class="table">
+            <thead>
+            <th>From Date</th>
+            <th>To Date</th>
+            <th>Description</th>
+
+            <th>Action</th>
+
+            </thead>
+            <tbody>
+                @foreach (var item in AwayPeriodList)
+                {
+                    <tr>
+                        <td>@item.FromDate</td>
+                        <td>@item.ToDate</td>
+                        <td>@item.Description</td>
+
+                        <td>
+                            <button @onclick="@(()=>Edit(item))">Edit</button>
+                            @if (item.FromDate > DateTime.Now)
+                            {
+                                <img src="images\delete.png" />
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+} *@

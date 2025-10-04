@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\SharedObjects\Winit.Shared.Models\Winit.Shared.Models.csproj" />
+    <ProjectReference Include="..\..\Bank\Winit.Modules.Bank.DL\Winit.Modules.Bank.DL.csproj" />
+    <ProjectReference Include="..\..\Int_CommonMethods\Wint.Modules.Int_CommonMethods.Model\Winit.Modules.Int_CommonMethods.Model.csproj" />
+    <ProjectReference Include="..\..\Store\Winit.Modules.Store.Model\Winit.Modules.Store.Model.csproj" />
+    <ProjectReference Include="..\..\User\Winit.Modules.User.Model\Winit.Modules.User.Model.csproj" />
+    <ProjectReference Include="..\Winit.Modules.ApprovalEngine.Model\Winit.Modules.ApprovalEngine.Model.csproj" />
+  </ItemGroup>
+
+</Project>

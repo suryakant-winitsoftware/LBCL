@@ -1,0 +1,65 @@
+﻿@page "/ErrorDescription"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+@using System.ComponentModel.DataAnnotations
+@using System.Linq
+@using Winit.Modules.Org.Model.Interfaces
+@using Newtonsoft.Json
+@inject Winit.Modules.ErrorHandling.BL.Interfaces.IErrorDescriptionViewModel _ErrorDescriptionViewModel
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+
+<PageTitle>Error Description Details</PageTitle>
+@if (IsInitialized)
+{
+    <div class="cls_section">
+
+        
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label"> <span class="cls_section_div_purchase2_span">*</span>@Localizer["error_code"]: </label>
+                <input class="cls_select2_button" disabled="" value="@_ErrorDescriptionViewModel.ErrorDescriptionDetails?.errorDetail?.ErrorCode">
+            </div>
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label"> @Localizer["severity"]: </label>
+                <input class="cls_select2_button" disabled="" value="@_ErrorDescriptionViewModel.ErrorDescriptionDetails?.errorDetail?.Severity">
+            </div>
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label"> @Localizer["category"]: </label>
+            <input class="cls_select2_button" disabled="" value=" @_ErrorDescriptionViewModel.ErrorDescriptionDetails?.errorDetail?.Category">
+            </div>
+        
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label"> <span class="cls_section_div_purchase2_span">*</span>@Localizer["platform"]: </label>
+                <input class="cls_select2_button" disabled="" value="@_ErrorDescriptionViewModel.ErrorDescriptionDetails?.errorDetail?.Platform">
+            </div>
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label"> @Localizer["module"]: </label>
+            <input class="cls_select2_button" disabled="" value="@_ErrorDescriptionViewModel.ErrorDescriptionDetails?.errorDetail?.Module">
+            </div>
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label"> @Localizer["sub_module"]: </label>
+            <input class="cls_select2_button" disabled="" value="@_ErrorDescriptionViewModel.ErrorDescriptionDetails?.errorDetail?.SubModule">
+            </div>
+
+    </div>
+       @*  <div class="row">
+            <div class="cls_section_div_purchase2">
+                <label class="cls_section_div_purchase2_label"> <span class="cls_section_div_purchase2_span">*</span>Descriptions: </label>
+                <input class="cls_select2_button" disabled="">@_ErrorDescriptionViewModel.ErrorDescriptionDetailsloc.Description</label>
+            </div>
+        </div> *@
+    <div class="cls_container_div4">
+        <button class="cls_add_new_sec" @onclick="AddNewErrorDescription">@Localizer["add_description"]</button>
+        </div>
+
+        <div class="cls_container_div1">
+            <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" DataSource="_ErrorDescriptionViewModel.ErrorDescriptionDetails?.errorDetailsLocalizationList" />
+
+        </div>
+
+
+}
+else
+{
+    <p>@Localizer["error_details_not_available"]</p>
+}

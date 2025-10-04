@@ -1,0 +1,108 @@
+﻿@page "/excelupload"
+@using System.IO
+@using NPOI.XSSF.UserModel
+@inject IJSRuntime JSRuntime
+@using  System.Dynamic;
+
+<h3>Upload an Excel File</h3>
+<input style="width:60%" type="file" @ref="fileInput" @onload="UploadExcelFile" @onchange="UploadExcelFile" />
+<button class="cls_comman_btn ml-2" @onclick="UploadExcelFile">Upload</button>
+<div>
+    @if (excelData != null)
+    {
+        <h4>Excel Data:</h4>
+        <table>
+            @foreach (var row in excelData)
+            {
+                <tr>
+                    @foreach (var cell in row)
+                    {
+                        <td>@cell</td>
+                    }
+                </tr>
+            }
+        </table>
+    }
+</div>
+@code {
+
+    [Parameter]
+    public EventCallback<Dictionary<string, List<string>>> GetUploadedData { get; set; }
+    [Parameter]
+    public int BatchParameter { get; set; } = 10;
+    
+    
+    private ElementReference fileInput;
+    private List<List<string>> excelData;
+    public int batchParameter;
+
+    private async Task UploadExcelFile()
+    {
+        batchParameter = 2;
+        var fileData = await JSRuntime.InvokeAsync<byte[]>("ReadFile", fileInput);
+
+        if (fileData != null)
+        {
+            using (var stream = new MemoryStream(fileData))
+            using (var workbook = new XSSFWorkbook(stream)) // Use XSSFWorkbook for XLSX files
+            {
+                var worksheet = workbook.GetSheetAt(0);
+                excelData = new List<List<string>>();
+
+                int maxRows = worksheet.LastRowNum + 1;
+                int recordSeperation = maxRows % 2 == 0 ? maxRows / batchParameter : (maxRows / batchParameter)+1;
+                int col1 = 1;
+                List<string> Headers = new List<string>();
+                var headerRow = worksheet.GetRow(0);
+                for (int col = 0; col < worksheet.GetRow(0).LastCellNum; col ++)
+                {
+                   
+                    if (headerRow != null)
+                    {
+                        var cell = headerRow.GetCell(col);
+                        Headers.Add(cell?.ToString() ?? "");
+                    }
+
+                }
+
+                for(int i = 1; i <= recordSeperation; i++)
+                {
+                    var data = new Dictionary<string, List<string>>();
+                    int rowLimitperBatch = i == 1 ? batchParameter : (batchParameter > 1 ? i * batchParameter : i + batchParameter);
+                    if (i == recordSeperation)
+                    {
+                        rowLimitperBatch = maxRows-1;
+                    }
+                    for (int col = 0; col < worksheet.GetRow(0).LastCellNum; col++)
+                    {
+                        var columnData = new List<string>();
+
+                        for (int row = col1; row <= rowLimitperBatch; row++)
+                        {
+                            var currentRow = worksheet.GetRow(row);
+                            if (currentRow != null)
+                            {
+                                var cell = currentRow.GetCell(col);
+                                 columnData.Add(cell?.ToString() ?? "");
+                            }
+                            else
+                            {
+                                
+                                columnData.Add("");
+                            }
+
+
+                        }
+                        data.Add(Headers[col], columnData);
+                        excelData.Add(columnData);
+                    }
+                    col1 = rowLimitperBatch+1;
+                    await GetUploadedData.InvokeAsync(data);
+                }
+
+                
+            }
+        }
+    }
+
+}

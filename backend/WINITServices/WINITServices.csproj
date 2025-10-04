@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Classes\Store\**" />
+    <Compile Remove="Interfaces\Store\**" />
+    <EmbeddedResource Remove="Classes\Store\**" />
+    <EmbeddedResource Remove="Interfaces\Store\**" />
+    <None Remove="Classes\Store\**" />
+    <None Remove="Interfaces\Store\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Classes\CacheHandler\CacheHandlerService.cs" />
+    <Compile Remove="Classes\CacheHandler\RedisCacheServiceConnectionMultiplexer - Copy.cs" />
+    <Compile Remove="Interfaces\CacheHandler\ICacheHandler.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="RabbitMQ.Client" Version="6.5.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.6" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.Text.Json" Version="8.0.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WINITRepository\WINITRepository.csproj" />
+    <ProjectReference Include="..\WINITSharedObjects\WINITSharedObjects.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Classes\Commission\" />
+  </ItemGroup>
+</Project>

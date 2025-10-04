@@ -1,0 +1,165 @@
+﻿@page "/changerequestapprovalinfo"
+@using Winit.Modules.ApprovalEngine.Model.Constants
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject NavigationManager NavManager
+@inject Winit.Modules.ApprovalEngine.BL.Interfaces.IApprovalEngineView _ApprovalEngine;
+
+
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" />
+
+<div class="cls_section">
+          
+    <div class="cls_section_div_purchase4">
+
+        <label class="cls_section_div_purchase2_label">Request Type:</label>
+
+        <label class="cls_credit_label">@(_ApprovalEngine.DisplayChangeRequestApproval?.LinkedItemType)</label>
+                
+    </div>
+    <div class="cls_section_div_purchase4">
+
+        <label class="cls_section_div_purchase2_label">Operation:</label>
+
+        <label class="cls_credit_label">@(_ApprovalEngine.DisplayChangeRequestApproval?.OperationType)</label>
+
+    </div>
+    <div class="cls_section_div_purchase4">
+
+        <label class="cls_section_div_purchase2_label">Reference:</label>
+
+        <label class="cls_credit_label">@(_ApprovalEngine.DisplayChangeRequestApproval?.Reference)</label>
+
+    </div>
+   
+</div>
+<div class="cls_section">
+    <div class="cls_section_div_purchase4">
+
+        <label class="cls_section_div_purchase2_label">Requested By:</label>
+
+        <label class="cls_credit_label">@(_ApprovalEngine.DisplayChangeRequestApproval?.RequestedBy)</label>
+
+    </div>
+    <div class="cls_section_div_purchase4">
+
+        <label class="cls_section_div_purchase2_label">Requested Date:</label>
+        <label class="cls_credit_label">@(_ApprovalEngine.DisplayChangeRequestApproval?.RequestDate.ToString("dd MMM, yyyy HH:mm:ss"))</label>
+
+    </div>
+    @if (!(_ApprovalEngine.DisplayChangeRequestApproval?.Status == ApprovalConst.Pending))
+    {
+        <div class="cls_section_div_purchase4">
+
+            <label class="cls_section_div_purchase2_label">
+                @(_ApprovalEngine.DisplayChangeRequestApproval?.Status == ApprovalConst.Approved ? "Approved On" :
+                    _ApprovalEngine.DisplayChangeRequestApproval?.Status == ApprovalConst.Rejected ? "Rejected On" : "")
+            </label>
+
+            <label class="cls_credit_label">
+                @( _ApprovalEngine.DisplayChangeRequestApproval?.ApprovedDate?.ToString("dd MMM, yyyy HH:mm:ss") ?? "N/A")
+            </label>
+
+        </div>
+    }
+
+    <div class="cls_section_div_purchase4">
+
+        <label class="cls_section_div_purchase2_label">Status</label>
+        <label class="cls_credit_label">@(_ApprovalEngine.DisplayChangeRequestApproval?.Status)</label>
+
+    </div>
+</div>
+@if(_ApprovalEngine.ChangeRecordDTOs != null)
+{
+    
+    string tableName = _ApprovalEngine.ChangeRecordDTOs[0].ScreenModelName;
+
+    if (tableName == OnboardingScreenConstant.CustomInfoStoreAdditionInfoCmi ||
+        tableName == OnboardingScreenConstant.CustomInfoStoreAdditionInfo ||
+        tableName == OnboardingScreenConstant.CustomInfoStore)
+    {
+        tableName = OnboardingScreenConstant.CustomerInformation;
+    }
+    else
+    {
+        tableName = _ApprovalEngine.ChangeRecordDTOs[0].ScreenModelName; // Keep original if condition is not met
+    }
+
+
+    <div class="cls_container_div4">
+        <h4 class="cls_container_p_full">@tableName</h4> <!-- Display the table name dynamically -->
+        @* class="table table-striped table-hover table-bordered" *@
+
+        <div class="div1">
+            <table >
+                <thead>
+                    <tr>
+                        <th>Field Name</th>
+                        <th>Old Value</th>
+                        <th>New Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (ChangeRecordDTO changeRecordDTO in _ApprovalEngine.ChangeRecordDTOs)
+                    {
+                        string modelName = changeRecordDTO.ScreenModelName; //here call one method if modelName is CustStore change property with Store model
+                    @foreach (var item in changeRecordDTO.ChangeRecords)
+                        {
+                            <tr>
+                                <td>@GetFieldDisplayName(item.FieldName, changeRecordDTO.ScreenModelName)</td>
+                                <td>@(item.OldValue?.ToString() ?? "null")</td>
+                                <td>@(item.NewValue?.ToString() ?? "null")</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+@if (IsModalPopupTriggered)
+{
+    @*  <div class="cls_Purchase_popup">
+        <div class="cls_popup2_info">
+            <img @onclick='() => _navigationManager.NavigateTo("ViewPurchaseOrderStatus")' src="Images/clear.png" width="30px" height="30px">
+
+        </div> *@
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show" tabindex="-1" style="display: block; overflow:auto; ">
+        <div class="modal-dialog" style="top:22%;max-width:40%;">
+            <div class="modal-content">
+                <div class="modal-body" style="max-height: calc(100vh - 210px); overflow-y: auto;">
+                    <span class="close" @onclick="() => IsModalPopupTriggered = false">&times;</span>
+                    <div class="cls_popup_image">
+                        <img src="Images/checked1.png" width="74px" height="74px">
+                    </div>
+                    <div class="cls_popup_center">
+                        <label class="cls_popup_center_label">Change Request</label>
+                    </div>
+                    <div class="cls_popup_center_text">
+                            <p class="cls_popup_center_text_p">
+                            <span class="cls_popup_center_text_span">Changes modified in main table</span>
+                            </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    @* </div> *@
+}
+
+
+<WinIt.Pages.ApprovalRoleEngine.ApprovalEngine ShowApprovalEngine="@(true)" 
+                                               RequestId="@_ApprovalEngine.AllApprovalRequestData?.RequestID?.ToString()"
+                                               @ref="childComponentRef"
+                                               ApprovalUsercodes="_ApprovalEngine.ApprovalUserCodes"
+                                               HandleApprovalAction="HandleApprovalAction"
+                                               IsReassignButtonNeeded="@(true)"
+                                               IsRejectButtonNeeded="@(true)">
+</WinIt.Pages.ApprovalRoleEngine.ApprovalEngine>
+
+<div class="cls_button_bottom">
+    <button class="cls_button_bottom_left" @onclick=@(()=>_navigationManager.NavigateTo("viewallchangerequestapprovalinfo"))>Back</button>
+</div>

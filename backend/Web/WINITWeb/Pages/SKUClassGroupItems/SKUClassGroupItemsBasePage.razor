@@ -1,0 +1,60 @@
+﻿@page "/SkuClassificationItemsMa"
+@attribute [Authorize]
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.SKUClass.BL.UIInterfaces.ISKUClassGroupItemsViewModel _sKUClassGroupItemsViewModel;
+
+
+@if (IsInitialized)
+{
+    <div class="row" style="padding: 0px;">
+        <div class="col-md-4 cls_padd_l_b">
+            <label class="cls_new_lab">
+                <span style="color:red;">*</span>@Localizer["org"]
+            </label>
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_sKUClassGroupItemsViewModel.OrgSelectionItems"
+                                                               IsButtonVisible="true"
+                                                               _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single"
+                                                               OnSelect="OnOrgSelect"
+                                                               Disabled="@_sKUClassGroupItemsViewModel.IsEdit" />
+        </div>
+        <div class="col-md-4 cls_padd_l_b">
+            <label class="cls_new_lab">
+                <span style="color:red;">*</span>@Localizer["distribution_channel"]
+            </label>
+            <Winit.UIComponents.Common.CustomControls.DropDown Disabled="@_sKUClassGroupItemsViewModel.IsEdit" 
+            DataSource="_sKUClassGroupItemsViewModel.DistributionChannelSelectionItems"
+                                                               IsButtonVisible="true"
+                                                               _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single"
+                                                               OnSelect="OnDistributionChannelSelect" @ref="DistributionDDL" />
+        </div>
+        <div class="col-md-4 cls_padd_l_b">
+            <label class="cls_new_lab">
+                <span style="color:red;">*</span>@Localizer["name"]
+            </label>
+            <input class="form-control" placeholder="Name" type="text" disabled="@_sKUClassGroupItemsViewModel.IsEdit"
+            @bind="_sKUClassGroupItemsViewModel.SKUClassGroupMaster.SKUClassGroup!.Name">
+        </div>
+        <div class="col-md-4 cls_padd_l_b">
+            <label class="cls_new_lab">
+                <span style="color:red;">*</span>@Localizer["description"]
+            </label>
+            <input class="form-control" placeholder="description" type="text" disabled="@_sKUClassGroupItemsViewModel.IsEdit"
+            @bind="_sKUClassGroupItemsViewModel.SKUClassGroupMaster.SKUClassGroup!.Description">
+        </div>
+    </div>
+
+    <div>
+        <Winit.UIComponents.Common.DialogBoxes.AddProductDialogBox SKUAttributesDataSource="_sKUClassGroupItemsViewModel.SkuAttributesList"
+                                                                   SKUDataSource="_sKUClassGroupItemsViewModel.SKUList"
+                                                                   GetSelectedSKU="OnAddSKUClick" />
+    </div>
+    <div class="mb-3">
+        <SKUClassGroupItemsGrid SKUClassGroupItemViews="_sKUClassGroupItemsViewModel.SKUClassGroupMaster.SKUClassGroupItems"
+                                OnPlantDDClick="PlantDDClicked" />
+
+    </div>
+}
+<div class="cls_export_main mt-3">
+    <button class="cls_add_new_sec" @onclick='OnBackClick'>@Localizer["back"]</button>
+    <button class="cls_add_new_sec" @onclick='OnSaveClick'>@Localizer["save"]</button>
+</div>

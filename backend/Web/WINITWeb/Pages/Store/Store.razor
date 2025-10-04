@@ -1,0 +1,282 @@
+﻿@page "/Store"
+@inherits WinIt.Pages.Base.BaseComponentBase
+@using Winit.Modules.Store.BL.Classes
+@using Winit.UIComponents.Web.Store.AddNewStore
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@inject NavigationManager NavigationManager
+@inject BreadCrum.Interfaces.IDataService _IDataService
+@inject Winit.Modules.Store.BL.Interfaces.IStorBaseViewModelForWeb iStoreBase
+
+
+@inject IJSRuntime jsRuntime
+
+
+<PageHeaderAndFilter IDataBreadcrumbService="BreadCrumDTO" />
+@if (iStoreBase.IsInitialize)
+{
+<div class="cls_main_page_style">
+        <div class="cls_sales_container2">
+    <button class="cls_add_cust_drilldown"
+            @onclick="@(() =>ChangeViewState(1))">
+            <span>@Localizer["customer_details"]</span>
+        <span>
+            @if (toggle.CustomerInformation)
+            {
+                <i class="cls_arrow_up"></i>
+            }
+            else
+            {
+                <i class="cls_arrow_down"></i>
+            }
+        </span>
+    </button>
+
+    <div class="cls_container_div5" style="display: @((toggle.CustomerInformation) ? "block" : "none")">
+    
+        @if (render.IsCustomerInformationRendered)
+        {
+                <Winit.UIComponents.Web.Store.AddNewStore.CustomerInformation T="Winit.Modules.Store.Model.Interfaces.IStore" @ref="customerInformation" _CustomerInformation="@iStoreBase.CustomerInformation"
+                                                                              Locations="((StorWebViewModelForWeb)iStoreBase).Locations"
+                                                                                                          LocationType="((StorWebViewModelForWeb)iStoreBase).LocationType"
+                                                                                                          FileSysList="iStoreBase.FileSysList"
+                                                                                                          OnUploadStoreImages="OnFilesUpload"
+                                                                                                          ListItems="iStoreBase.ListItems"/>
+
+                    <div class="cls_button_bottom_purchase"> <button class="cls_button_blue" @onclick=SaveCustomerInfo>@Localizer["save"]</button></div>
+
+        }
+    </div>
+        
+
+    <button class="cls_add_cust_drilldown  @(iStoreBase.IsDisabled?"disabled":"")" disabled="@iStoreBase.IsDisabled"
+            @onclick="@(() =>ChangeViewState(2) )">
+            <span>@Localizer["contact_details"]</span>
+        <span>
+            @if (toggle.ContactDetails)
+            {
+                <i class="cls_arrow_up"></i>
+            }
+            else
+            {
+                <i class="cls_arrow_down"></i>
+            }
+        </span>
+    </button>
+            <div class="cls_container_div5" style="display: @((toggle.ContactDetails) ? "block" : "none")">
+        @if (render.IsContactDetailsRendered)
+        {
+
+            <Winit.UIComponents.Web.Store.AddNewStore.ContactDetails @ref=contactDetails Contact="iStoreBase.Contact" />
+
+                    <div class="cls_button_bottom_purchase"> <button class="cls_button_blue"  @onclick="@(()=>((StorWebViewModelForWeb)iStoreBase).SaveOrUpdateContacts())">@Localizer["save"]</button></div>
+
+        }
+    </div>
+
+
+    <button class="cls_add_cust_drilldown  @(iStoreBase.IsDisabled?"disabled":"")" disabled="@iStoreBase.IsDisabled"
+            @onclick="@(() =>ChangeViewState(3) )">
+            <span>@Localizer["contact_person_details"]</span>
+        <span>
+            @if (toggle.ContactPersonDetails)
+            {
+                <i class="cls_arrow_up"></i>
+            }
+            else
+            {
+                <i class="cls_arrow_down"></i>
+            }
+        </span>
+    </button>
+            <div class="cls_container_div5" style="display: @((toggle.ContactPersonDetails) ? "block" : "none")">
+        @if (render.IsContactPersonDetailsRendered)
+        {
+            <Winit.UIComponents.Web.Store.AddNewStore.ContactPersonDetails @ref="contactPersonDetails" LinkedItemUID="@storeUid" 
+                                                                            Contacts="iStoreBase.ContactPersonList" Contact="iStoreBase.ContactPerson"
+                                                                               
+                                                                               SaveOrUpdateContact="SaveOrUpdateContactPersonDetails" />
+        }
+    </div>
+    <button class="cls_add_cust_drilldown  @(iStoreBase.IsDisabled?"disabled":"")" disabled="@iStoreBase.IsDisabled" @onclick="@(() =>ChangeViewState(4))">
+            <span>@Localizer["bill_to_address"]</span>
+        <span>
+            @if (toggle.BillToAddress)
+            {
+                <i class="cls_arrow_up"></i> <!-- Bootstrap Icon: Up arrow -->
+            }
+            else
+            {
+                <i class="cls_arrow_down"></i> <!-- Bootstrap Icon: Down arrow -->
+            }
+        </span>
+    </button>
+            <div class="cls_container_div5" style="display: @((toggle.BillToAddress) ? "block" : "none")">
+        @if (render.IsBillToAddressRendered)
+        {
+                <Address @ref="billingAddress" Type="@Winit.Modules.Store.Model.Constants.StoreConstants.BillingAddress" LinkedItemUID="@storeUid" _Address="iStoreBase.BillingAddress" />
+                    <div class="cls_button_bottom_purchase"> <button class="cls_button_blue" @onclick=@SaveBillingAddress>@Localizer["save"]</button></div>
+        }
+    </div>
+    <button class="cls_add_cust_drilldown  @(iStoreBase.IsDisabled?"disabled":"")" disabled="@iStoreBase.IsDisabled" @onclick="@(() => ChangeViewState(5))">
+            <span>@Localizer["ship_to_address"]</span>
+        <span>
+            @if (toggle.ShipToAddress)
+            {
+                <i class="cls_arrow_up"></i> <!-- Bootstrap Icon: Up arrow -->
+            }
+            else
+            {
+                <i class="cls_arrow_down"></i> <!-- Bootstrap Icon: Down arrow -->
+            }
+        </span>
+    </button>
+            <div class="cls_container_div5" style="display: @((toggle.ShipToAddress) ? "block" : "none")">
+        @if (render.IsShipToAddressRendered)
+        {
+                <Address @ref="shippingAddress" Type="@Winit.Modules.Store.Model.Constants.StoreConstants.ShippingAddress" _Address="iStoreBase.ShippingAddress" />
+                    <div class="cls_button_bottom_purchase">
+                        <button class="cls_button_light" @onclick=@(()=>ShowAllAddress=!ShowAllAddress)>@Localizer["show/hide_all_addresses"]</button>
+                        <button class="cls_button_blue" @onclick=@SaveShippingAddress>@Localizer["save"]</button>
+                    </div>
+                   
+                if (ShowAllAddress)
+                {
+                    <TableGridView DataSource="iStoreBase.Addresses.Where(p=>p.Type?.ToLower()==Winit.Modules.Store.Model.Constants.StoreConstants.ShippingAddress.ToLower()).ToList()" Columns="AddressColumns" />
+                }
+        }
+    </div>
+    <button class="cls_add_cust_drilldown  @(iStoreBase.IsDisabled?"disabled":"")" disabled="@iStoreBase.IsDisabled" @onclick="@(() => ChangeViewState(6))">
+            <span>@Localizer["organisation_configuration"]</span>
+        <span>
+            @if (toggle.OrganisationConfiguration)
+            {
+                <i class="cls_arrow_up"></i> <!-- Bootstrap Icon: Up arrow -->
+            }
+            else
+            {
+                <i class="cls_arrow_down"></i> <!-- Bootstrap Icon: Down arrow -->
+            }
+        </span>
+    </button>
+    <div class="cls_container_div5" style="display: @((toggle.OrganisationConfiguration) ? "block" : "none")">
+        @if (render.IsOrganisationConfigurationRendered)
+        {
+                <Winit.UIComponents.Web.Store.AddNewStore.OrganisationConfiguration @ref=organisationConfiguration 
+                                                                                    _OrganisationConfiguration="iStoreBase._OrganisationConfiguration"
+                                                                                    StoreUID="@iStoreBase.StoreUID" 
+                                                                                    ListItems="@iStoreBase.ListItems"
+                                                                                    SalesOrgList="iStoreBase.SalesOrgList"
+                                                                                    IsNew="iStoreBase.IsNewOrganisation"
+                                                                                    OnStoreGroupDataSelected="@((e)=>iStoreBase.SelectedStoreGroupDataInOrgConfig=e)" />
+            @*   <div style="align-content:center;"> <button class="cls_add_new_sec" style="margin-left: 50%;" @onclick=@SaveOrgConfiguration>Save</button></div> *@
+                    <div class="cls_button_bottom_purchase">
+
+                        <button class="cls_button_blue" @onclick=@SaveOrgConfiguration >@Localizer["save"]</button>
+                    @if (!iStoreBase.IsNewOrganisation)
+                    {
+                            <button class="cls_button_blue" @onclick=@SaveOrgConfiguration >@Localizer["save"]</button>
+                    }
+                </div>
+
+                <Winit.UIComponents.Web.Table.TableGridView DataSource=iStoreBase.StoreCreditList Columns="OrganisationConfigurationColumns" />
+        }
+    </div>
+    <div class="mt-3">
+        <button class="cls_add_cust_drilldown  @(iStoreBase.IsDisabled?"disabled":"")" disabled="@iStoreBase.IsDisabled" @onclick="@(()=>ChangeViewState(7))">
+                <span style="color: #19298B; font-weight:500">@Localizer["away_period_details"]</span>
+            <span>
+                @if (toggle.ShowAwayPeriodDetails)
+                {
+                    <i class="cls_arrow_up"></i>
+                }
+                else
+                {
+                    <i class="cls_arrow_down"></i>
+                }
+            </span>
+        </button>
+    </div>
+
+    <div style="display: @((toggle.ShowAwayPeriodDetails) ? "block" : "none")">
+        @if (render.IsAwayPeriodRendered)
+        {
+                <Winit.UIComponents.Web.Store.AddNewStore.AwayPeriod @ref="awayperiod" StoreUID="@iStoreBase.StoreUID"
+                                                                     AwayPeriodList="iStoreBase.AwayPeriodList" 
+                                                                  _AwayPeriod="iStoreBase.AwayPeriod"
+                                                                     SaveOrUpdateAwayPeriod="SaveorUpdateAwayPeriod" />
+        }
+    </div>
+
+    <div class="mt-3">
+        <button class="cls_add_cust_drilldown  @(iStoreBase.IsDisabled?"disabled":"")" disabled="@iStoreBase.IsDisabled" @onclick="@(()=>ChangeViewState(8))">
+                <span style="color: #19298B; font-weight:500">@Localizer["store_documents"]</span>
+            <span>
+                @if (toggle.StoreDocuments)
+                {
+                    <i class="cls_arrow_up"></i>
+                }
+                else
+                {
+                    <i class="cls_arrow_down"></i>
+                }
+            </span>
+        </button>
+    </div>
+
+    <div style="display: @((toggle.StoreDocuments) ? "block" : "none")">
+        @if (render.IsDocumentRendered)
+        {
+                <Winit.UIComponents.Web.Store.AddNewStore.Documents @ref="documents" 
+                                                            ListItems="iStoreBase.ListItems" 
+                                                            StoreUID="@iStoreBase.StoreUID" 
+                                                            isNewStore="@isNewStore" />
+        }
+
+    </div>
+    <div class="mt-3">
+        <button class="cls_add_cust_drilldown  @(iStoreBase.IsDisabled?"disabled":"")" disabled="@iStoreBase.IsDisabled" @onclick="@(()=>ChangeViewState(9))">
+                <span style="color: #19298B; font-weight:500">@Localizer["additional_info"]</span>
+            <span>
+                @if (toggle.InvoiceInformation)
+                {
+                    <i class="cls_arrow_up"></i>
+                }
+                else
+                {
+                    <i class="cls_arrow_down"></i>
+                }
+            </span>
+        </button>
+    </div>
+
+    <div style="display: @((toggle.InvoiceInformation) ? "block" : "none")">
+        @if (render.IsAdditionalRendered)
+        {
+                <Winit.UIComponents.Web.Store.AddNewStore.AdditionalInfo @ref="additionalInfo" 
+                                                                         _StoreAdditionalInfo="iStoreBase._StoreAdditionalInfo"
+                                                                         Route="iStoreBase.Route"
+                                                                         ListItems="iStoreBase.ListItems" />
+                <div style="align-content:center;"><button class="cls_add_new_sec" @onclick="SaveorUpdateAdditionalInfo" style="margin-left: 50%;">@Localizer["save"]</button></div>
+        }
+    </div>
+
+
+        <button class="cls_add_new_sec" @onclick="@(()=>_navigationManager.NavigateTo(" ManageCustomers"))" style="margin-left: 50%;">@Localizer["back"]</button>
+
+</div>
+    </div>
+
+}
+<div class="modal" tabindex="-1" style="display: @((showPopup) ? "block" : "none")">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">@Localizer["edit_error_details"]</h5>
+            @*  <button type="button" class="btn-close" @onclick="ClosePopup"></button> *@
+        </div>
+        <div class="modal-body">
+            @Localizer["changes_are_not_saved!_are_you_sure_you_want_to_continue"]
+            <button class="btn" @onclick="ClosePopup">@Localizer["no"]</button><button class="btn" @onclick="@(()=>ChangeScreen(nextScreeen))">@Localizer["yes"]</button>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,77 @@
+﻿@page "/AddItemSupplier"
+@page "/AddItemSupplier/{OrgUID}"
+@using System.ComponentModel.DataAnnotations
+@using System.Linq
+@using Microsoft.JSInterop
+@using Winit.Modules.Org.Model.Interfaces;
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+@inject NavigationManager NavManager
+@inject Winit.Modules.Org.BL.Interfaces.IOrgViewModel _orgViewModel;
+@using Newtonsoft.Json;
+@inject IJSRuntime JSRuntime
+
+
+<div>
+    <h6 style="color: #003898; font-weight: bold; margin: 0;">@(IsEditPage ? @Localizer["edit"] : @Localizer["add"]) Item Supplier</h6>
+</div>
+<div style="width: 100%;float: left;">
+    <nav style="width: 100%;float: left;" aria-label="breadcrumb">
+        <ol class="breadcrumb" style="background-color: transparent; margin: 0;">
+            <li class="breadcrumb-item" style="color:#003898; font-weight:bold"><a href="#">Home</a></li>
+            <li class="separator" style="margin: 0 0.2rem;color:#003898;">>></li>
+            <li class="breadcrumb-item" style="color:#003898; font-weight:bold"><a href="#"> Item Supplier</a></li>
+            <li class="separator" style="margin: 0 0.2rem;color:#003898; ">>></li>
+            <li class="breadcrumb-item active" aria-current="page" style="color:#003898; font-weight:bold">@(IsEditPage ? @Localizer["edit"] : @Localizer["add"])@Localizer["password"] Item Supplier</li>
+        </ol>
+    </nav>
+
+</div>
+<div class="storeupper">
+    <div class="tab-content">
+        <div class="row mb-2">
+            @if (!string.IsNullOrWhiteSpace(validationMessage))
+            {
+                <div class="alert alert-danger">
+                    <div class="col-md-12">
+                        <div style="color: red;">@validationMessage</div>
+                    </div>
+                </div>
+            }
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="supplierCode">Supplier Code</label><span style="color: red;">*</span>
+                    <input class="form-control ng-pristine ng-valid ng-touched" type="text" @bind-value="_orgViewModel.org.Code" disabled="@(IsEditPage)">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="supplierDescription">Supplier Description</label><span style="color: red;">*</span>
+                    <input class="form-control ng-pristine ng-valid ng-touched" type="text" @bind-value="_orgViewModel.org.Name">
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-md-12 d-flex justify-content-center align-items-center">
+                <button class="btn btn-secondary mr-2" @onclick="BackBtnClicked">@Localizer["back"]Back</button>
+                <button class="btn btn-primary" @onclick="() =>SaveOrgItem()">@(IsEditPage ? @Localizer["update"] : @Localizer["save"])</button>
+            </div>
+        </div>
+    </div>
+</div>
+@if (IsBackBtnPopUp)
+{
+    <WinIt.Pages.PopUp Title="Back" OnCloseClick="() => IsBackBtnPopUp = false" OkbtnText="Ok" CancelbtnText="Cancel" OnOkClick="OnOkFromBackBTnPopUpClick">
+        <label>
+            @Localizer["are_you_sure_you_want_to_cancel?_your_work_will_be_lost."]
+        </label>
+    </WinIt.Pages.PopUp>
+}
+
+@code {
+  
+  
+    
+
+}

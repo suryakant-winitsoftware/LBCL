@@ -1,0 +1,412 @@
+﻿@page "/selfRegistration"
+@inject Winit.Modules.Store.BL.Interfaces.ISelfRegistrationViewModel _viewmodel
+@using System.Text.RegularExpressions
+@using WinIt.Pages.Base
+@using Winit.Modules.Store.Model.Interfaces
+@using WinIt.Pages.Collection.BalanceConfirmation
+@using Winit.UIComponents.Common.TimeTracker
+@inherits BaseComponentBase
+
+<div class="wifi-container">
+    <div class="wifi-overlay"></div>
+    <div class="wifi-form">
+        <div class="self-div">
+            <img src="./Images/logo_m.png" width="188" alt="Alternate Text" />
+        </div>
+        <p class="wifi-subtitle">Self Registration</p>
+        @if (!string.IsNullOrEmpty(message))
+        {
+            <div class="wifi-error-message" role="alert">
+                @message
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(ApprovedMessage))
+        {
+            <div class="wifi-error-message" role="alert">
+                @ApprovedMessage
+            </div>
+        }
+        <label for="country" class="wifi-label">Country:</label>
+        <select id="country" class="wifi-input" @bind="selectedCountry">
+            <option value="+91">India (+91)</option>
+        </select>
+
+        <label for="mobile" class="wifi-label">Mobile Number:</label>
+        <div class="wifi-input-group">
+            <span class="wifi-prefix">@selectedCountry</span>
+            <input placeholder="Enter Here" type="tel" id="mobile" class="wifi-input-2" @bind="_viewmodel.selfRegistration.MobileNo" @oninput="ValidateMobileNumber" />
+        </div>
+        @if (!string.IsNullOrEmpty(mobileError))
+        {
+            <small class="wifi-error">@mobileError</small>
+        }
+
+        @if (!otpSent)
+        {
+            <button class="wifi-button" @onclick="@(() => RequestOtp(false))" disabled="@(!isValidMobile)">Send OTP</button>
+        }
+        else
+        {
+            <label for="otp" class="wifi-label">Enter OTP:</label>
+            <input type="text" placeholder="Enter Here" id="otp" class="wifi-input" @bind="_viewmodel.selfRegistration.UserEnteredOtp" />
+
+            <div class="cls_button_bottom_purchase">
+                <button class="cls_button_light" @onclick="VerifyOtp">Verify OTP</button>
+                <button class="cls_button_blue" @onclick="@(() => RequestOtp(true))" disabled="@DisableResendOtp" style="@(DisableResendOtp ? "background-color: darkgray;border-color: darkgray;cursor: not-allowed;" : "")">
+                    @if (DisableResendOtp)
+                    {
+                        <ReverseTimer @ref="otpTimer" Timerstopped="OnTimerCompleted" CountdownMinutes="1"></ReverseTimer>
+                    }
+                    else
+                    {
+                        <span>Resend OTP</span>
+                    }
+                </button>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .wifi-error-message {
+        color: red;
+        font-size: 14px;
+        text-align: center;
+        / Adjust spacing to position it directly below /
+    }
+
+    .wifi-container {
+        position: fixed;
+        width: 100%;
+        height: 100vh;
+        background: url('./Images/bg1.svg?v=1') no-repeat center center/cover;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        top: 0px;
+        left: 0px;
+    }
+
+    .self-div {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .wifi-overlay {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+    }
+
+    .wifi-form {
+        position: relative;
+        z-index: 2;
+        background: linear-gradient(to right, #cbe5f6 5%,#8cc6eb 99%);
+        padding: 20px;
+        border-radius: 10px;
+        width: 425px;
+        color: white;
+    }
+
+    .wifi-title {
+        text-align: center;
+        font-size: 24px;
+    }
+
+    .wifi-highlight {
+        color: #1B478A;
+    }
+
+    .wifi-subtitle {
+        text-align: center;
+        font-size: 26px;
+        margin-bottom: 0px;
+        font-weight: 700;
+        color: #1B478A;
+    }
+
+    .wifi-label {
+        display: block;
+        margin: 10px 0 5px;
+        font-size: 15px;
+        font-weight: 600;
+        color: #1B478A;
+    }
+
+    .wifi-input {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+    }
+
+    .wifi-input-2 {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 0 5px 5px 0;
+    }
+
+    .wifi-input-group {
+        display: flex;
+        align-items: center;
+    }
+
+    .wifi-prefix {
+        background: #1B478A;
+        padding: 10px;
+        border-radius: 5px 0 0 5px;
+        color: ##FFF;
+    }
+
+    .wifi-button {
+        width: 100%;
+        padding: 10px;
+        background: #1B478A;
+        border: none;
+        color: white;
+        cursor: pointer;
+        margin-top: 10px;
+        border-radius: 5px 5px 5px 5px;
+        font-size: 15px;
+        font-weight: 600;
+    }
+
+    .wifi-button-light {
+        width: 100%;
+        padding: 10px;
+        background: gray;
+        border: none;
+        color: white;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
+    .wifi-error {
+        color: red;
+        font-size: 12px;
+    }
+</style>
+
+@code {
+    private string message = string.Empty;
+    private string ApprovedMessage = string.Empty;
+    private string StoreStatus = string.Empty;
+    private bool DisableResendOtp = false;
+    private bool otpSent = false;
+    private bool isResend = false;
+    private bool isError = false;
+    private string selectedCountry = "+91";
+    private string mobileError = string.Empty;
+    private bool isValidMobile = false;
+    public ReverseTimer otpTimer { get; set; }
+    Winit.UIModels.Web.Breadcrum.Interfaces.IDataService dataService = new Winit.UIModels.Web.Breadcrum.Classes.DataServiceModel()
+        {
+            BreadcrumList = new List<Winit.UIModels.Web.Breadcrum.Interfaces.IBreadCrum>()
+            {
+                 new Winit.UIModels.Web.Breadcrum.Classes.BreadCrumModel(){SlNo=1,Text="SelfRegistration",URL="request-otp",IsClickable=true}
+
+             }
+        };
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            dataService.BreadcrumList.Add(new Winit.UIModels.Web.Breadcrum.Classes.BreadCrumModel()
+                {
+                    SlNo = 1,
+                    Text = dataService.HeaderText,
+                });
+            if (_viewmodel == null)
+            {
+                await _alertService.ShowErrorAlert("Error", "Viewmodel instance not created");
+            }
+        }
+        catch (Exception)
+        {
+
+        }
+
+    }
+    public async Task OnTimerCompleted(bool value)
+    {
+        try
+        {
+            DisableResendOtp = false;
+        }
+        catch (Exception ex)
+        {
+
+        }
+        finally
+        {
+            StateHasChanged();
+        }
+    }
+    private void ValidateMobileNumber(ChangeEventArgs e)
+    {
+        string mobileNumber = e.Value.ToString();
+        _viewmodel.selfRegistration.MobileNo = mobileNumber;
+
+        if (string.IsNullOrWhiteSpace(mobileNumber))
+        {
+            mobileError = "Mobile number is required.";
+            isValidMobile = false;
+        }
+        else if (selectedCountry == "+91" && !Regex.IsMatch(mobileNumber, @"^[6-9]\d{9}$"))
+        {
+            mobileError = "Invalid Indian mobile number. It should be 10 digits starting with 6, 7, 8, or 9.";
+            isValidMobile = false;
+        }
+        else if (selectedCountry == "+1" && !Regex.IsMatch(mobileNumber, @"^\d{10}$"))
+        {
+            mobileError = "Invalid US mobile number. It should be 10 digits.";
+            isValidMobile = false;
+        }
+        else
+        {
+            mobileError = string.Empty;
+            isValidMobile = true;
+        }
+    }
+    private async Task RequestOtp(bool Resend)
+    {
+        try
+        {
+            ShowLoader();
+            if (!isValidMobile)
+            {
+                SetErrorMessage("Please enter a valid mobile number.");
+                return;
+            }
+
+            _viewmodel.selfRegistration.OTP = GenerateOtp();
+            //_viewmodel.selfRegistration.UserEnteredOtp = _viewmodel.selfRegistration.OTP;
+            bool otpSaved = await _viewmodel.HandleSelfRegistration();
+            _ = _viewmodel.SendSms(_viewmodel?.selfRegistration?.OTP ?? "", _viewmodel.selfRegistration.MobileNo);
+
+
+            if (otpSaved)
+            {
+                otpSent = true;
+                SetSuccessMessage("OTP has been sent to your mobile number.");
+            }
+            else
+            {
+                SetErrorMessage("Failed to send OTP. Please try again.");
+            }
+        }
+        catch (Exception ex)
+        {
+            SetErrorMessage($"An error occurred: {ex.Message}");
+        }
+        finally
+        {
+            if (Resend)
+            {
+                SetSuccessMessage("OTP has been Re - sent to your mobile number.");
+                DisableResendOtp = true;
+                ApprovedMessage = string.Empty;
+            }
+            HideLoader();
+            StateHasChanged();
+        }
+    }
+
+    private string GenerateOtp()
+    {
+        return new Random().Next(100000, 999999).ToString();
+    }
+
+    private async Task VerifyOtp()
+    {
+        try
+        {
+            ShowLoader();
+            if (string.IsNullOrEmpty(_viewmodel.selfRegistration.UserEnteredOtp))
+            {
+                SetErrorMessage("Please enter the OTP sent to your mobile number.");
+                return;
+            }
+
+            bool otpVerified = await _viewmodel.VerifyOTP();
+
+            if (otpVerified)
+            {
+                Winit.Modules.Auth.Model.Interfaces.ILoginResponse? tokenData = await _viewmodel.GetToken();
+                if (tokenData != null)
+                {
+                    if (tokenData.AuthMaster != null)
+                    {
+                        await _localStorageService.SetItem("token", tokenData.Token);
+                     _= await _authStateProvider.GetAuthenticationStateAsync();
+
+                        ShowSuccessSnackBar("Success", "User login successful");
+                    }
+                    else
+                    {
+                        throw new Exception(Localizer["authentication_failed"]);
+                    }
+                }
+                else
+                {
+                    ShowErrorSnackBar("Login failed", "Failed generating token");
+                }
+                await GetStatusForCustomer();
+            }
+            else
+            {
+                SetErrorMessage("Invalid OTP. Please try again.");
+            }
+        }
+        catch (Exception ex)
+        {
+            SetErrorMessage($"An error occurred: {ex.Message}");
+        }
+        finally
+        {
+            HideLoader();
+        }
+    }
+
+    private async Task GetStatusForCustomer()
+    {
+        try
+        {
+            IStore storeDetails = await _viewmodel.GetStatusFromStore(_viewmodel.selfRegistration.UID);
+            if (storeDetails != null)
+            {
+                StoreStatus = storeDetails?.Status ?? "";
+            }
+            if (!string.IsNullOrEmpty(StoreStatus) && StoreStatus != SalesOrderStatus.DRAFT)
+            {
+                ApprovedMessage = "Your application has confirmed. It is under process.";
+                message = string.Empty;
+                return;
+            }
+            _navigationManager.NavigateTo($"AddCustomers?SUID={_viewmodel.selfRegistration.UID}");
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+        finally
+        {
+            StateHasChanged();
+        }
+    }
+
+    private void SetErrorMessage(string msg)
+    {
+        message = msg;
+        isError = true;
+    }
+
+    private void SetSuccessMessage(string msg)
+    {
+        message = msg;
+        isError = false;
+    }
+}

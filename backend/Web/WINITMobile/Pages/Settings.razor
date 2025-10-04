@@ -1,0 +1,99 @@
+﻿@page "/Settings"
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+@inject Winit.Modules.Auth.BL.Interfaces.ILoginViewModel _loginViewModel
+@inject Winit.Shared.CommonUtilities.Common.SHACommonFunctions _sHACommonFunctions;
+@inject DatabaseUploadService _databaseUploadService
+@inject WINITMobile.Data.IImageUploadService _imageUploadService
+
+<div class="cls_section_header">
+    <h2 class="cls_section_header_h2">@Localizer["settings"]</h2>
+</div>
+
+<div class="cls_Dash_customer_call4">
+    <div class="cls_Dash_customer_call4_rep" @onclick="OnSyncDataClick">
+        <button class="cls_settings_label">
+            @Localizer["sync_data"]
+        </button>
+    </div>
+    <div class="cls_Dash_customer_call4_rep" @onclick="OnUploadDataClick">
+        <button class="cls_settings_label">
+            @Localizer["upload_data"]
+        </button>
+    </div>
+    <div class="cls_Dash_customer_call4_rep" @onclick="UploadImagesToServer">
+        <button class="cls_settings_label">
+            Upload Files
+        </button>
+    </div>
+    <div class="cls_Dash_customer_call4_rep" @onclick="UploadDatabase">
+        <button class="cls_settings_label">
+            Upload Debug Logs
+        </button>
+    </div>
+    <div class="cls_Dash_customer_call4_rep" @onclick="() =>{ChangePassword = new Winit.Modules.Auth.Model.Classes.ChangePassword();IsChangePassWordPopUpOpen = true;}">
+        <button class="cls_settings_label">
+            @Localizer["change_password"]
+        </button>
+    </div>
+    
+    @*             
+<a href="printertest" class="cls_settings_label" style="width:100%;">
+    <div class="cls_Dash_customer_call4_rep">
+    Printer Setup
+        </div>
+    </a>
+        *@     
+
+</div>
+
+@* <button class="btn" @onclick="() =>{ChangePassword = new Winit.Modules.Auth.Model.Classes.ChangePassword();
+ IsChangePassWordPopUpOpen = true;}">
+    @Localizer["change_password"]
+</button>
+<button class="btn" @onclick="OnSyncDataClick">
+    @Localizer["sync_data"]
+</button>
+<button class="btn" @onclick="OnUploadDataClick">
+    @Localizer["upload_data"]
+</button>
+<a href="printertest">Printer Setup</a> *@
+
+@if (IsChangePassWordPopUpOpen)
+{
+    <PopUp CancelbtnText="Cancel" OkbtnText="Change Password" OnCloseClick="() => {IsChangePassWordPopUpOpen = false; ErrorMsg = null;}"
+           OnOkClick="OnChangePasswordClick">
+        @if (!string.IsNullOrEmpty(ErrorMsg))
+        {
+            <div class="alert alert-danger">
+                <label><b>@Localizer["the_following_field(s)_have_invalid_value(s)"]:</b>@ErrorMsg</label>
+            </div>
+        }
+        <div class="cls_container_div1">
+            <div class="cls_container_div1">
+                <label class="cls_section_label">
+                    <span class="cls_section_div_purchase2_span">*</span>@Localizer["current_password"]
+                </label>
+                <div class="cls_section_div">
+                    <input class="form-control cls_section_input" type="password" @bind="ChangePassword.OldPassword">
+                </div>
+            </div>
+            <div class="cls_container_div4">
+                <label class="cls_section_label">
+                    <span class="cls_section_div_purchase2_span">*</span>@Localizer["new_password"]
+                </label>
+                <div class="cls_section_div">
+                    <input class="form-control cls_section_input" type="password" @bind="ChangePassword.NewPassword">
+                </div>
+            </div>
+            <div class="cls_container_div4">
+                <label class="cls_section_label">
+                    <span class="cls_section_div_purchase2_span">*</span>@Localizer["confirm_password"]
+                </label>
+                <div class="cls_section_div">
+                    <input class="form-control cls_section_input" type="password" @oninput="(e) => ConfirmPassword = e?.Value?.ToString()"
+                           @bind="ConfirmPassword">
+                </div>
+            </div>
+        </div>
+    </PopUp>
+}

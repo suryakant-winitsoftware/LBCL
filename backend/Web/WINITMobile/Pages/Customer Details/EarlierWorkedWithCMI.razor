@@ -1,0 +1,76 @@
+﻿@inject Winit.Modules.Distributor.BL.Interfaces.ICreateDistributorBaseViewModel _distributorBaseViewModel
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+
+<div style="width:100%;float:left;margin:0px 0px;">
+    @if (!string.IsNullOrWhiteSpace(ValidationMessage))
+    {
+        <div class="alert alert-danger">
+            <div class="col-md-12">
+                <div style="color: red;">@ValidationMessage</div>
+            </div>
+        </div>
+    }
+    <div class="card">
+        <div class="card-body">
+            <div class="cls_cust_information">
+                <div class="row">
+                    <div class="col-12 col-sm-12 col-md-12 col-lg-12 mb-12">
+                        <div>
+                            <h6 class="cls_copy_adress_span" for="mcmeOptions">Earlier Worked with CMI</h6>
+                            <div id="mcmeOptions" style="float:left;">
+                                <div class="cls_btn_y_n">
+                                    <input class=""
+                                           type="radio" name="cmi" id="cmiYes" value="true"
+                                           @onchange="OnCMIChange"
+                                           checked="@(StoreAdditionalInfoCMI.EwwHasWorkedWithCMI == true)" />
+                                    <label for="mcmeYes">Yes</label>
+                                </div>
+                                <div class="cls_btn_y_n">
+                                    <input class=""
+                                           type="radio" name="cmi" id="cmiNo" value="false"
+                                           @onchange="OnCMIChange"
+                                           checked="@(StoreAdditionalInfoCMI.EwwHasWorkedWithCMI == false)" />
+                                    <label for="mcmeNo">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                 
+                    <div class="row" style="margin-top:14px;">
+                        <div class="col-12 col-md-6 mb-4">
+                        <label class="cls_customer_label">Year of Operation & Business Volume<i class="cls_section_div_purchase2_span">@ShowValidationStar()</i></label>
+                            <textarea autocomplete="off" class="cls_news_textarea" type="text" placeholder="Enter here" @bind="StoreAdditionalInfoCMI.EwwYearOfOperationAndVolume" />
+                        </div>
+                        <div class="col-12 col-md-6 mb-4">
+                        <label class="cls_customer_label">Dealer / Distributor<i class="cls_section_div_purchase2_span">@ShowValidationStar()</i></label>
+                            <textarea autocomplete="off" class="cls_news_textarea " type="text" placeholder="Enter here" @bind="StoreAdditionalInfoCMI.EwwDealerInfo" />
+                        </div>
+                    </div>
+                    <div class="row">
+
+                        <div class="col-12 col-md-6 mb-4">
+                        <label class="cls_customer_label">Name of the Firm(s) - Including Sister Concerns<i class="cls_section_div_purchase2_span">*</i></label>
+                            <textarea autocomplete="off" class="cls_news_textarea " type="text" placeholder="Enter here" @bind="StoreAdditionalInfoCMI.EwwNameOfFirms" />
+                        </div>
+                        <div class="col-12 col-md-6 mb-4">
+                            <label class="cls_customer_label">Total Investment In Business(Rs in lakhs)</label>
+                            <textarea autocomplete="off" class="cls_news_textarea" type="text" placeholder="Enter here" @bind="StoreAdditionalInfoCMI.EwwTotalInvestment" />
+                        </div>
+                    </div>
+                 
+            </div>
+        </div>
+    </div>
+</div>
+<div class="cls_button_bottom_purchase">
+        <button class="cls_button_light">Clear</button>
+        <button class="cls_button_blue" @onclick="SaveOrUpdate">@ButtonName</button>
+    </div>
+
+
+
+@code {
+
+}

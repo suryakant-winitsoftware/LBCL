@@ -1,0 +1,109 @@
+﻿@namespace WinIt.Pages.PurchaseOrderTemplate
+@page "/addeditpotemplate"
+@page "/addeditpotemplate/{UID}"
+@page "/addeditpotemplate/{UID}/{IsView:bool}"
+@using Winit.Modules.SKU.Model.Interfaces
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.PurchaseOrder.BL.Interfaces.IAddEditPurchaseOrderTemplateViewModel _viewModel
+<PageTitle>Add Edit PO Template </PageTitle>
+<PageHeaderAndFilter IDataBreadcrumbService="dataService"></PageHeaderAndFilter>
+
+<div class="cls_container_div1">
+    <button class="cls_add_new_sec" style="float:right;margin-top:-47px;" @onclick="()=> IsFilterOpen = !IsFilterOpen">Filter</button>
+
+
+    <div class="cls_section" style="display:@(IsFilterOpen ? "block":"none");">
+
+        <div class="cls_section_div_purchase2">
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_viewModel.OrganisationUnitSelectionItems"
+                                                               IsButtonVisible="true"
+                                                               Title="Organisation Unit"
+                                                               OnSelect="e => _viewModel.ApplyGridFilter()"
+                                                               _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Multiple" />
+        </div>
+        <div class="cls_section_div_purchase2">
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_viewModel.DivisionSelectionItems"
+                                                               IsButtonVisible="true"
+                                                               Title="Division"
+                                                               OnSelect="e => _viewModel.ApplyGridFilter()"
+                                                               _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Multiple" />
+        </div>
+        <div class="cls_section_div_purchase2">
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_viewModel.ProductCategorySelectionItems"
+                                                               IsButtonVisible="true"
+                                                               Title="Product Category"
+                                                               OnSelect="e => _viewModel.ApplyGridFilter()"
+                                                               _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Multiple" />
+        </div>
+    </div>
+
+</div>
+
+<div class="cls_section">
+    <div class="cls_container_div1">
+
+        <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span">*</span>Template Name</label>
+            <div class="cls_select">
+                <input placeholder="Enter Here" type="text" @bind="_viewModel.PurchaseOrderTemplateMaster.PurchaseOrderTemplateHeader.TemplateName" />
+            </div>
+        </div>
+
+        <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span">*</span>Is Active</label>
+
+
+            <input class="cls_section_div_purchase2_input" type="checkbox" @bind="_viewModel.PurchaseOrderTemplateMaster.PurchaseOrderTemplateHeader.IsActive" />
+
+        </div>
+    </div>
+</div>
+
+<div class="cls_container_div4">
+
+    <div class="cls_section_search">
+        <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder="Search "
+                                                               MaxLength="200" DebounceInterval="500"
+                                                               OnDebounceIntervalElapsed="e =>
+                                                                    {
+                                                                        _viewModel.ProductSearchString = e;
+                                                                        _viewModel.ApplyGridFilter();
+                                                                    } "
+                                                               KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+                                                               Value=""
+                                                               IsForSearch="true" />
+    </div>
+    <div class="">
+        <button class="cls_comman_btn" @onclick="() => AddProductDialogBox?.OnOpenClick()">Add Product</button>
+
+    </div>
+
+</div>
+<div class="cls_container_div1 margin_top">
+    <WinIt.Pages.DialogBoxes.AddProductDialogBoxV1 T="ISKUV1"
+                                                   DataSource="_viewModel.SKUs"
+                                                   L1="@(e => e.L1 )"
+                                                   L2="@(e => e.L2 )"
+                                                   L3="@(e => e.L3 )"
+                                                   L4="@(e => e.L4 )"
+                                                   L5="@(e => e.L5 )"
+                                                   L6="@(e => e.L6 )"
+                                                   L7="@(e => e.Code)"
+                                                   L8="@(e => e.Name)"
+                                                   UID="@(e => e.UID)"
+                                                   OnCancelClick="() => AddProductDialogBox?.OnCloseClick()"
+                                                   OnOkClick="OnAddProductClick"
+                                                   DropDownDataSource="_viewModel.SKUAttributeData"
+                                                   OnDropdownValueSelectSKUAtrribute="OnDropdownValueSelectSKUAtrributes"
+                                                   SelectedItems="SKUs"
+                                                   FilterAction="FilterAction"
+                                                   @ref="AddProductDialogBox" />
+
+    <WinIt.Pages.PurchaseOrderTemplate.PurchaseOrderTemplateGrid DisplayedSKUList="_viewModel.FilteredPurchaseOrderTemplateItemViews">
+    </WinIt.Pages.PurchaseOrderTemplate.PurchaseOrderTemplateGrid>
+</div>
+<div class="cls_button_bottom_purchase">
+    <button class="cls_button_light " @onclick="OnDeleteSelectedItems">Delete Selected From the list</button>
+    <button class="cls_button_light" @onclick='() => _navigationManager.NavigateTo("purchaseordertemplate")'>Cancel</button>
+    <button class="cls_button_blue " @onclick="OnSaveOrUpdateClick">@(_viewModel.IsAdd ? "Save" : "Update")</button>
+</div>

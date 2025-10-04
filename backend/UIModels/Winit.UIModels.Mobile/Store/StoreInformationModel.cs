@@ -1,0 +1,120 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Winit.UIModels.Mobile.Store
+{
+    public class StoreInformationModel : Winit.UIModels.Common.BaseModel
+    {
+
+        public string CompanyUID { get; set; }
+
+
+        public string Code { get; set; }
+
+
+        public string Number { get; set; }
+
+
+        public string Name { get; set; }
+
+
+        public string AliasName { get; set; }
+
+
+        public string LegalName { get; set; }
+
+
+        public string Type { get; set; }
+
+
+        public string BillToStoreUID { get; set; }
+
+
+        public string ShipToStoreUID { get; set; }
+
+
+        public string SoldToStoreUID { get; set; }
+
+
+        public int Status { get; set; }
+
+
+        public bool IsActive { get; set; }
+
+
+        public string StoreClass { get; set; }
+
+
+        public string StoreRating { get; set; }
+
+
+        public bool IsBlocked { get; set; }
+
+
+        public string BlockedReasonCode { get; set; }
+
+
+        public string BlockedReasonDescription { get; set; }
+
+
+        public string CreatedByEmpUID { get; set; }
+
+
+        public string CreatedByJobPositionUID { get; set; }
+
+
+        public string CountryUID { get; set; }
+
+
+        public string RegionUID { get; set; }
+
+
+        public string CityUID { get; set; }
+
+
+        public string Source { get; set; }
+
+
+        public string OutletName { get; set; }
+
+
+        public string BlockedByEmpUID { get; set; }
+
+
+        public string ArabicName { get; set; }
+
+
+        public bool IsTaxApplicable { get; set; } = false;
+
+
+        public string TaxDocNumber { get; set; }
+
+
+        public string SchoolWarehouse { get; set; }
+        public bool VatOrGst { get; set; } = false;
+
+
+        public string DayType { get; set; }
+
+
+        public DateTime SpecialDay { get; set; }
+
+
+        public bool IsTaxDocVerified { get; set; }
+
+
+        public decimal StoreSize { get; set; }
+
+
+        public string ProspectEmpUID { get; set; }
+        public string PriceType { get; set; }
+        public string TaxKeyField { get; set; }
+        public string StoreImage { get; set; }
+        public bool IsVATQRCaptureMandatory { get; set; } = false;
+        public string TaxType { get; set; }
+    }
+}

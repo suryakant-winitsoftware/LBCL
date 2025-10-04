@@ -1,0 +1,109 @@
+﻿@using System.ComponentModel.DataAnnotations
+@using System.Linq
+@using Microsoft.Extensions.Localization
+@using Winit.UIComponents.Common.LanguageResources.Mobile
+@inject IStringLocalizer<LanguageKeys> Localizer
+@inject Winit.UIComponents.Common.Language.ILanguageService _languageService
+
+@if (!DisableAddButton)
+{
+    <button @onclick="OpenAddProductDialog" disabled="@Disabled" class="cls_add_new_sec">
+        @Localizer["add_product"]
+    </button>
+}
+
+@if (isDialogOpen && !Disabled)
+{
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show" tabindex="-1" style="display: block; overflow:auto;">
+        <div class="modal-dialog cls_pop_up_style1" >
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@Localizer["add_product"]</h5>
+                    <span class="close" @onclick="CloseDialog">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="row" style="padding: 0px;">
+                        
+                            <div class="col-md-4 cls_padd_l_b">
+
+                                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="ListForddlCatType" OnSelect="OnselectCategoryType"
+                                                                                   _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single" IsButtonVisible="true" Title=@Localizer["category_type"] />
+                            </div>
+                            
+                            <div class="col-md-4 cls_padd_l_b">
+
+                                <Winit.UIComponents.Common.CustomControls.DropDown OnSelect="OnselectCategory" IsButtonVisible="true" DataSource="SelectedListForCategory"
+                                                                                   _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Multiple" Title=@Localizer["category"] />
+                            </div>
+
+                        <div class="col-md-4 cls_padd_l_b">
+                            <div class="cls_btn_y_n" style="margin-top:16px;">
+                            <input type="checkbox" @onchange="OnCheckboxChange" />
+                            <label for="promoCheckbox">@Localizer["show_promo_records"]</label>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="cls_container_div1">
+                            <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder=@Localizer["search_by_item_code_/_description"] MaxLength="200" DebounceInterval="500" OnDebounceIntervalElapsed="SearchAmongSelectedProduct"
+                                                                                   KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+                                                                                   Value="" IsForSearch="true" />
+                        </div>
+                    
+                    
+                        <div class="div1">
+                            <table>
+                                <thead>
+                                <th>
+                                    <input type="checkbox" @onchange="HandleRowSelectionChange" />
+                                </th>
+                                <th>
+                                    <span style="cursor:default;">@Localizer["sku_code"]</span>
+                                </th>
+                                <th>
+                                    <span style="cursor:default;">@Localizer["sku_name"]</span>
+                                </th>
+                                </thead>
+                                <tbody>
+
+                                    @if (skuLIstForTable!=null && skuLIstForTable.Any())
+                                    {
+                                        @foreach (var row in skuLIstForTable)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <input type="checkbox" @onclick="() => row.IsSelected = !row.IsSelected"
+                                                           checked="@row.IsSelected" />
+                                                </td>
+                                                <td>
+                                                    @row.Code
+                                                </td>
+                                                <td>
+                                                    @row.Label
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                    else{
+                                        <tr>
+                                            <td colspan="3" style="text-align: center;color:red">@Localizer["no_items"]</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                   
+                </div>
+                <div class="modal-footer">
+                    <button class="cls_comman_btn" @onclick="AddSelectedProduct" >
+                        @Localizer["add_selected_product"]
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+

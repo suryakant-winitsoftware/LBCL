@@ -1,0 +1,207 @@
+﻿@page "/capturepo"
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+@using WINITMobile.Pages.DialogBoxes;
+@inject Winit.Modules.ProductFeedback.BL.Interfaces.IProductFeedbackViewModel _viewModel;
+@inject Winit.Modules.PO.BL.Interfaces.IPOExecutionBL _poExecutionBL;
+@inject Winit.Modules.FileSys.BL.Interfaces.IFileSysBL _fileSysBL 
+@inject WINITMobile.Data.IImageUploadService _imageUploadService
+@inject Winit.Modules.StoreActivity.BL.Interfaces.IStoreActivityViewModel _StoreActivityViewmodel
+@inject Winit.Modules.SKU.BL.Interfaces.ISKUBL _skuBL
+
+<div class="container-fluid">
+    <div class="page-header" style="margin-top: 10px;">
+        <h2 style="width:70%" class="cls_main_heading">Capture PO</h2>     
+        <button style="float: right;" class="btn-add" @onclick="ShowAddProductDialog">
+            Add
+        </button>
+    </div>
+    <!-- Header with Add button -->
+    <div class="expiry-check-header">
+        <div class="store-info">
+            @* <div class="store-name">@(SelectedStoreItemView?.Name ?? "N/A")</div>
+            <div class="store-code">@(SelectedStoreItemView?.Code ?? "N/A")</div> *@
+        </div>
+
+    </div>
+    <div class="cls_container_div" style="display: flex; gap: 20px; align-items: flex-start; margin-top: 10px;">
+
+        <!-- Camera Section -->
+        <div style="width: 50%;">
+            <h5 class="cls_section_label1">Capture Image of PO</h5>
+            <FileCapture OnImageDeleteClick="OnImageDeleteClick"
+            OnImageCapture="OnImageCapture"
+            FolderPath="@ImgFolderPath"
+            FileName="CapturePO"
+            CaptureData="@fileCaptureData">
+            </FileCapture>
+        </div>
+
+        <!-- PO Number Section -->
+        <div style="width: 50%;">
+            <h5 class="cls_section_label1">PO Number</h5>
+            <input type="text" class="form-control" maxlength="20" placeholder="Enter PO Number" @bind="@captureItemPO.PONumber" />
+        </div>
+
+    </div>
+    <!-- Data Table -->
+
+    <div class="div1">
+        <table class="table" style="table-layout:fixed;">
+            <thead>
+                <tr>
+                    <th  style="width:50%">Item Code / Description</th>
+                    <th style="width:16%">Qty</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (displayItems?.Any() == true)
+                {
+                    @foreach (var item in displayItems)
+                    {
+                        <tr>
+                            <td>@item.SKUCode - @item.SKUName</td>
+                            <td>
+                                <input type="number" placeholder="Enter Qty"
+                                class="table-input"
+                                @bind="item.Qty" />
+                            </td>
+                            <td>
+                                <input type="number"
+                                class="table-input" placeholder="Enter Value"
+                                @bind="item.Value" />
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="3" style="text-align: center; padding: 10px;">
+                            No items added
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <label class="form-label" style="margin-bottom: 20px;font-size: 14px;color: black;font-weight: 600;margin-top:5px;width: 100%;float: left;text-align: left;">
+        Total PO Value: ₹@displayItems.Sum(p => p.TotalPOValue).ToString("0.00")
+    </label>
+
+
+</div>
+<div class="cls_dashboard_7">
+
+
+    <button class="cls_continue_btn" @onclick="SubmitPOData">Complete</button>
+</div>
+<!-- Dialog Box -->
+@if (IsPageLoader)
+{
+    <AddProductDialogBox T="WINITMobile.Pages.PriceCheck.Models.CapturePOItem"
+    DataSource="availableProducts.OrderBy(p => p.SKUName).ToList()"
+    FilterAction="filterAction"
+    SKUCode="@(e => e.SKUCode)"
+    SKUHeader="@(e => e.SKUName)"
+    ImageUrl="@(e => e.SKUImage)"
+    OnCancelClick="CancelAddProducts"
+    OnOkClick="AddProducts"
+    FilterDataList="filterDataList"
+    Rerender="true"
+    @ref="addProductDialog" />
+}
+
+    <style>
+        .form-control{font-size:13px;}
+        .cls_section_label1 {
+    font-size: 12px;
+    font-weight: 500;
+    color: #464850;
+    width: 100%;
+    margin-bottom: 3px;
+}
+    .expiry-check-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding:0px;
+        background: white;
+        border-bottom:0px solid #eee;width:100%;
+    }
+
+    .store-info {
+        flex: 1;
+    }
+
+    .store-name {
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: #333;
+    }
+
+    .store-code {
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .btn-add {
+        background-color: #1B478A;
+        color: white;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .expiry-table-wrapper {
+        padding: 16px;
+        overflow-x: auto;
+    }
+
+    .expiry-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .expiry-table th,
+    .expiry-table td {
+        padding:4px;
+        border: 1px solid #ddd;
+        text-align: left;
+    }
+
+    .table-input {
+        width: 100%;
+        padding: 6px 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .submit-section {
+        padding: 16px;
+        background: white;
+        border-top: 1px solid #eee;
+        position: sticky;
+        bottom: 0;
+    }
+
+    .btn-submit {
+        width: 100%;
+        background-color: #1B478A;
+        color: white;
+        padding: 12px;
+        border: none;
+        border-radius: 6px;
+        font-weight: 500;
+    }
+
+    .no-data {
+        padding: 32px;
+        text-align: center;
+        color: #666;
+    }
+</style>
+

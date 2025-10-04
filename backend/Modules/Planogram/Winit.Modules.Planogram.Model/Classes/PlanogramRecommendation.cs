@@ -1,0 +1,19 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Winit.Modules.Planogram.Model.Interfaces;
+
+namespace Winit.Modules.Planogram.Model.Classes
+{
+    public class PlanogramRecommendation : IPlanogramRecommendation
+    {
+        public string UID { get; set; }
+        public string CategoryCode { get; set; }
+        public decimal? ShareOfShelfCm { get; set; }
+        public string SelectionType { get; set; }
+        public string SelectionValue { get; set; }
+        public string RecommendedImagePath { get; set; }
+    }
+}

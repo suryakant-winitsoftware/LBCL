@@ -1,0 +1,42 @@
+﻿@inject Winit.Modules.Contact.Model.Interfaces.IContact Contact
+@inject Winit.Modules.Contact.BL.Interfaces.IContactBL ContactBL
+@using Microsoft.Extensions.Localization
+@using Winit.UIComponents.Common.LanguageResources.Mobile
+@inject Winit.UIComponents.Common.Language.ILanguageService _languageService
+@inject IStringLocalizer<LanguageKeys> Localizer
+    <div class="cls_main_sign_input_new1">
+    <div>@Localizer["mobile"] </div>
+        <div>
+            <input type="text" @bind="Contact.Mobile" />
+        </div>
+
+    <div>@Localizer["landline"] </div>
+        <div>
+            <input type="text" @bind="Contact.Mobile2" />
+        </div>
+
+    <div>@Localizer["email_id"] </div>
+        <div>
+            <input type="text" @bind="Contact.Email" />
+        </div>
+    </div>
+
+    <div class="cls_main_sign_input_new1">
+    <div>@Localizer["contact_person_name"] </div>
+        <div>
+            <input type="text" @bind="Contact.Name" />
+        </div>
+
+    <div>@Localizer["contact_person_mobile_number"] </div>
+        <div>
+            <input type="text" @bind="Contact.Phone" />
+        </div>
+
+    <div>@Localizer["contact_person_email_id"] </div>
+        <div>
+            <input type="text" @bind="Contact.Email2" />
+        </div>
+    </div>
+
+    <div><button class="btn" @onclick="Save">@SaveOrUpdate</button></div>
+

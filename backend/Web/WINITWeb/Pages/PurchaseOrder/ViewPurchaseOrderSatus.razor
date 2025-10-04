@@ -1,0 +1,35 @@
+﻿@page "/ViewPurchaseOrderStatus"
+@using Winit.UIComponents.Common.CustomControles
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.PurchaseOrder.BL.Interfaces.IViewPurchaseOrderStatusViewModel _viewModel
+@inject Winit.Modules.Common.UIState.Classes.BaseModuleState _stateService
+@inject Winit.Modules.Common.UIState.Classes.NavigationHistoryService _navigationhistory
+<PageHeaderAndFilter IDataBreadcrumbService="DataService"
+                     ColumnsForFilter="FilterColumns" IsSearchCriteriaNeeded="true"
+                     IsShowFilter="true" OnFilterApplied="OnFilterClick"/>
+<div class="dn">
+    <AuthorizeView Roles="ASM, Distributor">
+        <div class="cls_full_width">
+            <button class="cls_comman_btn" @onclick="CreateNewPurchaseOrder">Create New Purchase Order</button>
+        </div>
+    </AuthorizeView>
+</div>
+<div>
+    <Tabs TabItems="TabSelectionItems" OnTabSelect="OnTabSelect" IsCountRequired="true"/>
+</div>
+
+@if (_viewModel.DisplayHeaderList != null && GridColumns != null)
+{
+    <TableGridView Columns="GridColumns" DataSource="_viewModel.DisplayHeaderList" OnSort="OnSortClick"
+                   PageNumber="_viewModel.PageNumber" PageSize="_viewModel.PageSize" TotalItemsCount="_viewModel.TotalCount"
+                   ShowRecordsCount="true"
+                   IsPaginationRequired="true" OnPageChange="PageIndexChanged"/>
+    @* <Winit.UIComponents.Web.Paging.Paging CurrentPage="_viewModel.PageNumber" *@
+    @*                                       OnPageChange="PageIndexChanged" *@
+    @*                                       PageSize="_viewModel.PageSize" *@
+    @*                                       TotalItems="_viewModel.TotalCount"/> *@
+}
+else
+{
+    <p>Loading...</p>
+}

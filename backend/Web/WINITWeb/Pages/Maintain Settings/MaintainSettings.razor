@@ -1,0 +1,73 @@
+﻿@page "/MaintainSettings"
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize]
+<PageTitle>Maintain Settings</PageTitle>
+@using System.ComponentModel.DataAnnotations
+@using System.Linq
+@using Microsoft.JSInterop
+@using Newtonsoft.Json;
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.Setting.BL.Interfaces.IMaintainSettingViewModel _settingViewModel;
+@inject Winit.UIComponents.Common.IAlertService _AlertMessgae;
+
+@using Winit.UIComponents.Web.Filter
+@using Winit.UIModels.Common.Filter
+
+
+<div>
+
+   @*  <button class="cls_add_new_sec" style="float:right;margin-right:0px" @onclick="ShowFilter">@Localizer["filter"]</button>
+    <Filter @ref="filterRef" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+            OnFilterApplied=@OnFilterApply /> *@
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+                         OnFilterApplied="@OnFilterApply" />
+
+</div>
+@if (IsEditPopUp)
+{
+    <PopUp Title=@Localizer["setting_edit"] OkbtnText=@Localizer["update"] CancelbtnText=@Localizer["back"] OnOkClick="UpdateSetting" OnCloseClick="OnCancelFromBackBTnPopUpClick">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="cls_new_lab">@Localizer["type"]</label>
+                    <input class="form-control" type="text" @bind-value="_settingViewModel.setting.Type" disabled="">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="cls_new_lab">@Localizer["name"]</label>
+                    <input class="form-control" type="text" @bind-value="_settingViewModel.setting.Name" disabled="">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="cls_new_lab">@Localizer["value"]</label>
+                    @if (_settingViewModel.setting.DataType == "string" || _settingViewModel.setting.DataType == "Int")
+                    {
+                        <input class="form-control" type="text" @bind="_settingViewModel.setting.Value">
+                    }
+                    else if (_settingViewModel.setting.DataType == "Boolean")
+                    {
+                        <select class="form-control custom-select" @bind="_settingViewModel.setting.Value" name="datatype">
+                            <option value="1">@Localizer["yes"]</option>
+                            <option value="0">@Localizer["no"]</option>
+                        </select>
+                    }
+                </div>
+            </div>
+        </div>
+    </PopUp>
+}
+@if (IsBackBtnPopUp)
+{
+    <WinIt.Pages.PopUp Title=@Localizer["back"] OkbtnText=@Localizer["ok"] CancelbtnText=@Localizer["cancel"] OnOkClick="OnOkFromUpdateBTnPopUpClick" OnCloseClick="OnCloseFromUpdateBTnPopUpClick">
+        <label>
+            @Localizer["are_you_sure_you_want_to_cancel?_your_work_will_be_lost."]
+        </label>
+    </WinIt.Pages.PopUp>
+}
+@if (IsInitialized)
+{
+    <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" DataSource="_settingViewModel.SettingGridviewList" OnSort="OnSortApply" PageNumber="_settingViewModel.PageNumber" PageSize="_settingViewModel.PageSize" TotalItemsCount="_settingViewModel.TotalItemsCount" ShowRecordsCount="true" />
+    <Winit.UIComponents.Web.Paging.Paging CurrentPage="_settingViewModel.PageNumber" OnPageChange="_settingViewModel.PageIndexChanged" PageSize="_settingViewModel.PageSize" TotalItems="_settingViewModel.TotalItemsCount" />
+ }

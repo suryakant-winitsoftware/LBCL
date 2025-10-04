@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Classes\SqliteSyncDataInsertDL.cs" />
+    <Compile Remove="Interfaces\ISyncDataInsertDL.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Address\Winit.Modules.Address.Model\Winit.Modules.Address.Model.csproj" />
+    <ProjectReference Include="..\..\Base\Winit.Modules.Base.DL\Winit.Modules.Base.DL.csproj" />
+    <ProjectReference Include="..\..\CaptureCompetitor\Winit.Modules.CaptureCompetitor.Model\Winit.Modules.CaptureCompetitor.Model\Winit.Modules.CaptureCompetitor.Model.csproj" />
+    <ProjectReference Include="..\..\CollectionModule\Winit.Modules.CollectionModule.Model\Winit.Modules.CollectionModule.Model.csproj" />
+    <ProjectReference Include="..\..\ExpiryCheck\Winit.Modules.ExpiryCheck.Model\Winit.Modules.ExpiryCheck.Model.csproj" />
+    <ProjectReference Include="..\..\JourneyPlan\Winit.Modules.JourneyPlan.Model\Winit.Modules.JourneyPlan.Model.csproj" />
+    <ProjectReference Include="..\..\Merchandiser\Winit.Modules.Merchandiser.Model\Winit.Modules.Merchandiser.Model.csproj" />
+    <ProjectReference Include="..\..\PO\Winit.Modules.PO.Model\Winit.Modules.PO.Model.csproj" />
+    <ProjectReference Include="..\..\ReturnOrder\Winit.Modules.ReturnOrder.Model\Winit.Modules.ReturnOrder.Model.csproj" />
+    <ProjectReference Include="..\..\SalesOrder\Winit.Modules.SalesOrder.Model\Winit.Modules.SalesOrder.Model.csproj" />
+    <ProjectReference Include="..\..\SKU\Winit.Modules.SKU.Model\Winit.Modules.SKU.Model.csproj" />
+    <ProjectReference Include="..\..\StockUpdater\Winit.Modules.StockUpdater.Model\Winit.Modules.StockUpdater.Model.csproj" />
+    <ProjectReference Include="..\..\StoreCheck\Winit.Modules.StoreCheck.Model\Winit.Modules.StoreCheck.Model.csproj" />
+    <ProjectReference Include="..\..\WHStock\Winit.Modules.WHStock.Model\Winit.Modules.WHStock.Model.csproj" />
+    <ProjectReference Include="..\Winit.Modules.Syncing.Model\Winit.Modules.Syncing.Model.csproj" />
+  </ItemGroup>
+</Project>

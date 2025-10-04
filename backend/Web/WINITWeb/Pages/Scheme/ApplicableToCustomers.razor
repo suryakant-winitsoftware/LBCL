@@ -1,0 +1,89 @@
+﻿@using Winit.Modules.Store.Model.Interfaces
+<div class="cls_section">
+    <h3 class="cls_container_p_full"><span class="cls_section_div_purchase2_span">*</span>Applicable to Customer</h3>
+
+    <div class="cls_section_div_sku">
+        <label class="cls_section_div_purchase2_label">Broad Classification</label>
+        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="@BroadClassificationDDL"
+                                                           Disabled="@(IsDisable)"
+                                                           IsButtonVisible=true
+                                                           Title="Broad Classification"
+                                                           _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Multiple"
+                                                           OnSelect="@((e)=>OnBroadClassificationSelect.InvokeAsync(e))" />
+    </div>
+    <div class="cls_section_div_sku">
+        <label class="cls_section_div_purchase2_label">Branch</label>
+        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="@BranchDDL"
+                                                           _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Multiple"
+                                                           IsButtonVisible=true Title="Branch"
+                                                           Disabled="@(IsDisable)"
+                                                           OnSelect="@((e)=>OnBranchSelect.InvokeAsync(e))" />
+    </div>
+    <div class="cls_section_div_sku">
+        <label class="cls_section_div_purchase2_label">Channel Partner</label>
+        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="@ChannelPartner"
+                                                           Title="Channel Partner"
+                                                           _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Multiple"
+                                                           IsButtonVisible=true
+                                                           Disabled="@(IsDisable)"
+                                                           OnSelect="@((e)=>OnChannelPartnerSelect.InvokeAsync(e))" />
+    </div>
+    @if (IsShowAllCustomersneeded)
+    {
+        <div class="cls_section_div_sku">
+            <a @onclick=@OnShowAllClick class="cls_app_cus_label">Show All Customers</a>
+        </div>
+    }
+    @if (_showAllCustomers)
+    {
+        <PopUpStatic OnCloseClick=@(()=>_showAllCustomers=false) DisableOkBtn="true" CancelbtnText="Close">
+            <div class="cls_popupstatic_div">
+                @if (stores.Any())
+                {
+                    @foreach (var store in stores)
+                    {
+                        <label class="cls_popupstatic_label">@($"[{store.Code}]{store.Name}")</label>
+                    }
+                }
+                else
+                {
+                    <label class="cls_popupstatic_label">@($"no records")</label>
+                }
+
+            </div>
+        </PopUpStatic>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public List<ISelectionItem> BroadClassificationDDL { get; set; }
+    [Parameter]
+    public List<ISelectionItem> BranchDDL { get; set; }
+    [Parameter]
+    public List<ISelectionItem> ChannelPartner { get; set; }
+    [Parameter]
+    public bool IsDisable { get; set; }
+
+    [Parameter]
+    public EventCallback<DropDownEvent> OnBroadClassificationSelect { get; set; }
+    [Parameter]
+    public EventCallback<DropDownEvent> OnBranchSelect { get; set; }
+    [Parameter]
+    public EventCallback<DropDownEvent> OnChannelPartnerSelect { get; set; }
+    [Parameter]
+    public Func<List<IStore>> OnShowAllcustomers { get; set; }
+
+    [Parameter]
+    public bool IsShowAllCustomersneeded { get; set; }
+
+    protected bool _showAllCustomers;
+    List<IStore> stores = [];
+    private void OnShowAllClick()
+    {
+        stores.Clear();
+        stores.AddRange(OnShowAllcustomers.Invoke());
+        _showAllCustomers = true;
+        StateHasChanged();
+    }
+}

@@ -1,0 +1,213 @@
+﻿@page "/Deliveryitemview/{OrderNumber}"
+
+<h1> Preview page </h1>
+@code{
+    [Parameter]
+    public string OrderNumber { get; set; }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@* @using Winit.Modules.SalesOrder.Model.Interfaces;
+@inject Winit.Modules.SalesOrder.BL.UIInterfaces.ISalesSummaryViewModel _SalesSummeryViewModel
+@inject Winit.Modules.SalesOrder.BL.Interfaces.ISalesOrderBL _SalesOrderBL
+<div>
+    <h1>Order Details</h1>
+    @if (salesOrder != null)
+    {
+        
+        <h3>Order Lines</h3>
+        @foreach (var orderLine in salesOrderLines)
+        {
+            <div>
+                <p>Line Number: @orderLine.LineNumber</p>
+                <p>SKU Code: @orderLine.ItemCode</p>
+                <!-- Display other order line details here -->
+            </div>
+        }
+    }
+</div>
+@code {
+    [Parameter]
+    public string OrderNumber { get; set; }
+    private Winit.Modules.SalesOrder.Model.Interfaces.ISalesOrderViewModel salesOrder;
+    private List<ISalesOrderLine> salesOrderLines;
+    private IEnumerable<Winit.Modules.SalesOrder.Model.Interfaces.ISalesOrderViewModel> data;
+    protected async override Task OnInitializedAsync()
+    {
+        List<Winit.Shared.Models.Enums.FilterCriteria> filterlist = new List<Winit.Shared.Models.Enums.FilterCriteria>();
+        filterlist.Add(new Winit.Shared.Models.Enums.FilterCriteria("SalesOrderNumber", OrderNumber, Winit.Shared.Models.Enums.FilterType.Equal));
+        data = await _SalesOrderBL.SelectSalesOrderDetailsAll(null,0,0,filterlist);
+        if (data != null && data.Any())
+        {
+            salesOrder = data.First();
+            salesOrderLines = salesOrder.SalesOrderLine;
+        }
+    }
+} *@
+@* @page "/productdetail/{OrderNumber}"
+@using Winit.Modules.SalesOrder.Model.Interfaces
+@using Winit.Modules.SalesOrder.Model.UIInterfaces
+@inject Winit.Modules.SalesOrder.BL.UIInterfaces.ISalesSummaryViewModel _SalesSummeryViewModel
+@inject Winit.Modules.SalesOrder.BL.Interfaces.ISalesOrderBL _SalesOrderBL
+
+<div>
+</div>
+
+@code {
+    [Parameter]
+    public string OrderNumber { get; set; }
+    private IEnumerable<Winit.Modules.SalesOrder.Model.Interfaces.ISalesOrderViewModel> data;
+
+    // Define reverse conversion methods
+    private Winit.Modules.SalesOrder.Model.Classes.SalesOrder ReverseConvertToSalesOrder(Winit.Modules.SalesOrder.Model.Interfaces.ISalesOrderViewModel viewModel)
+    {
+        // Map properties from viewModel to SalesOrder
+        var salesOrder = new Winit.Modules.SalesOrder.Model.Classes.SalesOrder
+        {
+            // Map properties accordingly
+        };
+        return salesOrder;
+    }
+
+    private Winit.Modules.SalesOrder.Model.Classes.SalesOrderLine ReverseConvertToSalesOrderLine(Winit.Modules.SalesOrder.Model.UIInterfaces.ISalesOrderItemView salesOrderItemView)
+    {
+        // Map properties from salesOrderItemView to SalesOrderLine
+        var salesOrderLine = new Winit.Modules.SalesOrder.Model.Classes.SalesOrderLine
+        {
+            // Map properties accordingly
+        };
+        return salesOrderLine;
+    }
+
+    protected async override Task OnInitializedAsync()
+    {
+        List<Winit.Shared.Models.Enums.FilterCriteria> filterlist = new List<Winit.Shared.Models.Enums.FilterCriteria>();
+        filterlist.Add(new Winit.Shared.Models.Enums.FilterCriteria("SalesOrderNumber", OrderNumber, Winit.Shared.Models.Enums.FilterType.Equal));
+        data = await _SalesOrderBL.SelectSalesOrderDetailsAll(null, 0, 0, filterlist);
+
+        // Now, you can use the reverse conversion methods to map the data
+        if (data != null && data.Any())
+        {
+            var salesOrderViewModel = data.First(); // Assuming you have a single item
+            var salesOrder = ReverseConvertToSalesOrder(salesOrderViewModel);
+
+            // You can similarly map salesOrder lines
+           // var salesOrderItemViews = salesOrderViewModel.SalesOrderItemViews;
+          //  var salesOrderLines = salesOrderItemViews.Select(ReverseConvertToSalesOrderLine).ToList();
+        }
+    }
+} *@
+@* @page "/productdetail/{OrderNumber}"
+@inject Winit.Modules.SalesOrder.BL.UIInterfaces.ISalesSummaryViewModel _SalesSummeryViewModel
+@inject Winit.Modules.SalesOrder.BL.Interfaces.ISalesOrderBL _SalesOrderBL
+<div>
+    <h1>Order Details</h1>
+    @if (salesOrder != null)
+    {
+        <div>
+            <h2>Order Number: @salesOrder.SalesOrderNumber</h2>
+            <p>Order Date: @salesOrder.OrderDate</p>
+            <!-- Display other order details here -->
+        </div>
+        <h3>Order Lines</h3>
+        @foreach (var orderLine in salesOrderLines)
+        {
+            <div>
+                <p>Line Number: @orderLine.LineNumber</p>
+                <p>SKU Code: @orderLine.ItemCode</p>
+                <!-- Display other order line details here -->
+            </div>
+        }
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string OrderNumber { get; set; }
+    private Winit.Modules.SalesOrder.Model.Classes.SalesOrder salesOrder;
+    private List<Winit.Modules.SalesOrder.Model.Classes.SalesOrderLine> salesOrderLines;
+
+    protected async override Task OnInitializedAsync()
+    {
+        List<Winit.Shared.Models.Enums.FilterCriteria> filterlist = new List<Winit.Shared.Models.Enums.FilterCriteria>();
+        filterlist.Add(new Winit.Shared.Models.Enums.FilterCriteria("SalesOrderNumber", OrderNumber, Winit.Shared.Models.Enums.FilterType.Equal));
+        var data = await _SalesOrderBL.SelectSalesOrderDetailsAll(null, 0, 0, filterlist);
+
+        if (data != null && data.Any())
+        {
+           // var salesOrderViewModel = data.First(); // Assuming you have one order per order number
+            //var salesOrderViewModel = data.First() as Winit.Modules.SalesOrder.Model.Classes.SalesOrderViewModelDCO; 
+            var salesOrderViewModel = data.First() as Winit.Modules.SalesOrder.Model.Classes.SalesOrderViewModel;
+        // Convert SalesOrderViewModel to your model class
+
+            salesOrder = ConvertToSalesOrder(salesOrderViewModel);
+            salesOrderLines = ConvertToSalesOrderLines(salesOrderViewModel.SalesOrderLine);
+        }
+    }
+
+    public Winit.Modules.SalesOrder.Model.Classes.SalesOrder ConvertToSalesOrder(Winit.Modules.SalesOrder.Model.Interfaces.ISalesOrderViewModel salesOrderViewModel)
+    {
+        var salesOrder = new Winit.Modules.SalesOrder.Model.Classes.SalesOrder
+            {
+                SalesOrderNumber = salesOrderViewModel.SalesOrderNumber,
+                OrderDate = salesOrderViewModel.OrderDate,
+                // Set other properties here
+            };
+        return salesOrder;
+    }
+
+    public List<Winit.Modules.SalesOrder.Model.Classes.SalesOrderLine> ConvertToSalesOrderLines(List<Winit.Modules.SalesOrder.Model.Classes.SalesOrderLine> salesOrderLineViewModels)
+    {
+        var salesOrderLines = new List<Winit.Modules.SalesOrder.Model.Classes.SalesOrderLine>();
+        foreach (var salesOrderLineViewModel in salesOrderLineViewModels)
+        {
+            var salesOrderLine = new Winit.Modules.SalesOrder.Model.Classes.SalesOrderLine
+                {
+                    LineNumber = salesOrderLineViewModel.LineNumber,
+                    ItemCode = salesOrderLineViewModel.ItemCode,
+
+                    // Set other properties here
+                };
+            salesOrderLines.Add(salesOrderLine);
+        }
+        return salesOrderLines;
+    }
+} *@
+
+

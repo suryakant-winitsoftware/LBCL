@@ -1,0 +1,27 @@
+﻿
+<style >
+.textblue {
+    color: #132e97;
+}
+
+.skuinline p {
+    text-wrap: nowrap;
+}
+
+.my-btn {
+    border-color: #003898;
+    color: #003898;
+}
+
+    .my-btn:hover {
+        background-color: #003898;
+    }
+
+.detail {
+    text-align: center;
+}
+
+    .detail p {
+        display: inline-block;
+        margin: 0;
+        </style>

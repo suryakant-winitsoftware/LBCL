@@ -1,0 +1,280 @@
+﻿@page "/Customertemview"
+@inject NavigationManager NavigationManager;
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+@inject WINITMobile.Data.SideBarService _sideBarService
+@inject Winit.Modules.JourneyPlan.BL.Interfaces.IJourneyPlanViewModelFactory _viewmodel
+@inject Winit.Modules.Store.BL.Interfaces.IStoreBL _storeBL
+@inject Winit.Modules.Address.BL.Interfaces.IAddressBL _addressbl
+<div class="bg-white shadow">
+    <div class="container" style="padding:0px;">
+        <div class="cls_n_map_main">
+            <div class="cls_n_map" id="customerMap" style="height: 200px;"></div>
+           @*  <div class="cls_n_map_btn_main1">
+                <a @onclick="OpenAlert">@Localizer["tele_order"]</a> <a @onclick="RemoteCollection">@Localizer["remote_collections"]</a>
+            </div> *@
+            <div class="cls_n_map_btn_main2">
+                <a>
+                    <span><img style="width:16px;" src="/Images/navigate.png" /></span> <p @onclick="OpenDirections">@Localizer["navigate"]</p>
+                </a>
+            </div>
+
+        </div>
+        <div class="py-6">
+            <div class="cls_Dash_customer_preview">
+                @if (SelectedStoreItemView != null)
+                {
+                    <div class="cls_Dash_customer_preview_rep">
+                        <div class="cls_Dash_customer_preview_rep1">
+                            <div style="width:85%;float:left">
+                                <h3 class="text-lg font-semibold">@SelectedStoreItemView.Name</h3>
+                                <p class="text-sm text-gray-600">@SelectedStoreItemView.Address</p>
+                            </div>
+                            <div style="width: auto;float: right;">
+                                <button style="margin-right:10px;float:left;border:0px;background:none;padding:0px;" type="button" @onclick="ShowPopupAction"><img style="width:18px;" src="/Images/edit.png"></button>
+                                @if (SelectedStoreItemView.CurrentVisitStatus == Winit.Shared.Models.Constants.StoryHistoryStatus.VISITED)
+                                {
+                                    // if visted status no skip button
+                                }
+                                else
+                                {
+                                    <button style="display:none" class="cls_btn_secondary" @onclick="HandleSkipClicked">@Localizer["skip"]</button>
+                                }
+                            </div>
+
+
+                            <div class="cls_Dash_customer_preview_rep3">
+                                <div class="cls_Dash_customer_preview_rep3_rep dn">
+                                    <p>@Localizer["order_profile"]:</p><label>@Localizer["standing"]</label>
+                                </div>
+                                <div class="cls_Dash_customer_preview_rep3_rep">
+                                    <p>@Localizer["customer_code"]:</p><label>@SelectedStoreItemView.Code</label>
+                                </div>
+                                <div class="cls_Dash_customer_preview_rep3_rep dn">
+                                    <p>@Localizer["contact_person"]:</p><label>@SelectedStoreItemView.StoreNumber &nbsp;</label>
+                                </div>
+                                <div class="cls_Dash_customer_preview_rep3_rep dn">
+                                    <p>@Localizer["mobile_number"]:</p><label> @SelectedStoreItemView.ContactNumber &nbsp;</label>
+                                </div>
+                                <div class="cls_Dash_customer_preview_rep3_rep">
+                                    <p>@Localizer["channel"]:</p><label>@SelectedStoreItemView.ChannelName &nbsp;</label>
+                                </div>
+                                <div class="cls_Dash_customer_preview_rep3_rep dn">
+                                    <p>@Localizer["customer_type"]:</p><label>@SelectedStoreItemView.SelectedStoreCredit.CreditType &nbsp;</label>
+                                </div>
+                                <div class="cls_Dash_customer_preview_rep3_rep dn">
+                                    <p>@Localizer["available_credit_limit"]:</p><label>@SelectedStoreItemView.SelectedStoreCredit.AvailableBalance &nbsp;</label>
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <div class="cls_Dash_customer_preview_rep22" style="display:none">
+
+                            <div class="cls_Dash_customer_preview_rep22_rep">
+                                <p>@Localizer["growth"]</p>
+                                <span><img style="width:28px;" src="/Images/Growth.png"></span>
+                                <label>@Localizer["gt"]</label>
+                            </div>
+                            <div class="cls_Dash_customer_preview_rep22_rep">
+                                <p>@Localizer["last_month_billed"]</p>
+                                <span><img style="width:28px;" src="/Images/Last_Month_Billed.png"></span>
+                                <label>@Localizer["yes"]</label>
+                            </div>
+                            <div class="cls_Dash_customer_preview_rep22_rep">
+                                <p>@Localizer["outlet_subtype"]</p>
+                                <span><img style="width:28px;" src="/Images/Outlet_Subtype.png"></span>
+                                <label>&nbsp;</label>
+                            </div>
+                            <div class="cls_Dash_customer_preview_rep22_rep">
+                                <p>@Localizer["store_growth"]</p>
+                                <span><img style="width:28px;" src="/Images/Store_Growth.png"></span>
+                                <label>@Localizer["monthly"]</label>
+                            </div>
+
+                        </div>
+
+                    </div>
+                }
+            </div>
+            <div class="cls_Dash_customer_preview_rep33" style="padding-left:10px;display:none;">
+                <div class="cls_Dash_customer_preview_rep33_rep dn">
+                    <span><img style="width:14px;" src="/Images/icon_star.png"></span> <p>@Localizer["msl"]</p>
+                </div>
+                <div class="cls_Dash_customer_preview_rep33_rep">
+                    <span><img style="width:14px;" src="/Images/icon_tag.png"></span> <p>@Localizer["promo"]</p>
+                </div>
+                <div class="cls_Dash_customer_preview_rep33_rep">
+                    <span><img style="width:14px;" src="/Images/icon_box.png"></span> <p>@Localizer["new"]</p>
+                </div>
+                <div class="cls_Dash_customer_preview_rep33_rep dn">
+                    <p>@Localizer["frequently_buying_items"]</p>
+                </div>
+            </div>
+
+
+@*             <div class="cls_Dash_customer_preview_rep44">
+                <div class="cls_Dash_customer_preview_rep44_left">
+                    <img style="width:36px;" src="/Images/basil_invoice.png">
+                </div>
+                <div class="cls_Dash_customer_preview_rep44_right">
+                    <p>@Localizer["current_outstanding"]</p>
+                    <h3>@SelectedStoreItemView.SelectedStoreCredit.TotalBalance</h3>
+                </div>
+            </div>
+            <div class="cls_Dash_customer_preview_rep55_main">
+                <div class="cls_Dash_customer_preview_rep55">
+                    <div class="cls_Dash_customer_preview_rep55_rep">
+                        <div class="cls_Dash_customer_preview_rep55_rep_top">
+                            <span> <img style="width:30px;" src="/Images/ic_n_1.png"></span>
+                            <p>@Localizer["credit_limit"]</p>
+
+                        </div>
+                        <div class="cls_Dash_customer_preview_rep55_rep_bottom">
+                            <h3>@SelectedStoreItemView.SelectedStoreCredit.CreditLimit K</h3><p>@Localizer["sar"]</p>
+                        </div>
+                    </div>
+                    <div class="cls_Dash_customer_preview_rep55_rep" style="margin-right:0px;">
+                        <div class="cls_Dash_customer_preview_rep55_rep_top">
+                            <span> <img style="width:30px;" src="/Images/ic_n_1.png"></span>
+                            <p>@Localizer["available_limit"]</p>
+
+                        </div>
+                        <div class="cls_Dash_customer_preview_rep55_rep_bottom">
+                            <h3>@SelectedStoreItemView.SelectedStoreCredit.AvailableBalance K</h3><p>@Localizer["sar"]</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="cls_Dash_customer_preview_rep55">
+                    <div class="cls_Dash_customer_preview_rep55_rep">
+                        <div class="cls_Dash_customer_preview_rep55_rep_top">
+                            <span> <img style="width:30px;" src="/Images/ic_n_1.png"></span>
+                            <p>@Localizer["due_amount"]</p>
+
+                        </div>
+                        <div class="cls_Dash_customer_preview_rep55_rep_bottom">
+                            <h3>@SelectedStoreItemView.SelectedStoreCredit.TotalBalance K</h3><p>@Localizer["sar"]</p>
+                        </div>
+                    </div>
+                    <div class="cls_Dash_customer_preview_rep55_rep" style="margin-right:0px;">
+                        <div class="cls_Dash_customer_preview_rep55_rep_top">
+                            <span> <img style="width:30px;" src="/Images/ic_n_1.png"></span>
+                            <p>@Localizer["todays_target"]</p>
+
+                        </div>
+                        <div class="cls_Dash_customer_preview_rep55_rep_bottom">
+                            <h3>0 K</h3><p>@Localizer["sar"]</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="cls_Dash_customer_preview_rep55">
+                    <div class="cls_Dash_customer_preview_rep55_rep">
+                        <div class="cls_Dash_customer_preview_rep55_rep_top">
+                            <span> <img style="width:30px;" src="/Images/ic_n_1.png"></span>
+                            <p>@Localizer["last_invoice"]</p>
+
+                        </div>
+                        <div class="cls_Dash_customer_preview_rep55_rep_bottom">
+                            <h3>0 K</h3><p>@Localizer["sar"]</p>
+                        </div>
+                    </div>
+                    <div class="cls_Dash_customer_preview_rep55_rep" style="margin-right:0px;">
+                        <div class="cls_Dash_customer_preview_rep55_rep_top">
+                            <span> <img style="width:30px;" src="/Images/ic_n_1.png"></span>
+                            <p>@Localizer["mtd_sales_value"]</p>
+
+                        </div>
+                        <div class="cls_Dash_customer_preview_rep55_rep_bottom">
+                            <h3>0 K</h3><p>@Localizer["sar"]</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="cls_Dash_customer_preview_rep66">
+                <h3>@Localizer["history"]</h3>
+                <p>Oct-2023</p>
+                <span>
+                    <img style="width:100%;" src="/Images/ic_chat.png">
+                </span>
+            </div> *@
+            <div class="cls_Dash_customer_preview_rep77">
+                @if (SelectedStoreItemView.CurrentVisitStatus == Winit.Shared.Models.Constants.StoryHistoryStatus.VISITED)
+                {
+                    // if visted status no skip button
+                }
+                else
+                {
+                    <a @onclick="HandleSkipClicked" class="cls_btn_check1">@Localizer["skip"]</a>
+                }
+                <a @onclick="ShowReasonsPopup" class="cls_btn_check2">@Localizer["check_in"]</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container mt-4">
+    <!-- Custom Dialog Container -->
+    <div style="@($"display: {(ShowPopup ? "block" : "none")}")"></div>
+
+    <div class="modal fade show" role="alert" style="@($"display: {(ShowPopup ? "block" : "none")}")">
+        <div class="modal-dialog cls_location_modal_popup">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@Localizer["location"]</h5>
+                    <button type="button" class="close" @onclick="HidePopup">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="modal-body">
+                    <!-- Current Location Section -->
+                    <div class="cls_location_popup">
+                        <h6>Current Shop Location</h6>
+                        <div class="cls_location_popup_rep">
+                            <p>@Localizer["latitude"]:</p><label>@(SelectedStoreItemView?.Latitude ?? "0")</label>
+                        </div>
+                        <div class="cls_location_popup_rep">
+                            <p>@Localizer["longitude"]:</p><label>@(SelectedStoreItemView?.Longitude ?? "0")</label>
+                        </div>
+
+                    </div>
+                    <div class="cls_location_popup">
+                        <h6>@Localizer["new"]</h6>
+                        <div class="cls_location_popup_rep">
+                            <p>@Localizer["latitude"]:</p><label>@NewLatitude</label>
+                        </div>
+                        <div class="cls_location_popup_rep">
+                            <p>@Localizer["longitude"]:</p><label>@NewLongitude</label>
+                        </div>
+
+                    </div>
+                    <div class="cls_location_popup">
+                        <h6>Distance</h6>
+                        <div class="cls_location_popup_rep cls_width_100">
+                            <p>@Localizer["distance"] GPS coordinates:</p><label>@DisplayDistanceCordinate</label>
+                        </div>
+
+                    </div>
+                    @*  <div class="cls_location_popup">
+                        <h6>Distance</h6>
+                        <div class="cls_location_popup_rep cls_width_100">
+                            <p>Road Distance(Vehicle):</p><label>@DisplayDistance</label>
+                        </div>
+
+                    </div> *@
+
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="modal-footer">
+                    <button type="button" class="cls_btn_primary" @onclick="UpdateLocation">@Localizer["update"]</button>
+                    <button type="button" class="cls_btn_secondary" @onclick="HidePopup">@Localizer["close"]</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@code {
+    
+}

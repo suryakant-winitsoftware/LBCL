@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <UserSecretsId>88ef2429-40c4-439c-9c74-963f7235087a</UserSecretsId>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Classes\Store\**" />
+    <Compile Remove="Interfaces\Store\**" />
+    <EmbeddedResource Remove="Classes\Store\**" />
+    <EmbeddedResource Remove="Interfaces\Store\**" />
+    <None Remove="Classes\Store\**" />
+    <None Remove="Interfaces\Store\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.0" />
+    <PackageReference Include="Npgsql" Version="7.0.7" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="8.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WINITSharedObjects\WINITSharedObjects.csproj" />
+  </ItemGroup>
+</Project>

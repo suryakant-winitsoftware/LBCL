@@ -1,0 +1,186 @@
+﻿@page "/balanceconfirmation"
+@inject IJSRuntime JSRuntime
+@inject HttpClient Http
+@inject Winit.Modules.CollectionModule.BL.Interfaces.IBalanceConfirmationViewModel _balanceConfirmationViewmodel
+
+
+@if (IsInitialised)
+{
+    <script>
+        function downloadPdf(base64String, fileName) {
+            const link = document.createElement('a');
+            link.href = 'data:application/pdf;base64,' + base64String;
+            link.download = fileName;
+            document.body.appendChild(link); // Append link to body to ensure it's in the DOM
+            link.click();
+            document.body.removeChild(link); // Clean up
+        }
+    </script>
+
+    <PageHeaderAndFilter IDataBreadcrumbService="iDataBreadcrumbService"></PageHeaderAndFilter>
+@*     <div class="card p-3 mb-4" style="width: 1820px;border-radius: 10px;">
+        <div class="row align-items-center justify-content-between">
+            <div class="d-flex flex-column">
+                @if (!IsView)
+                {
+                    <div class="d-flex flex-row">
+                        <div class="col-md-2 d-flex flex-column ml-3">
+                            <button class="cls_wastage_btn" style="margin: 0px 2%;width: 96%;" @onclick="DownloadPDF">
+                                Export To PDF
+                            </button>
+                        </div>
+                        @if (_balanceConfirmationViewmodel.BalanceConfirmationDetails.Status == "Pending")
+                        {
+                            <div class="col-md-2">
+                                <button class="cls_wastage_btn" style="margin: 0px 2%;width: 96%;" @onclick="RedirectToConfirmation">
+                                    Balance Confirmation
+                                </button>
+                            </div>
+                        }
+                    </div>
+                }
+                <div style="margin-bottom: 20px;"></div>
+                <div>
+                    <div class="col-md-4" style="margin-left: 20px;font-size:14px;font-weight:700;">
+                        <label style="color:gray;">Total Outstanding Balance :</label>
+                        <span style="color:red;">@FormatNumberInIndianStyle(_balanceConfirmationViewmodel.BalanceConfirmationDetails.ClosingBalance)</span>
+                    </div>
+                </div>
+                <div style="margin-bottom: 10px;"></div>
+                <div>
+                    <div class="d-flex flex-row">
+                        <div class="col-md-4" style="font-size:14px;font-weight:700;margin-left: 20px;">
+                            <label style="color:gray;">As on: @DateFormat(_balanceConfirmationViewmodel.BalanceConfirmationDetails.GeneratedOn)   </label>
+                            <span style="color:orange;margin-left: 15px;">@_balanceConfirmationViewmodel.BalanceConfirmationDetails.Status</span>
+                            @if (_balanceConfirmationViewmodel.BalanceConfirmationDetails.Status != "Pending")
+                            {
+                                <a href="#" style="margin-left: 15px;" @onclick:preventDefault @onclick="@(ViewDetails)">View Details</a>
+                            }
+                        </div>
+                        @if (!IsView)
+                        {
+                            <div class="col-8">
+                                <button class="cls_wastage_btn" style="margin: 0px 78%;width: 20%;" @onclick="RedirectToViewHistory">
+                                    View History
+                                </button>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 text-center">
+            </div>
+
+            <div class="col-md-2 text-right mr-3">
+            </div>
+
+        </div>
+    </div> *@
+
+
+    <div class="cls_balance_section">
+        @if (!IsView)
+        {
+            <div class="cls_balance_button">
+
+                <button class="cls_balance_button1" @onclick="DownloadPDF">Export to PDF</button>
+
+                @if (_balanceConfirmationViewmodel.BalanceConfirmationDetails.Status == "Pending")
+                {
+                    <button class="cls_balance_button2" @onclick="RedirectToConfirmation">Balance Confirmation</button>
+                }
+            </div>
+        }
+
+        <div class="cls_container_div1">
+            <div class="cls_balance_container_left">
+
+        <div class="cls_balance_container">
+            <label class="cls_container_balance">Total Outstanding Balance : </label>
+            <span class="cls_container_balance_price">@FormatNumberInIndianStyle(_balanceConfirmationViewmodel.BalanceConfirmationDetails.ClosingBalance)</span>
+
+        </div>
+        <div class="cls_balance_container">
+            <label class="cls_container_date">As on: @DateFormat(_balanceConfirmationViewmodel.BalanceConfirmationDetails.GeneratedOn)  </label>
+            <span class="cls_container_balance_confirmation">@_balanceConfirmationViewmodel.BalanceConfirmationDetails.Status</span>
+            @if (_balanceConfirmationViewmodel.BalanceConfirmationDetails.Status != "Pending")
+            {
+                <a href="#" style="margin-left: 15px;" @onclick:preventDefault @onclick="@(ViewDetails)">View Details</a>
+            }
+
+            
+
+        </div>
+        </div>
+            <div class="cls_add_scheme_right1">
+            @if (!IsView)
+            {
+          
+                    <button class="cls_comman_btn1" @onclick="RedirectToViewHistory">
+                        View History
+                    </button>
+                
+            }
+            </div>
+    </div>
+        
+
+    </div>
+
+
+
+    <TableGridView Columns="StoreStatementColumns" DataSource="_balanceConfirmationViewmodel.StoreStatementDetails" OnSort="Product_OnSort"></TableGridView>
+}
+
+
+
+@if (ViewImageAndSignature)
+{
+    <div class="modal fade show" tabindex="-1" style="display: block;">
+        <div class="modal-dialog">
+            <div class="modal-content" style="padding: 10px; margin-left:0%;border-radius: 13px;top: 140px; height: 400px; width: 600px;">
+                <div class="modal-header" style="padding:0px;border:none;">
+                    <h5 class="modal-title" style="position: relative;font-size: 20px;font-weight: 700;top: 15px;margin-left: 25px;">
+                        Balance Confirmed
+                    </h5>
+                    <div>
+                        <button type="button" class="close w-16 h-16" @onclick="Close">
+                            <span aria-hidden="true" style="color:#000000;">&times;</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-body" style="display: flex; flex-direction: column; height: 100%;margin-left:10px;">
+                    <div>
+                        <div>
+                            <div class="d-flex flex-column">
+                                <span style="font-size:18px;font-weight:800;color:#19298B;">@FormatNumberInIndianStyle(_balanceConfirmationViewmodel.BalanceConfirmationDetails.ClosingBalance)</span>
+                                <span style="font-size: 14px; font-weight: 600; color: gray;">@DateFormat(_balanceConfirmationViewmodel.BalanceConfirmationDetails.GeneratedOn)</span>
+                            </div>
+                            <div style="margin-bottom: 20px;"></div>
+                            <div>
+                                <div class="d-flec flex-column">
+                                    <div>
+                                        <span style="font-size: 14px;font-weight: 700;color:#19298B;">Captured Selfie & Signature</span>
+                                    </div>
+                                    <div style="margin-bottom: 10px;"></div>
+                                    
+                                    <div class="d-flex flex-row">
+                                        <div>
+                                            <img style="width:250px;margin-right: 20px;" src="@_balanceConfirmationViewmodel.imageSrc" />
+                                        </div>
+                                        <div>
+                                            <img style="width:250px;" src="@_balanceConfirmationViewmodel.imageSrc" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 20px;"></div>
+                            <div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

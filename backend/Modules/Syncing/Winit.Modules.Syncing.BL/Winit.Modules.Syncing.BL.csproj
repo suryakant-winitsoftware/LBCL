@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Classes\SqliteSyncService.cs" />
+    <Compile Remove="Interfaces\ISqliteSyncService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Serilog" Version="2.12.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Address\Winit.Modules.Address.Model\Winit.Modules.Address.Model.csproj" />
+    <ProjectReference Include="..\..\Base\Winit.Modules.Base.BL\Winit.Modules.Base.BL.csproj" />
+    <ProjectReference Include="..\..\RabbitMQQueue\Winit.Modules.RabbitMQQueue.BL\Winit.Modules.RabbitMQQueue.BL.csproj" />
+    <ProjectReference Include="..\..\SalesOrder\Winit.Modules.SalesOrder.Model\Winit.Modules.SalesOrder.Model.csproj" />
+    <ProjectReference Include="..\..\SKU\Winit.Modules.SKU.Model\Winit.Modules.SKU.Model.csproj" />
+    <ProjectReference Include="..\..\StoreCheck\Winit.Modules.StoreCheck.Model\Winit.Modules.StoreCheck.Model.csproj" />
+    <ProjectReference Include="..\Winit.Modules.Syncing.DL\Winit.Modules.Syncing.DL.csproj" />
+    <ProjectReference Include="..\Winit.Modules.Syncing.Model\Winit.Modules.Syncing.Model.csproj" />
+  </ItemGroup>
+</Project>

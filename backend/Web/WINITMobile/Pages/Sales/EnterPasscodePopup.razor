@@ -1,0 +1,66 @@
+﻿@page "/enter-passcode"
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+@if (IsVisible)
+{
+    <div style="position: fixed; top: 0; right: 0; bottom: 0; left: 0; background-color: rgba(255, 255, 255, 0.7); backdrop-filter: blur(5px); z-index: 99;"></div>
+
+    <div style="display: block; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 30%; z-index: 100; background-color: white; border-radius: 10px; padding: 20px; margin: 10px; color: black;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h5 style="margin: 0; color: #333;">@Localizer["enter_passcode"]</h5>
+            <button @onclick="CloseModal" style="background: none; border: none; font-size: 24px;">&times;</button>
+        </div>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <div style="font-size: 50px;">🔒</div>
+            <p style="color: black; font: 11px; margin: 10px 0;">@Localizer["please_enter_the_passcode_for_below_passkey"]</p>
+            <h2 style="margin: 10px 0; color:  darkblue; font: 11px;">55124</h2>
+            <input type="password" placeholder=@Localizer["enter_here"] @bind="Passcode" style="width: 100%; padding: 10px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 5px;" />
+        </div>
+        @if (!string.IsNullOrEmpty(ValidationMessage))
+        {
+            <div style="color: red;">@ValidationMessage</div>
+        }
+        <button @onclick="Apply" style="display: block; width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">@Localizer["done"]</button>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public bool IsVisible { get; set; }
+
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+
+    private string Passcode { get; set; }
+
+
+    private string ValidationMessage { get; set; } = "";
+
+    [Parameter]
+    public EventCallback<string> OnApply { get; set; }
+
+    private void Apply()
+    {
+        if (Passcode == "12345")
+        {
+            ValidationMessage = "";
+            OnApply.InvokeAsync(Passcode);
+        }
+        else
+        {
+            ValidationMessage = @Localizer["passcode_incorrect!!"];
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        LoadResources(null, _languageService.SelectedCulture);
+
+    }
+    private void CloseModal()
+    {
+        IsVisible = false;
+        OnClose.InvokeAsync(false);
+    }
+}

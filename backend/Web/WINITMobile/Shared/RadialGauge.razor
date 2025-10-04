@@ -1,0 +1,66 @@
+﻿@using System.Net.Http
+@using System.Threading.Tasks
+@using Newtonsoft.Json
+@using Winit.UIModels.Common.GraphModels
+@inject IJSRuntime JSRuntime
+
+@* <div class="chartMenu">
+    <p>DOUGHNUT CHART</p>
+</div> *@
+<div class="chartCard">
+    <div class="chartWrapper">
+        <canvas id="myDoughnutChart" width="200" height="200"></canvas>
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public List<RadialGaugeModel> DataSource { get; set; }
+
+    [Parameter]
+    public int NeedleValue { get; set; }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var jsonData = JsonConvert.SerializeObject(DataSource);
+            await JSRuntime.InvokeAsync<object>("renderDoughnutChart", "myDoughnutChart", new object[] { jsonData }, NeedleValue);
+        }
+    }
+    // protected override async Task OnAfterRenderAsync(bool firstRender)
+    // {
+    //     if (firstRender)
+    //     {
+    //         await LoadDoughnutChart();
+    //     }
+    // }
+
+    // private async Task LoadDoughnutChart()
+    // {
+    //     var data = new
+    //     {
+    //         labels = new[] { "Label 1", "Label 2", "Label 3", "Label 4", "Label 5" },
+    //         values = new[] { 10, 20, 30, 40, 50 }
+    //     };
+
+    //     await JSRuntime.InvokeVoidAsync("renderDoughnutChart", "myDoughnutChart", data, 100);
+    // }
+}
+<style>
+    .chartWrapper {
+        width: 300px; /* Adjust this value as needed */
+        height: 300px; /* Adjust this value as needed */
+        position: relative;
+    }
+
+        .chartWrapper canvas {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+</style>
+
+
+

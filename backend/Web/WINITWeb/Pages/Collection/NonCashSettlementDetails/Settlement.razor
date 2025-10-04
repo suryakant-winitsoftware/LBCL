@@ -1,0 +1,31 @@
+﻿@page "/settlement"
+
+@using System.Net.Http.Json;
+@using Newtonsoft.Json;
+@inject HttpClient httpClient;
+@inject NavigationManager _NavigationManager;
+@using Winit.Modules.CollectionModule.Model.Constants
+@using Winit.UIComponents.Web.Filter
+@inject Winit.Modules.CollectionModule.BL.Interfaces.INonCashSettlementViewModel _nonCashSettlementViewModel
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+
+@if (IsInitialised)
+{
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="false" />
+    <WinIt.Pages.Collection.CreatePayment.TotalCollectionCalculationTabs DataSource="_nonCashSettlementViewModel.CollectionTabDetails"></WinIt.Pages.Collection.CreatePayment.TotalCollectionCalculationTabs>
+    <button class="cls_add_new_sec" style="float:right;margin-right:0px" @onclick="ShowFilter">@Localizer["filter"]</button>
+
+    <Filter @ref="filterRef" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+            OnFilterApplied="@OnFilterApply" />
+
+    <div style="margin-bottom: 20px;"></div>
+
+    <Winit.UIComponents.Common.CustomControles.Tabs TabItems="@TabSelectionItems" OnTabSelect="OnTabSelect" IsCountRequired="true"></Winit.UIComponents.Common.CustomControles.Tabs>
+    
+    <Winit.UIComponents.Web.Table.TableGridView Columns="@DataGridColumns" DataSource="@GridDataSource"
+                                                ShowRecordsCount="true" PageNumber="_nonCashSettlementViewModel._currentPage" PageSize="_nonCashSettlementViewModel._pageSize"
+                                                TotalItemsCount="@Count" />
+    <Winit.UIComponents.Web.Paging.Paging CurrentPage="_nonCashSettlementViewModel._currentPage" OnPageChange="PageIndexChanged" PageSize="_nonCashSettlementViewModel._pageSize" TotalItems="@Count" />
+
+}

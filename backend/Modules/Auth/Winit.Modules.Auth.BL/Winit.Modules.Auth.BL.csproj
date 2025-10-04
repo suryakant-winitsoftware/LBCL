@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Winit.Modules.Common.BL\Winit.Modules.Common.BL.csproj" />
+    <ProjectReference Include="..\..\MobileApp\Winit.Modules.MobileApp.BL\Winit.Modules.MobileApp.BL.csproj" />
+    <ProjectReference Include="..\..\MobileApp\Winit.Modules.MobileApp.Model\Winit.Modules.MobileApp.Model.csproj" />
+    <ProjectReference Include="..\Winit.Modules.Auth.DL\Winit.Modules.Auth.DL.csproj" />
+    <ProjectReference Include="..\Winit.Modules.Auth.Model\Winit.Modules.Auth.Model.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,87 @@
+﻿@page "/profile"
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.Auth.BL.Interfaces.ILoginViewModel _loginViewModel
+@inject SHACommonFunctions _sHACommonFunctions;
+<h3>Profile</h3>
+<button class="btn" @onclick="() =>{ChangePassword = new Winit.Modules.Auth.Model.Classes.ChangePassword();
+ IsChangePassWordPopUpOpen = true;}">
+    Change Password
+</button>
+
+@if (IsChangePassWordPopUpOpen)
+{
+    <PopUp CancelbtnText="Cancel" OkbtnText="Change Password" 
+        OnCloseClick="() => {IsChangePassWordPopUpOpen = false; ErrorMsg = null;}"
+           OnOkClick="OnChangePasswordClick">
+        @if (!string.IsNullOrEmpty(ErrorMsg))
+        {
+            <div class="alert alert-danger">
+                <label><b>The following field(s) have invalid value(s):</b>@ErrorMsg</label>
+            </div>
+        }
+        <div class="row" style="padding: 0px;">
+            <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab">
+                    <span style="color:red;">*</span>Current Password
+                </label>
+                <input class="form-control"  type="password" @bind="ChangePassword.OldPassword">
+            </div>
+            <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab">
+                    <span style="color:red;">*</span>New Password
+                </label>
+                <input class="form-control"  type="password" @bind="ChangePassword.NewPassword">
+            </div>
+            <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab">
+                    <span style="color:red;">*</span>Confirm Password
+                </label>
+                <input class="form-control"  type="password" @oninput="(e) => ConfirmPassword = e?.Value?.ToString()"
+                       @bind="ConfirmPassword">
+            </div>
+        </div>
+    </PopUp>
+}
+@code {
+ 
+    private bool IsChangePassWordPopUpOpen { get; set; }
+    private string? ConfirmPassword { get; set; }
+    private string? ErrorMsg { get; set; }
+    private Winit.Modules.Auth.Model.Interfaces.IChangePassword ChangePassword { get; set; }
+
+    private async Task OnChangePasswordClick()
+    {
+        var user = (await AuthenticationState).User;
+        if (string.IsNullOrEmpty(ChangePassword.OldPassword))
+        {
+            ErrorMsg = "Current Password is Required";
+            return;
+        }
+        if (string.IsNullOrEmpty(ChangePassword.NewPassword))
+        {
+            ErrorMsg = "Please Enter new Password";
+            return;
+        }
+        if (ChangePassword.NewPassword != ConfirmPassword)
+        {
+            ErrorMsg = "Password miss match";
+            return;
+        }
+        try
+        {
+            ShowLoader();
+            ChangePassword.ChallengeCode = _sHACommonFunctions.GenerateChallengeCode();
+            ChangePassword.OldPassword = _sHACommonFunctions.EncryptPasswordWithChallenge(ChangePassword.OldPassword?.Trim(), ChangePassword.ChallengeCode);
+            ChangePassword.UserId = user.Identity.Name;
+            ChangePassword.NewPassword = ChangePassword.NewPassword;
+            string response = await _loginViewModel.UpdateExistingPasswordWithNewPassword(ChangePassword);
+            IsChangePassWordPopUpOpen = false;
+            HideLoader();
+            ShowSuccessSnackBar("Success", response);
+        }
+        catch (Exception ex)
+        {
+            ErrorMsg = ex.Message;
+        }
+    }
+}

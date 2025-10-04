@@ -1,0 +1,30 @@
+﻿@page "/branchsalesreport"
+@using WinIt.Pages.Base
+@layout MainLayout
+@inherits BaseComponentBase
+@inject Winit.Modules.DashBoard.BL.Interfaces.IBranchSalesReportViewModel _viewModel
+
+<PageTitle>Page Title</PageTitle>
+
+<PageHeaderAndFilter IDataBreadcrumbService="iDataBreadcrumbService"></PageHeaderAndFilter>
+<button @onclick=Export>Export Excel</button>
+<TableGridView DataSource="_viewModel.BranchSalesReport"
+               Columns="MainGridColumns"
+               IsPaginationRequired=true
+               ShowRecordsCount=true
+               PageNumber="_viewModel.PagingRequest.PageNumber"
+               PageSize="_viewModel.PagingRequest.PageSize"
+               TotalItemsCount="_viewModel.TotalItems" />
+
+
+
+@if (IsPopupOpen)
+{
+    <PopUp Title="Asm View" OkbtnText="Ok" OnCloseClick=@(()=>IsPopupOpen = false) OnOkClick="@(()=>IsPopupOpen = false)" DisableCancelBtn=true>
+        <p><b>Branch Name:</b>@SelectedBranch.BranchName</p>
+        <p><b>Total Unit:</b> @SelectedBranch.TotalUnits  <b style="float:right">Total Sales:</b> @SelectedBranch.TotalSales </p>
+
+        <TableGridView DataSource="@(IsAsmView? _viewModel.BranchSalesReportAsmviews:_viewModel.BranchSalesReportOrgviews)"
+                       Columns="@(IsAsmView?AsmViewGridColumns:OrgViewGridColumns)" />
+    </PopUp>
+}

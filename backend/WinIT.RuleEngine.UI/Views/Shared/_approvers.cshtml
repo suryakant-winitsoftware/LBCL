@@ -1,0 +1,19 @@
+﻿@model IEnumerable<ApprovalHierarchy>
+
+
+@foreach (ApprovalHierarchy u in Model)
+{
+
+
+    <div class="col-md-4">
+        @u.ApproverId
+    </div>
+    <div class="col-md-4">
+        @u.Level
+    </div>
+    
+    <div class="col-md-4">
+        <a class="btn cls_contact" href="@Url.Action("AddEditUser","Partner", new {id=u.id })">Remove</a>
+    </div>
+
+}

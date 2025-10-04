@@ -1,0 +1,49 @@
+﻿@page "/MaintainWareHouseStock"
+@inject Winit.Modules.Org.BL.Interfaces.IViewWareHouse_VanStockViewModel _warehousestockViewModel;
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+
+@if (IsInitialized)
+{
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@ColumnsForFilter" OnFilterApplied="@OnFilterApply" />
+    @if (IsGridInitialised)
+    {
+        <div class="cls_header_right">
+            <Winit.UIComponents.Web.ExportToExcel.ExportToExcel ColumnHeaders="@DataGridColumns" ButtonName="Export to Excel" OnExportButtonClick="OnExcelDownloadClick"
+                                                                DataSource="@_warehousestockViewModel.MaintainWareHouseStockListForEXCEl" FileName="WareHouseStock.xlsx" />
+        </div>
+        
+    }
+    <div class="cls_section">
+        <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span">*</span>Organisation Unit</label>
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_warehousestockViewModel.WareHouseOrganisationalSelectionItems" Title="Organisation" _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Multiple"
+                                                               IsButtonVisible="true" OnSelect="HandleWarehouseOrganisationalSelection" IsSearchable="true" />
+        </div>
+        <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span">*</span>Warehouse</label>
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_warehousestockViewModel.WareHouseStockSelectionItems" Title="Warehouse" _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single"
+                                                               IsButtonVisible="true" OnSelect="HandleWarehouseSelection" IsSearchable="true" />
+        </div>
+        <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label">Sub Warehouse</label>
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_warehousestockViewModel.SubWareHouseSelectionItems" Title=" Sub Warehouse" _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Multiple"
+                                                               IsButtonVisible="true" OnSelect="HandleSubWarehouseSelection" IsSearchable="true"  />
+        </div>
+        <div class="cls_section_div_purchase2">
+            <button class="cls_add_new_sec" style="margin-top:18px;" @onclick="PopulateDataBasedOnSelections">populate Data</button>
+        </div>
+    </div>
+    
+    @if (IsGridInitialised)
+    {
+        <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" DataSource="_warehousestockViewModel.MaintainWareHouseStockListForGrid"
+                                                    PageNumber="_warehousestockViewModel.PageNumber"
+                                                    PageSize="_warehousestockViewModel.PageSize" OnSort="OnSortApply"
+                                                    TotalItemsCount="_warehousestockViewModel.TotalItemsCount" ShowRecordsCount="true" />
+        <Winit.UIComponents.Web.Paging.Paging CurrentPage="_warehousestockViewModel.PageNumber" OnPageChange="PageIndexChanged"
+                                              PageSize="_warehousestockViewModel.PageSize" TotalItems="_warehousestockViewModel.TotalItemsCount" />
+
+    }
+
+}

@@ -1,0 +1,29 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    @model  IEnumerable<WINITSharedObjects.Models.RuleEngine.Rule>
+}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<div class="container">
+    <table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Name</th>
+      <th scope="col">Descriptions</th>
+      <th scope="col">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+     @foreach (WINITSharedObjects.Models.RuleEngine.Rule u in Model)
+    {
+    <tr>
+      <th scope="row">@u.Id</th>
+      <td> @u.Name</td>
+      <td>@u.Description</td>
+      <td>Edit</td>
+    </tr>
+    }
+  </tbody>
+</table>
+
+</div>

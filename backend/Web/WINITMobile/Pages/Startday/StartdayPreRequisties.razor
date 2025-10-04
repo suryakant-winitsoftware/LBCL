@@ -1,0 +1,207 @@
+﻿@page "/StartdayPreRequisties"
+@inject NavigationManager NavigationManager; 
+@using Winit.Modules.Store.BL.Interfaces;
+@using Winit.Modules.Store.Model.Interfaces;
+@using Winit.Modules.Store.Model.Classes;
+@using Winit.Shared.Models.Common;
+@using Microsoft.JSInterop;
+@using Newtonsoft.Json;
+@using System.IO;
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+@inject WINITMobile.Data.SideBarService _sideBarService
+@inject Winit.Modules.JourneyPlan.BL.Interfaces.IStartDayViewModel _viewmodel
+@using WINITMobile.Models.TopBar;
+@using System.Net.NetworkInformation;
+@using System.Net.Http;
+@using System.Threading.Tasks;
+@using System.Diagnostics;
+
+<div class="cls_start_day">
+    <div class="cls_start_day_top">
+        <span><img style="width:375px;" src="/Images/start_bg.png" /></span>
+        <h3>
+            @Localizer["start_day_pre"] <b>
+                @Localizer["requisites"]
+            </b>
+        </h3>
+    </div>
+    <div class="container">
+    <div class="cls_start_day_bottom">
+        <div class="cls_start_day_bottom_rep" @onclick="CheckSync">
+            <div class="cls_start_day_bottom_rep_left">
+                <img src="/Images/startday_icon1.png" />
+            </div>
+            <div class="cls_start_day_bottom_rep_cen">
+                    <h3>
+                        @Localizer["synchronization"]
+                    </h3>
+                    <p>
+                        @Localizer["it_checks_the_data_is_synced_between_server_&_app"]
+                    </p>
+            </div>
+            <div class="cls_start_day_bottom_rep_right">
+                @if (isSynchronized)
+                {
+                    <img src="/Images/Righttick.png" />
+                }
+                else if (isSyncInProgress)
+                {
+                    <img src="/Images/spinning-circle.gif" />
+                }
+                else
+                {
+                    <img src="/Images/Red-X.png" />
+                }
+            </div>
+        </div>
+        <div class="cls_start_day_bottom_rep" @onclick="CheckInternetAndWifi">
+            <div class="cls_start_day_bottom_rep_left">
+                <img src="/Images/startday_icon2.png" />
+            </div>
+            <div class="cls_start_day_bottom_rep_cen">
+                    <h3>
+                        @Localizer["internet"]
+                    </h3>
+                    <p>
+                        @Localizer["internet_source_&_speed"]
+                    </p>
+                <ul class="list-group list-group-flush">
+                    @if (IsInternetWifi)
+                    {
+                            <li class="list-group-item">@Localizer["wifi"]: @downloadSpeed Mb, ↑ @uploadSpeed Mbps</li>
+                    }
+                    else
+                    {
+                            <li class="list-group-item">@Localizer["internetspeed"]: @downloadSpeed Mb, ↑ @uploadSpeed Mbps</li>
+                    }
+
+                </ul>
+            </div>
+            <div class="cls_start_day_bottom_rep_right">
+                @if (IsInternetWifi || IsMobileInternetOn)
+                {
+                    <img src="/Images/Righttick.png" />
+                }
+                else if (IsCheckingWifi)
+                {
+                    <img src="/Images/spinning-circle.gif" />
+                }
+                else
+                {
+                    <img src="/Images/Red-X.png" />
+                }
+            </div>
+        </div>
+        <div class="cls_start_day_bottom_rep" @onclick="CheckMobileInternet">
+            <div class="cls_start_day_bottom_rep_left">
+                <img src="/Images/startday_icon3.png" />
+            </div>
+            <div class="cls_start_day_bottom_rep_cen">
+                    <h3>
+                        @Localizer["mobile_internet"]
+                    </h3>
+                    <p>
+                        @Localizer["check_mobile_internet_availability"]
+                    </p>
+            </div>
+            <div class="cls_start_day_bottom_rep_right">
+                @if (IsMobileInternetOn)
+                {
+                    <img src="/Images/Righttick.png" />
+                }
+                else if (IsCheckingInternet)
+                {
+                    <img src="/Images/spinning-circle.gif" />
+                }
+                else
+                {
+                    <img src="/Images/Red-X.png" />
+                }
+            </div>
+        </div>
+        <div class="cls_start_day_bottom_rep" @onclick="CheckGPS">
+            <div class="cls_start_day_bottom_rep_left">
+                <img src="/Images/startday_icon4.png" />
+            </div>
+            <div class="cls_start_day_bottom_rep_cen">
+                    <h3>
+                        @Localizer["location"]
+                    </h3>
+                    <p>
+                        @Localizer["gps_must_be_turned_on_to_check_location_&_distance"]
+                    </p>
+            </div>
+            <div class="cls_start_day_bottom_rep_right">
+                @if (IsGpsOn)
+                {
+                    <img src="/Images/Righttick.png" />
+                }
+                else if (IsCheckingGps)
+                {
+                    <img src="/Images/spinning-circle.gif" />
+                }
+                else
+                {
+                    <img src="/Images/Red-X.png" />
+                }
+            </div>
+        </div>
+        <div class="cls_start_day_bottom_rep" style="border:0px;" @onclick="UpdateBatteryStatus">
+            <div class="cls_start_day_bottom_rep_left">
+                <img src="/Images/startday_icon5.png" />
+            </div>
+            <div class="cls_start_day_bottom_rep_cen">
+                    <h3>
+                        @Localizer["battery"]
+                    </h3>
+                    <p>
+                        @Localizer["make_sure_battery_is_minimum_30%_charged_to_start_your_day"]
+                    </p>
+            </div>
+            <div class="cls_start_day_bottom_rep_right">
+                @if (Battery.Default != null)
+                {
+                    @*  <div class="progress">
+                <div class="progress-bar bg-@GetBatteryColor(Battery.Default.ChargeLevel)" role="progressbar" style="width: @(Battery.Default.ChargeLevel * 100)%" aria-valuenow="@(Battery.Default.ChargeLevel * 100)" aria-valuemin="0" aria-valuemax="100">@(Battery.Default.ChargeLevel * 100)%</div>
+                </div> *@
+                    <div class="progress" style="display:none;">
+                        <div class="progress-bar bg-@GetBatteryColor(BatteryPercentage)" role="progressbar" style="width: @(BatteryPercentage * 100)%" aria-valuenow="@(BatteryPercentage * 100)" aria-valuemin="0" aria-valuemax="100">@BatteryPercentage%</div>
+                    </div>
+                    @if (Battery.Default.ChargeLevel >= 0.3)
+                    {
+                        <img src="/Images/Righttick.png" />
+                    }
+                    else
+                    {
+                        <img src="/Images/Red-X.png" />
+                    }
+                }
+                else
+                {
+                        <p class="text-secondary">
+                            @Localizer["battery_information_unavailable"]
+                        </p>
+                }
+            </div>
+        </div>
+        
+    </div>
+        <div class="cls_start_day_bottom1">
+            <a @onclick="CheckAllPermissions" style="cursor:pointer">
+                <span><img style="width:30px;" src="/Images/Verifiedaccount.png" /></span>
+                <p>
+                    @Localizer["attendence"]
+                </p>
+</a>
+        </div>
+    </div>
+</div>
+
+    
+        
+
+
+@code {
+    
+    
+}

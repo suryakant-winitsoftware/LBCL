@@ -1,0 +1,112 @@
+﻿@page "/SalesInvoiceLineMaster"
+@using Winit.UIComponents.Web.Table
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.Tally.BL.Interfaces.ITallyMasterViewModel tallyMasterViewModel;
+
+@if (IsInitialised)
+{
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="false" IsSearchCriteriaNeeded="false" />
+    <div class="cls_container_div1">
+    <div class="cls_header_right">
+        <Winit.UIComponents.Web.ExportToExcel.ExportToExcel ColumnHeaders="@SalesInvoiceResultDataGridColumns" ButtonName="Export to Excel" DataSource="@tallyMasterViewModel.tallySalesInvoiceResults" FileName="SalesInvoiceLineMasterTally.xlsx" />
+    </div>
+    </div>
+    <div class="cls_container_div1">
+        <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" DataSource="tallyMasterViewModel.SalesInvoiceLineMasterDataList" />
+    </div>
+   
+    @if (IsItemSelectedToShow)
+    {
+        <PopUp Title="Add Unassigned Customer Classification" DisableCancelBtn="true" OkbtnText="Back"
+               OnOkClick="OnBackButtonClick" DisableCrossBtn="true"
+               OnCloseClick="() => IsItemSelectedToShow = false">
+            <div class="cls_container_div1">
+            <div class="cls_pop_up_div">
+                <label class="cls_section_div_purchase2_label">  DmsUid </label>
+                <label class="cls_credit_label2">@tallyMasterViewModel.tallySalesInvoiceLineMaster.DmsUid  ?? ""</label>
+            </div>
+
+            <div class="cls_pop_up_div">
+                <label class="cls_section_div_purchase2_label">  Guid </label>
+                <label class="cls_credit_label2">@tallyMasterViewModel.tallySalesInvoiceLineMaster.Guid ?? ""</label>
+            </div>
+
+            <div class="cls_pop_up_div">
+                <label class="cls_section_div_purchase2_label">  VoucherNumber </label>
+                <label class="cls_credit_label2">@tallyMasterViewModel.tallySalesInvoiceLineMaster.VoucherNumber ?? ""</label>
+            </div>
+
+            </div>
+            <div class="cls_popup_outline">
+            <div class="cls_pop_up_div">
+                <label class="cls_section_div_purchase2_label">  StockItemName </label>
+                <label class="cls_credit_label2">@tallyMasterViewModel.tallySalesInvoiceLineMaster.StockItemName ?? ""</label>
+            </div>
+
+            <div class="cls_pop_up_div">
+                <label class="cls_section_div_purchase2_label">  Rate </label>
+                <label class="cls_credit_label2">@tallyMasterViewModel.tallySalesInvoiceLineMaster.Rate ?? ""</label>
+            </div>
+
+            <div class="cls_pop_up_div">
+                <label class="cls_section_div_purchase2_label">  Amount </label>
+                <label class="cls_credit_label2">@tallyMasterViewModel.tallySalesInvoiceLineMaster.Amount ?? ""</label>
+            </div>
+
+            </div>
+            <div class="cls_popup_outline">
+
+            <div class="cls_pop_up_div">
+                <label class="cls_section_div_purchase2_label">  ActualQty </label>
+                <label class="cls_credit_label2">@tallyMasterViewModel.tallySalesInvoiceLineMaster.ActualQty ?? ""</label>
+            </div>
+
+            <div class="cls_pop_up_div">
+                <label class="cls_section_div_purchase2_label">  BilledQty </label>
+                <label class="cls_credit_label2">@tallyMasterViewModel.tallySalesInvoiceLineMaster.BilledQty ?? ""</label>
+            </div>
+
+            <div class="cls_pop_up_div">
+                <label class="cls_section_div_purchase2_label"> DiscountPercentage </label>
+                <label class="cls_credit_label2">@tallyMasterViewModel.tallySalesInvoiceLineMaster.DiscountPercentage ?? ""</label>
+            </div>
+
+            </div>
+            <div class="cls_popup_outline">
+            <div class="cls_pop_up_div">
+                <label class="cls_section_div_purchase2_label">  Qty </label>
+                <label class="cls_credit_label2">@tallyMasterViewModel.tallySalesInvoiceLineMaster.Qty ?? ""</label>
+            </div>
+
+            <div class="cls_pop_up_div">
+                <label class="cls_section_div_purchase2_label">  UnitPrice </label>
+                <label class="cls_credit_label2">@tallyMasterViewModel.tallySalesInvoiceLineMaster.UnitPrice ?? ""</label>
+            </div>
+
+            <div class="cls_pop_up_div">
+                <label class="cls_section_div_purchase2_label">  TotalAmount </label>
+                <label class="cls_credit_label2">@tallyMasterViewModel.tallySalesInvoiceLineMaster.TotalAmount ?? ""</label>
+            </div>
+            </div>
+            <div class="cls_popup_outline">
+
+            <div class="cls_pop_up_div">
+                <label class="cls_section_div_purchase2_label">  TotalDiscount </label>
+                <label class="cls_credit_label2">@tallyMasterViewModel.tallySalesInvoiceLineMaster.TotalDiscount ?? ""</label>
+            </div>
+
+            <div class="cls_pop_up_div">
+                <label class="cls_section_div_purchase2_label">  TotalTax </label>
+                <label class="cls_credit_label2">@tallyMasterViewModel.tallySalesInvoiceLineMaster.TotalTax ?? ""</label>
+            </div>
+
+            <div class="cls_pop_up_div">
+                <label class="cls_section_div_purchase2_label">  NetAmount </label>
+                <label class="cls_credit_label2">@tallyMasterViewModel.tallySalesInvoiceLineMaster.NetAmount ?? ""</label>
+            </div>
+            </div>
+            
+
+        </PopUp>
+    }
+}

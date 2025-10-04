@@ -1,0 +1,2205 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="absent" xml:space="preserve">
+    <value>غائب</value>
+  </data>
+  <data name="account_number" xml:space="preserve">
+    <value>رقم حساب</value>
+  </data>
+  <data name="achieved" xml:space="preserve">
+    <value>حقق</value>
+  </data>
+  <data name="active" xml:space="preserve">
+    <value>نشيط</value>
+  </data>
+  <data name="actual" xml:space="preserve">
+    <value>فِعلي</value>
+  </data>
+  <data name="actual_visits" xml:space="preserve">
+    <value>الزيارات الفعلية</value>
+  </data>
+  <data name="add" xml:space="preserve">
+    <value>يضيف</value>
+  </data>
+  <data name="address_line1" xml:space="preserve">
+    <value>العنوان سطر 1</value>
+  </data>
+  <data name="address_line2" xml:space="preserve">
+    <value>سطر العنوان 2</value>
+  </data>
+  <data name="address_line3" xml:space="preserve">
+    <value>سطر العنوان3</value>
+  </data>
+  <data name="add_items" xml:space="preserve">
+    <value>إضافة عناصر</value>
+  </data>
+  <data name="add_itemspreviewstore_1" xml:space="preserve">
+    <value>إضافة عناصر معاينة المتجر 1</value>
+  </data>
+  <data name="add_load_request" xml:space="preserve">
+    <value>فشل طلب التحميل المقدم</value>
+  </data>
+  <data name="add_notes" xml:space="preserve">
+    <value>أضف ملاحظات</value>
+  </data>
+  <data name="add_product" xml:space="preserve">
+    <value>أضف منتج</value>
+  </data>
+  <data name="add_selected_product" xml:space="preserve">
+    <value>إضافة المنتج المحدد</value>
+  </data>
+  <data name="add_unload_request" xml:space="preserve">
+    <value>إضافة طلب إلغاء التحميل</value>
+  </data>
+  <data name="after_you_close_for_day_you_will_not_be_able_to_do_any_further_transactions" xml:space="preserve">
+    <value>بعد الإغلاق ليوم واحد، لن تتمكن من القيام بأي معاملات أخرى</value>
+  </data>
+  <data name="alert" xml:space="preserve">
+    <value>يُحذًِر</value>
+  </data>
+  <data name="all" xml:space="preserve">
+    <value>الجميع</value>
+  </data>
+  <data name="allocate_amt" xml:space="preserve">
+    <value>تخصيص مبلغ</value>
+  </data>
+  <data name="already_added" xml:space="preserve">
+    <value>تم الاضافة مسبقا</value>
+  </data>
+  <data name="amount" xml:space="preserve">
+    <value>كمية</value>
+  </data>
+  <data name="an_error_occurred" xml:space="preserve">
+    <value>حدث خطأ</value>
+  </data>
+  <data name="an_unexpected_error_occurred." xml:space="preserve">
+    <value>حدث خطأ غير متوقع.</value>
+  </data>
+  <data name="apply" xml:space="preserve">
+    <value>يتقدم</value>
+  </data>
+  <data name="approval_is_needed_for_price_updates_as_the_unit_price_of_the_item_is_beyond_the_specified range" xml:space="preserve">
+    <value>يلزم الحصول على موافقة لتحديثات الأسعار نظرًا لأن سعر الوحدة للعنصر يتجاوز النطاق المحدد</value>
+  </data>
+  <data name="approved" xml:space="preserve">
+    <value>موافقة</value>
+  </data>
+  <data name="approved_qty" xml:space="preserve">
+    <value>الكمية المعتمدة</value>
+  </data>
+  <data name="ar" xml:space="preserve">
+    <value>AR</value>
+  </data>
+  <data name="arabic_name" xml:space="preserve">
+    <value>الاسم العربي</value>
+  </data>
+  <data name="are_you_at_the_depot?" xml:space="preserve">
+    <value>هل أنت في المستودع؟</value>
+  </data>
+  <data name="are_you_sure._you_want_to_delete_this_item" xml:space="preserve">
+    <value>هل أنت متأكد. تريد حذف هذا العنصر</value>
+  </data>
+  <data name="are_you_sure?_do_you_want_to_create_receipt" xml:space="preserve">
+    <value>هل أنت متأكد؟ هل تريد إنشاء إيصال</value>
+  </data>
+  <data name="are_you_sure_you_want_to" xml:space="preserve">
+    <value>هل أنت متأكد أنك تريد</value>
+  </data>
+  <data name="are_you_sure_you_want_to_confirm_the_order" xml:space="preserve">
+    <value>هل أنت متأكد أنك تريد تأكيد الطلب</value>
+  </data>
+  <data name="are_you_sure_you_want_to_continue_without_taking_advantage_of_the_promotion" xml:space="preserve">
+    <value>هل أنت متأكد أنك تريد الاستمرار دون الاستفادة من العرض الترويجي؟</value>
+  </data>
+  <data name="are_you_sure_you_want_to_delete_the_item?" xml:space="preserve">
+    <value>هل أنت متأكد أنك تريد حذف العنصر؟</value>
+  </data>
+  <data name="are_you_sure_you_want_to_delete_this_item?" xml:space="preserve">
+    <value>هل أنت متأكد أنك تريد حذف هذا البند؟</value>
+  </data>
+  <data name="are_you_sure_you_want_to_do_cfd?" xml:space="preserve">
+    <value>هل أنت متأكد أنك تريد التعامل مع عقود الفروقات؟</value>
+  </data>
+  <data name="are_you_sure_you_want_to_do_close_for_day?" xml:space="preserve">
+    <value>هل أنت متأكد أنك تريد القيام بإغلاق اليوم؟</value>
+  </data>
+  <data name="are_you_sure_you_want_to_logout?" xml:space="preserve">
+    <value>هل أنت متأكد أنك تريد تسجيل الخروج؟</value>
+  </data>
+  <data name="are_you_sure_you_want_to_save_the_order?" xml:space="preserve">
+    <value>هل أنت متأكد أنك تريد حفظ الطلب؟</value>
+  </data>
+  <data name="are_you_sure_you_want_to_submit" xml:space="preserve">
+    <value>هل أنت متأكد أنك تريد التقديم</value>
+  </data>
+  <data name="are_you_sure_you_want_to_submit?" xml:space="preserve">
+    <value>هل أنت متأكد أنك تريد التقديم؟</value>
+  </data>
+  <data name="are_you_want_to_logout?" xml:space="preserve">
+    <value>هل تريد تسجيل الخروج؟</value>
+  </data>
+  <data name="as_amount_exceeds" xml:space="preserve">
+    <value>كما يتجاوز المبلغ</value>
+  </data>
+  <data name="atleast_one_item_should_be_selected" xml:space="preserve">
+    <value>ينبغي اختيار عنصر واحد على الأقل</value>
+  </data>
+  <data name="atleast_one_item_should_be_selected." xml:space="preserve">
+    <value>ينبغي اختيار عنصر واحد على الأقل.</value>
+  </data>
+  <data name="attendance" xml:space="preserve">
+    <value>حضور</value>
+  </data>
+  <data name="attendance_details" xml:space="preserve">
+    <value>تفاصيل الحضور</value>
+  </data>
+  <data name="attendance_percentage" xml:space="preserve">
+    <value>نسبة الحضور</value>
+  </data>
+  <data name="attendance_summary" xml:space="preserve">
+    <value>ملخص الحضور</value>
+  </data>
+  <data name="attendence" xml:space="preserve">
+    <value>الحضور</value>
+  </data>
+  <data name="attention" xml:space="preserve">
+    <value>انتباه</value>
+  </data>
+  <data name="available_credit_limit" xml:space="preserve">
+    <value>الحد الائتماني المتاح</value>
+  </data>
+  <data name="available_limit" xml:space="preserve">
+    <value>الحد المتاح</value>
+  </data>
+  <data name="back" xml:space="preserve">
+    <value>خلف</value>
+  </data>
+  <data name="backstore_qty" xml:space="preserve">
+    <value>الكمية في المخزن الخلفي</value>
+  </data>
+  <data name="balance_amt" xml:space="preserve">
+    <value>مبلغ الرصيد</value>
+  </data>
+  <data name="bal_to_go" xml:space="preserve">
+    <value>بال للذهاب</value>
+  </data>
+  <data name="bank_name" xml:space="preserve">
+    <value>اسم البنك</value>
+  </data>
+  <data name="bargraph" xml:space="preserve">
+    <value>شريط الرسم البياني</value>
+  </data>
+  <data name="base_margin" xml:space="preserve">
+    <value>الهامش الأساسي</value>
+  </data>
+  <data name="battery" xml:space="preserve">
+    <value>بطارية</value>
+  </data>
+  <data name="battery_information_unavailable" xml:space="preserve">
+    <value>معلومات البطارية غير متوفرة</value>
+  </data>
+  <data name="blocked" xml:space="preserve">
+    <value>محظور</value>
+  </data>
+  <data name="branch_name" xml:space="preserve">
+    <value>اسم الفرع</value>
+  </data>
+  <data name="call_coverage" xml:space="preserve">
+    <value>تغطية المكالمات</value>
+  </data>
+  <data name="camera_permission_is_required_to_use_this_feature." xml:space="preserve">
+    <value>مطلوب إذن الكاميرا لاستخدام هذه الميزة.</value>
+  </data>
+  <data name="cancel" xml:space="preserve">
+    <value>يلغي</value>
+  </data>
+  <data name="cannot_process_your_request!" xml:space="preserve">
+    <value>لا يمكن معالجة طلبك!</value>
+  </data>
+  <data name="can_not_round_off_local_currency" xml:space="preserve">
+    <value>لا يمكن تقريب العملة المحلية</value>
+  </data>
+  <data name="capture_geo_location" xml:space="preserve">
+    <value>التقاط الموقع الجغرافي</value>
+  </data>
+  <data name="capture_store" xml:space="preserve">
+    <value>متجر الالتقاط</value>
+  </data>
+  <data name="cart" xml:space="preserve">
+    <value>عربة التسوق</value>
+  </data>
+  <data name="cash" xml:space="preserve">
+    <value>نقدي</value>
+  </data>
+  <data name="cash_disc" xml:space="preserve">
+    <value>القرص النقدي</value>
+  </data>
+  <data name="cash_discount" xml:space="preserve">
+    <value>الخصم النقدي</value>
+  </data>
+  <data name="cash_payment" xml:space="preserve">
+    <value>دفع نقدا</value>
+  </data>
+  <data name="category" xml:space="preserve">
+    <value>فئة</value>
+  </data>
+  <data name="category_type" xml:space="preserve">
+    <value>نوع الفئة</value>
+  </data>
+  <data name="cfd" xml:space="preserve">
+    <value>العقود مقابل الفروقات</value>
+  </data>
+  <data name="cfdprinter" xml:space="preserve">
+    <value>CFDPrinter</value>
+  </data>
+  <data name="cfd_has_been_completed_for_the_day._you_can't_perform_any_transaction_today." xml:space="preserve">
+    <value>تم الانتهاء من عقود الفروقات لهذا اليوم. لا يمكنك إجراء أي معاملة اليوم.</value>
+  </data>
+  <data name="cfd_has_been_completed_for_the_day._you_can't_perform_any_transaction_today.1" xml:space="preserve">
+    <value>تم الانتهاء من عقود الفروقات لهذا اليوم. لا يمكنك إجراء أي معاملة اليوم.</value>
+  </data>
+  <data name="cfd_status" xml:space="preserve">
+    <value>حالة عقود الفروقات</value>
+  </data>
+  <data name="cfd_submitted_successfully" xml:space="preserve">
+    <value>تم إرسال عقود الفروقات بنجاح</value>
+  </data>
+  <data name="change_password" xml:space="preserve">
+    <value>تغيير كلمة المرور</value>
+  </data>
+  <data name="channel" xml:space="preserve">
+    <value>قناة</value>
+  </data>
+  <data name="checked" xml:space="preserve">
+    <value>التحقق</value>
+  </data>
+  <data name="check_all" xml:space="preserve">
+    <value>تحقق من الكل</value>
+  </data>
+  <data name="check_in" xml:space="preserve">
+    <value>تحقق في</value>
+  </data>
+  <data name="check_mobile_internet_availability" xml:space="preserve">
+    <value>التحقق من توفر الإنترنت عبر الهاتف المحمول</value>
+  </data>
+  <data name="check_out" xml:space="preserve">
+    <value>الدفع</value>
+  </data>
+  <data name="cheque" xml:space="preserve">
+    <value>يفحص</value>
+  </data>
+  <data name="cheque_no" xml:space="preserve">
+    <value>رقم الشيك</value>
+  </data>
+  <data name="cheque_number" xml:space="preserve">
+    <value>رقم الشيك</value>
+  </data>
+  <data name="cheque_payment" xml:space="preserve">
+    <value>الدفع بشيك</value>
+  </data>
+  <data name="city/district" xml:space="preserve">
+    <value>مقاطعه المدينه</value>
+  </data>
+  <data name="clear" xml:space="preserve">
+    <value>واضح</value>
+  </data>
+  <data name="clear_all" xml:space="preserve">
+    <value>امسح الكل</value>
+  </data>
+  <data name="clear_selected" xml:space="preserve">
+    <value>مسح المحدد</value>
+  </data>
+  <data name="close" xml:space="preserve">
+    <value>يغلق</value>
+  </data>
+  <data name="close_of_day(cfd)" xml:space="preserve">
+    <value>إغلاق اليوم (عقود الفروقات)</value>
+  </data>
+  <data name="collect" xml:space="preserve">
+    <value>يجمع</value>
+  </data>
+  <data name="collected" xml:space="preserve">
+    <value>تم جمعها</value>
+  </data>
+  <data name="collected_qty" xml:space="preserve">
+    <value>الكمية المجمعة</value>
+  </data>
+  <data name="collection" xml:space="preserve">
+    <value>مجموعة</value>
+  </data>
+  <data name="collection_summary" xml:space="preserve">
+    <value>ملخص المجموعة</value>
+  </data>
+  <data name="collect_amount" xml:space="preserve">
+    <value>جمع المبلغ</value>
+  </data>
+  <data name="collect_payment" xml:space="preserve">
+    <value>جمع الدفعات المالية</value>
+  </data>
+  <data name="commission_tracker" xml:space="preserve">
+    <value>تعقب اللجنة</value>
+  </data>
+  <data name="confirm" xml:space="preserve">
+    <value>يتأكد</value>
+  </data>
+  <data name="confirm?" xml:space="preserve">
+    <value>يتأكد؟</value>
+  </data>
+  <data name="confirmation" xml:space="preserve">
+    <value>تأكيد</value>
+  </data>
+  <data name="confirm_password" xml:space="preserve">
+    <value>تأكيد كلمة المرور</value>
+  </data>
+  <data name="contact_person" xml:space="preserve">
+    <value>الشخص الذي يمكن الاتصال به</value>
+  </data>
+  <data name="contact_person_email_id" xml:space="preserve">
+    <value>معرف البريد الإلكتروني لجهة الاتصال</value>
+  </data>
+  <data name="contact_person_mobile_number" xml:space="preserve">
+    <value>رقم الهاتف المحمول لجهة الاتصال</value>
+  </data>
+  <data name="contact_person_name" xml:space="preserve">
+    <value>اسم شخص الاتصال</value>
+  </data>
+  <data name="continue" xml:space="preserve">
+    <value>يكمل</value>
+  </data>
+  <data name="createsalesorder" xml:space="preserve">
+    <value>createsalesorder</value>
+  </data>
+  <data name="credit" xml:space="preserve">
+    <value>ائتمان</value>
+  </data>
+  <data name="credit_limit" xml:space="preserve">
+    <value>الحد الائتماني</value>
+  </data>
+  <data name="credit_note" xml:space="preserve">
+    <value>اشعار دائن</value>
+  </data>
+  <data name="currency" xml:space="preserve">
+    <value>عملة</value>
+  </data>
+  <data name="currency_not_mapped" xml:space="preserve">
+    <value>لم يتم تعيين العملة</value>
+  </data>
+  <data name="current" xml:space="preserve">
+    <value>حاضِر</value>
+  </data>
+  <data name="current_outstanding" xml:space="preserve">
+    <value>التيار المعلقة</value>
+  </data>
+  <data name="current_password" xml:space="preserve">
+    <value>كلمة السر الحالية</value>
+  </data>
+  <data name="current_password_is_required" xml:space="preserve">
+    <value>كلمة المرور الحالية مطلوبة</value>
+  </data>
+  <data name="customers" xml:space="preserve">
+    <value>عملاء</value>
+  </data>
+  <data name="customers_not_visited" xml:space="preserve">
+    <value>لم تتم زيارة العملاء</value>
+  </data>
+  <data name="customer_call_procedure" xml:space="preserve">
+    <value>إجراءات استدعاء العملاء</value>
+  </data>
+  <data name="customer_chain" xml:space="preserve">
+    <value>سلسلة العملاء</value>
+  </data>
+  <data name="customer_channel" xml:space="preserve">
+    <value>قناة العملاء</value>
+  </data>
+  <data name="customer_classification" xml:space="preserve">
+    <value>تصنيف العملاء</value>
+  </data>
+  <data name="customer_code" xml:space="preserve">
+    <value>رمز العميل</value>
+  </data>
+  <data name="customer_group" xml:space="preserve">
+    <value>مجموعة العملاء</value>
+  </data>
+  <data name="customer_signature" xml:space="preserve">
+    <value>توقيع العميل</value>
+  </data>
+  <data name="customer_sub_channel" xml:space="preserve">
+    <value>قناة العملاء الفرعية</value>
+  </data>
+  <data name="customer_type" xml:space="preserve">
+    <value>نوع العميل</value>
+  </data>
+  <data name="damage" xml:space="preserve">
+    <value>ضرر</value>
+  </data>
+  <data name="dashboard" xml:space="preserve">
+    <value>لوحة القيادة</value>
+  </data>
+  <data name="date" xml:space="preserve">
+    <value>تاريخ</value>
+  </data>
+  <data name="date_&amp;_time" xml:space="preserve">
+    <value>التاريخ والوقت</value>
+  </data>
+  <data name="days" xml:space="preserve">
+    <value>أيام</value>
+  </data>
+  <data name="days_present" xml:space="preserve">
+    <value>أيام موجودة</value>
+  </data>
+  <data name="default_bank" xml:space="preserve">
+    <value>البنك الافتراضي</value>
+  </data>
+  <data name="delete" xml:space="preserve">
+    <value>يمسح</value>
+  </data>
+  <data name="delete_user_journey" xml:space="preserve">
+    <value>حذف رحلة المستخدم</value>
+  </data>
+  <data name="delivered" xml:space="preserve">
+    <value>تم التوصيل</value>
+  </data>
+  <data name="deliveredbysignature" xml:space="preserve">
+    <value>تم التسليم بواسطة التوقيع</value>
+  </data>
+  <data name="delivery_date" xml:space="preserve">
+    <value>تاريخ التسليم او الوصول</value>
+  </data>
+  <data name="demo" xml:space="preserve">
+    <value>تجريبي</value>
+  </data>
+  <data name="dialog" xml:space="preserve">
+    <value>الحوار</value>
+  </data>
+  <data name="disc" xml:space="preserve">
+    <value>القرص</value>
+  </data>
+  <data name="discount" xml:space="preserve">
+    <value>تخفيض</value>
+  </data>
+  <data name="discrepency" xml:space="preserve">
+    <value>التناقض</value>
+  </data>
+  <data name="discrepency_can_not_be_negative" xml:space="preserve">
+    <value>لا يمكن أن يكون التناقض سلبيا</value>
+  </data>
+  <data name="disc_sku" xml:space="preserve">
+    <value>رمز SKU للقرص</value>
+  </data>
+  <data name="distance" xml:space="preserve">
+    <value>مسافة</value>
+  </data>
+  <data name="distance_in_meters" xml:space="preserve">
+    <value>المسافة بالأمتار</value>
+  </data>
+  <data name="distribution_channel_should_not_be_null" xml:space="preserve">
+    <value>يجب ألا تكون قناة التوزيع فارغة</value>
+  </data>
+  <data name="done" xml:space="preserve">
+    <value>منتهي</value>
+  </data>
+  <data name="dont_miss_out" xml:space="preserve">
+    <value>لا تفوت</value>
+  </data>
+  <data name="doughnutgraph" xml:space="preserve">
+    <value>دوناتغراف</value>
+  </data>
+  <data name="doughnut_chart" xml:space="preserve">
+    <value>مخطط دائري</value>
+  </data>
+  <data name="do_you_want_to_cancel_this_payment?" xml:space="preserve">
+    <value>هل تريد إلغاء هذه الدفعة؟</value>
+  </data>
+  <data name="do_you_want_to_create_on_account?" xml:space="preserve">
+    <value>هل تريد إنشاء حساب؟</value>
+  </data>
+  <data name="do_you_want_to_proceed?" xml:space="preserve">
+    <value>هل تريد المتابعة؟</value>
+  </data>
+  <data name="do_you_want_to_start_the_journey?" xml:space="preserve">
+    <value>هل تريد أن تبدأ الرحلة</value>
+  </data>
+  <data name="draft" xml:space="preserve">
+    <value>مسودة</value>
+  </data>
+  <data name="dre" xml:space="preserve">
+    <value>دري</value>
+  </data>
+  <data name="dre(damage_return_expiry)" xml:space="preserve">
+    <value>DRE (انتهاء صلاحية إرجاع الضرر)</value>
+  </data>
+  <data name="due" xml:space="preserve">
+    <value>حق</value>
+  </data>
+  <data name="due_amount" xml:space="preserve">
+    <value>مبلغ مستحق</value>
+  </data>
+  <data name="due_date" xml:space="preserve">
+    <value>تاريخ الاستحقاق</value>
+  </data>
+  <data name="each" xml:space="preserve">
+    <value>كل</value>
+  </data>
+  <data name="edit_price" xml:space="preserve">
+    <value>تحرير السعر</value>
+  </data>
+  <data name="email" xml:space="preserve">
+    <value>بريد إلكتروني</value>
+  </data>
+  <data name="email_id" xml:space="preserve">
+    <value>عنوان الايميل</value>
+  </data>
+  <data name="empty_alert" xml:space="preserve">
+    <value>تنبيه فارغ</value>
+  </data>
+  <data name="end_date" xml:space="preserve">
+    <value>تاريخ الانتهاء</value>
+  </data>
+  <data name="entered_amount_can_not_be_zero_in_selected_payment_mode" xml:space="preserve">
+    <value>لا يمكن أن يكون المبلغ الذي تم إدخاله صفرًا في وضع الدفع المحدد</value>
+  </data>
+  <data name="enter_account_name" xml:space="preserve">
+    <value>أدخل اسم الحساب</value>
+  </data>
+  <data name="enter_amount_currency_wise" xml:space="preserve">
+    <value>أدخل المبلغ العملة الحكيمة</value>
+  </data>
+  <data name="enter_bank_name" xml:space="preserve">
+    <value>أدخل اسم البنك</value>
+  </data>
+  <data name="enter_customer_name/code_here" xml:space="preserve">
+    <value>أدخل اسم العميل/الرمز هنا</value>
+  </data>
+  <data name="enter_customer_name/code_here.." xml:space="preserve">
+    <value>أدخل اسم العميل/الرمز هنا..</value>
+  </data>
+  <data name="enter_damage_notes_here" xml:space="preserve">
+    <value>أدخل ملاحظات الضرر هنا</value>
+  </data>
+  <data name="enter_discount_amount" xml:space="preserve">
+    <value>أدخل مبلغ الخصم</value>
+  </data>
+  <data name="enter_here" xml:space="preserve">
+    <value>أدخل هنا</value>
+  </data>
+  <data name="enter_new_price" xml:space="preserve">
+    <value>أدخل السعر الجديد</value>
+  </data>
+  <data name="enter_passcode" xml:space="preserve">
+    <value>أدخل رمز المرور</value>
+  </data>
+  <data name="enter_qty" xml:space="preserve">
+    <value>أدخل الكمية</value>
+  </data>
+  <data name="enter_qty_atleast_one_product" xml:space="preserve">
+    <value>أدخل الكمية على الأقل منتج واحد</value>
+  </data>
+  <data name="ep%" xml:space="preserve">
+    <value>نسبة الربح المئوية</value>
+  </data>
+  <data name="error" xml:space="preserve">
+    <value>خطأ</value>
+  </data>
+  <data name="error_initializing_sales_order_view_model" xml:space="preserve">
+    <value>خطأ في تهيئة نموذج عرض أمر المبيعات</value>
+  </data>
+  <data name="error_loading_data" xml:space="preserve">
+    <value>حدث خطأ أثناء تحميل البيانات</value>
+  </data>
+  <data name="execption" xml:space="preserve">
+    <value>استثناء</value>
+  </data>
+  <data name="expecteddeliverydate" xml:space="preserve">
+    <value>تاريخ التسليم المتوقع</value>
+  </data>
+  <data name="expected_avg_monthly_income" xml:space="preserve">
+    <value>متوسط ​​الدخل الشهري المتوقع</value>
+  </data>
+  <data name="expiry" xml:space="preserve">
+    <value>انقضاء</value>
+  </data>
+  <data name="expiry_date" xml:space="preserve">
+    <value>تاريخ الانتهاء</value>
+  </data>
+  <data name="failed" xml:space="preserve">
+    <value>فشل</value>
+  </data>
+  <data name="failed_to_capture_photo" xml:space="preserve">
+    <value>فشل التقاط الصورة</value>
+  </data>
+  <data name="failed_to_convert_photo" xml:space="preserve">
+    <value>فشل تحويل الصورة</value>
+  </data>
+  <data name="failed_to_post_the_order" xml:space="preserve">
+    <value>فشل في نشر الطلب</value>
+  </data>
+  <data name="failed_to_update_location" xml:space="preserve">
+    <value>فشل تحديث الموقع</value>
+  </data>
+  <data name="fetching_gps..." xml:space="preserve">
+    <value>جارٍ جلب نظام تحديد المواقع العالمي (GPS)...</value>
+  </data>
+  <data name="file_type_is_not_allowed" xml:space="preserve">
+    <value>نوع الملف غير مسموح به</value>
+  </data>
+  <data name="filter" xml:space="preserve">
+    <value>منقي</value>
+  </data>
+  <data name="final_order_value" xml:space="preserve">
+    <value>قيمة الطلب النهائي</value>
+  </data>
+  <data name="forgot_password" xml:space="preserve">
+    <value>هل نسيت كلمة السر</value>
+  </data>
+  <data name="free" xml:space="preserve">
+    <value>حر</value>
+  </data>
+  <data name="frequently_buying_items" xml:space="preserve">
+    <value>شراء العناصر بشكل متكرر</value>
+  </data>
+  <data name="from" xml:space="preserve">
+    <value>من</value>
+  </data>
+  <data name="from_your_planned_visits" xml:space="preserve">
+    <value>من زياراتك المخططة</value>
+  </data>
+  <data name="good_return" xml:space="preserve">
+    <value>عودة جيدة</value>
+  </data>
+  <data name="gps" xml:space="preserve">
+    <value>نظام تحديد المواقع</value>
+  </data>
+  <data name="gps_is_not_enabled._do_you_want_to_enable_it?" xml:space="preserve">
+    <value>لم يتم تمكين نظام تحديد المواقع العالمي (GPS). هل تريد تمكين هذا؟</value>
+  </data>
+  <data name="gps_is_not_supported_on_this_device" xml:space="preserve">
+    <value>نظام تحديد المواقع العالمي (GPS) غير مدعوم على هذا الجهاز</value>
+  </data>
+  <data name="gps_must_be_turned_on_to_check_location_&amp;_distance" xml:space="preserve">
+    <value>يجب تشغيل نظام تحديد المواقع العالمي (GPS) للتحقق من الموقع والمسافة</value>
+  </data>
+  <data name="gps_not_supported" xml:space="preserve">
+    <value>نظام تحديد المواقع العالمي (GPS) غير مدعوم</value>
+  </data>
+  <data name="group_1" xml:space="preserve">
+    <value>مجموعة 1</value>
+  </data>
+  <data name="group_2" xml:space="preserve">
+    <value>المجموعة 2</value>
+  </data>
+  <data name="growth" xml:space="preserve">
+    <value>نمو</value>
+  </data>
+  <data name="gt" xml:space="preserve">
+    <value>جي تي</value>
+  </data>
+  <data name="history" xml:space="preserve">
+    <value>تاريخ</value>
+  </data>
+  <data name="inactive" xml:space="preserve">
+    <value>غير نشط</value>
+  </data>
+  <data name="inr" xml:space="preserve">
+    <value>روبية هندية</value>
+  </data>
+  <data name="internet" xml:space="preserve">
+    <value>إنترنت</value>
+  </data>
+  <data name="internetspeed" xml:space="preserve">
+    <value>سرعة الإنترنت</value>
+  </data>
+  <data name="internet_source_&amp;_speed" xml:space="preserve">
+    <value>مصدر الإنترنت والسرعة</value>
+  </data>
+  <data name="invoice" xml:space="preserve">
+    <value>فاتورة</value>
+  </data>
+  <data name="invoices_amt" xml:space="preserve">
+    <value>مبلغ الفواتير</value>
+  </data>
+  <data name="invoices_details" xml:space="preserve">
+    <value>تفاصيل الفواتير</value>
+  </data>
+  <data name="invoices_no" xml:space="preserve">
+    <value>رقم الفواتير</value>
+  </data>
+  <data name="invoice_amount" xml:space="preserve">
+    <value>قيمة الفاتورة</value>
+  </data>
+  <data name="invoice_amount_can't_be_negative" xml:space="preserve">
+    <value>لا يمكن أن يكون مبلغ الفاتورة سالبًا</value>
+  </data>
+  <data name="invoice_amount_can_not_be_negative" xml:space="preserve">
+    <value>لا يمكن أن يكون مبلغ الفاتورة سالبًا</value>
+  </data>
+  <data name="invoice_and_collected_amount_should_be_same" xml:space="preserve">
+    <value>يجب أن تكون الفاتورة والمبلغ المحصل متساويين</value>
+  </data>
+  <data name="invoice_delivery_method" xml:space="preserve">
+    <value>طريقة تسليم الفاتورة</value>
+  </data>
+  <data name="invoice_no" xml:space="preserve">
+    <value>رقم الفاتورة</value>
+  </data>
+  <data name="invoice_number" xml:space="preserve">
+    <value>رقم الفاتورة</value>
+  </data>
+  <data name="invoice_price" xml:space="preserve">
+    <value>سعر الفاتورة</value>
+  </data>
+  <data name="invoice_price_sku" xml:space="preserve">
+    <value>سعر الفاتورة SKU</value>
+  </data>
+  <data name="invoice_type" xml:space="preserve">
+    <value>نوع الفاتورة</value>
+  </data>
+  <data name="inv_date" xml:space="preserve">
+    <value>تاريخ الإيداع</value>
+  </data>
+  <data name="is_warehouse/school" xml:space="preserve">
+    <value>هو مستودع / مدرسة</value>
+  </data>
+  <data name="items_selected" xml:space="preserve">
+    <value>العناصر المحددة </value>
+  </data>
+  <data name="item_code/description" xml:space="preserve">
+    <value>رمز الصنف/الوصف</value>
+  </data>
+  <data name="item_code/name" xml:space="preserve">
+    <value>رمز/اسم العنصر</value>
+  </data>
+  <data name="item_description" xml:space="preserve">
+    <value>وصف السلعة</value>
+  </data>
+  <data name="it_checks_the_data_is_synced_between_server_&amp;_app" xml:space="preserve">
+    <value>يتحقق من مزامنة البيانات بين الخادم والتطبيق</value>
+  </data>
+  <data name="it_seems_you_are_not_in_customer_location,do_you_want_to_do_force_check_in" xml:space="preserve">
+    <value>يبدو أنك لست في موقع العميل، هل تريد القيام بفرض تسجيل الوصول؟</value>
+  </data>
+  <data name="it_seems_you_are_not_in_customer_location,do_you_want_to_do_force_check_in1" xml:space="preserve">
+    <value>يبدو أنك لست في موقع العميل، هل تريد القيام بفرض تسجيل الدخول؟</value>
+  </data>
+  <data name="journeyplan" xml:space="preserve">
+    <value>JourneyPlan</value>
+  </data>
+  <data name="journey_plan(jp)" xml:space="preserve">
+    <value>خطة الرحلة(JP)</value>
+  </data>
+  <data name="jp" xml:space="preserve">
+    <value>جي بي</value>
+  </data>
+  <data name="jp_reconciliation_is_completed_for_all_available_route_for_selected_vehicle" xml:space="preserve">
+    <value>اكتملت تسوية JP لجميع المسارات المتاحة للمركبة المحددة</value>
+  </data>
+  <data name="jp_reconciliation_status" xml:space="preserve">
+    <value>حالة المصالحة JP</value>
+  </data>
+  <data name="label" xml:space="preserve">
+    <value>ملصق</value>
+  </data>
+  <data name="landline" xml:space="preserve">
+    <value>هاتف ارضي</value>
+  </data>
+  <data name="last_invoice" xml:space="preserve">
+    <value>الفاتورة الأخيرة</value>
+  </data>
+  <data name="last_month_billed" xml:space="preserve">
+    <value>فاتورة الشهر الماضي</value>
+  </data>
+  <data name="latitude" xml:space="preserve">
+    <value>خط العرض</value>
+  </data>
+  <data name="leaderboard" xml:space="preserve">
+    <value>المتصدرين</value>
+  </data>
+  <data name="legal_name" xml:space="preserve">
+    <value>الاسم القانوني</value>
+  </data>
+  <data name="line_number" xml:space="preserve">
+    <value>رقم السطر</value>
+  </data>
+  <data name="loading...." xml:space="preserve">
+    <value>تحميل....</value>
+  </data>
+  <data name="loading_customers.." xml:space="preserve">
+    <value>جاري تحميل العملاء..</value>
+  </data>
+  <data name="loading_journey_plan" xml:space="preserve">
+    <value>جارٍ تحميل خطة الرحلة</value>
+  </data>
+  <data name="loading_load_request" xml:space="preserve">
+    <value>جارٍ تحميل طلب التحميل</value>
+  </data>
+  <data name="loading_product_catalogue" xml:space="preserve">
+    <value>تحميل كتالوج المنتجات</value>
+  </data>
+  <data name="loading_sales_order" xml:space="preserve">
+    <value>تحميل أمر المبيعات</value>
+  </data>
+  <data name="load_request" xml:space="preserve">
+    <value>طلب التحميل</value>
+  </data>
+  <data name="load_request_submitted_failed" xml:space="preserve">
+    <value>فشل طلب التحميل المقدم</value>
+  </data>
+  <data name="location" xml:space="preserve">
+    <value>موقع</value>
+  </data>
+  <data name="location_permission_is_not_granted" xml:space="preserve">
+    <value>لم يتم منح إذن الموقع</value>
+  </data>
+  <data name="location_permission_is_required_to_use_this_feature" xml:space="preserve">
+    <value>مطلوب إذن الموقع لاستخدام هذه الميزة</value>
+  </data>
+  <data name="location_permission_is_required_to_use_this_feature1" xml:space="preserve">
+    <value>مطلوب إذن الموقع لاستخدام هذه الميزة</value>
+  </data>
+  <data name="location_popup" xml:space="preserve">
+    <value>الموقع المنبثق</value>
+  </data>
+  <data name="location_update" xml:space="preserve">
+    <value>تحديث الموقع</value>
+  </data>
+  <data name="location_updated_successfully" xml:space="preserve">
+    <value>تم تحديث الموقع بنجاح</value>
+  </data>
+  <data name="logout" xml:space="preserve">
+    <value>تسجيل خروج</value>
+  </data>
+  <data name="longitude" xml:space="preserve">
+    <value>خط الطول</value>
+  </data>
+  <data name="loyalty_redeemed" xml:space="preserve">
+    <value>تم استرداد الولاء</value>
+  </data>
+  <data name="lpo_number" xml:space="preserve">
+    <value>رقم أمر الشراء المحلي</value>
+  </data>
+  <data name="make_sure_battery_is_minimum_30%_charged_to_start_your_day" xml:space="preserve">
+    <value>تأكد من شحن البطارية بنسبة 30% على الأقل لبدء يومك</value>
+  </data>
+  <data name="manager" xml:space="preserve">
+    <value>مدير</value>
+  </data>
+  <data name="managercontact" xml:space="preserve">
+    <value>جهة اتصال المدير</value>
+  </data>
+  <data name="managername" xml:space="preserve">
+    <value>اسم المدير</value>
+  </data>
+  <data name="map" xml:space="preserve">
+    <value>خريطة</value>
+  </data>
+  <data name="mark" xml:space="preserve">
+    <value>علامة</value>
+  </data>
+  <data name="mark_attendance" xml:space="preserve">
+    <value>علامة الحضور</value>
+  </data>
+  <data name="maximum_price_limit" xml:space="preserve">
+    <value>الحد الأقصى للسعر</value>
+  </data>
+  <data name="maxqty_reached" xml:space="preserve">
+    <value>تم الوصول إلى الحد الأقصى للكمية</value>
+  </data>
+  <data name="mbps" xml:space="preserve">
+    <value>ميغابت في الثانية</value>
+  </data>
+  <data name="mcl" xml:space="preserve">
+    <value>MCL</value>
+  </data>
+  <data name="mcl_status" xml:space="preserve">
+    <value>حالة MCL</value>
+  </data>
+  <data name="message" xml:space="preserve">
+    <value>رسالة</value>
+  </data>
+  <data name="message_of_the_day" xml:space="preserve">
+    <value>رسالة اليوم</value>
+  </data>
+  <data name="minimum_price_limit" xml:space="preserve">
+    <value>الحد الأدنى للسعر</value>
+  </data>
+  <data name="mins" xml:space="preserve">
+    <value>دقيقة</value>
+  </data>
+  <data name="missing_customer_signature" xml:space="preserve">
+    <value>توقيع العميل مفقود</value>
+  </data>
+  <data name="missing_salesman_signature" xml:space="preserve">
+    <value>توقيع البائع مفقود</value>
+  </data>
+  <data name="mobile" xml:space="preserve">
+    <value>متحرك</value>
+  </data>
+  <data name="mobile_internet" xml:space="preserve">
+    <value>الإنترنت عبر الهاتف النقال</value>
+  </data>
+  <data name="mobile_number" xml:space="preserve">
+    <value>رقم الهاتف المحمول</value>
+  </data>
+  <data name="mode_of_delivery" xml:space="preserve">
+    <value>طريقة التسليم</value>
+  </data>
+  <data name="modify_order" xml:space="preserve">
+    <value>تعديل الترتيب</value>
+  </data>
+  <data name="moment_code" xml:space="preserve">
+    <value>رمز اللحظة</value>
+  </data>
+  <data name="monthly" xml:space="preserve">
+    <value>شهريا</value>
+  </data>
+  <data name="msl" xml:space="preserve">
+    <value>MSL</value>
+  </data>
+  <data name="mtd_sales_value" xml:space="preserve">
+    <value>قيمة المبيعات مليون دينار</value>
+  </data>
+  <data name="mycustomers" xml:space="preserve">
+    <value>زبائني</value>
+  </data>
+  <data name="my_customers" xml:space="preserve">
+    <value>زبائني</value>
+  </data>
+  <data name="my_dashboard" xml:space="preserve">
+    <value>لوحة القيادة الخاصة بي</value>
+  </data>
+  <data name="navigate" xml:space="preserve">
+    <value>التنقل</value>
+  </data>
+  <data name="new" xml:space="preserve">
+    <value>جديد</value>
+  </data>
+  <data name="new_password" xml:space="preserve">
+    <value>كلمة المرور الجديدة</value>
+  </data>
+  <data name="nl" xml:space="preserve">
+    <value>NL</value>
+  </data>
+  <data name="no" xml:space="preserve">
+    <value>لا</value>
+  </data>
+  <data name="not" xml:space="preserve">
+    <value>لا</value>
+  </data>
+  <data name="not_delivered" xml:space="preserve">
+    <value>لم يتم تسليمها</value>
+  </data>
+  <data name="no_category_selected" xml:space="preserve">
+    <value>لم يتم تحديد فئة</value>
+  </data>
+  <data name="no_category_selected1" xml:space="preserve">
+    <value>لم يتم تحديد فئة</value>
+  </data>
+  <data name="no_file_chosen" xml:space="preserve">
+    <value>لم تقم باختيار ملف</value>
+  </data>
+  <data name="no_items" xml:space="preserve">
+    <value>لا توجد عناصر</value>
+  </data>
+  <data name="no_items_added" xml:space="preserve">
+    <value>لم تتم إضافة أي عناصر</value>
+  </data>
+  <data name="no_items_are_selected" xml:space="preserve">
+    <value>لم يتم تحديد أي عناصر</value>
+  </data>
+  <data name="no_items_selected" xml:space="preserve">
+    <value>لم يتم تحديد أي عناصر</value>
+  </data>
+  <data name="no_journey_plan_available_for_the_day" xml:space="preserve">
+    <value>لا توجد خطة رحلة متاحة لهذا اليوم</value>
+  </data>
+  <data name="no_order_details_available" xml:space="preserve">
+    <value>لا توجد تفاصيل الطلب المتاحة</value>
+  </data>
+  <data name="no_printer" xml:space="preserve">
+    <value>لا توجد طابعة</value>
+  </data>
+  <data name="no_printer1" xml:space="preserve">
+    <value>لا توجد طابعة</value>
+  </data>
+  <data name="no_printer_selected_at_printer_service_for_printing" xml:space="preserve">
+    <value>لم يتم تحديد طابعة في خدمة الطابعة للطباعة</value>
+  </data>
+  <data name="no_records_available" xml:space="preserve">
+    <value>لا توجد سجلات متاحة</value>
+  </data>
+  <data name="no_records_selected" xml:space="preserve">
+    <value>لم يتم تحديد أي سجلات</value>
+  </data>
+  <data name="no_record_found" xml:space="preserve">
+    <value>لا يوجد سجلات</value>
+  </data>
+  <data name="no_results_found" xml:space="preserve">
+    <value>لم يتم العثور على نتائج</value>
+  </data>
+  <data name="no_sku_available" xml:space="preserve">
+    <value>لا يوجد SKU متاح</value>
+  </data>
+  <data name="number" xml:space="preserve">
+    <value>رقم</value>
+  </data>
+  <data name="number_of_cash_counters" xml:space="preserve">
+    <value>عدد عدادات النقد</value>
+  </data>
+  <data name="odometer" xml:space="preserve">
+    <value>عداد المسافات</value>
+  </data>
+  <data name="odometer_reading" xml:space="preserve">
+    <value>قراءة عداد المسافات</value>
+  </data>
+  <data name="of_the_day" xml:space="preserve">
+    <value>اليوم</value>
+  </data>
+  <data name="ok" xml:space="preserve">
+    <value>نعم</value>
+  </data>
+  <data name="old" xml:space="preserve">
+    <value>قديم</value>
+  </data>
+  <data name="onaccount" xml:space="preserve">
+    <value>على الحساب</value>
+  </data>
+  <data name="online" xml:space="preserve">
+    <value>متصل</value>
+  </data>
+  <data name="online_payment" xml:space="preserve">
+    <value>الدفع الالكتروني</value>
+  </data>
+  <data name="on_account" xml:space="preserve">
+    <value>على حساب</value>
+  </data>
+  <data name="on_account_created_successfully" xml:space="preserve">
+    <value>تم إنشاء الحساب بنجاح</value>
+  </data>
+  <data name="on_account_creation_failed" xml:space="preserve">
+    <value>عند فشل إنشاء الحساب</value>
+  </data>
+  <data name="on_account_will_be_created._are_you_sure_to_proceed?" xml:space="preserve">
+    <value>سيتم إنشاء الحساب. هل أنت متأكد من المتابعة؟</value>
+  </data>
+  <data name="openfile_not_supported" xml:space="preserve">
+    <value>الملف المفتوح غير مدعوم</value>
+  </data>
+  <data name="order" xml:space="preserve">
+    <value>طلب</value>
+  </data>
+  <data name="orderdate" xml:space="preserve">
+    <value>تاريخ الطلب</value>
+  </data>
+  <data name="order_confirmation" xml:space="preserve">
+    <value>تأكيد الطلب</value>
+  </data>
+  <data name="order_delivered_successfully" xml:space="preserve">
+    <value>تم تسليم الطلب بنجاح</value>
+  </data>
+  <data name="order_number" xml:space="preserve">
+    <value>رقم الأمر</value>
+  </data>
+  <data name="order_placed_successfully" xml:space="preserve">
+    <value>تم تقديم الطلب بنجاح</value>
+  </data>
+  <data name="order_profile" xml:space="preserve">
+    <value>الملف الشخصي للطلب</value>
+  </data>
+  <data name="order_qty" xml:space="preserve">
+    <value>الكمية النظام</value>
+  </data>
+  <data name="order_saved_successfully" xml:space="preserve">
+    <value>تم حفظ الطلب بنجاح</value>
+  </data>
+  <data name="order_status" xml:space="preserve">
+    <value>حالة الطلب</value>
+  </data>
+  <data name="order_value_can_not_be_less_than_zero(0)" xml:space="preserve">
+    <value>لا يمكن أن تكون قيمة الطلب أقل من الصفر (0)</value>
+  </data>
+  <data name="order_value_can_not_be_less_than_zero(0)." xml:space="preserve">
+    <value>لا يمكن أن تكون قيمة الطلب أقل من الصفر (0).</value>
+  </data>
+  <data name="org_seq_code_not_mapped" xml:space="preserve">
+    <value>لم يتم تعيين كود التسلسل المؤسسي</value>
+  </data>
+  <data name="outer" xml:space="preserve">
+    <value>الخارجي</value>
+  </data>
+  <data name="outlet_name" xml:space="preserve">
+    <value>اسم المخرج</value>
+  </data>
+  <data name="outlet_subtype" xml:space="preserve">
+    <value>النوع الفرعي للمخرج</value>
+  </data>
+  <data name="out_of" xml:space="preserve">
+    <value>بعيدا عن المكان</value>
+  </data>
+  <data name="overdue" xml:space="preserve">
+    <value>تأخرت</value>
+  </data>
+  <data name="over_due" xml:space="preserve">
+    <value>أكثر من اللازم</value>
+  </data>
+  <data name="passcode_incorrect!!" xml:space="preserve">
+    <value>رمز المرور غير صحيح!!</value>
+  </data>
+  <data name="passed" xml:space="preserve">
+    <value>اجتاز</value>
+  </data>
+  <data name="password" xml:space="preserve">
+    <value>كلمة المرور</value>
+  </data>
+  <data name="password_miss_match" xml:space="preserve">
+    <value>كلمة المرور مفقودة</value>
+  </data>
+  <data name="paying_amount" xml:space="preserve">
+    <value>مبلغ الدفع</value>
+  </data>
+  <data name="payment" xml:space="preserve">
+    <value>قسط</value>
+  </data>
+  <data name="payment_check_list" xml:space="preserve">
+    <value>قائمة التحقق من الدفع</value>
+  </data>
+  <data name="payment_date" xml:space="preserve">
+    <value>تاريخ الدفع</value>
+  </data>
+  <data name="payment_success" xml:space="preserve">
+    <value>الدفع الناجح</value>
+  </data>
+  <data name="pending" xml:space="preserve">
+    <value>قيد الانتظار</value>
+  </data>
+  <data name="perfect_score" xml:space="preserve">
+    <value>علامة كاملة</value>
+  </data>
+  <data name="permission_denied" xml:space="preserve">
+    <value>تم رفض الإذن</value>
+  </data>
+  <data name="permission_not_granted" xml:space="preserve">
+    <value>لم يتم منح الإذن</value>
+  </data>
+  <data name="permission_not_granted_to_use_the_phone_dialer" xml:space="preserve">
+    <value>لم يتم منح الإذن لاستخدام طالب الهاتف</value>
+  </data>
+  <data name="phone_dialer_is_not_supported_on_this_device" xml:space="preserve">
+    <value>برنامج Phone Dialer غير مدعوم على هذا الجهاز</value>
+  </data>
+  <data name="phone_dialer_not_supported" xml:space="preserve">
+    <value>طالب الهاتف غير مدعوم</value>
+  </data>
+  <data name="piechart" xml:space="preserve">
+    <value>رسم بياني</value>
+  </data>
+  <data name="place_order" xml:space="preserve">
+    <value>مكان الامر</value>
+  </data>
+  <data name="planned" xml:space="preserve">
+    <value>المخطط لها</value>
+  </data>
+  <data name="plan_for_the_call" xml:space="preserve">
+    <value>خطة للمكالمة</value>
+  </data>
+  <data name="please_capture_before_image_to_continue" xml:space="preserve">
+    <value>يرجى التقاط الصورة قبل المتابعة</value>
+  </data>
+  <data name="please_check_date_range" xml:space="preserve">
+    <value>يرجى التحقق من النطاق الزمني</value>
+  </data>
+  <data name="please_connect_to_the_internet_before_proceeding" xml:space="preserve">
+    <value>يرجى الاتصال بالإنترنت قبل المتابعة</value>
+  </data>
+  <data name="please_enable_gps_before_proceeding" xml:space="preserve">
+    <value>الرجاء تمكين GPS قبل المتابعة</value>
+  </data>
+  <data name="please_ensure_that_the_battery_is_at_least_20%_charged_before_proceeding" xml:space="preserve">
+    <value>يرجى التأكد من أن البطارية مشحونة بنسبة 20% على الأقل قبل المتابعة</value>
+  </data>
+  <data name="please_enter_amount" xml:space="preserve">
+    <value>الرجاء إدخال المبلغ</value>
+  </data>
+  <data name="please_enter_amount_in_selected_paymentmode" xml:space="preserve">
+    <value>الرجاء إدخال المبلغ في طريقة الدفع المحددة</value>
+  </data>
+  <data name="please_enter_a_non-negative_value" xml:space="preserve">
+    <value>الرجاء إدخال قيمة غير سلبية</value>
+  </data>
+  <data name="please_enter_new_password" xml:space="preserve">
+    <value>الرجاء إدخال كلمة المرور الجديدة</value>
+  </data>
+  <data name="please_enter_paying_amount" xml:space="preserve">
+    <value>الرجاء إدخال مبلغ الدفع</value>
+  </data>
+  <data name="please_enter_the_passcode_for_below_passkey" xml:space="preserve">
+    <value>الرجاء إدخال رمز المرور لمفتاح المرور أدناه</value>
+  </data>
+  <data name="please_goto_dashboard_then_only_you_can_change_the_route" xml:space="preserve">
+    <value>يرجى الانتقال إلى لوحة التحكم، حيث يمكنك فقط تغيير المسار</value>
+  </data>
+  <data name="please_select_a_reason_to_continue" xml:space="preserve">
+    <value>الرجاء تحديد سبب للمتابعة</value>
+  </data>
+  <data name="please_select_checklist" xml:space="preserve">
+    <value>الرجاء تحديد قائمة التحقق</value>
+  </data>
+  <data name="please_select_force_chekin_reason" xml:space="preserve">
+    <value>الرجاء تحديد سبب فرض الشيك</value>
+  </data>
+  <data name="please_select_force_chekin_reason1" xml:space="preserve">
+    <value>الرجاء تحديد سبب فرض الشيك</value>
+  </data>
+  <data name="please_select_paymentmode" xml:space="preserve">
+    <value>الرجاء تحديد وضع الدفع</value>
+  </data>
+  <data name="please_select_records" xml:space="preserve">
+    <value>الرجاء تحديد السجلات</value>
+  </data>
+  <data name="please_select_route_to_continue" xml:space="preserve">
+    <value>الرجاء تحديد الطريق للمتابعة</value>
+  </data>
+  <data name="please_select_route_to_continue." xml:space="preserve">
+    <value>الرجاء تحديد الطريق للمتابعة.</value>
+  </data>
+  <data name="please_start_your_day_first_to_continue_to_journey_plan." xml:space="preserve">
+    <value>يرجى أن تبدأ يومك أولاً للاستمرار في خطة الرحلة.</value>
+  </data>
+  <data name="please_wait_until_all_prerequisites_are_checked" xml:space="preserve">
+    <value>يرجى الانتظار حتى يتم التحقق من كافة المتطلبات الأساسية</value>
+  </data>
+  <data name="pos" xml:space="preserve">
+    <value>نقاط البيع</value>
+  </data>
+  <data name="positive_calls" xml:space="preserve">
+    <value>المكالمات الإيجابية</value>
+  </data>
+  <data name="pos_payment" xml:space="preserve">
+    <value>الدفع عبر نقاط البيع</value>
+  </data>
+  <data name="po_boxnumber" xml:space="preserve">
+    <value>عدد مربع P.O</value>
+  </data>
+  <data name="po_number" xml:space="preserve">
+    <value>PO عدد</value>
+  </data>
+  <data name="ppq" xml:space="preserve">
+    <value>PPQ</value>
+  </data>
+  <data name="preffered_payment_mode" xml:space="preserve">
+    <value>طريقة الدفع المفضلة</value>
+  </data>
+  <data name="present" xml:space="preserve">
+    <value>حاضر</value>
+  </data>
+  <data name="preview" xml:space="preserve">
+    <value>معاينة</value>
+  </data>
+  <data name="price" xml:space="preserve">
+    <value>سعر</value>
+  </data>
+  <data name="price_sku" xml:space="preserve">
+    <value>سعر SKU</value>
+  </data>
+  <data name="price_type" xml:space="preserve">
+    <value>نوع السعر</value>
+  </data>
+  <data name="print" xml:space="preserve">
+    <value>مطبعة</value>
+  </data>
+  <data name="printer_brand" xml:space="preserve">
+    <value>العلامة التجارية للطابعة</value>
+  </data>
+  <data name="printer_mac_address" xml:space="preserve">
+    <value>عنوان ماك للطابعة</value>
+  </data>
+  <data name="printer_mac_address_is_empty_or_null" xml:space="preserve">
+    <value>عنوان MAC الخاص بالطابعة فارغ أو فارغ</value>
+  </data>
+  <data name="printer_paper_size" xml:space="preserve">
+    <value>حجم ورق الطابعة</value>
+  </data>
+  <data name="printer_paper_size_is_empty_or_null" xml:space="preserve">
+    <value>حجم ورق الطابعة فارغ أو فارغ</value>
+  </data>
+  <data name="printer_type_or_brand_is_empty_or_null" xml:space="preserve">
+    <value>نوع الطابعة أو العلامة التجارية فارغ أو فارغ</value>
+  </data>
+  <data name="print_collection_summary" xml:space="preserve">
+    <value>ملخص مجموعة الطباعة</value>
+  </data>
+  <data name="print_sales_summary" xml:space="preserve">
+    <value>طباعة ملخص المبيعات</value>
+  </data>
+  <data name="print_summary" xml:space="preserve">
+    <value>ملخص الطباعة</value>
+  </data>
+  <data name="proceed" xml:space="preserve">
+    <value>يتابع</value>
+  </data>
+  <data name="product_details" xml:space="preserve">
+    <value>تفاصيل المنتج</value>
+  </data>
+  <data name="promo" xml:space="preserve">
+    <value>الترويجي</value>
+  </data>
+  <data name="promotions" xml:space="preserve">
+    <value>الترقيات</value>
+  </data>
+  <data name="promotion_details" xml:space="preserve">
+    <value>تفاصيل الترويج</value>
+  </data>
+  <data name="qty" xml:space="preserve">
+    <value>الكمية</value>
+  </data>
+  <data name="quantity" xml:space="preserve">
+    <value>كمية</value>
+  </data>
+  <data name="quantity_alert" xml:space="preserve">
+    <value>تنبيه الكمية</value>
+  </data>
+  <data name="radialgauge" xml:space="preserve">
+    <value>مقياس الشعاع</value>
+  </data>
+  <data name="rate" xml:space="preserve">
+    <value>معدل</value>
+  </data>
+  <data name="rc_qty" xml:space="preserve">
+    <value>الكمية RC</value>
+  </data>
+  <data name="reading" xml:space="preserve">
+    <value>قراءة</value>
+  </data>
+  <data name="reason" xml:space="preserve">
+    <value>سبب</value>
+  </data>
+  <data name="receipt" xml:space="preserve">
+    <value>إيصال</value>
+  </data>
+  <data name="receipts_created_successfully" xml:space="preserve">
+    <value>تم إنشاء الإيصالات بنجاح</value>
+  </data>
+  <data name="receipts_created_successfully,_on_account_failed" xml:space="preserve">
+    <value>تم إنشاء الإيصالات بنجاح، وفشل "الحساب".</value>
+  </data>
+  <data name="receipts_creation_failed,_on_account_created" xml:space="preserve">
+    <value>فشل إنشاء الإيصالات، وتم إنشاء الحساب</value>
+  </data>
+  <data name="receivedbysignature" xml:space="preserve">
+    <value>تم الاستلام بواسطة التوقيع</value>
+  </data>
+  <data name="recommended" xml:space="preserve">
+    <value>مُستَحسَن</value>
+  </data>
+  <data name="refresh" xml:space="preserve">
+    <value>ينعش</value>
+  </data>
+  <data name="region/zone" xml:space="preserve">
+    <value>المنطقة/المنطقة</value>
+  </data>
+  <data name="remaining" xml:space="preserve">
+    <value>متبقي</value>
+  </data>
+  <data name="remember_me" xml:space="preserve">
+    <value>تذكرنى</value>
+  </data>
+  <data name="remote_collections" xml:space="preserve">
+    <value>المجموعات البعيدة</value>
+  </data>
+  <data name="requested" xml:space="preserve">
+    <value>مطلوب</value>
+  </data>
+  <data name="requestedqrt2_should_not_be_zero" xml:space="preserve">
+    <value>لا ينبغي أن تكون قيمة RequestedQrt2 صفرًا</value>
+  </data>
+  <data name="requested_qty" xml:space="preserve">
+    <value>الكمية المطلوبة</value>
+  </data>
+  <data name="requisites" xml:space="preserve">
+    <value>المتطلبات</value>
+  </data>
+  <data name="reset" xml:space="preserve">
+    <value>إعادة ضبط</value>
+  </data>
+  <data name="retake" xml:space="preserve">
+    <value>إعادة الالتقاط</value>
+  </data>
+  <data name="returnorder" xml:space="preserve">
+    <value>طلب الإرجاع</value>
+  </data>
+  <data name="return_order" xml:space="preserve">
+    <value>أمر الإرجاع</value>
+  </data>
+  <data name="return_order_preview" xml:space="preserve">
+    <value>معاينة أمر الإرجاع</value>
+  </data>
+  <data name="return_summary" xml:space="preserve">
+    <value>ملخص العودة</value>
+  </data>
+  <data name="rlp" xml:space="preserve">
+    <value>RLP</value>
+  </data>
+  <data name="round_off_range_should_be" xml:space="preserve">
+    <value>ينبغي أن يكون نطاق التقريب </value>
+  </data>
+  <data name="route" xml:space="preserve">
+    <value>طريق</value>
+  </data>
+  <data name="route_not_mapped" xml:space="preserve">
+    <value>لم يتم تعيين الطريق</value>
+  </data>
+  <data name="route_selection" xml:space="preserve">
+    <value>اختيار الطريق</value>
+  </data>
+  <data name="route_selection_will_be_enabled_once_day_started." xml:space="preserve">
+    <value>سيتم تمكين اختيار المسار بمجرد بدء اليوم.</value>
+  </data>
+  <data name="saleable" xml:space="preserve">
+    <value>رائج</value>
+  </data>
+  <data name="sales" xml:space="preserve">
+    <value>مبيعات</value>
+  </data>
+  <data name="salesman_signature" xml:space="preserve">
+    <value>توقيع البائع</value>
+  </data>
+  <data name="salesorder" xml:space="preserve">
+    <value>طلب المبيعات</value>
+  </data>
+  <data name="sales_invoice" xml:space="preserve">
+    <value>فاتورة المبيعات</value>
+  </data>
+  <data name="sales_order" xml:space="preserve">
+    <value>طلب المبيعات</value>
+  </data>
+  <data name="sales_order_can't_be_null." xml:space="preserve">
+    <value>لا يمكن أن يكون أمر المبيعات خاليًا.</value>
+  </data>
+  <data name="sales_order_can_not_be_null" xml:space="preserve">
+    <value>لا يمكن أن يكون أمر المبيعات خاليًا</value>
+  </data>
+  <data name="sales_order_preview" xml:space="preserve">
+    <value>معاينة أمر المبيعات</value>
+  </data>
+  <data name="sales_org" xml:space="preserve">
+    <value>منظمة المبيعات</value>
+  </data>
+  <data name="sales_organization" xml:space="preserve">
+    <value>تنظيم المبيعات</value>
+  </data>
+  <data name="sales_performance" xml:space="preserve">
+    <value>اداء المبيعات</value>
+  </data>
+  <data name="sales_summary" xml:space="preserve">
+    <value>ملخص المبيعات</value>
+  </data>
+  <data name="sar" xml:space="preserve">
+    <value>ريال سعودي</value>
+  </data>
+  <data name="save" xml:space="preserve">
+    <value>يحفظ</value>
+  </data>
+  <data name="save_&amp;_proceed" xml:space="preserve">
+    <value>حفظ والمتابعة</value>
+  </data>
+  <data name="school" xml:space="preserve">
+    <value>مدرسة</value>
+  </data>
+  <data name="sc_qty" xml:space="preserve">
+    <value>الكمية SC</value>
+  </data>
+  <data name="search_by_customer_name.." xml:space="preserve">
+    <value>البحث حسب اسم العميل..</value>
+  </data>
+  <data name="search_by_customer_name_/code" xml:space="preserve">
+    <value>البحث حسب اسم العميل/الرمز</value>
+  </data>
+  <data name="search_by_customer_name_or_address" xml:space="preserve">
+    <value>البحث حسب اسم العميل أو العنوان</value>
+  </data>
+  <data name="search_by_customer_name_or_address_or_code...." xml:space="preserve">
+    <value>البحث حسب اسم العميل أو العنوان أو الرمز....</value>
+  </data>
+  <data name="search_by_item_code/description" xml:space="preserve">
+    <value>البحث حسب رمز السلعة/الوصف</value>
+  </data>
+  <data name="search_by_item_code_/_description" xml:space="preserve">
+    <value>البحث حسب رمز السلعة / الوصف</value>
+  </data>
+  <data name="search_by_receipt_number" xml:space="preserve">
+    <value>البحث عن طريق رقم الإيصال</value>
+  </data>
+  <data name="search_here..." xml:space="preserve">
+    <value>ابحث هنا...</value>
+  </data>
+  <data name="select" xml:space="preserve">
+    <value>يختار</value>
+  </data>
+  <data name="selected_category:" xml:space="preserve">
+    <value>الفئة المختارة:</value>
+  </data>
+  <data name="selected_category_type_:" xml:space="preserve">
+    <value>نوع الفئة المختارة :</value>
+  </data>
+  <data name="select_all" xml:space="preserve">
+    <value>اختر الكل</value>
+  </data>
+  <data name="select_atleast_one_sku" xml:space="preserve">
+    <value>حدد SKU واحدًا على الأقل</value>
+  </data>
+  <data name="select_bank_name" xml:space="preserve">
+    <value>حدد اسم البنك</value>
+  </data>
+  <data name="select_category" xml:space="preserve">
+    <value>اختر الفئة</value>
+  </data>
+  <data name="select_category_type" xml:space="preserve">
+    <value>حدد نوع الفئة</value>
+  </data>
+  <data name="select_classification" xml:space="preserve">
+    <value>اختر التصنيف</value>
+  </data>
+  <data name="select_customers" xml:space="preserve">
+    <value>حدد العملاء</value>
+  </data>
+  <data name="select_customer_chain" xml:space="preserve">
+    <value>حدد سلسلة العملاء</value>
+  </data>
+  <data name="select_customer_channel" xml:space="preserve">
+    <value>حدد قناة العميل</value>
+  </data>
+  <data name="select_customer_group" xml:space="preserve">
+    <value>حدد مجموعة العملاء</value>
+  </data>
+  <data name="select_customer_sub_channel" xml:space="preserve">
+    <value>حدد قناة العميل الفرعية</value>
+  </data>
+  <data name="select_customer_type" xml:space="preserve">
+    <value>حدد نوع العميل</value>
+  </data>
+  <data name="select_delivery_mode" xml:space="preserve">
+    <value>حدد وضع التسليم</value>
+  </data>
+  <data name="select_paymentmode" xml:space="preserve">
+    <value>حدد وضع الدفع</value>
+  </data>
+  <data name="select_reason" xml:space="preserve">
+    <value>حدد السبب</value>
+  </data>
+  <data name="select_remote_collection_reason" xml:space="preserve">
+    <value>حدد سبب التجميع عن بعد</value>
+  </data>
+  <data name="select_route" xml:space="preserve">
+    <value>حدد الطريق</value>
+  </data>
+  <data name="select_sales_organization" xml:space="preserve">
+    <value>حدد منظمة المبيعات</value>
+  </data>
+  <data name="select_store_size" xml:space="preserve">
+    <value>حدد حجم المتجر</value>
+  </data>
+  <data name="select_sub_type" xml:space="preserve">
+    <value>حدد النوع الفرعي</value>
+  </data>
+  <data name="select_type" xml:space="preserve">
+    <value>اختر صنف</value>
+  </data>
+  <data name="select_uom_first" xml:space="preserve">
+    <value>حدد UOM أولاً</value>
+  </data>
+  <data name="select_visit_frequency" xml:space="preserve">
+    <value>حدد تكرار الزيارة</value>
+  </data>
+  <data name="settings" xml:space="preserve">
+    <value>إعدادات</value>
+  </data>
+  <data name="settings1" xml:space="preserve">
+    <value>إعدادات</value>
+  </data>
+  <data name="setupcreate" xml:space="preserve">
+    <value>سيتوبكريت</value>
+  </data>
+  <data name="share" xml:space="preserve">
+    <value>يشارك</value>
+  </data>
+  <data name="shart_fall" xml:space="preserve">
+    <value>شارت فال</value>
+  </data>
+  <data name="show_promo_records" xml:space="preserve">
+    <value>عرض السجلات الترويجية</value>
+  </data>
+  <data name="sign_here" xml:space="preserve">
+    <value>وقع هنا</value>
+  </data>
+  <data name="skip" xml:space="preserve">
+    <value>يتخطى</value>
+  </data>
+  <data name="skipped" xml:space="preserve">
+    <value>تم تخطيه</value>
+  </data>
+  <data name="skip_reason" xml:space="preserve">
+    <value>تخطي السبب</value>
+  </data>
+  <data name="sku's_qty" xml:space="preserve">
+    <value>الكمية SKU</value>
+  </data>
+  <data name="skus" xml:space="preserve">
+    <value>وحدات SKU</value>
+  </data>
+  <data name="sku_code" xml:space="preserve">
+    <value>رمز SKU</value>
+  </data>
+  <data name="sku_name" xml:space="preserve">
+    <value>اسم رمز التخزين التعريفي</value>
+  </data>
+  <data name="special_day" xml:space="preserve">
+    <value>يوم خاص</value>
+  </data>
+  <data name="special_day_description" xml:space="preserve">
+    <value>وصف يوم خاص</value>
+  </data>
+  <data name="standing" xml:space="preserve">
+    <value>واقفا</value>
+  </data>
+  <data name="startdayprerequisties" xml:space="preserve">
+    <value>StartdayPreRequisties</value>
+  </data>
+  <data name="start_date" xml:space="preserve">
+    <value>تاريخ البدء</value>
+  </data>
+  <data name="start_day" xml:space="preserve">
+    <value>تبدأ اليوم</value>
+  </data>
+  <data name="start_day_pre" xml:space="preserve">
+    <value>ابدأ يوم ما قبل</value>
+  </data>
+  <data name="start_day_pre_requisites" xml:space="preserve">
+    <value>المتطلبات المسبقة ليوم البدء</value>
+  </data>
+  <data name="state" xml:space="preserve">
+    <value>ولاية</value>
+  </data>
+  <data name="status" xml:space="preserve">
+    <value>حالة</value>
+  </data>
+  <data name="still" xml:space="preserve">
+    <value>ما زال</value>
+  </data>
+  <data name="stockrequest" xml:space="preserve">
+    <value>طلب المخزون</value>
+  </data>
+  <data name="stock_audit" xml:space="preserve">
+    <value>تدقيق المخزون</value>
+  </data>
+  <data name="stock_audit_loading" xml:space="preserve">
+    <value>تحميل تدقيق المخزون</value>
+  </data>
+  <data name="stock_audit_saved_successfully" xml:space="preserve">
+    <value>تم حفظ تدقيق المخزون بنجاح</value>
+  </data>
+  <data name="stock_request_requested_successfully" xml:space="preserve">
+    <value>تم طلب المخزون بنجاح</value>
+  </data>
+  <data name="store" xml:space="preserve">
+    <value>محل</value>
+  </data>
+  <data name="store_check" xml:space="preserve">
+    <value>التحقق من المتجر</value>
+  </data>
+  <data name="store_document" xml:space="preserve">
+    <value>مستند المتجر</value>
+  </data>
+  <data name="store_growth" xml:space="preserve">
+    <value>نمو المتجر</value>
+  </data>
+  <data name="store_image" xml:space="preserve">
+    <value>صورة المتجر</value>
+  </data>
+  <data name="store_information" xml:space="preserve">
+    <value>معلومات المتجر</value>
+  </data>
+  <data name="store_qty" xml:space="preserve">
+    <value>مخزن الكمية</value>
+  </data>
+  <data name="store_size" xml:space="preserve">
+    <value>حجم المتجر</value>
+  </data>
+  <data name="store_view_model_is_null" xml:space="preserve">
+    <value>نموذج عرض المتجر فارغ</value>
+  </data>
+  <data name="stringnotfound" xml:space="preserve">
+    <value>سلسلة لم يتم العثور</value>
+  </data>
+  <data name="submit" xml:space="preserve">
+    <value>يُقدِّم</value>
+  </data>
+  <data name="sub_area" xml:space="preserve">
+    <value>المنطقة الفرعية</value>
+  </data>
+  <data name="success" xml:space="preserve">
+    <value>نجاح</value>
+  </data>
+  <data name="successfully" xml:space="preserve">
+    <value>بنجاح</value>
+  </data>
+  <data name="success_is_not_a_destination._success_is_a_journey" xml:space="preserve">
+    <value>النجاح ليس وجهة. النجاح هو رحلة</value>
+  </data>
+  <data name="summary" xml:space="preserve">
+    <value>ملخص</value>
+  </data>
+  <data name="synchronization" xml:space="preserve">
+    <value>التزامن</value>
+  </data>
+  <data name="syncing_completed_successfully" xml:space="preserve">
+    <value>تمت المزامنة بنجاح</value>
+  </data>
+  <data name="upload_completed_successfully" xml:space="preserve">
+    <value>اكتمل التحميل بنجاح</value>
+  </data>
+  <data name="syncing_data..." xml:space="preserve">
+    <value>جارٍ مزامنة البيانات...</value>
+  </data>
+  <data name="sync_data" xml:space="preserve">
+    <value> مزامنة البيانات</value>
+  </data>
+  <data name="upload_data" xml:space="preserve">
+    <value>تحميل البيانات</value>
+  </data>
+  <data name="tab" xml:space="preserve">
+    <value>فاتورة غير مدفوعة</value>
+  </data>
+  <data name="tabs" xml:space="preserve">
+    <value>نوافذ التبويب</value>
+  </data>
+  <data name="take_selfie" xml:space="preserve">
+    <value>خذ صورة شخصية</value>
+  </data>
+  <data name="target" xml:space="preserve">
+    <value>هدف</value>
+  </data>
+  <data name="target_vs_ach" xml:space="preserve">
+    <value>الهدف مقابل آخ</value>
+  </data>
+  <data name="tax" xml:space="preserve">
+    <value>ضريبة</value>
+  </data>
+  <data name="tax_sku" xml:space="preserve">
+    <value>رمز التخزين التعريفي الضريبي</value>
+  </data>
+  <data name="tax_value[tax_+_invoice_vat]" xml:space="preserve">
+    <value>قيمة الضريبة[الضريبة + ضريبة القيمة المضافة الفاتورة]</value>
+  </data>
+  <data name="tele_order" xml:space="preserve">
+    <value>الطلب عن بعد</value>
+  </data>
+  <data name="territory" xml:space="preserve">
+    <value>إِقلِيم</value>
+  </data>
+  <data name="there_are_old_invoice_to_collect_/_previous_cheque_/_bank_transfer_payments_are_not_settled.do_you_want_to_continue?" xml:space="preserve">
+    <value>هناك فاتورة قديمة للتحصيل / الشيك السابق / لم تتم تسوية دفعات التحويل البنكي. هل تريد المتابعة؟</value>
+  </data>
+  <data name="there_are_some_unposted_data_that_need_to_be_posted_before_doing_cfd" xml:space="preserve">
+    <value>هناك بعض البيانات غير المنشورة التي يجب نشرها قبل القيام بعقود الفروقات</value>
+  </data>
+  <data name="there_is_no_active_store" xml:space="preserve">
+    <value>لا يوجد متجر نشط</value>
+  </data>
+  <data name="there_is_some_error_while_processing_request." xml:space="preserve">
+    <value>هناك بعض الأخطاء أثناء معالجة الطلب.</value>
+  </data>
+  <data name="there_is_some_unposted_userdata" xml:space="preserve">
+    <value>هناك بعض بيانات المستخدم غير المنشورة</value>
+  </data>
+  <data name="the_following_field(s)_have_invalid_value(s)" xml:space="preserve">
+    <value>يحتوي الحقل (الحقول) التالي على قيمة (قيم) غير صالحة</value>
+  </data>
+  <data name="the_order?" xml:space="preserve">
+    <value>الأمر - الطلب؟</value>
+  </data>
+  <data name="the_selected_customer_is_blocked_with_comment" xml:space="preserve">
+    <value>تم حظر العميل المحدد بالتعليق</value>
+  </data>
+  <data name="the_selected_route_aleady_closed_for_the_day" xml:space="preserve">
+    <value>الطريق المحدد مغلق بالفعل لهذا اليوم</value>
+  </data>
+  <data name="this_feature_coming_in_phase2" xml:space="preserve">
+    <value>هذه الميزة قادمة في المرحلة الثانية</value>
+  </data>
+  <data name="time_gone" xml:space="preserve">
+    <value>ذهب الوقت</value>
+  </data>
+  <data name="time_spent" xml:space="preserve">
+    <value>قضاء الوقت</value>
+  </data>
+  <data name="to" xml:space="preserve">
+    <value>ل</value>
+  </data>
+  <data name="to1" xml:space="preserve">
+    <value>ل</value>
+  </data>
+  <data name="today's" xml:space="preserve">
+    <value>اليوم</value>
+  </data>
+  <data name="todays" xml:space="preserve">
+    <value>اليوم</value>
+  </data>
+  <data name="todays_jp" xml:space="preserve">
+    <value>اليوم جي بي</value>
+  </data>
+  <data name="todays_scheduled_visits" xml:space="preserve">
+    <value>الزيارات المجدولة اليوم</value>
+  </data>
+  <data name="todays_target" xml:space="preserve">
+    <value>هدف اليوم</value>
+  </data>
+  <data name="topup" xml:space="preserve">
+    <value>فوق حتى</value>
+  </data>
+  <data name="top_selling" xml:space="preserve">
+    <value>الأكثر مبيعا</value>
+  </data>
+  <data name="top_trending" xml:space="preserve">
+    <value>أعلى تتجه</value>
+  </data>
+  <data name="total_amount" xml:space="preserve">
+    <value>المبلغ الإجمالي</value>
+  </data>
+  <data name="total_collected_amount" xml:space="preserve">
+    <value>إجمالي المبلغ المحصل</value>
+  </data>
+  <data name="total_collection" xml:space="preserve">
+    <value>مجموع المجموعة</value>
+  </data>
+  <data name="total_due" xml:space="preserve">
+    <value>الاجمالي المستحق</value>
+  </data>
+  <data name="total_exicise_duty_amount" xml:space="preserve">
+    <value>إجمالي مبلغ الرسوم الجمركية</value>
+  </data>
+  <data name="total_invoice_amount" xml:space="preserve">
+    <value>المبلغ الإجمالي للفاتورة</value>
+  </data>
+  <data name="total_number_of_skus_replaced" xml:space="preserve">
+    <value>إجمالي عدد وحدات SKU المستبدلة</value>
+  </data>
+  <data name="total_sale" xml:space="preserve">
+    <value>إجمالي البيع</value>
+  </data>
+  <data name="total_sku's" xml:space="preserve">
+    <value>إجمالي SKU</value>
+  </data>
+  <data name="total_working" xml:space="preserve">
+    <value>العمل الإجمالي</value>
+  </data>
+  <data name="total_workingdays" xml:space="preserve">
+    <value>إجمالي أيام العمل</value>
+  </data>
+  <data name="total_workingdays_passed" xml:space="preserve">
+    <value>إجمالي أيام العمل مرت</value>
+  </data>
+  <data name="trip_end_time" xml:space="preserve">
+    <value>وقت نهاية الرحلة</value>
+  </data>
+  <data name="trip_start_time" xml:space="preserve">
+    <value>وقت بدء الرحلة</value>
+  </data>
+  <data name="trx_number" xml:space="preserve">
+    <value>رقم تركس</value>
+  </data>
+  <data name="type" xml:space="preserve">
+    <value>يكتب</value>
+  </data>
+  <data name="type_1" xml:space="preserve">
+    <value>النوع 1</value>
+  </data>
+  <data name="type_2" xml:space="preserve">
+    <value>النوع 2</value>
+  </data>
+  <data name="unable_to_download_user_master_data_completely,_please_relogin_to_continue." xml:space="preserve">
+    <value>غير قادر على تنزيل البيانات الرئيسية للمستخدم بالكامل، يرجى إعادة تسجيل الدخول للمتابعة.</value>
+  </data>
+  <data name="uncheck_all" xml:space="preserve">
+    <value>الغاءالكل</value>
+  </data>
+  <data name="unit_price" xml:space="preserve">
+    <value>سعر الوحدة</value>
+  </data>
+  <data name="unplanned" xml:space="preserve">
+    <value>غير مخطط لها</value>
+  </data>
+  <data name="uom" xml:space="preserve">
+    <value>UOM</value>
+  </data>
+  <data name="uom_must_be_selected." xml:space="preserve">
+    <value>يجب تحديد UOM.</value>
+  </data>
+  <data name="upc" xml:space="preserve">
+    <value>UPC</value>
+  </data>
+  <data name="upcoming" xml:space="preserve">
+    <value>القادمة</value>
+  </data>
+  <data name="update" xml:space="preserve">
+    <value>تحديث</value>
+  </data>
+  <data name="update_amount" xml:space="preserve">
+    <value>تحديث المبلغ</value>
+  </data>
+  <data name="upload_image" xml:space="preserve">
+    <value>تحميل الصور</value>
+  </data>
+  <data name="upload_status" xml:space="preserve">
+    <value>حالة التحميل</value>
+  </data>
+  <data name="user_id" xml:space="preserve">
+    <value>معرف المستخدم</value>
+  </data>
+  <data name="user_org_not_mapped" xml:space="preserve">
+    <value>لم يتم تعيين مؤسسة المستخدم</value>
+  </data>
+  <data name="user_role_not_mapped" xml:space="preserve">
+    <value>لم يتم تعيين دور المستخدم</value>
+  </data>
+  <data name="value" xml:space="preserve">
+    <value>قيمة</value>
+  </data>
+  <data name="van_qty" xml:space="preserve">
+    <value>فانكتي</value>
+  </data>
+  <data name="vehicle_no" xml:space="preserve">
+    <value>السيارة لا</value>
+  </data>
+  <data name="vehicle_not_mapped" xml:space="preserve">
+    <value>لم يتم تعيين المركبة</value>
+  </data>
+  <data name="vehile_no" xml:space="preserve">
+    <value>رقم المركبة</value>
+  </data>
+  <data name="version" xml:space="preserve">
+    <value>إصدار</value>
+  </data>
+  <data name="version_name" xml:space="preserve">
+    <value>اسم الإصدار</value>
+  </data>
+  <data name="view_for" xml:space="preserve">
+    <value>عرض ل</value>
+  </data>
+  <data name="view_load_request" xml:space="preserve">
+    <value>عرض طلب التحميل</value>
+  </data>
+  <data name="view_product_catalogue" xml:space="preserve">
+    <value>عرض كتالوج المنتجات</value>
+  </data>
+  <data name="view_unload_request" xml:space="preserve">
+    <value>عرض طلب التفريغ</value>
+  </data>
+  <data name="village/area/locality" xml:space="preserve">
+    <value>القرية / المنطقة / المنطقة المحلية</value>
+  </data>
+  <data name="visited" xml:space="preserve">
+    <value>تمت زيارتها</value>
+  </data>
+  <data name="visited_today" xml:space="preserve">
+    <value>تمت زيارتها اليوم</value>
+  </data>
+  <data name="visit_frequency" xml:space="preserve">
+    <value>تردد الزيارة</value>
+  </data>
+  <data name="visit_service_compliance" xml:space="preserve">
+    <value>قم بزيارة الامتثال للخدمة</value>
+  </data>
+  <data name="ware_house" xml:space="preserve">
+    <value>مستودع</value>
+  </data>
+  <data name="wastage" xml:space="preserve">
+    <value>الهدر</value>
+  </data>
+  <data name="weekdays" xml:space="preserve">
+    <value>أيام الأسبوع</value>
+  </data>
+  <data name="weekly" xml:space="preserve">
+    <value>أسبوعي</value>
+  </data>
+  <data name="wifi" xml:space="preserve">
+    <value>واي فاي</value>
+  </data>
+  <data name="will_be_available_in_phase_2!" xml:space="preserve">
+    <value>سيكون متاحًا في المرحلة الثانية!</value>
+  </data>
+  <data name="work_in_progress" xml:space="preserve">
+    <value>أعمال جارية</value>
+  </data>
+  <data name="yes" xml:space="preserve">
+    <value>نعم</value>
+  </data>
+  <data name="your_ranking" xml:space="preserve">
+    <value>الترتيب الخاص بك</value>
+  </data>
+  <data name="your_session_will_end_in" xml:space="preserve">
+    <value>ستنتهي جلستك في</value>
+  </data>
+  <data name="you_are_collecting_payment_using" xml:space="preserve">
+    <value>أنت تقوم بتحصيل الدفع باستخدام</value>
+  </data>
+  <data name="you_are_not_entered_qty_for_some_items" xml:space="preserve">
+    <value>لم يتم إدخال الكمية لبعض العناصر</value>
+  </data>
+  <data name="you_completed" xml:space="preserve">
+    <value>لقد أكملت</value>
+  </data>
+  <data name="you_completed_of_from_your_planned_visits" xml:space="preserve">
+    <value>لقد أكملت من زياراتك المخططة</value>
+  </data>
+  <data name="you_have_already_started_future_date_and_now_you_can't_start_back_date." xml:space="preserve">
+    <value>لقد بدأت بالفعل التاريخ المستقبلي والآن لا يمكنك البدء بالتاريخ الخلفي.</value>
+  </data>
+  <data name="you_have_reached_the_maximum_value" xml:space="preserve">
+    <value>لقد وصلت إلى الحد الأقصى للقيمة</value>
+  </data>
+  <data name="zero_quotation_outlet" xml:space="preserve">
+    <value>منفذ الاقتباس صفر</value>
+  </data>
+  <data name="zero_sales" xml:space="preserve">
+    <value>مبيعات صفر</value>
+  </data>
+  <data name="zone" xml:space="preserve">
+    <value>منطقة</value>
+  </data>
+  <data name="qty_exceeds_van_qty" xml:space="preserve">
+    <value>الكمية تتجاوز كمية فان</value>
+  </data>
+  <data name="failed_to_save_the_signatures" xml:space="preserve">
+    <value>فشل في حفظ التوقيعات</value>
+  </data>
+  <data name="name_ascending" xml:space="preserve">
+    <value>الاسم تصاعدي</value>
+  </data>
+  <data name="name_descending" xml:space="preserve">
+    <value>اسم تنازلي</value>
+  </data>
+  <data name="price_ascending" xml:space="preserve">
+    <value>السعر تصاعدي</value>
+  </data>
+  <data name="price_descending" xml:space="preserve">
+    <value>السعر تنازلي</value>
+  </data>
+  <data name="sort_by" xml:space="preserve">
+    <value>ترتيب حسب</value>
+  </data>
+</root>

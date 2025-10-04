@@ -1,0 +1,296 @@
+﻿@inject Winit.Modules.Distributor.BL.Interfaces.ICreateDistributorBaseViewModel _distributorBaseViewModel
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+
+@inject IJSRuntime JSRuntime
+@using ClosedXML.Excel;
+@using Winit.Modules.FileSys.Model.Interfaces
+@using Winit.Shared.CommonUtilities.Common
+@using iTextSharp.text;
+@using iTextSharp.text.pdf;
+@using Microsoft.AspNetCore.Components;
+@using Microsoft.JSInterop;
+@using System;
+@using System.Collections.Generic;
+@using System.Globalization;
+
+<script>
+    function downloadFile(fileName, base64String) {
+    const link = document.createElement('a');
+    link.href = 'data:application/pdf;base64,' + base64String;
+    link.download = fileName;
+    document.body.appendChild(link); // Append link to body to ensure it's in the DOM
+    link.click();
+    document.body.removeChild(link); // Clean up
+    }
+</script>
+@if (IsCodeofEthicsRendered)
+{
+    <div class="container text-center">
+        <div class="row h-50 align-items-end mt-4">
+            <div class="col">
+                <h6 style="color: #19298B;"><b>CARRIER MIDEA INDIA PRIVATE LIMITED</b></h6>
+            </div>
+        </div>
+        <div class="row h-50 align-items-center">
+            <div class="col">
+                <h6 style="color: #19298B;"><b>CODE OF ETHICS AND CONDUCT FOR PARTNERS</b></h6>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" id="content-to-download">
+        <div class="card-body">
+            <p>This Code sets forth minimum workplace standards and business practices that are expected of any Partners (Dealer, Distributor, Retailer, ASP, other service provider, consultant, contractor, supplier or vendor) doing business with us, consistent with our company's values.</p>
+
+            <div class="mb-3">
+                <p class="fw-bold">Anti-Corruption/Bribes:</p>
+                <p>CMI is committed to complying with anti-corruption laws that prohibit bribes, kickbacks, or other corrupt actions to obtain or retain business or obtain any improper advantage. All Partners are expected to comply with all applicable anti-corruption laws while conducting business with and on behalf of CMI. Partners are prohibited from directly or indirectly giving any form of bribe, kickback, or other illegal payment, to any Govt. official, other customer official, intermediary/influencer and any other person/entity not specifically mentioned here while doing business for CMI products. In case any CMI employee seeks any bribe or improper benefit, Partners are required to report the same to CMI Business Practice Officer (BPO) or CMI Legal Head at the email IDs given at the bottom of this note.</p>
+            </div>
+
+            <div class="mb-3">
+                <p class="fw-bold">Business gifts and Entertainment:</p>
+                <p>Employees of CMI are strictly prohibited from accepting or soliciting gifts in any form and for any value from Partners, suppliers and any other business Partners. Therefore, you are required to desist from giving any gift or anything of value to any CMI employee or to their family members anywhere, irrespective of any occasion, including social norms like festivals.</p>
+            </div>
+
+            <div class="mb-3">
+                <p class="fw-bold">Conflict of interests:</p>
+                <p>The employees and the Partners of CMI should not have any personal or financial relation, whether direct or indirect, amongst them that might conflict or appear to conflict with the employee's or partner's obligation to act in the best interests of CMI. Conflict of interest situations may arise in many ways and any situation that creates, or could reasonably appear to create, a conflict of interest should be avoided and disclosed by both the employees and the Partners to CMI. Please write to or call the CMI BPO on the contact details below if you have a question or query on the same. Please report any such conflict of interest immediately to the CMI BPO.</p>
+            </div>
+
+            <div class="mb-3">
+                <p class="fw-bold">Disclosing confidential information:</p>
+                <p>Proper management and protection of confidential information is critical to the success of both CMI and its Partners. CMI respects and protects the confidential information of its Partners and expects the same from its Partners. Confidential Information includes all information of which unauthorized disclosure could be detrimental to the interests of CMI whether or not such information is identified as Confidential Information. For example employee data, customer and supplier identities and characteristics, agreements, marketing knowledge and information, sales figures, pricing information, marketing plans and business plans, strategies, forecasts, financial information, budgets, software, projections, quality control and manufacturing procedures, processes, formulas, trade secrets, innovations, inventions, discoveries, improvements, research or development and test results, specifications, data, know-how, formats, plans, sketches, specifications, drawings, models and any other information which by its nature is clearly confidential.</p>
+            </div>
+
+            <div class="mb-3">
+                <p class="fw-bold">International Trade Compliance:</p>
+                <p>The Partners of CMI should not be named in any of the watch lists issued by various countries around the world and the Partners should not have any commercial dealings, relations, contracts or interests in any of the Prohibited Countries viz., Sudan, Cuba, Iran, North Korea & Syria or with any citizen or legal entity of such countries.</p>
+            </div>
+
+            <div class="mb-3">
+                <p class="fw-bold">Anti-Trust & Anti-Competitive activities:</p>
+                <p>The Channel Partners of CMI should not indulge in any anti-trust and anti-competitive activities like sharing of confidential information of any party including CMI, price fixing, predatory price fixing or any other activities, which will or has the potential to kill competition in the market.</p>
+            </div>
+
+            <div class="mb-3">
+                <p class="fw-bold">Applicability to Sub-Contractors:</p>
+                <p>This Code also applies to the sub-contractor(s) to the Partners, if any. The Code shall be cascaded down to all such sub-tier(s) of subcontractor(s). The partner is fully responsible for ensuring compliance by any such sub-contractor(s) as if it were the partner themselves.</p>
+            </div>
+
+            <div class="mb-3">
+                <p class="fw-bold">Reporting potential misconduct:</p>
+                <p>As a responsible partner, if you experience or observe any unethical, illegal or otherwise improper business conduct by a CMI employee or anyone acting on behalf of CMI, you must immediately report the matter to CMI Business Practice Officer at <a href="mailto:bpo@carriermidea.com">bpo@carriermidea.com</a> (9810219956) or to CMI Legal Head at <a href="mailto:atul.sharma@carriermidea.com">atul.sharma@carriermidea.com</a> (9810718505). The partner's identity shall be kept confidential and his relation with CMI will not be affected by an honest and well-intentioned report of actual or potential misconduct.</p>
+            </div>
+
+            <div class="mb-3">
+                <p class="fw-bold">For more details:</p>
+                <p>For more details on the CMI Code of Ethics and Business Conduct, kindly go to our website <a href="http://www.carriermideaindia.com" target="_blank">http://www.carriermideaindia.com</a>.</p>
+            </div>
+        </div>
+    </div>
+    <div style="width:100%;float:left;margin:10px 0px 20px 0px;">
+        <div class="col-12 d-flex justify-content-center mt-4">
+            <div class="">
+                <Winit.UIComponents.Common.FileUploader.FileUploader @ref=fileUploader FileExtension=".pdf"
+                RelativePath="@FilePath" FileSize="500000" AllowMultipleFiles="true" FileSysList=@fileSysList.Where(s => s.FileSysType == Winit.Modules.Store.Model.Constants.FileSysTypeConstants.CodeEthicsConductPartners).ToList()
+                LinkedItemUID="@StoreUID"
+                LinkedItemType="store" UploadEventCallBack="GetsavedImagePath" DeleteEventCallBack="AfterDeleteImage"
+                FileSysType="@Winit.Modules.Store.Model.Constants.FileSysTypeConstants.CodeEthicsConductPartners"
+                FileType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.Pdf" />
+
+
+            </div>
+        </div>
+    </div>
+
+     <div style="width:100%;float:left;margin:10px 0px 20px 0px;">
+        <div class="col-12 d-flex justify-content-center mt-4">
+            <button class="cls_comman_btn" type="submit" @onclick="DownloadPDF">Download</button>
+
+        </div>
+    </div>
+}
+
+
+
+@code {
+
+    private Winit.UIComponents.Common.FileUploader.FileUploader? fileUploader { get; set; }
+    private string? FilePath { get; set; }
+    [Parameter] public List<IFileSys> fileSysList { get; set; } = new List<IFileSys>();
+    [Parameter]
+    public EventCallback<List<IFileSys>> SaveOrUpdateCodeEthicsConductPartners { get; set; }
+    [Parameter]public EventCallback<IFileSys> DeleteCodeEthicsConductPartners { get; set; }
+    [Parameter] public string StoreUID { get; set; } = "";
+    public bool UploadFile { get; set; }
+    public List<IFileSys> CodeOfEthicsFileSys { get; set; } = new List<IFileSys>();
+    public bool IsSuccess { get; set; } = false;
+    [Parameter]public bool IsCodeofEthicsRendered { get; set; } 
+
+    protected override async Task OnInitializedAsync()
+    {
+        _loadingService.ShowLoading();
+        FilePath = FileSysTemplateControles.GetOnBoardImageCheckFolderPath(StoreUID);
+        CodeOfEthicsFileSys = fileSysList.Where(s => s.FileSysType == Winit.Modules.Store.Model.Constants.FileSysTypeConstants.CodeEthicsConductPartners).ToList();
+        _loadingService.HideLoading();
+    }
+    public async Task GetsavedImagePath(List<IFileSys> ImagePath)
+    {
+        if (!string.IsNullOrEmpty(StoreUID))
+        {
+            fileSysList = ImagePath;
+            CodeOfEthicsFileSys.Clear();
+            CodeOfEthicsFileSys = fileSysList;
+            var fileUploaders = new Dictionary<Winit.UIComponents.Common.FileUploader.FileUploader?, List<IFileSys>?>();
+            AddToDictionaryIfNotNull(fileUploaders, fileUploader, fileSysList);
+            var requiredUploaders = new List<string>();
+            requiredUploaders.Add(Winit.Modules.Store.Model.Constants.FileSysTypeConstants.CodeEthicsConductPartners);
+            var emptyFileUploaderNames = fileUploaders
+                                .Where(u => requiredUploaders.Contains(u.Key?.FileSysType) && (u.Value == null || !u.Value.Any()))
+                                .Select(u => u.Key?.FileSysType ?? "Unknown")
+                                .ToList();
+            if (emptyFileUploaderNames.Any())
+            {
+                // Format the message with newline characters
+                var uploaderNames = string.Join("\n", emptyFileUploaderNames);
+                var formattedMessage = $"Please upload files for the following:\n{uploaderNames}";
+                await _alertService.ShowErrorAlert("Error", formattedMessage);
+                return;
+            }
+            Winit.Shared.Models.Common.ApiResponse<string> apiResponse = await fileUploader.MoveFiles();
+            if (apiResponse.IsSuccess)
+            {
+                UploadFile = false;
+                await SaveOrUpdateCodeEthicsConductPartners.InvokeAsync(fileSysList);
+                IsSuccess = true;
+            }
+        }
+        else
+        {
+            await _alertService.ShowErrorAlert("Error", "Please fill Customer Information....");
+        }
+    }
+    private void AddToDictionaryIfNotNull(Dictionary<Winit.UIComponents.Common.FileUploader.FileUploader?, List<IFileSys>?> fileUploaders,
+                                                Winit.UIComponents.Common.FileUploader.FileUploader? uploader, List<IFileSys>? fileSysList)
+    {
+        if (uploader != null && fileSysList != null && fileSysList.Any())
+        {
+            fileUploaders.Add(uploader, fileSysList);
+        }
+    }
+    private void AfterDeleteImage(string UID)
+    {
+        var record = fileSysList.FirstOrDefault(p => p.UID == UID);
+        fileSysList.Remove(record);
+        DeleteCodeEthicsConductPartners.InvokeAsync();
+        StateHasChanged();
+    }
+    public void Close()
+    {
+        try
+        {
+            UploadFile = false;
+        }
+        catch (Exception ex)
+        {
+
+        }
+    }
+    public void Upload()
+    {
+        try
+        {
+            UploadFile = true;
+        }
+        catch (Exception ex)
+        {
+
+        }
+    }
+    public async Task DownloadPDF()
+    {
+        try
+        {
+            var pdfBytes = await GeneratePdfAsync();
+            var base64String = Convert.ToBase64String(pdfBytes);
+            var fileName = "CodeEthicsConductPartners.pdf";
+
+            await JSRuntime.InvokeVoidAsync("downloadFile", fileName, base64String);
+        }
+        catch (Exception ex)
+        {
+
+        }
+    }
+    public async Task<byte[]> GeneratePdfAsync()
+    {
+        try
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                // Create a new PDF document
+                var document = new Document();
+                PdfWriter.GetInstance(document, memoryStream);
+
+                document.Open();
+
+                var font = FontFactory.GetFont(FontFactory.HELVETICA, 12);
+
+                // Add title
+                var titleFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 16);
+                var title = new Paragraph("CARRIER MIDEA INDIA PRIVATE LIMITED", titleFont)
+                    {
+                        Alignment = Element.ALIGN_CENTER,
+                        SpacingAfter = 10f
+                    };
+                document.Add(title);
+
+                var subtitle = new Paragraph("CODE OF ETHICS AND CONDUCT FOR PARTNERS", titleFont)
+                    {
+                        Alignment = Element.ALIGN_CENTER,
+                        SpacingAfter = 20f
+                    };
+                document.Add(subtitle);
+
+                // Add the text content
+                var textContent = new[]
+                {
+                "This Code sets forth minimum workplace standards and business practices that are expected of any Partners (Dealer, Distributor, Retailer, ASP, other service provider, consultant, contractor, supplier or vendor) doing business with us, consistent with our company's values.",
+                "\n\nAnti-Corruption/Bribes:",
+                "CMI is committed to complying with anti-corruption laws that prohibit bribes, kickbacks, or other corrupt actions to obtain or retain business or obtain any improper advantage. All Partners are expected to comply with all applicable anti-corruption laws while conducting business with and on behalf of CMI. Partners are prohibited from directly or indirectly giving any form of bribe, kickback, or other illegal payment, to any Govt. official, other customer official, intermediary/influencer and any other person/entity not specifically mentioned here while doing business for CMI products. In case any CMI employee seeks any bribe or improper benefit, Partners are required to report the same to CMI Business Practice Officer (BPO) or CMI Legal Head at the email IDs given at the bottom of this note.",
+                "\n\nBusiness gifts and Entertainment:",
+                "Employees of CMI are strictly prohibited from accepting or soliciting gifts in any form and for any value from Partners, suppliers and any other business Partners. Therefore, you are required to desist from giving any gift or anything of value to any CMI employee or to their family members anywhere, irrespective of any occasion, including social norms like festivals.",
+                "\n\nConflict of interests:",
+                "The employees and the Partners of CMI should not have any personal or financial relation, whether direct or indirect, amongst them that might conflict or appear to conflict with the employee's or partner's obligation to act in the best interests of CMI. Conflict of interest situations may arise in many ways and any situation that creates, or could reasonably appear to create, a conflict of interest should be avoided and disclosed by both the employees and the Partners to CMI. Please write to or call the CMI BPO on the contact details below if you have a question or query on the same. Please report any such conflict of interest immediately to the CMI BPO.",
+                "\n\nDisclosing confidential information:",
+                "Proper management and protection of confidential information is critical to the success of both CMI and its Partners. CMI respects and protects the confidential information of its Partners and expects the same from its Partners. Confidential Information includes all information of which unauthorized disclosure could be detrimental to the interests of CMI whether or not such information is identified as Confidential Information. For example employee data, customer and supplier identities and characteristics, agreements, marketing knowledge and information, sales figures, pricing information, marketing plans and business plans, strategies, forecasts, financial information, budgets, software, projections, quality control and manufacturing procedures, processes, formulas, trade secrets, innovations, inventions, discoveries, improvements, research or development and test results, specifications, data, know-how, formats, plans, sketches, specifications, drawings, models and any other information which by its nature is clearly confidential.",
+                "\n\nInternational Trade Compliance:",
+                "The Partners of CMI should not be named in any of the watch lists issued by various countries around the world and the Partners should not have any commercial dealings, relations, contracts or interests in any of the Prohibited Countries viz., Sudan, Cuba, Iran, North Korea & Syria or with any citizen or legal entity of such countries.",
+                "\n\nAnti-Trust & Anti-Competitive activities:",
+                "The Channel Partners of CMI should not indulge in any anti-trust and anti-competitive activities like sharing of confidential information of any party including CMI, price fixing, predatory price fixing or any other activities, which will or has the potential to kill competition in the market.",
+                "\n\nApplicability to Sub-Contractors:",
+                "This Code also applies to the sub-contractor(s) to the Partners, if any. The Code shall be cascaded down to all such sub-tier(s) of subcontractor(s). The partner is fully responsible for ensuring compliance by any such sub-contractor(s) as if it were the partner themselves.",
+                "\n\nReporting potential misconduct:",
+                "As a responsible partner, if you experience or observe any unethical, illegal or otherwise improper business conduct by a CMI employee or anyone acting on behalf of CMI, you must immediately report the matter to CMI Business Practice Officer at bpo@carriermidea.com (9810219956) or to CMI Legal Head at atul.sharma@carriermidea.com (9810718505). The partner's identity shall be kept confidential and his relation with CMI will not be affected by an honest and well-intentioned report of actual or potential misconduct.",
+                "\n\nFor more details:",
+                "For more details on the CMI Code of Ethics and Business Conduct, kindly go to our website http://www.carriermideaindia.com."
+            };
+
+                foreach (var text in textContent)
+                {
+                    document.Add(new Paragraph(text, font));
+                }
+
+
+                document.Close();
+
+                return memoryStream.ToArray();
+
+            }
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+    }
+}

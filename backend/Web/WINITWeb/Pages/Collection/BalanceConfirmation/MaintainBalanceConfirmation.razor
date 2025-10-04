@@ -1,0 +1,9 @@
+﻿@page "/maintainbalanceconfirmation"
+@inject Winit.Modules.CollectionModule.BL.Interfaces.IBalanceConfirmationViewModel _balanceConfirmationViewmodel
+
+
+<PageHeaderAndFilter IDataBreadcrumbService="iDataBreadcrumbService"></PageHeaderAndFilter>
+@if (IsInitialised)
+{
+    <TableGridView DataSource="BalanceConfirmationRecords" Columns="BalanceConfirmationColumns"></TableGridView>
+}

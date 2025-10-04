@@ -1,0 +1,23 @@
+﻿@page "/radialgauge"
+
+@using Winit.UIModels.Common.GraphModels
+<WINITMobile.Shared.RadialGauge DataSource="data" NeedleValue="needleValue" />
+
+
+@code {
+    public List<RadialGaugeModel> data = new List<RadialGaugeModel>();
+    public int needleValue = 100;
+    protected override async Task OnInitializedAsync()
+    {
+        data = new List<RadialGaugeModel>()
+        {
+            new RadialGaugeModel { Label = "Label 1", Value = 10  },
+            new RadialGaugeModel { Label = "Label 2", Value = 20 },
+            new RadialGaugeModel { Label = "Label 3", Value = 30 },
+            new RadialGaugeModel { Label = "Label 4", Value = 40 },
+            new RadialGaugeModel { Label = "Label 5", Value = 50},
+
+        };
+    }
+   
+}

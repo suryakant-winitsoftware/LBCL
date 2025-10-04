@@ -1,0 +1,237 @@
+﻿/*
+.cbxcontainer {
+    position: relative;
+    padding-left: 21px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    font-size: 13px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    width: auto;
+    margin-right: 30px
+}
+
+.cbxcontainer input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0
+}
+
+.checkmark {
+    position: absolute;
+    top: 1px;
+    left: 0;
+    height: 15px;
+    width: 15px;
+    background-color: #dad5d5;
+    border: 1px solid #a5a5a5
+}
+
+.cbxcontainer:hover input ~ .checkmark {
+    background-color: #ccc
+}
+
+.cbxcontainer input:checked ~ .checkmark {
+    background-color: #19298b;
+    border-radius: 3px;
+    border: 0
+}
+
+.cls_inner_heading {
+    width: 100%;
+    float: left;
+    color: #19298b;
+    font-size: 15px;
+    font-weight: 700;
+    margin-left: 14px;
+    margin-top: 5px
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none
+}
+
+.cls_padd_l_b {
+    padding: 0 10px 15px 0;
+    height: 70px
+}
+
+.cbxcontainer input:checked ~ .checkmark:after {
+    display: block
+}
+
+.cls_btn_new {
+    background: #19298b;
+    padding: 6px 15px;
+    color: #fff;
+    border: 0;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 3px
+}
+
+.cbxcontainer .checkmark:after {
+    left: 5px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid #fff;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg)
+}
+
+label {
+    color: #3a3939;
+    margin-bottom: 5px
+}
+
+.btn-default {
+    color: #3d5167 !important
+}
+
+.Details {
+    float: left;
+    width: 100%;
+    padding: 10px 0
+}
+
+body {
+    margin: 0;
+    min-height: 100%;
+    padding: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    font-weight: 400;
+    color: #333c40;
+    -webkit-font-smoothing: antialiased;
+    font-size: 14px
+}
+
+.cls_inner_gray_head {
+    width: 100%;
+    float: left;
+    font-size: 13px;
+    color: #3a3939;
+    font-weight: 400;
+    margin-bottom: 5px
+}
+
+.rbtcontainer {
+    color: #19298b;
+    margin-right: 30px;
+    font-size: 14px
+}
+
+.storeupper {
+    width: 100%;
+    float: left;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    webkit-box-shadow: 0 1px #fff inset,0 1px 5px rgba(34,25,25,.4);
+    -webkit-box-shadow: 0 1px #fff inset,0 1px 5px rgba(34,25,25,.4);
+    box-shadow: 0 1px #fff inset,0 1px 5px rgba(34,25,25,.4);
+    padding: 10px;
+    border-bottom: 3px solid #2298c4 !important;
+    border-top: 1px solid #ccc !important border-top: 3px solid #013799!important;
+    border-radius: 5px;
+    background: #fff;
+    padding: 15px
+}
+
+.cls_norecord {
+    position: inherit;
+    width: 100%;
+    padding: 10px
+}
+
+.modal-header {
+    background: #fff;
+    border: 0
+}
+
+.cls_new_head {
+    color: #19298b !important
+}
+
+.close {
+    color: #6f6e75
+}
+
+.cls_new_input {
+    display: block;
+    width: 100%;
+    padding: 2px .75rem;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #333;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    -webkit-box-shadow: -1px 0 8px 0 #dde1e4 inset;
+    box-shadow: -1px 0 8px 0 #dde1e4 inset;
+    -webkit-transition: border-color .15s ease-in-out,-webkit-box-shadow .15s ease-in-out;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out,-webkit-box-shadow .15s ease-in-out
+}
+
+.cls_inner_l_heading {
+    width: 100%;
+    float: left;
+    color: #19298b;
+    font-size: 15px;
+    font-weight: 700;
+    margin-left: 0;
+    margin-top: 0;
+    margin-bottom: 4px
+}
+
+textarea.form-control {
+    height: 116px
+}
+
+.cls_new_grid_style {
+    width: 100%
+}
+
+    .cls_new_grid_style tr {
+        background: #fff;
+        border: 1px solid #ccc !important;
+        padding: 6px 0;
+        margin: 6px 0 0;
+        width: 100%;
+        font-weight: 700;
+        color: #333;
+        line-height: 18px
+    }
+
+        .cls_new_grid_style tr:nth-child(even) {
+            background: #ededed
+        }
+
+.table {
+    border-collapse: separate;
+    border-spacing: 0 0
+}
+
+    .table > thead > tr > th {
+        vertical-align: bottom;
+        border-bottom: 0 solid #ddd
+    }
+
+    .table > tbody > tr > td {
+        border-bottom: 0 solid #ddd
+    }
+
+.cls_salesOrderColur {
+    background: #ff0
+}
+
+
+*/

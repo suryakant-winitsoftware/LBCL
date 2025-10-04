@@ -1,0 +1,209 @@
+﻿@page "/MaintainProductEdit"
+
+@inject NavigationManager NavManager
+@inject HttpClient httpClient
+@using System.Net.Http.Json
+@using WinIt.Models.MaintainProductClasses
+@using MudBlazor
+
+<div>
+    <h8 style="color:#003898; font-weight:bold">Maintain Product Edit</h8>
+</div>
+<div>
+    Dashboard >> Preseller Orders Details >> View Order Details
+</div>
+
+<div style="background-color:#f5f5f5; margin: 15px;">
+    <h10 style="color: #003898;">@(tableData != null ? tableData.Items.FirstOrDefault()?.LegalName : "Loading...")</h10>
+</div>
+<div>
+    <MudTable ServerData="ServerReload" Dense="true" Hover="true" @ref="table">
+    <!-- Table header content -->
+    <HeaderContent>
+        @*<MudTh></MudTh>*@ <!-- Empty header for plus/minus sign -->
+        <MudTh><MudTableSortLabel SortLabel="name_field" T="StoreDataModel">Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="type_field" T="StoreDataModel">Number</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="type_field" T="StoreDataModel">Code</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <!-- Table row template -->
+    <RowTemplate>
+        
+        <MudTd DataLabel="Name">
+                <span @onclick="() => ToggleRowDetails(context)">@GetRowIcon(context)</span>
+            @context.Name
+        </MudTd>
+        <MudTd DataLabel="Number">
+            @context.Number
+        </MudTd>
+        <MudTd DataLabel="Code">
+            @context.Code
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+    @if (expandedRowIndex.HasValue && tableData != null)
+    {
+        var expandedRow = tableData.Items.FirstOrDefault(item => item.Id == expandedRowIndex.Value);
+        if (expandedRow != null)
+        {
+            <div style="background-color: #f5f5f5; margin: 15px;">
+                <MudTable ServerData="ServerReload" Dense="true" Hover="true" @ref="table">
+                <HeaderContent>
+                    <MudTh></MudTh> <!-- Empty header for plus/minus sign -->
+                    <MudTh><MudTableSortLabel SortLabel="name_field" T="StoreDataModel">Name</MudTableSortLabel></MudTh>
+                    <MudTh><MudTableSortLabel SortLabel="type_field" T="StoreDataModel">Number</MudTableSortLabel></MudTh>
+                    <MudTh><MudTableSortLabel SortLabel="type_field" T="StoreDataModel">Code</MudTableSortLabel></MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel=""></MudTd>
+                    <MudTd DataLabel="Name">
+                        <input type="text" value="@expandedRow.Name" />
+                    </MudTd>
+                    <MudTd DataLabel="Number">
+                        <input type="text" value="@expandedRow.Number" />
+                    </MudTd>
+                    <MudTd DataLabel="Code">
+                        <input type="text" value="@expandedRow.Code" />
+                    </MudTd>
+                </RowTemplate>
+                </MudTable>
+            </div>
+        }
+    }
+</div>
+<div>
+    <button class="btn btn-primary" @onclick="ToggleEditMode">Edit</button>
+    <button class="btn btn-secondary" @onclick="NavigateBack">Back</button>
+</div>
+
+
+@code {
+    private TableData<Winit.UIModels.Common.Product.StoreDataModel> tableData;
+    private string uid;
+    private StoreDataModel detailsData;
+    private MudTable<StoreDataModel> table;
+    private bool isEditMode = false;
+    private Dictionary<int, bool> expandedRows = new Dictionary<int, bool>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Call the ServerReload method to fetch initial data
+        tableData = await ServerReload(null); // Pass null as TableState for initial load
+    }
+
+
+
+
+
+    private async Task<TableData<StoreDataModel>> ServerReload(TableState state)
+    {
+        try
+        {
+            var uri = new Uri(NavManager.Uri);
+            var query = uri.Query;
+            if (!string.IsNullOrWhiteSpace(query))
+            {
+                var queryParams = System.Web.HttpUtility.ParseQueryString(query);
+                uid = queryParams.Get("uid");
+                if (!string.IsNullOrWhiteSpace(uid))
+                {
+                    detailsData = await httpClient.GetFromJsonAsync<StoreDataModel>($"https://netcoretest.winitsoftware.com/api/store/SelectStoreByUID?UID={uid}");
+                    // Create a list containing the single detailsData instance
+                    var dataList = new List<StoreDataModel> { detailsData };
+                    // Return the list as the items for the MudTable
+                    tableData = new TableData<StoreDataModel>() { Items = dataList };
+                    return tableData;
+                }
+                else
+                {
+                    Console.WriteLine("Error: UID not found in query parameters.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Error: No query parameters found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle the exception as needed
+            Console.WriteLine($"Error loading data: {ex.Message}");
+        }
+
+        // Return an empty TableData if no data is available
+        tableData = new TableData<StoreDataModel>() { Items = new StoreDataModel[0] };
+        return tableData;
+    }
+
+    //private void ToggleEditMode()
+    //{
+    //    isEditMode = !isEditMode;
+    //    expandedRows.Clear();
+    //}
+
+    private int? expandedRowIndex = null;
+
+    //private void ToggleRowDetails(StoreDataModel context)
+    //{
+    //    if (expandedRowIndex.HasValue && expandedRowIndex.Value == context.Id)
+    //    {
+    //        expandedRowIndex = null;
+    //    }
+    //    else
+    //    {
+    //        expandedRowIndex = context.Id;
+    //    }
+    //}
+
+    private bool IsRowExpanded(StoreDataModel context)
+    {
+        return expandedRows.ContainsKey(context.Id) && expandedRows[context.Id];
+    }
+    //private string GetRowIcon(StoreDataModel context)
+    //{
+    //    return expandedRowIndex.HasValue && expandedRowIndex.Value == context.Id ? "-" : "+";
+    //}
+   
+    private string GetRowIcon(StoreDataModel context)
+    {
+        return isEditMode ? "+" :(expandedRowIndex.HasValue && expandedRowIndex.Value == context.Id ? "-" : "");
+    }
+
+
+
+    private void ToggleEditMode()
+    {
+        isEditMode = !isEditMode;
+        expandedRows.Clear();
+        if (!isEditMode)
+        {
+            expandedRowIndex = null; // Reset expanded row when leaving edit mode
+        }
+    }
+
+
+    private void ToggleRowDetails(StoreDataModel context)
+    {
+        if (expandedRowIndex.HasValue && expandedRowIndex.Value == context.Id)
+        {
+            expandedRowIndex = null;
+            expandedRows[context.Id] = false; // Update the dictionary to indicate it's not expanded
+        }
+        else
+        {
+            expandedRowIndex = context.Id;
+            expandedRows[context.Id] = true; // Update the dictionary to indicate it's expanded
+        }
+    }
+
+    private void NavigateBack()
+    {
+        // Implement the logic to navigate back to the "MaintainProduct" page
+        NavManager.NavigateTo("/MaintainProduct");
+    }
+
+    //if (SelectedCustomerProducts.Count > 0)
+    //{
+    //    SelectedCustomerProducts.RemoveAll(product => product.IsActive);
+    //}
+}

@@ -1,0 +1,28 @@
+﻿@page "/ManageCustomers"
+@inherits WinIt.Pages.Base.BaseComponentBase
+@using Winit.Modules.Store.BL.Interfaces
+@using Winit.UIComponents.Web.Table
+@using Winit.UIComponents.Web.Paging
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+
+@inject IMaintainCustomerViewModel _viewModel
+
+
+<PageHeaderAndFilter IDataBreadcrumbService="BreadCrumDTO" IsShowFilter="true" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+                     OnFilterApplied="@OnFilterApply" />
+
+<div>
+    <WinIt.Components.ImportExcel OnImport="OnImport" />
+    <input class="cls_add_new_sec" style="background-color:cadetblue;color:black" type="button"
+           value=@Localizer["add_new_customer"] @onclick="@(() => NavigationManager.NavigateTo($"Store?{PageType.Page}={PageType.New}"))" />
+</div>
+<TableGridView DataSource="_viewModel.Stores"
+               Columns="DataGridColumns"
+               OnSort="OnSort"
+               TotalItemsCount="_viewModel.TotalItems"
+               PageSize="_viewModel.PagingRequest.PageSize"
+               PageNumber="_viewModel.PagingRequest.PageNumber"
+               ShowRecordsCount="true"
+               IsPaginationRequired=true
+               OnPageChange="OnPageChange" />
+                

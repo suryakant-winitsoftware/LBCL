@@ -1,0 +1,289 @@
+﻿@inherits WINITMobile.Pages.Base.BaseComponentBase
+@inject WINITMobile.Data.SideBarService _sideBarService
+@inject Winit.Modules.Base.BL.ILocalStorageService _localStorageService;
+@inject AuthenticationStateProvider _authStateProvider
+@inject Winit.Modules.JourneyPlan.BL.Interfaces.IBeatHistoryViewModel _beatHistoryViewModel;
+@inject IJSRuntime _jSRuntime
+
+@{
+    string blank = "";
+    string JourneyPlan = "JourneyPlan";
+    string StockAudit = "stockaudit";
+    string TemporaryCreditEnhancement = "TemporaryCreditEnhancement";
+    string MaintainWareHouseStock = "MaintainWareHouseStock";
+    string CheckServiceStatus = "CheckServiceStatus";
+    string MaintainCallRegistration = "MaintainCallRegistration";
+    string ManageInvoice = "manageinvoice";
+    string ViewInvoice = "viewinvoice";
+    string MyCustomers = "CustomerList";
+    string MaintainCashCollection = "maintaincashcollection";
+    string ProductFeedback = "product-feedback";
+    string BroadcastInitiative = "broadcast-initiative";
+    string ProductSampling = "product-sampling";
+    string EscalationMatrix = "escalation-matrix";
+    string CustomerDetails = "CustomerDetails";
+    string ViewPurchaseOrderStatus = "ViewPurchaseOrderStatus";
+    string PurchaseOrder = "purchaseorder";
+    string PaymentSummary = "paymentsummary";
+    string ReturnSummary = "ReturnSummary";
+    string createsalesorder = "createsalesorder";
+    string StockRequest = "ViewRequest/Load";
+    string UnLoadRequest = "ViewRequest/Unload";
+    string demodashboard = "demodashboard";
+    string ViewVanStock = "ViewVanStock";
+    string DialogTest = "DialogTest";
+    string Store = "Store";
+    string BarGraph = "bargraph";
+    string CFD = "CloseOfTheDay";
+    string StartdayPreRequisties = "StartdayPreRequisties";
+    string Summary_DeliverySummary = "Summary_DeliverySummary";
+}
+<div>
+    <nav class="flex-column">
+        <div class="cls_menu_n_main">
+            <div class="cls_menu_top1" style="cursor:pointer;">
+                <div class="cls_menu_top1_left">
+                    <img style="width:54px;" src="/Images/group_bg.png">
+                </div>
+                <div class="cls_menu_top1_right">
+                    <h3>@_appUser.Emp.Name</h3>
+                    <p @onclick="OnRouteDDClick">
+                        Route : @((_appUser.SelectedRoute is null) ?
+                        "Select Route" : @$"{_appUser.SelectedRoute.Name}")
+                    </p>
+                </div>
+            </div>
+            @* <div class="cls_menu_n">
+            <NavLink @onclick="OnRouteDDClick">
+            <span><img style="width:18px;" src="/Images/d1.png"></span>
+            <p >
+            @((_appUser.SelectedRoute is null) ?
+            "Select Route" : @$"[{_appUser.SelectedRoute.Code}] {_appUser.SelectedRoute.Name}")
+            </p>
+            </NavLink>
+            </div> *@
+      
+            @if (!_appUser.IsCheckedIn)
+            {
+                <div class="cls_menu_n">
+                    <NavLink class="nav-link" @onclick='(e=>returnpath("dashboard"))' Match="NavLinkMatch.All">
+                        <span><img style="width:18px;" src="/Images/d1.png"></span> <p>Task</p>
+                    </NavLink>
+                </div>
+                <div class="cls_menu_n">
+                    <NavLink class="nav-link" @onclick='(e=>returnpath("reports/dashboard"))' Match="NavLinkMatch.All">
+                        <span><img style="width:18px;" src="/Images/d1.png"></span> <p>Target Vs Achievement</p>
+                    </NavLink>
+                </div>
+                <div class="cls_menu_n dn">
+                    <NavLink class="nav-link" @onclick='(e=>returnpath("dashboard"))' Match="NavLinkMatch.All">
+                        <span><img style="width:18px;" src="/Images/d1.png"></span> <p>Dashboard</p>
+                    </NavLink>
+                </div>
+                <div class="cls_menu_n dn">
+                    <NavLink class="nav-link" @onclick="OpenRazorpayDashboard">
+                        <span><img style="width:18px;" src="/Images/d4.png"></span><p>Razor pay Check-in/out</p>
+                    </NavLink>
+                </div>
+                <div class="cls_menu_n dn">
+                    <NavLink class="nav-link" @onclick="(e => MoveToJP())">
+                        <span><img style="width:18px;" src="/Images/d2.png"></span><p>JourneyPlan</p>
+                    </NavLink>
+                </div>
+                <div class="cls_menu_n dn">
+                    <NavLink class="nav-link" @onclick="(e => returnpath(MyCustomers))">
+                        <span><img style="width:18px;" src="/Images/d4.png"></span><p>MyCustomers</p>
+                    </NavLink>
+                </div>
+                <div class="cls_menu_n dn">
+                    <NavLink class="nav-link" @onclick='(e=>returnpath($"training/{_appUser.Emp.UID}"))'>
+                        <span><img style="width:18px;" src="/Images/d2.png"></span> <p>Brand Training</p>
+                    </NavLink>
+                </div>
+                <div class="cls_menu_n dn">
+                    <NavLink class="nav-link" @onclick='(e => returnpath(ProductFeedback))'>
+                        <span><img style="width:18px;" src="/Images/d4.png"></span><p>Product Feedback</p>
+                    </NavLink>
+                </div>
+                <div class="cls_menu_n dn">
+                    <NavLink class="nav-link" @onclick='(e => returnpath(BroadcastInitiative))'>
+                        <span><img style="width:18px;" src="/Images/d4.png"></span><p>Broadcast Initiative</p>
+                    </NavLink>
+                </div>
+                <div class="cls_menu_n dn">
+                    <NavLink class="nav-link" @onclick='(e => returnpath(ProductSampling))'>
+                        <span><img style="width:18px;" src="/Images/d4.png"></span><p>Product Sampling</p>
+                    </NavLink>
+                </div>
+                <div class="cls_menu_n dn">
+                    <NavLink class="nav-link" @onclick='(e => returnpath(EscalationMatrix))'>
+                        <span><img style="width:18px;" src="/Images/d4.png"></span><p>Escalation Matrix</p>
+                    </NavLink>
+                </div>
+                <div class="cls_menu_n dn">
+                    <NavLink class="nav-link" @onclick='(e=>returnpath($"rota/{_appUser.Emp.UID}"))'>
+                        <span><img style="width:18px;" src="/Images/d2.png"></span> <p>ROTA</p>
+                    </NavLink>
+                </div>                
+                <div class="cls_menu_n dn">
+                    <NavLink class="nav-link" @onclick='(e => returnpath(MaintainCashCollection))'>
+                        <span><img style="width:18px;" src="/Images/d4.png"></span><p>CashDepositRequest</p>
+                    </NavLink>
+                </div>
+                
+                
+                
+                
+                
+            }
+            
+
+            @if (!_appUser.IsCheckedIn)
+            {
+                <div class="cls_menu_n">
+                    <NavLink class="nav-link  dn" @onclick="ToggleStock">
+                        <span><img style="width:18px;" src="/Images/d2.png"></span><p>Stock</p>
+                    </NavLink>
+                    @if (stockMenu)
+                    {
+                        <div class="submenu">
+                            <NavLink class="expand-menu" @onclick="(e => returnpath(ViewVanStock))">
+                                <span><img style="width:18px;" src="/Images/d3.png"></span> <p>View Van Stock</p>
+                            </NavLink>
+                            <NavLink class="expand-menu" @onclick="(e => returnpath(StockRequest))">
+                                <span><img style="width:18px;" src="/Images/d3.png"></span> <p>Load Request</p>
+                            </NavLink>
+                            <NavLink class="expand-menu" @onclick='(e => returnpath(UnLoadRequest))'>
+                                <span><img style="width:18px;" src="/Images/d4.png"></span> <p>UnLoad Request</p>
+                            </NavLink>
+                        </div>
+                    }
+                </div>
+
+
+                <div class="cls_menu_n dn">
+                    <NavLink class="nav-link" @onclick="(e => returnpath(StockAudit))">
+                        <span><img style="width:18px;" src="/Images/d3.png"></span><p>Stock Audit</p>
+                    </NavLink>
+                </div>
+                <div class="cls_menu_n dn">
+                    <NavLink class="nav-link" @onclick="(e => returnpath(Store))">
+                        <span><img style="width:18px;" src="/Images/d2.png"></span><p>Create Store</p>
+                    </NavLink>
+                </div>
+                <div class="cls_menu_n">
+                    <NavLink class="nav-link" @onclick="(e => returnpath(CFD))">
+                        <span><img style="width:18px;" src="/Images/d4.png"></span><p>Day End</p>
+                    </NavLink>
+                </div>
+                <div class="cls_menu_n">
+                    <NavLink class="nav-link" @onclick='(e => returnpath("Settings"))'>
+                        <span><img style="width:18px;" src="/Images/d1.png"></span><p>Settings</p>
+                    </NavLink>
+                </div>
+
+            }
+
+@*             <div class="cls_menu_n">
+                <NavLink class="nav-link" @onclick='(e => returnpath("Settings"))'>
+                    <span><img style="width:18px;" src="/Images/d1.png"></span><p>Settings</p>
+                </NavLink>
+            </div>
+            <div class="cls_menu_n">
+                <NavLink class="nav-link" @onclick='(e => returnpath("purchaseorder"))'>
+                    <span><img style="width:18px;" src="/Images/d1.png"></span><p>Purchase Order</p>
+                </NavLink>
+            </div> *@
+
+
+            @if (_appUser.IsCheckedIn)
+            {
+                <div class="cls_menu_n">
+                    <NavLink class="nav-link" @onclick='(e => returnpath("Settings"))'>
+                        <span><img style="width:18px;" src="/Images/d1.png"></span><p>Settings</p>
+                    </NavLink>
+                </div>
+
+                <div class="cls_menu_n">
+                    <NavLink class="nav-link" @onclick="HandleCheckOutClicked">
+                        <span><img style="width:18px;" src="/Images/d4.png"></span> <p>Check Out</p>
+                    </NavLink>
+                </div>
+            }
+            @if (!_appUser.IsCheckedIn)
+            {
+                <div class="cls_menu_n">
+                    <NavLink class="nav-link" @onclick='OnLogoutClick'>
+                        <span><img style="width:18px;" src="/Images/d1.png"></span> <p>Logout</p>
+                    </NavLink>
+                </div>
+
+            }
+            <div class="cls_version_no">
+                <span><img style="width:124px;" src="/Images/Winitlogo2.png"></span>
+                <p>Version: @(AppInfo.Current.BuildString)</p>
+            </div>
+            <div class="cls_menu_n dn">
+                <NavLink class="nav-link" @onclick="(e => returnpath(StartdayPreRequisties))">
+                    <span><img style="width:18px;" src="/Images/d4.png"></span><p>StartdayPreRequisties</p>
+                </NavLink>
+            </div>
+            <div class="cls_menu_n dn">
+                <NavLink class="nav-link" @onclick='(e => returnpath("HorizontalTabs"))'>
+                    <span><img style="width:18px;" src="/Images/d3.png"></span><p>Tabs</p>
+                </NavLink>
+            </div>
+            <div class="cls_menu_n dn">
+                <NavLink class="nav-link" @onclick="(e => returnpath(demodashboard))">
+                    <span><img style="width:18px;" src="/Images/d4.png"></span><p>Demo</p>
+                </NavLink>
+            </div>
+            <div class="cls_menu_n dn">
+                <NavLink class="nav-link" @onclick='(e => returnpath("bargraph"))'>
+                    <span><img style="width:18px;"></span><p>BarGraph</p>
+                </NavLink>
+            </div>
+            <div class="cls_menu_n dn">
+                <NavLink class="nav-link" @onclick='(e => returnpath("radialGauge"))'>
+                    <span><img style="width:18px;"></span><p>RadialGauge</p>
+                </NavLink>
+            </div>
+            <div class="cls_menu_n dn">
+                <NavLink class="nav-link" @onclick='(e => returnpath("doughnut"))'>
+                    <span><img style="width:18px;" @* src="/Images/d1.png" *@></span><p>DoughnutGraph</p>
+                </NavLink>
+            </div>
+            <div class="cls_menu_n dn">
+                <NavLink class="nav-link" @onclick='(e=>returnpath("piechart"))' Match="NavLinkMatch.All">
+                    <span><img style="width:18px;" src="/Images/d1.png"></span> <p>piechart</p>
+                </NavLink>
+            </div>
+            @if (IsWindows)
+            {
+               @*  <div class="cls_menu_n ">
+                    <NavLink class="nav-link" @onclick="() => history.back()" Match="NavLinkMatch.All">
+                        <span><img style="width:18px;" src="/Images/d1.png"></span> <p>Back</p>
+                    </NavLink>
+                </div>
+                <div class="cls_menu_n ">
+                    <NavLink class="nav-link" @onclick="() => _jSRuntime.InvokeVoidAsync history.forward()" Match="NavLinkMatch.All">
+                        <span><img style="width:18px;" src="/Images/d1.png"></span> <p>piechart</p>
+                    </NavLink>
+                </div> *@
+            }
+        </div>
+    </nav>
+</div>
+<style>
+
+    
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background:#000000a8; /* TEST: bright red, revert to rgba(0,0,0,0.2) after confirming */
+    z-index: 999; /* above most content, below sidebar if needed */
+}
+</style>

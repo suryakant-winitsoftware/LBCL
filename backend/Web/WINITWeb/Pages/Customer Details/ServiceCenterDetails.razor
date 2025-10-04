@@ -1,0 +1,294 @@
+﻿@inherits WinIt.Pages.Base.BaseComponentBase
+<div style="width:100%;float:left;margin:0px 0px;">
+    @if (!string.IsNullOrWhiteSpace(ValidationMessage))
+    {
+        <div class="alert alert-danger">
+            <div class="col-md-12">
+                <div style="color: red;">@ValidationMessage</div>
+            </div>
+        </div>
+    }
+    <div class="card">
+        <div class="card-body">
+            <div class="cls_cust_information">
+                <div class="row">
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <label style="font-weight: bold;">Address of Service Centre<i class="cls_section_div_purchase2_span">*</i></label>
+                        <textarea class="form-control" autocomplete="off" placeholder="Enter here" rows="3" @bind="@StoreAdditionalInfoCmi.ScAddress" />
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <label style="font-weight: bold;">Address Type</label>
+                        <div class="cls_btn_y_n1">
+                            @* <input type="checkbox" class="" @onchange='(e) => OnCheckboxChanged(e, "Rented")'
+                            checked='@IsChecked("Rented")'> *@
+                            <input type="radio" id="sbiRadio1" name="bank1" value="sbi1"
+                                   @onchange='(e) => OnCheckboxChanged(e, "Rented")'
+                                   checked='@StoreAdditionalInfoCmi?.ScAddressType?.Equals("Rented")' />
+                            <label>Rented</label>
+                        </div>
+                        <div class="cls_btn_y_n1">
+                            <input type="radio" id="sbiRadio" name="bank" value="sbi"
+                                   @onchange='(e) => OnCheckboxChanged(e, "Owned")'
+                                   checked='@StoreAdditionalInfoCmi?.ScAddressType?.Equals("Owned")' />
+                            <label>Owned</label>
+                        </div>
+                    </div>
+
+
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <label style="font-weight: bold;">Is Service Centre location Different from principle place of business</label>
+                        <div class="cls_btn_y_n1">
+                            <input type="radio" id="yesRadio" name="yesNo" value="true"
+                                   @onchange="(e) => OnLocationChanged(true)"
+                                   checked="@StoreAdditionalInfoCmi?.ScIsServiceCenterDifferenceFromPrinciplePlace.Equals(true)" />
+                            <label for="yesRadio" class="mr-2">Yes</label>
+
+                        </div>
+                        <div class="cls_btn_y_n1">
+                            <input type="radio" id="noRadio" name="yesNo" value="false"
+                                   @onchange="(e) => OnLocationChanged(false)"
+                                   checked="@StoreAdditionalInfoCmi?.ScIsServiceCenterDifferenceFromPrinciplePlace.Equals(false)" />
+                            <label for="noRadio">No</label>
+                        </div>
+                    </div>
+
+
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <label style="font-weight: bold;">Upload File(Rental Agreement copy)</label>
+                        <Winit.UIComponents.Common.FileUploader.FileUploader @ref=Memo_AssofileUploader FileExtension=".jpg,.jpeg,.pdf,.png,.doc"
+                                                                             RelativePath="@FilePath"
+                                                                             FileSize="500000"
+                                                                             AllowMultipleFiles="true"
+                                                                             FileSysList=Memo_AssofileSysList
+                                                                             LinkedItemUID="@LinkedItemUID"
+                                                                             LinkedItemType="store"
+                                                                             UploadEventCallBack="GetMoASavedImagePath"
+                                                                             DeleteEventCallBack="AfterDeleteImage"
+                                                                             FileSysType="@Winit.Modules.Store.Model.Constants.FileSysTypeConstants.ScRentalAgreement"
+                                                                             FileType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.Image" />
+                    </div>
+
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <label style="font-weight: bold;">Area in Sq Feet</label>
+                        <input class="form-control" autocomplete="off" type="number" placeholder="Enter here" @bind="StoreAdditionalInfoCmi.ScArea">
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <label style="font-weight: bold;">Current Brand handled<i class="cls_section_div_purchase2_span">*</i></label>
+                        <input class="form-control" autocomplete="off" type="text" placeholder="Enter here" @bind="StoreAdditionalInfoCmi.ScCurrentBrandHandled">
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <label style="font-weight: bold;">Years in Experience</label>
+                        <input class="form-control" autocomplete="off" type="number" placeholder="Enter here" @bind="StoreAdditionalInfoCmi.ScExpInYear">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+
+                <label><b>Technicians</b></label>
+                <div class="row">
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <label style="font-weight: bold;">No of Technicians</label>
+                        <input class="form-control"
+                               autocomplete="off"
+                               type="text"
+                               placeholder="Enter here" @bind="StoreAdditionalInfoCmi.ScNoOfTechnician" />
+                    </div>
+                </div>
+                <div class="row">
+                    @foreach (var techInfo in TechnicianInfo)
+                    {
+                        <div class="col-12 col-md-6 col-lg-3 mb-4">
+                            <label class="form-label fw-bold">Name</label>
+                            <input autocomplete="off" class="form-control" type="text" placeholder="Enter here" @bind="techInfo.Name" />
+                        </div>
+                        <div class="col-12 col-md-6 col-lg-3 mb-4">
+                            <label class="form-label fw-bold">Age</label>
+                            <input autocomplete="off" class="form-control" type="text" placeholder="Enter here" @bind="techInfo.Age" />
+                        </div>
+                        <div class="col-12 col-md-6 col-lg-3 mb-4">
+                            <label class="form-label fw-bold">Qualification</label>
+                            <input autocomplete="off" class="form-control" type="text" placeholder="Enter here" @bind="techInfo.Qualification" />
+                        </div>
+
+                        <div class="col-12 col-md-6 col-lg-3 mb-4 d-flex align-items-end">
+                            @if (techInfo == TechnicianInfo.Last())
+                            {
+                                <button style="margin-top: 17px;" class="btn btn-primary mb-2" @onclick="AddTechnicianRow">+</button>
+                            }
+                            else
+                            {
+                                <button style="margin-top: 17px;" class="btn btn-danger mb-2" @onclick="() => RemoveTechnicianRow(techInfo)">-</button>
+                            }
+                        </div>
+                    }
+                </div>
+
+
+
+                <label><b>Supervisors</b></label>
+
+                <div class="row">
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <label style="font-weight: bold;">No of Supervisors</label>
+                        <input class="form-control"
+                               autocomplete="off"
+                               type="text"
+                               placeholder="Enter here" @bind="StoreAdditionalInfoCmi.ScNoOfSupervisor" />
+                    </div>
+                </div>
+                <div class="row">
+                    @foreach (var superInfo in SupervisorInfos)
+                    {
+                        <div class="col-12 col-md-6 col-lg-3 mb-4">
+                            <label class="form-label fw-bold">Name</label>
+                            <input autocomplete="off" class="form-control" type="text" placeholder="Enter here" @bind="superInfo.Name" />
+                        </div>
+                        <div class="col-12 col-md-6 col-lg-3 mb-4">
+                            <label class="form-label fw-bold">Age</label>
+                            <input autocomplete="off" class="form-control" type="text" placeholder="Enter here" @bind="superInfo.Age" />
+                        </div>
+                        <div class="col-12 col-md-6 col-lg-3 mb-4">
+                            <label class="form-label fw-bold">Qualification</label>
+                            <input autocomplete="off" class="form-control" type="text" placeholder="Enter here" @bind="superInfo.Qualification" />
+                        </div>
+
+                        <div class="col-12 col-md-6 col-lg-3 mb-4 d-flex align-items-end">
+                            @if (superInfo == SupervisorInfos.Last())
+                            {
+                                <button style="margin-top: 17px;" class="btn btn-primary mb-2" @onclick="AddSupervisorRow">+</button>
+                            }
+                            else
+                            {
+                                <button style="margin-top: 17px;" class="btn btn-danger mb-2" @onclick="() => RemoveSupervisorRow(superInfo)">-</button>
+                            }
+                        </div>
+                    }
+                </div>
+
+
+                <div class="row">
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <label style="font-weight: bold;">Shop & Establishment/Municipal License No.</label>
+                        <input class="form-control" autocomplete="off" placeholder="Enter here" rows="3" @bind="StoreAdditionalInfoCmi.ScLicenseNo">
+                    </div>
+
+
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <label style="font-weight: bold;">Upload Copy of Municipal License No </label>
+                        <Winit.UIComponents.Common.FileUploader.FileUploader @ref=Partnership_DealerPfileUploader FileExtension=".jpg,.jpeg,.pdf,.png,.doc"
+                                                                             RelativePath="@FilePath"
+                                                                             FileSize="500000"
+                                                                             AllowMultipleFiles="true"
+                                                                             FileSysList=Partnership_DealerfileSysList
+                                                                             LinkedItemUID="@LinkedItemUID"
+                                                                             LinkedItemType="store"
+                                                                             UploadEventCallBack="GetPDPSavedImagePath"
+                                                                             DeleteEventCallBack="AfterDeleteImage"
+                                                                             FileSysType="@Winit.Modules.Store.Model.Constants.FileSysTypeConstants.ScLicence"
+                                                                             FileType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.Image" />
+
+                    </div>
+                </div>
+
+                <label><b>Photographs of serveice center</b></label>
+
+                <div class="row">
+
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <label style="font-weight: bold;">Upload Front Office </label>
+                        <Winit.UIComponents.Common.FileUploader.FileUploader @ref=GSTfileUploader FileExtension=".jpg,.jpeg,.pdf,.png,.doc"
+                                                                             RelativePath="@FilePath"
+                                                                             FileSize="500000"
+                                                                             AllowMultipleFiles="true"
+                                                                             FileSysList=GSTfileSysList
+                                                                             LinkedItemUID="@LinkedItemUID"
+                                                                             LinkedItemType="store"
+                                                                             UploadEventCallBack="GetGSTSavedImagePath"
+                                                                             DeleteEventCallBack="AfterDeleteImage"
+                                                                             FileSysType="@Winit.Modules.Store.Model.Constants.FileSysTypeConstants.ScFrontOffice"
+                                                                             FileType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.Image" />
+
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <label style="font-weight: bold;">Upload Store </label>
+                        <Winit.UIComponents.Common.FileUploader.FileUploader @ref=PANfileUploader FileExtension=".jpg,.jpeg,.pdf,.png,.doc"
+                                                                             RelativePath="@FilePath"
+                                                                             FileSize="500000"
+                                                                             AllowMultipleFiles="true"
+                                                                             FileSysList=PANfileSysList
+                                                                             LinkedItemUID="@LinkedItemUID"
+                                                                             LinkedItemType="store"
+                                                                             UploadEventCallBack="GetPANSavedImagePath"
+                                                                             DeleteEventCallBack="AfterDeleteImage"
+                                                                             FileSysType="@Winit.Modules.Store.Model.Constants.FileSysTypeConstants.ScStore"
+                                                                             FileType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.Image" />
+
+                    </div>
+                </div>
+                <div class="row">
+
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <label style="font-weight: bold;">Upload Training Area </label>
+                        <Winit.UIComponents.Common.FileUploader.FileUploader @ref=Shop_EstfileUploader FileExtension=".jpg,.jpeg,.pdf,.png,.doc"
+                                                                             RelativePath="@FilePath"
+                                                                             FileSize="500000"
+                                                                             AllowMultipleFiles="true"
+                                                                             FileSysList=Shop_EstfileSysList
+                                                                             LinkedItemUID="@LinkedItemUID"
+                                                                             LinkedItemType="store"
+                                                                             UploadEventCallBack="GetShopEstSavedImagePath"
+                                                                             DeleteEventCallBack="AfterDeleteImage"
+                                                                             FileSysType="@Winit.Modules.Store.Model.Constants.FileSysTypeConstants.ScTrainingArea"
+                                                                             FileType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.Image" />
+
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <label style="font-weight: bold;">Upload Workshop</label>
+                        <Winit.UIComponents.Common.FileUploader.FileUploader @ref=ESICfileUploader FileExtension=".jpg,.jpeg,.pdf,.png,.doc"
+                                                                             RelativePath="@FilePath"
+                                                                             FileSize="500000"
+                                                                             AllowMultipleFiles="true"
+                                                                             FileSysList=ESICfileSysList
+                                                                             LinkedItemUID="@LinkedItemUID"
+                                                                             LinkedItemType="store"
+                                                                             UploadEventCallBack="GetESICSavedImagePath"
+                                                                             DeleteEventCallBack="AfterDeleteImage"
+                                                                             FileSysType="@Winit.Modules.Store.Model.Constants.FileSysTypeConstants.ScWorkshop"
+                                                                             FileType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.Image" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <label style="font-weight: bold;">Upload group of photo with all Employee </label>
+                        <Winit.UIComponents.Common.FileUploader.FileUploader @ref=PFfileUploader FileExtension=".jpg,.jpeg,.pdf,.png,.doc"
+                                                                             RelativePath="@FilePath"
+                                                                             FileSize="500000"
+                                                                             AllowMultipleFiles="true"
+                                                                             FileSysList=PFfileSysList
+                                                                             LinkedItemUID="@LinkedItemUID"
+                                                                             LinkedItemType="store"
+                                                                             UploadEventCallBack="GetPFSavedImagePath"
+                                                                             DeleteEventCallBack="AfterDeleteImage"
+                                                                             FileSysType="@Winit.Modules.Store.Model.Constants.FileSysTypeConstants.ScGroupPhoto"
+                                                                             FileType="@Winit.Modules.Common.Model.Constants.FileTypeConstants.Image" />
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="width:100%;float:left;margin:10px 0px;">
+        <div class="col-12 d-flex justify-content-center">
+            <button class="cls_comman_sec_btn mr-2" type="submit" @onclick="OnClear">Clear</button>
+            <button class="cls_comman_btn" type="submit" @onclick="CreateUpdateServiceCenterDetails">@ButtonName</button>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+@code {
+
+}

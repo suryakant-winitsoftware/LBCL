@@ -1,0 +1,279 @@
+﻿	@inject NavigationManager NavManager
+    @attribute [Authorize]
+	@inject IServiceProvider _ServiceProvider
+	@inject Winit.Modules.Route.BL.Interfaces.IAddEditRouteLoadViewModel _AddEditRouteLoadViewModel
+	@inject BreadCrum.Interfaces.IDataService _IDataService
+	@inherits WinIt.Pages.Base.BaseComponentBase
+   
+
+
+	@page "/addeditloadtemplate"
+
+<PageHeaderAndFilter IDataBreadcrumbService="dataService"/>
+<div class="storeupper">
+	<div class="tab-content">
+		<div class="row">
+			<div class="col-md-3">
+				<div class="form-group">
+					<label for="supplierCode">@Localizer["template_name"]</label><span style="color: red;">*</span>
+					@if (_AddEditRouteLoadViewModel.RouteLoadTruckTemplateUID != null)
+					{
+						<input class="form-control ng-pristine ng-valid ng-touched" type="text" @bind="_AddEditRouteLoadViewModel.TemplateName" readonly>
+
+					}
+					else
+					{
+						<input class="form-control ng-pristine ng-valid ng-touched" type="text" @bind="_AddEditRouteLoadViewModel.TemplateName">
+
+					}
+				</div>
+			</div>
+			<div class="col-md-3">
+				<div class="form-group">
+					<label for="supplierDescription">@Localizer["template_description"]</label><span style="color: red;">*</span>
+					<input class="form-control ng-pristine ng-valid ng-touched" type="text" id="supplierDescription" @bind="_AddEditRouteLoadViewModel.TemplateDescription">
+				</div>
+			</div>
+
+			@if (_AddEditRouteLoadViewModel.RouteListForSelection != null)
+			{
+				<div class="col-md-3">
+
+					<div class="form-group">
+						<label><span style="color:red;">*</span>@Localizer["route"]</label>
+						@if (_AddEditRouteLoadViewModel.RouteLoadTruckTemplateUID != null)
+						{
+							<input class="form-control ng-pristine ng-valid ng-touched" type="text" @bind="_AddEditRouteLoadViewModel.SelectedRoute" readonly>
+
+						}
+						else
+						{
+							<!-- Add a CSS class to the dropdown component to style it as disabled -->
+							<Winit.UIComponents.Common.CustomControls.DropDown DataSource="_AddEditRouteLoadViewModel.RouteListForSelection"
+																			   Title=@Localizer["route"]
+																			   IsButtonVisible="true"
+																			   OnSelect="OnselectRoue"
+																			   IsSearchable="true" />
+
+						}
+					</div>
+				</div>
+			}
+
+		</div>
+	</div>
+</div>
+
+
+
+<div class="row justify-content-center" style="margin-top:10px">
+	<div class="row justify-content-center">
+
+
+		@if (_AddEditRouteLoadViewModel.RouteListForSelection != null && _AddEditRouteLoadViewModel.TemplateName != null && _AddEditRouteLoadViewModel.TemplateDescription != null)
+		{
+			@if (_AddEditRouteLoadViewModel.RouteListForSelection.Any(item => item.IsSelected))
+			{
+				<div class="cls_export_main">
+
+					<button class="cls_add_new_sec" @onclick="OpenAddSKUDialog">@Localizer["add_product"]</button>
+				</div>
+
+				@*  <div>
+		<button @onclick="OpenAddSKUDialog" class="btn btn-primary" style=" background-color:#003898; margin-top: 10px;">
+		Add Product
+		</button>
+		</div> *@
+			}
+		}
+
+
+
+	</div>
+</div>
+@if (_AddEditRouteLoadViewModel.SkuAttributesList != null && IsAddSKUDialogOpen == true)
+{
+
+	<Winit.UIComponents.Web.DialogBox.AddSKU @ref="AddSKURef" SKUAttributesDataSource="_AddEditRouteLoadViewModel.SkuAttributesList"
+											 SKUDataSource="_AddEditRouteLoadViewModel.SkuList" GetSelectedSKU="GetSelectedSKU" />
+
+}
+<div style="margin-top: 10px">
+	<Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder="@Localizer["search_by_sku_code"]" MaxLength="200" DebounceInterval="500" OnDebounceIntervalElapsed="ApplySearch"
+														   KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+														   Value="" IsForSearch="true" />
+</div>
+<div class="div1">
+<table class="table">
+	<thead>
+		<tr>
+			<th class="tblHeader"><input type="checkbox" @onchange="ToggleAllRows" checked="@CheckAllRows" /></th>
+			<th class="tblHeader">@Localizer["sku_code"]</th>
+			<th class="tblHeader">@Localizer["sku_name"]</th>
+			<th class="tblHeader">@Localizer["uom"]</th>
+			<th colspan="2" class="tblHeader">@Localizer["mon_(qty)"]</th>
+			<th colspan="2" class="tblHeader">@Localizer["tue_(qty)"]</th>
+			<th colspan="2" class="tblHeader">@Localizer["wed_(qty)"]</th>
+			<th colspan="2" class="tblHeader">@Localizer["thu_(qty)"]</th>
+			<th colspan="2" class="tblHeader">@Localizer["fri_(qty)"]</th>
+			<th colspan="2" class="tblHeader">@Localizer["sat_(qty)"]</th>
+			<th colspan="2" class="tblHeader">@Localizer["sun_(qty)"]</th>
+		</tr>
+		<tr>
+			<th></th>
+			<th></th>
+			<th></th>
+			<th></th>
+			<th class="tblHeader">@Localizer["load"]</th>
+			<th class="tblHeader">@Localizer["max_sale"]</th>
+			<th class="tblHeader">@Localizer["load"]Load</th>
+			<th class="tblHeader">@Localizer["max_sale"]</th>
+			<th class="tblHeader">@Localizer["load"]</th>
+			<th class="tblHeader">@Localizer["max_sale"]</th>
+			<th class="tblHeader">@Localizer["load"]</th>
+			<th class="tblHeader">@Localizer["max_sale"]</th>
+			<th class="tblHeader">@Localizer["load"]</th>
+			<th class="tblHeader">@Localizer["max_sale"]</th>
+			<th class="tblHeader">@Localizer["load"]</th>
+			<th class="tblHeader">@Localizer["max_sale"]</th>
+			<th class="tblHeader">@Localizer["load"]</th>
+			<th class="tblHeader">@Localizer["max_sale"]</th>
+
+		</tr>
+	</thead>
+	<tbody>
+		@if (_AddEditRouteLoadViewModel.DisplayRouteLoadTruckTemplateViewDTO != null && _AddEditRouteLoadViewModel.DisplayRouteLoadTruckTemplateViewDTO.RouteLoadTruckTemplateLineList != null && _AddEditRouteLoadViewModel.DisplayRouteLoadTruckTemplateViewDTO.RouteLoadTruckTemplateLineList.Count > 0)
+		{
+
+
+
+			@foreach (var row in _AddEditRouteLoadViewModel.DisplayRouteLoadTruckTemplateViewDTO.RouteLoadTruckTemplateLineList)
+			{
+				var matchedSku = _AddEditRouteLoadViewModel?.SkuList?.FirstOrDefault(sku => sku.Code == row.SKUCode);
+				<tr>
+					<td>
+						<input type="checkbox" @bind="row.IsSelected" @onclick="() => ToggleRow(row)" />
+					</td>
+					<td>@row.SKUCode</td>
+					<td>@matchedSku?.Name</td>
+					<td>
+
+						@* <select class="form-control" @bind="row.UOM"> *@
+						<select style="width: 100px;height: 39px;border-radius: 5px;border-color: #dee2e6 solid;" @bind="row.UOM">
+							<option value="OU">OU</option>
+							<option value="EA">EA</option>
+						</select>
+
+					</td>
+					<td><input type="number" class="form-control" value="@row.MondayQty" @onchange="e => UpdateProperty(row, e, nameof(row.MondayQty))" /></td>
+					<td><label class="form-control" style="background-color: #f8f9fa; color: #6c757d;">@row.MondaySuggestedQty</label></td>
+					<td><input type="number" class="form-control" value="@row.TuesdayQty" @onchange="e => UpdateProperty(row, e, nameof(row.TuesdayQty))" /></td>
+
+					<td><label class="form-control" style="background-color: #f8f9fa; color: #6c757d;">@row.TuesdaySuggestedQty</label></td>
+					<td><input type="number" class="form-control" value="@row.WednesdayQty" @onchange="e => UpdateProperty(row, e, nameof(row.WednesdayQty))" /></td>
+
+					<td><label class="form-control" style="background-color: #f8f9fa; color: #6c757d;">@row.WednesdaySuggestedQty</label></td>
+					<td><input type="number" class="form-control" value="@row.ThursdayQty" @onchange="e => UpdateProperty(row, e, nameof(row.ThursdayQty))" /></td>
+
+					<td><label class="form-control" style="background-color: #f8f9fa; color: #6c757d;">@row.ThursdaySuggestedQty</label></td>
+					<td><input type="number" class="form-control" value="@row.FridayQty" @onchange="e => UpdateProperty(row, e, nameof(row.FridayQty))" /></td>
+
+					<td><label class="form-control" style="background-color: #f8f9fa; color: #6c757d;">@row.FridaySuggestedQty</label></td>
+					<td><input type="number" class="form-control" value="@row.SaturdayQty" @onchange="e => UpdateProperty(row, e, nameof(row.SaturdayQty))" /></td>
+
+					<td><label class="form-control" style="background-color: #f8f9fa; color: #6c757d;">@row.SaturdaySuggestedQty</label></td>
+					<td><input type="number" class="form-control" value="@row.SundayQty" @onchange="e => UpdateProperty(row, e, nameof(row.SundayQty))" /></td>
+
+					<td><label class="form-control" style="background-color: #f8f9fa; color: #6c757d;">@row.SundaySuggestedQty</label></td>
+
+				</tr>
+			}
+		}
+	</tbody>
+</table>
+</div>
+<div class="cls_export_main d-flex justify-content-center align-items-center">
+	<button class="cls_add_new_sec" @onclick="BackBtnConfirmation">@Localizer["back"]</button>
+	<button class="cls_add_new_sec" @onclick="DeleteSelectedTemplate">@Localizer["delete_selected_from_list"]</button>
+	<button class="cls_add_new_sec" @onclick="SaveAndUpDateTemplates">@Localizer["save"]</button>
+</div>
+
+@code
+{
+
+
+}
+
+
+<style>
+	.custom-dropdown {
+		position: relative;
+		display: inline-block;
+	}
+
+		.custom-dropdown::after {
+			content: '▼'; /* Unicode character for downward arrow */
+			position: absolute;
+			right: 10px; /* Adjust the position as needed */
+			top: 50%;
+			transform: translateY(-50%);
+		}
+
+
+
+	.common-button {
+		background-color: white;
+		color: #003898;
+		border: 1px solid #003898;
+		cursor: pointer;
+		transition: background-color 0.3s, color 0.3s, border-color 0.3s, font-weight 0.3s;
+		border-radius: 5px;
+		font-weight: bold;
+		padding: 5px 10px;
+	}
+
+		.common-button:hover {
+			background-color: #003898;
+			color: white;
+			border-color: white;
+		}
+
+	.floating-alert {
+		position: fixed;
+		top: 172px;
+		right: 543px;
+		background-color: lightgreen; /* Red */
+		color: white;
+		padding: 10px;
+		border-radius: 5px;
+		display: none;
+		z-index: 9999;
+	}
+
+	.close {
+		position: absolute;
+		top: -5px;
+		right: 2px;
+		background: none;
+		border: none;
+		cursor: pointer;
+		color: white;
+		font-size: 18px;
+	}
+
+	.background-overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+		display: none;
+		z-index: 9998; /* Below the alert */
+	}
+	.no-spinner::-webkit-inner-spin-button,
+	.no-spinner::-webkit-outer-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+</style>

@@ -1,0 +1,93 @@
+﻿@page "/UserLocationTemplate"
+
+@using WinIt.BreadCrum.Classes
+@using WinIt.BreadCrum.Interfaces
+@inject Winit.Modules.Location.BL.Interfaces.ILocationMappingTemplateBaseViewModel _locationmappingTemplate
+
+@inherits Base.BaseComponentBase
+<PageHeaderAndFilter IDataBreadcrumbService="DataBreadCrum" />
+<button class="cls_add_new_sec" @onclick="@(()=>_navigationManager.NavigateTo($"addLocationMappingTemplate?{PageType.Page}={PageType.New}"))">Add New</button>
+<TableGridView DataSource="_locationmappingTemplate.Templates" Columns="Columns" />
+
+
+@code {
+    List<Winit.Modules.User.Model.Classes.UserLocationMapping> userLocationMappings = new List<Winit.Modules.User.Model.Classes.UserLocationMapping>();
+    Winit.UIModels.Web.Breadcrum.Interfaces.IDataService DataBreadCrum = new Winit.UIModels.Web.Breadcrum.Classes.DataServiceModel()
+    {
+            HeaderText = "Maintain User Location Mapping",
+        BreadcrumList = new()
+        {
+            new Winit.UIModels.Web.Breadcrum.Classes.BreadCrumModel()
+            {
+                Text="Maintain User Location Mapping",
+                SlNo=1,
+            }
+        }
+    };
+    List<DataGridColumn> Columns;
+
+    protected override async Task OnInitializedAsync()
+    {
+        SetColumnsHeaders();
+        await SetHeaderName();
+        await _locationmappingTemplate.PopulateViewModel();
+
+    }
+    [CascadingParameter]
+    public EventCallback<WinIt.BreadCrum.Interfaces.IDataService> CallbackService { get; set; }
+    public async Task SetBreadCrum(string HeaderText, List<IBreadCrum> BreadcrumList)
+    {
+        _iDataService.BreadcrumList = new List<IBreadCrum>();
+        _iDataService.HeaderText = HeaderText;
+        _iDataService.BreadcrumList = BreadcrumList;
+        await CallbackService.InvokeAsync(_iDataService);
+    }
+    protected async Task SetHeaderName()
+    {
+        List<IBreadCrum> BreadcrumList = new()
+        {
+            new BreadCrumModel(){ SlNo=1,Text="Maintain User Location mapping"},
+        };
+        await SetBreadCrum("Maintain User Location mapping", BreadcrumList);
+    }
+
+    protected void SetColumnsHeaders()
+    {
+        Columns = new List<DataGridColumn>()
+            {
+                new(){Header="Mapping Code" ,GetValue=s=>((Winit.Modules.Location.Model.Interfaces.ILocationTemplate)s).TemplateCode},
+                new(){Header="Mapping Name" ,GetValue=s=>((Winit.Modules.Location.Model.Interfaces.ILocationTemplate)s).TemplateName},
+                new(){Header="Is Active" ,GetValue=s=>CommonFunctions.GetBooleanValueInYesOrNO(((Winit.Modules.Location.Model.Interfaces.ILocationTemplate)s).IsActive)},
+
+            new()
+            {
+                Header="Action",
+                IsButtonColumn=true,
+                ButtonActions = new()
+                {
+                    new()
+                    {
+                        ButtonType=ButtonTypes.Image,
+                        URL="Images/edit.png",
+                        Action=item=>ViewOrEdit((Winit.Modules.Location.Model.Interfaces.ILocationTemplate)item)
+                    }
+                    // ,new()
+                    // {
+                    //     ButtonType=ButtonTypes.Image,
+                    //     URL="Images/view.png",
+                    // }
+                }
+            }
+        };
+    }
+
+    protected void ViewOrEdit(Winit.Modules.Location.Model.Interfaces.ILocationTemplate locationTemplate)
+    {
+        _dataManager?.SetData(locationTemplate.UID, locationTemplate);
+        _navigationManager.NavigateTo($"addLocationMappingTemplate?UID={locationTemplate.UID}&{PageType.Page}={PageType.Edit}");
+    }
+
+
+
+
+}

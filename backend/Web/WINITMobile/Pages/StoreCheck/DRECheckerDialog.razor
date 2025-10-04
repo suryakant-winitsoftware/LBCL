@@ -1,0 +1,237 @@
+﻿@using Winit.UIComponents.Common.WinitDatepicker
+@using Winit.UIModels.Common
+@using Winit.Shared.Models.Events
+@using Winit.Modules.StoreCheck.Model.Interfaces
+@using Winit.Modules.StoreCheck.Model.Classes
+@using Winit.Shared.Models.Constants
+@using System.Globalization
+@using System
+@using Winit.Shared.Models.Common
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+
+<div class="modal fade show" style="display: block;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span style="font-weight: bold; color: black;">@Localizer["dre(damage_return_expiry)"]</span>
+                <button type="button" class="close" @onclick="() => OnSubmit(DataSource, true)">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <img src="@DataSource.SKUImageURL" onerror="this.src='/Data/SKU/no_image_available.jpg'" alt="@DataSource.ItemCode" style="width:18px; margin-right: 10px;">
+                <span style="font-weight: bold; color: black;">@DataSource.SKUName</span>
+                <hr style="border-top: 1px solid black; margin-top: 5px; margin-bottom: 5px;">
+                @if(DataSource.StoreCheckItemExpiryDREHistory != null){
+ @foreach (var dreDetails in DataSource.StoreCheckItemExpiryDREHistory)
+                {
+                    // Format dreDetails.ExpiryDate to the desired format
+                    //string formattedDate = dreDetails.ExpiryDate.ToString("dd/MMM/yyyy", CultureInfo.InvariantCulture);
+                    @* string sqlFormattedDate = dreDetails.ExpiryDate.HasValue
+                ? dreDetails.ExpiryDate.Value.ToString("dd/MM/yyyy")
+                : null; *@
+                    // string sqlFormattedDate = dreDetails.ExpiryDate.ToString("dd/MM/yyyy");
+
+
+                    if (dreDetails.StockSubType == StoreCheckConst.Damage)
+                    {
+                        <span style="font-weight: bold; color: #003898;">@Localizer["damage"]</span>
+                        <div class="row">
+                            <div class="col">
+                                <label for="qtyInput" style="font-weight: bold;">@Localizer["qty"]:</label>
+                                <input id="qtyInput" type="number" value="@dreDetails.Qty" class="form-control" placeholder="Enter Qty" @onchange='(e)=>OnQuantityChange(e,dreDetails,"qtyInput")' />
+                            </div>
+                            <div class="col">
+                                <label for="@StoreCheckConst.Damage" style="font-weight: bold;">@Localizer["expiry_date"]:</label>
+                                <WinitCalendar id="@StoreCheckConst.Damage" selectedDate="@dreDetails.ExpiryDate.ToString()" OnChange="OnDateChange"></WinitCalendar>
+                            </div>
+                        </div>
+                        <input id="noteInput" style="margin-top:2px;" class="form-control" value="@dreDetails.Notes" placeholder="Enter Damage Notes Here" @onchange='(e)=>OnQuantityChange(e,dreDetails,"noteInput")' />
+                        <hr style="border-top: 1px solid black; margin-top: 5px; margin-bottom: 5px;">
+                    }
+                    else if (dreDetails.StockSubType == StoreCheckConst.Expiry)
+                    {
+                        <span style="font-weight: bold; color: #003898;">@Localizer["expiry"]</span>
+                        <div class="row">
+                            <div class="col">
+                                <label for="qtyInput" style="font-weight: bold;">@Localizer["qty"]:</label>
+                                <input id="qtyInput" type="number" value="@dreDetails.Qty" class="form-control" placeholder="Enter Qty" @onchange='(e)=>OnQuantityChange(e,dreDetails,"qtyInput")' />
+                            </div>
+                            <div class="col">
+                                <label for="@StoreCheckConst.Expiry" style="font-weight: bold;">@Localizer["expiry_date"]:</label>
+                                <WinitCalendar id="@StoreCheckConst.Expiry" MinDate="0" selectedDate="@dreDetails.ExpiryDate.ToString()" OnChange="OnDateChange"></WinitCalendar>
+                            </div>
+                        </div>
+                        <input id="noteInput" style="margin-top:2px;" class="form-control" value="@dreDetails.Notes" placeholder=@Localizer["enter_damage_notes_here"] @onchange='(e)=>OnQuantityChange(e,dreDetails,"noteInput")' />
+                        <hr style="border-top: 1px solid black; margin-top: 5px; margin-bottom: 5px;">
+                    }
+                    else if (dreDetails.StockSubType == StoreCheckConst.GoodReturn)
+                    {
+                        <span style="font-weight: bold; color: #003898;">@Localizer["good_return"]</span>
+                        <div class="row">
+                            <div class="col">
+                                <label for="qtyInput" style="font-weight: bold;">@Localizer["qty"]:</label>
+                                <input id="qtyInput" type="number" value="@dreDetails.Qty" class="form-control" placeholder=@Localizer["enter_qty"] @onchange='(e)=>OnQuantityChange(e,dreDetails,"qtyInput")' />
+                            </div>
+                            <div class="col">
+                                <label for="@StoreCheckConst.GoodReturn1" style="font-weight: bold;">@Localizer["expiry_date"]:</label>
+                                <WinitCalendar id="@StoreCheckConst.GoodReturn1" MaxDate="0" selectedDate="@dreDetails.ExpiryDate.ToString()" OnChange="OnDateChange"></WinitCalendar>
+                            </div>
+                            <div class="col">
+                                <label for="ReturnReason" style="font-weight: bold;">Reason:</label>
+                                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="Reason"
+                                                                                   Title=@Localizer["reason"]
+                                                                                   IsButtonVisible="true"
+                                                                                   OnSelect="OnReasonSelectChange"
+                                                                                   IsSearchable="true"
+                                                                                   _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single" />
+                            </div>
+                        </div>
+                        <input id="noteInput" style="margin-top:2px;" class="form-control" value="@dreDetails.Notes" placeholder=@Localizer["enter_damage_notes_here"] @onchange='(e)=>OnQuantityChange(e,dreDetails,"noteInput")' />
+                        <hr style="border-top: 1px solid black; margin-top: 5px; margin-bottom: 5px;">
+                    }
+                }
+
+                }
+               
+            </div>
+            <div class="cls_dashboard_7 " style="width:100%">
+                <button type="button" class="cls_continue_btn" @onclick="() => OnSubmit(DataSource, false)">@Localizer["submit"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-backdrop fade show"></div>
+
+
+@code {
+
+    public List<ISelectionItem> Reason = new List<ISelectionItem>();
+    private IStoreCheckItemHistoryViewList _internalDataSource;
+
+    [Parameter]
+    public IStoreCheckItemHistoryViewList DataSource { get; set; }
+
+    [Parameter]
+    public EventCallback<IStoreCheckItemHistoryViewList> AfterModificationDone { get; set; }
+
+    public string DamageExpiryDate { get; set; }
+    public string DamageQty { get; set; }
+    public string DamageNotes { get; set; }
+    public string ExpireQty { get; set; }
+    public string ExpiryDate { get; set; }
+    public string ExpireNotes { get; set; }
+    public string GoodReturnExpiryDate { get; set; }
+    public string ReturnNotes { get; set; }
+    public string ReturnQty { get; set; }
+
+    protected override void OnInitialized()
+    {
+        //_internalDataSource = DataSource.Clone() as StoreCheckItemHistoryViewList;
+        base.OnInitialized();
+        LoadResources(null, _languageService.SelectedCulture);
+
+    }
+
+    private void OnQuantityChange(ChangeEventArgs e, IStoreCheckItemExpiryDREHistory storeCheckItemExpiryDREHistory, string inputType)
+    {
+        if (inputType == "qtyInput")
+        {
+            if (int.TryParse(e.Value.ToString(), out int Qty))
+            {
+                storeCheckItemExpiryDREHistory.Qty = Qty;
+                storeCheckItemExpiryDREHistory = TimeModifying(storeCheckItemExpiryDREHistory);
+            }
+
+        }
+        else if (inputType == "noteInput")
+        {
+            storeCheckItemExpiryDREHistory.Notes = e.Value.ToString();
+            storeCheckItemExpiryDREHistory = TimeModifying(storeCheckItemExpiryDREHistory);
+        }
+
+    }
+    public void OnDateChange(CalenderWrappedData calenderWrappedData)
+    {
+        var rowDetails = DataSource.StoreCheckItemExpiryDREHistory
+                            .FirstOrDefault(item => item.StockSubType == calenderWrappedData.Id);
+        string selectedValue = calenderWrappedData.SelectedValue;
+
+
+
+        // Attempt to parse the date using the specified format
+
+        // Check if rowDetails is not null
+        if (rowDetails != null)
+        {
+            // Update the ExpiryDate with the parsed date
+            rowDetails.ExpiryDate = selectedValue;
+
+            // Modify the rowDetails object using the TimeModifying method
+            rowDetails = TimeModifying(rowDetails);
+        }
+        else
+        {
+            // Handle the case where rowDetails is null, if needed
+            Console.WriteLine("No matching item found.");
+        }
+
+
+    }
+
+    public async Task OnSubmit(IStoreCheckItemHistoryViewList rowDataSource, bool IsCancelClick)
+    {
+        if (!IsCancelClick)
+        {
+            DataSource.IsDRESelected = true;
+            await AfterModificationDone.InvokeAsync(DataSource);
+        }
+        else
+        {
+            await AfterModificationDone.InvokeAsync(null);
+        }
+    }
+
+    public async Task OnReasonSelectChange(DropDownEvent dropDownEvent)
+    {
+        // Handle reason selection change
+    }
+
+    public IStoreCheckItemExpiryDREHistory TimeModifying(IStoreCheckItemExpiryDREHistory storeCheckItemExpiryDREHistory)
+    {
+        storeCheckItemExpiryDREHistory.ModifiedTime = DateTime.Now;
+        storeCheckItemExpiryDREHistory.ServerModifiedTime = DateTime.Now;
+        storeCheckItemExpiryDREHistory.IsRowModified = true;
+        return storeCheckItemExpiryDREHistory;
+    }
+}
+
+<style>
+    .modal-content {
+        height: 100%;
+        position: fixed;
+        z-index: 1;
+        width: 60%;
+        margin-left: auto;
+        margin-right: auto;
+        left: 0;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        border-radius: 10px;
+    }
+
+    .modal-content {
+        border-radius: 10px;
+        overflow: auto;
+    }
+
+    .modal-backdrop {
+        z-index: 1040;
+    }
+
+    .modal {
+        z-index: 1050;
+    }
+
+</style>

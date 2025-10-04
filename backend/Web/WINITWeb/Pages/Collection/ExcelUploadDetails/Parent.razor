@@ -1,0 +1,73 @@
+﻿@page "/hell"
+@inject NavigationManager navigate;
+
+@using OfficeOpenXml.Table;
+@using System.Data;
+@using Microsoft.AspNetCore.Components.Forms;
+@using Winit.Modules.CollectionModule.Model.Classes;
+@using Winit.Modules.CollectionModule.Model.Interfaces;
+@using Winit.Modules.Address.Model.Classes;
+@using static Winit.Modules.CollectionModule.Model.Interfaces.IAccCollection;
+@using static Winit.Modules.CollectionModule.Model.Interfaces.IAccReceivable;
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+<!-- Button trigger modal -->@*
+<button class="btn btn-primary" @onclick="ShowModal">Launch demo modal</button> *@
+
+<!-- Modal -->
+@if (ShowModalPopUp)
+{
+    <div class="modal fade show" tabindex="-1" style="display: block;">
+        <div class="modal-dialog">
+            <div class="modal-content" style="width:200%;margin-left:-50%">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">@Localizer["selected_details"]</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @onclick="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="div1">
+                    <table class="table">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">@Localizer["customer"]</th>
+                                <th scope="col">@Localizer["receiptnumber"]</th>
+                                <th scope="col">@Localizer["payment_type"]PaymentType</th>
+                                <th scope="col">@Localizer["paid_amount"]</th>
+                                <th scope="col">@Localizer["document_no"]</th>
+                                <th scope="col">@Localizer["document_type"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var li in People)
+                            {
+                                @foreach (var list in li.AccCollectionAllotment)
+                                {
+                                    <tr>
+                                        <td>
+                                            <Child Recipt="Recipt" OnItemSelected="@((e)=>HandleDropdownSelection(e,list,li))" People="People" stst="list" ShowList=false />
+                                        </td>
+                                        <td>@li.AccCollection.ReceiptNumber</td>
+                                        <td>@li.AccCollection.Category</td>
+                                        <td>@list.PaidAmount</td>
+                                        <td>@list.ReferenceNumber</td>
+                                        <td>@list.TargetType</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @onclick="Save">@Localizer["save"]</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+}
+@code {
+
+}

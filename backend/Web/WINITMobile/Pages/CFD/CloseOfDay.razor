@@ -1,0 +1,70 @@
+﻿@page "/CloseOfTheDay"
+@using Winit.Modules.Store.BL.Interfaces;
+@using Winit.Modules.Store.Model.Interfaces;
+@using Winit.Modules.Store.Model.Classes;
+@using Winit.Shared.Models.Common
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+@inject WINITMobile.Data.SideBarService _sideBarService
+@inject Winit.Modules.JourneyPlan.BL.Interfaces.ICFDViewModel _viewmodel
+@inject Winit.Modules.Store.BL.Interfaces.IStoreBL _storeBL
+@inject Winit.Modules.Address.BL.Interfaces.IAddressBL _addressbl
+@inject Winit.Modules.Syncing.BL.Interfaces.IMobileDataSyncBL _mobileDataSyncBL;
+<div class="cls_container_div1">
+    <div class="cls_section_header">
+        <h2 class="cls_section_header_h2">Day End</h2>
+    </div>
+
+    <div class="cls_Dash_customer_preview1 cls_margin_top_15px">
+        @* loop this below div *@
+        <div class="cls_Dash_customer_preview_rep">
+            <div class="cls_Dash_customer_preview_rep1 cls_section2 cls_mar_btm0px" style="box-shadow:none;">
+                <div class="cls_eod_con">
+                    <div class="cls_eod_con_div">
+                        <h6 class="cls_section_label">@Localizer["upload_status"]</h6>
+                        <p class="cls_section_p">@_viewmodel.UploadStatus</p>
+                    </div>
+                    <div class="cls_eod_con_div">
+                        <h6 class="cls_section_label">EOT Status</h6>
+                        <p class="cls_section_p">@_viewmodel.EOTStatus</p>
+                    </div>
+                </div>
+                <div class="cls_eod_con cls_margin_top_15px">
+                    <div class="cls_eod_con_div  dn" style="display:none;">
+                        <h6 class="cls_section_label">@Localizer["jp_reconciliation_status"]</h6>
+                        <p class="cls_section_p">Pending</p>
+                    </div>
+                    <div class="cls_eod_con_div">
+                        <h6 class="cls_section_label">@Localizer["trip_start_time"]</h6>
+                        <p class="cls_section_p">@Winit.Shared.CommonUtilities.Common.CommonFunctions.GetDateTimeInFormat(_viewmodel.JourneyStartTime)</p>
+                    </div>
+                    <div class="cls_eod_con_div">
+                        <h6 class="cls_section_label">@Localizer["trip_end_time"]</h6>
+                        <p class="cls_section_p">@Winit.Shared.CommonUtilities.Common.CommonFunctions.GetDateTimeInFormat(_viewmodel.JourneyEndTime)</p>
+                    </div>
+                </div>
+          
+
+            </div> <!-- Closing cls_Dash_customer_preview_rep1 -->
+        </div> <!-- Closing cls_Dash_customer_preview_rep -->
+    </div> <!-- Closing cls_Dash_customer_preview1 -->
+
+    <div class="cls_dashboard_7">
+        <button class="cls_continue_btn" @onclick="CheckAndSubmit">Submit</button>
+        @if (_appConfigs.ApiBaseUrl.Contains("dev"))
+        {
+
+            <button class="cls_btn_check2 dn" @onclick="DeleteUerJourney">Delete UserJourney</button>
+        }
+    </div>
+
+    <!--Handle later (handle based on rlole) -->
+    @* @if (_appUser?.Role?.RoleNameEn != "Audit" && !string.IsNullOrEmpty(_appUser?.Role?.RoleNameEn)) *@
+    @if (false)
+    {
+        <div class="cls_dashboard_7">
+            <button class="cls_btn_check2" @onclick="PrintCollectionSummary">@Localizer["print_collection_summary"]</button>
+
+            <button class="cls_btn_check2 dn" @onclick="PrintSalesSummary">@Localizer["print_sales_summary"]</button>
+        </div>
+    }
+</div> <!-- Closing cls_container_div1 -->

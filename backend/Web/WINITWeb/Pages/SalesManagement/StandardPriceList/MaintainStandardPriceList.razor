@@ -1,0 +1,53 @@
+﻿@page "/MaintainStandardPriceList"
+@using Winit.Modules.SKU.BL.Interfaces
+@inherits WinIt.Pages.Base.BaseComponentBase
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@inject IMaintainStandardPriceListBaseViewModel _viewModel
+
+
+@* <div  class="col-md-6 cls_padd_l_b" style="width:100%">
+    <div  style="width:40%;float:left;">
+        <label  class="cls_new_lab">Search By SKU Code/Name</label>
+        <input class="form-control" placeholder="Search By SKU Code/Name" type="text" @bind=@_viewModel.CodeOrName>
+    </div>
+    <div  style="width:19%;float:left;margin-top:24px;margin-left: 6px;padding-left: 5px;">
+        <a class="cls_add_new_filter" @onclick=_viewModel.Search>Search</a>
+        <a class="cls_add_new_sec" @onclick=_viewModel.Reset>Reset</a>
+
+    </div>
+
+
+</div> *@
+@if (_viewModel.isLoad)
+{
+    @* <button class="cls_add_new_sec" style="float:right;margin-right:0px" @onclick="ShowFilter">@Localizer["filter"]</button> *@
+    @*     <Filter @ref="filterRef" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+            OnFilterApplied="@_viewModel.OnFilterApply" /> *@
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+                         OnFilterApplied="@_viewModel.OnFilterApply" />
+
+
+    @*  <Winit.UIComponents.Web.SalesManagement.PriceManagement.Items IsIndividualPricelist=true
+                                                                  OnSort=_viewModel.OnSort
+                                                                  IsNew=false SKUPriceList=_viewModel.SerchedSKUPriceList
+                                                                  SKUPriceGroup=_viewModel.FRPrice
+                                                                  TotalItemsCount="_viewModel._totalItems" PageSize="_viewModel._pageSize" PageNumber="_viewModel._currentPage" ShowRecordsCount="true" />
+ *@
+    <WinIt.Pages.SalesManagement.PriceListComponent IsIndividualPricelist=true
+                                                    OnSort=_viewModel.OnSort
+                                                    IsNew=false SKUPriceList=_viewModel.SerchedSKUPriceList
+                                                    PriceListUID="@_appSetting.PriceApplicationModel"
+                                                    SKUPriceGroup=_viewModel.FRPrice
+                                                    TotalItemsCount="_viewModel._totalItems"
+                                                    PageSize="_viewModel._pageSize"
+                                                    PageNumber="_viewModel._currentPage"
+                                                    ShowRecordsCount="true" />
+
+    @* <Winit.UIComponents.Web.Table.TableGridView DataSource="_viewModel.SerchedSKUPriceList" Columns="ProductColumns" OnSort=_viewModel.OnSort /> *@
+    @if (_viewModel.SerchedSKUPriceList != null && _viewModel.SerchedSKUPriceList.Count > 0)
+    {
+        <Winit.UIComponents.Web.Paging.Paging TotalItems=@_viewModel._totalItems PageSize="_viewModel._pageSize" CurrentPage="_viewModel._currentPage" OnPageChange="_viewModel.OnPageChange" />
+    }
+
+}
+

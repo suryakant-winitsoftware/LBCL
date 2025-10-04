@@ -1,0 +1,665 @@
+﻿@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
+@inject NavigationManager NavigationManager
+@inject Winit.Modules.Base.BL.ILocalStorageService _localStorageService;
+@inject AuthenticationStateProvider _authStateProvider
+<nav class="cls_header fixed-top" data-bs-theme="dark">
+    <div class="container-fluid">
+        <a class="fl" href="dashboard"><img style="width:172px;margin-top:10px;" src="Images/logo.png" /></a>
+        <button class="navbar-toggler m-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav" style="display:none">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="dashboard">
+                        Home
+                    </NavLink>
+                </li>
+                <li class="nav-item dropdown">
+                    <div class="nav-link dropdown-toggle" id="salesManagementDropdown" role="button"
+                         data-bs-toggle="dropdown" aria-expanded="false" @onmouseover="ShowDropdown" @onmouseout="HideDropdown">
+                        Sales Management
+                    </div>
+                    <ul class="dropdown-menu" aria-labelledby="salesManagementDropdown" style="display: @(showDropdown ? "block" : "none")" @onmouseover="ShowDropdown" @onmouseout="HideDropdown">
+                    </ul>
+                </li>
+                <!-- Add more nav items here -->
+            </ul>
+        </div>
+        <div class="cls_header_center navnew">
+            <ul>
+                <li>
+                    <a href="dashboard">
+                        Home
+                    </a>
+                </li>
+                <li>
+                    <NavLink>
+                        All Menu
+                    </NavLink>
+
+                <ul style="margin:0px auto" class="cls_Serial8">
+                <li style="width:19%;text-align:center;margin-left:10px;margin-right:10px;margin-top:20px;margin-bottom: 20px;">
+                    <a class="cla_a0" href="javascript:void(0)" style="color:#fff;width:auto;float:left;border-bottom:2px solid #fff;">
+                        Team A
+                    </a>
+                    <div style="width:100%;float:left;margin-bottom:4px;">
+
+                        @* <div class="cls_main_in_list" style="width:100%;float:left;">
+                                    <NavLink class="cls_bgnn" href="showpaymentdetails">
+                                        Maintain Collection
+                                    </NavLink>
+                                </div> *@
+                        <div class="cls_main_in_list" style="width:100%;float:left;">
+                            <NavLink class="cls_bgnn" href="viewpayments">
+                                View Payments
+                            </NavLink>
+                        </div>
+                        <div class="cls_main_in_list" style="width:100%;float:left;">
+                            <NavLink class="cls_bgnn" href="collection">
+                                Add New Collection
+                            </NavLink>
+                        </div>
+                        <div class="cls_main_in_list" style="width:100%;float:left;">
+                            <NavLink class="cls_bgnn" href="cash">
+                                Cash Settlement
+                            </NavLink>
+                        </div>
+                        <div class="cls_main_in_list" style="width:100%;float:left;">
+                            <NavLink class="cls_bgnn" href="settlement">
+                                Non-Cash Settlement
+                            </NavLink>
+                        </div>
+                        <div class="cls_main_in_list" style="width:100%;float:left;">
+                            <NavLink class="cls_bgnn" href="statement">
+                                Statement
+                            </NavLink>
+                        </div>
+                        <div class="cls_main_in_list" style="width:100%;float:left;">
+                            <NavLink class="cls_bgnn" href="popup">
+                                Bulk Collection
+                            </NavLink>
+                        </div>
+
+
+
+                    </div>
+                </li>
+                <li style="width:19%;text-align:center;margin-left:10px;margin-right:10px;margin-top:20px;margin-bottom: 20px;">
+                    <a class="cla_a0" href="javascript:void(0)" style="color:#fff;width:auto;float:left;border-bottom:2px solid #fff;">
+                        Team B
+                    </a>
+                    <div style="width:100%;float:left;margin-bottom:4px;">
+                        <div class="cls_main_in_list" style="width:100%;float:left;">
+                            <NavLink class="cls_bgnn" href="ManageCustomers">
+                                Manage Customers
+                            </NavLink>
+                        </div>
+                        <div class="cls_main_in_list" style="width:100%;float:left;">
+                            <NavLink class="cls_bgnn" href="ManageCustomerPriceList">
+                                Manage Customer Price List
+                            </NavLink>
+                        </div>
+                        <div class="cls_main_in_list" style="width:100%;float:left;">
+                            <NavLink class="cls_bgnn" href="MaintainStandardPriceList">
+                                Maintain Standard Price List
+                            </NavLink>
+                        </div>
+                        <div class="cls_main_in_list" style="width:100%;float:left;">
+                            <NavLink class="cls_bgnn" href="MaintainPromotions">
+                                Maintain Promotion
+                            </NavLink>
+                        </div>
+                        <div class="cls_main_in_list" style="width:100%;float:left;">
+                            <NavLink class="cls_bgnn" href="maintainUserRole">
+                                Maintain User Role
+                            </NavLink>
+                        </div>
+                    </div>
+                </li>
+                <li style="width:19%;text-align:center;margin-left:10px;margin-right:10px;margin-top:20px;margin-bottom: 20px;">
+                    <a class="cla_a0" href="javascript:void(0)" style="color:#fff;width:auto;float:left;border-bottom:2px solid #fff;">
+                        Team C
+                    </a>
+                    <div style="width:100%;float:left;margin-bottom:4px;">
+
+                        <div class="cls_main_in_list" style="width:100%;float:left;">
+
+                            <div class="cls_main_in_list" style="width:100%;float:left;">
+                                <NavLink class="cls_bgnn" href="routemanagement">
+                                    Route Management
+                                </NavLink>
+                            </div>
+                            <div class="cls_main_in_list" style="width:100%;float:left;">
+                                <NavLink class="cls_bgnn" href="addroute">
+                                    Add Route
+                                </NavLink>
+                            </div>
+
+                        </div>
+                    </div>
+                </li>
+                <li style="width:19%;text-align:center;margin-left:10px;margin-right:10px;margin-top:20px;margin-bottom: 20px;">
+                    <a class="cla_a0" href="javascript:void(0)" style="color:#fff;width:auto;float:left;border-bottom:2px solid #fff;">
+                        Team D Part-1
+                    </a>
+                    <div style="width:100%;float:left;margin-bottom:4px;">
+
+                        <div class="cls_main_in_list" style="width:100%;float:left;">
+                            <div class="cls_main_in_list" style="width:100%;float:left;">
+                                <NavLink class="cls_bgnn" href="SKUGroupTypeHierarchy">
+                                    SKU Group Type Hierarchy
+                                </NavLink>
+                            </div>
+                            <div class="cls_main_in_list" style="width:100%;float:left;">
+                                <NavLink class="cls_bgnn" href="SkuGroupHierarchy">
+                                    Sku Group Hierarchy
+                                </NavLink>
+                            </div>
+                            <div class="cls_main_in_list" style="width:100%;float:left;">
+                                <NavLink class="cls_bgnn" href="LocationTypeHierarchy">
+                                    Location Type Hierarchy
+                                </NavLink>
+                            </div>
+                            <div class="cls_main_in_list" style="width:100%;float:left;">
+                                <NavLink class="cls_bgnn" href="LocationHierarchy">
+                                    Location Hierarchy
+                                </NavLink>
+                            </div>
+                            <div class="cls_main_in_list" style="width:100%;float:left;">
+                                <NavLink class="cls_bgnn" href="StoreGroupTypeHierarchy">
+                                    Store Group Type Hierarchy
+                                </NavLink>
+                            </div>
+                            <div class="cls_main_in_list" style="width:100%;float:left;">
+                                <NavLink class="cls_bgnn" href="StoreGroupHierarchy">
+                                    Store Group Hierarchy
+                                </NavLink>
+                            </div>
+                            <div class="cls_main_in_list" style="width:100%;float:left;">
+                                <NavLink class="cls_bgnn" href="MaintainTax">
+                                    Maintain Tax
+                                </NavLink>
+                            </div>
+                            <div class="cls_main_in_list" style="width:100%;float:left;">
+                                <NavLink class="cls_bgnn" href="MaintainTaxGroup">
+                                    Maintain Tax Group
+                                </NavLink>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </li>
+                <li style="width:19%;text-align:center;margin-left:10px;margin-right:10px;margin-top:20px;margin-bottom: 20px;">
+                    <a class="cla_a0" href="javascript:void(0)" style="color:#fff;width:auto;float:left;border-bottom:2px solid #fff;">
+                        Team D Part-2
+                    </a>
+                    <div style="width:100%;float:left;margin-bottom:4px;">
+
+                        <div class="cls_main_in_list" style="width:100%;float:left;">
+                            <div class="cls_main_in_list" style="width:100%;float:left;">
+                                <NavLink class="cls_bgnn" href="mappingComponent">
+                                    Mapping Component
+                                </NavLink>
+                            </div>
+                            <div class="cls_main_in_list" style="width:100%;float:left;">
+                                <NavLink class="cls_bgnn" href="ReturnOrder">
+                                    Return Order
+                                </NavLink>
+                            </div>
+                            <div class="cls_main_in_list" style="width:100%;float:left;">
+                                <NavLink class="cls_bgnn" href="ViewSalesOrder">
+                                    View Sales Order
+                                </NavLink>
+                            </div>
+                            <div class="cls_main_in_list" style="width:100%;float:left;">
+                                <NavLink class="cls_bgnn" href="SalesOrder?SalesType=CS">
+                                    Cash Sales Order
+                                </NavLink>
+                            </div>
+                            <div class="cls_main_in_list" style="width:100%;float:left;">
+                                <NavLink class="cls_bgnn" href="SalesOrder?SalesType=VS">
+                                    Van Sales Order
+                                </NavLink>
+                            </div>
+                            <div class="cls_main_in_list" style="width:100%;float:left;">
+                                <NavLink class="cls_bgnn" href="ManageUnallocatedOrders">
+                                    Manage Unallocated Orders
+                                </NavLink>
+                            </div>
+                            <div class="cls_main_in_list" style="width:100%;float:left;">
+                                <NavLink class="cls_bgnn" href="SalesOrder?SalesType=PS">
+                                    Pre Sales Order
+                                </NavLink>
+                            </div>
+                            <div class="cls_main_in_list" style="width:100%;float:left;">
+                                <NavLink class="cls_bgnn" href="ManagePresalesOrders">
+                                    Manage Presales Orders
+                                </NavLink>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li style="width:19%;text-align:center;margin-left:10px;margin-right:10px;margin-top:20px;margin-bottom: 20px;">
+                    <a class="cla_a0" href="javascript:void(0)" style="color:#fff;width:auto;float:left;border-bottom:2px solid #fff;">
+                        Team E
+                    </a>
+                    <div style="width:100%;float:left;margin-bottom:4px;">
+
+                        <div class="cls_main_in_list" style="width:100%;float:left;">
+
+                            <div class="cls_main_in_list" style="width:100%;float:left;">
+                                <NavLink class="cls_bgnn" href="loadrequestemplate">
+                                    Load Request Template
+                                </NavLink>
+                            </div>
+                            <div class="cls_main_in_list" style="width:100%;float:left;">
+                                <NavLink class="cls_bgnn" href="skusequence">
+                                    SKU Sequence
+                                </NavLink>
+                            </div>
+                            <div class="cls_main_in_list" style="width:100%;float:left;">
+                                <NavLink class="cls_bgnn" href="viewloadrequest">
+                                    Maintain Load Request
+                                </NavLink>
+                            </div>
+                            <div class="cls_main_in_list" style="width:100%;float:left;">
+                                <NavLink class="cls_bgnn" href="ReOpenJourneyPlan">
+                                    Re-Open Journey Plan
+                                </NavLink>
+                            </div>
+                            <div class="cls_main_in_list" style="width:100%;float:left;">
+                                <NavLink class="cls_bgnn" href="ViewBankDetails">
+                                    View Bank Details
+                                </NavLink>
+                            </div>
+                            <div class="cls_main_in_list" style="width:100%;float:left;">
+                                <NavLink class="cls_bgnn" href="ViewErrorDetails">
+                                    View Error Details
+                                </NavLink>
+                            </div>
+                            <div class="cls_main_in_list" style="width:100%;float:left;">
+                                <NavLink class="cls_bgnn" href="AllowedSKU">
+                                    Allowed SKU
+                                </NavLink>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li style="width:19%;text-align:center;margin-left:10px;margin-right:10px;margin-top:20px;margin-bottom: 20px;">
+                    <a class="cla_a0" href="javascript:void(0)" style="color:#fff;width:auto;float:left;border-bottom:2px solid #fff;">
+                        Team F
+                    </a>
+                    <div style="width:100%;float:left;margin-bottom:4px;">
+
+                        <div class="cls_main_in_list" style="width:100%;float:left;">
+                            <div class="cls_main_in_list" style="width:100%;float:left;">
+                                <NavLink class="cls_bgnn" href="MaintainSKU">
+                                    Maintain SKU
+                                </NavLink>
+                            </div>
+                            <div class="cls_main_in_list" style="width:100%;float:left;">
+                                <NavLink class="cls_bgnn" href="MaintainWarehouse">
+                                    Maintain Warehouse
+                                </NavLink>
+                            </div>
+                            <div class="cls_main_in_list" style="width:100%;float:left;">
+                                <NavLink class="cls_bgnn" href="MaintainVan">
+                                    Maintain Van
+                                </NavLink>
+                            </div>
+                            <div class="cls_main_in_list" style="width:100%;float:left;">
+                                <NavLink class="cls_bgnn" @onclick='() => _navigationManager.NavigateTo("ViewWareHouseStock",forceLoad:true)' href="ViewWareHouseStock">
+                                    View Warehouse Stock
+                                </NavLink>
+                            </div>
+                            <div class="cls_main_in_list" style="width:100%;float:left;">
+                                <NavLink class="cls_bgnn" @onclick='() => _navigationManager.NavigateTo("ViewVanStock/true",forceLoad:true)'>
+                                    View Van Stock
+                                </NavLink>
+                            </div>
+                            <div class="cls_main_in_list" style="width:100%;float:left;">
+                                <NavLink class="cls_bgnn" href="ClearData">
+                                    Clear Data Permission
+                                </NavLink>
+                            </div>
+                            <div class="cls_main_in_list" style="width:100%;float:left;">
+                                <NavLink class="cls_bgnn" href="viewappversion">
+                                    Device Management
+                                </NavLink>
+                            </div>
+                            <div class="cls_main_in_list" style="width:100%;float:left;">
+                                <NavLink class="cls_bgnn" href="MaintainSettings">
+                                    Maintain Settings
+                                </NavLink>
+                            </div>
+                            <div class="cls_main_in_list" style="width:100%;float:left;">
+                                <NavLink class="cls_bgnn" href="ViewReasons">
+                                    View Reasons
+                                </NavLink>
+                            </div>
+                            <div class="cls_main_in_list" style="width:100%;float:left;">
+                                <NavLink class="cls_bgnn" href="ViewTodayJourneyPlan">
+                                    View Today Journey Plan
+                                </NavLink>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li style="width:19%;text-align:center;margin-left:10px;margin-right:10px;margin-top:20px;margin-bottom: 20px;">
+                    <a class="cla_a0" href="javascript:void(0)" style="color:#fff;width:auto;float:left;border-bottom:2px solid #fff;">
+                        Team F Part 2
+                    </a>
+                    <div style="width:100%;float:left;margin-bottom:4px;">
+
+                        <div class="cls_main_in_list" style="width:100%;float:left;">
+                            <div class="cls_main_in_list" style="width:100%;float:left;">
+                                <NavLink class="cls_bgnn" href="ViewTodayJourneyPlan">
+                                    View Today Journey Plan
+                                </NavLink>
+                            </div>
+                                    
+                        </div>
+                    </div>
+                </li>
+                </ul>
+                </li>
+                <li>
+                    <div class="d-flex" style="margin-right:0">
+                        <AuthorizeView>
+                            <Authorized>
+                                <div @onclick='() => _navigationManager.NavigateTo("profile")'>
+                                    <img style="width:30px;" src="Images/profile.svg" />
+                                    <p >@context?.User?.Identity?.Name</p>
+                                </div>
+                                <img style="width:30px" src="Images/logout.svg" @onclick="OnLogOutClick" />
+                            </Authorized>
+                        </AuthorizeView>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div style="display:none;">
+            <form style="display:none;">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-light" type="submit">Search</button>
+            </form>
+            <button class="btn btn-link text-light mx-3">
+                <span>User Profile</span>
+                <i class="bi bi-person-circle"></i>
+            </button>
+        </div>
+    </div>
+    @* <NavLink class="nav-link" href="login">
+    <span class="oi oi-dollar" aria-hidden="true"></span> Collection
+    </NavLink>
+    <NavLink class="nav-link" href="popup">
+    <span></span> Json
+    </NavLink>
+    <NavLink class="nav-link" href="cash">
+    <span></span> Cashier Settlement
+    </NavLink> *@
+</nav>
+
+<hr />
+
+<div class="modal" tabindex="-1" style="display: @((showPopup) ? "block" : "none")">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Customer Details</h5>
+                <button type="button" class="btn-close" @onclick="ClosePopup"></button>
+            </div>
+            <div class="modal-body">
+                <h4>Other Actions</h4>
+                <ul class="list-group">
+                    <li class="list-group-item" @onclick="NavigateToCustomerDetails">Customer Details</li>
+                    <li class="list-group-item" @onclick="NavigateToContactDetailss">Contact Details</li>
+                    <li class="list-group-item" @onclick="NavigateToBillToAddress">Bill To Address</li>
+                    <li class="list-group-item" @onclick="NavigateToShipToAddress">Ship To Address</li>
+                </ul>
+                <hr />
+                <h4>Collect Payment</h4>
+                <ul class="list-group">
+                    <li class="list-group-item" @onclick="NavigateToInvoiceinformation">Invoice information</li>
+                    <li class="list-group-item" @onclick="NavigateToRouteDeliveryProfilet">Route Delivery Profile</li>
+                    <li class="list-group-item" @onclick="NavigateToOrganisationConfiguration">Organisation Configuration</li>
+                    <li class="list-group-item" @onclick="NavigateToOrderSettings">Order Settings</li>
+                </ul>
+                <hr />
+                <h4>Credits</h4>
+                <ul class="list-group">
+                    <li class="list-group-item" @onclick="NavigateToStoredCreditSettings">Stored Credit Settings</li>
+                    <li class="list-group-item" @onclick="NavigateToAwayPeriodDetails">Away Period Details</li>
+
+                    <li class="list-group-item" @onclick="NavigateToCustomerCreationExpiration">Customer Creation Expiration</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- All Menu -->
+<div class="modal" tabindex="-1" style="display: @((ShowAllMenu) ? "block" : "none")">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Customer Details</h5>
+                <button type="button" class="btn-close" @onclick="@(()=>ShowAllMenu=false)"></button>
+            </div>
+            <div class="modal-body">
+                <h4>Prem Pages</h4>
+                <ul class="list-group">
+                    <li class="list-group-item" @onclick="@(() => Navigation("ManageCustomers"))">Manage Customers</li>
+                    <li class="list-group-item" @onclick="@(() => Navigation("ManageCustomerPriceList"))">Manage Customer PriceList</li>
+                    <li class="list-group-item" @onclick="@(() => Navigation("MaintainPromotions"))">Maintain Promotions</li>
+                    <li class="list-group-item" @onclick="@(() => Navigation("MaintainStandardPriceList"))">Maintain Standard PriceList</li>
+                </ul>
+                <hr />
+                <h4>Mahir Pages(Collection module)</h4>
+                <ul class="list-group">
+                    <li class="list-group-item" @onclick="@(() => Navigation("collection"))">Payment Collection</li>
+                    <li class="list-group-item" @onclick="@(() => Navigation("popup"))">Bulk Import Excel</li>
+                    <li class="list-group-item" @onclick="@(() => Navigation("cash"))">Cashier Settlement</li>
+                </ul>
+                <hr />
+                <h4>Aziz</h4>
+                <ul class="list-group">
+
+                    <li class="list-group-item" @onclick="@(() => Navigation("loadrequestemplate"))">loadrequestemplate</li>
+                    <li class="list-group-item" @onclick="@(() => Navigation("skusequence"))">SKU Sequence</li>
+                    <li class="list-group-item" @onclick="@(() => Navigation("AddLoadRequest"))">SKU Sequence</li>
+
+                </ul>
+                <hr />
+                <h4>Srinadh</h4>
+                <ul class="list-group">
+
+                    <li class="list-group-item" @onclick="@(() => Navigation("LocationTypeHierarchy"))">Location Type Hierarchy</li>
+                    <li class="list-group-item" @onclick="@(() => Navigation("LocationHierarchy"))">Location Hierarchy</li>
+                    <li class="list-group-item" @onclick="@(() => Navigation("SKUGroupTypeHierarchy"))">SKUGroup Type Hierarchy </li>
+                    <li class="list-group-item" @onclick="@(() => Navigation("SkuGroupHierarchy"))">Sku Group Hierarchy</li>
+                    <li class="list-group-item" @onclick="@(() => Navigation("StoreGroupTypeHierarchy"))">StoreGroup Type Hierarchy</li>
+                    <li class="list-group-item" @onclick="@(() => Navigation("StoreGroupHierarchy"))">Store Group Hierarchy</li>
+                    <li class="list-group-item" @onclick="@(() => Navigation("MaintainTax"))">Maintain Tax</li>
+                    <li class="list-group-item" @onclick="@(() => Navigation("MaintainTaxGroup"))">Maintain Tax Group</li>
+                    <li class="list-group-item" @onclick="@(() => Navigation("MappingComponent"))">Mapping Component</li>
+
+                </ul>
+                <hr />
+                <h4>Selvamathi</h4>
+                <ul class="list-group">
+                    <li class="list-group-item" @onclick="@(() => Navigation("ClearData"))">Clear Data Permission</li>
+                    <li class="list-group-item" @onclick="@(() => Navigation("MaintainSKU"))">Item Sku</li>
+                    <li class="list-group-item" @onclick="@(() => Navigation("ItemSupplier"))">Item Supplier</li>
+                    <li class="list-group-item" @onclick="@(() => Navigation("MaintainVan"))">Maintain Van</li>
+                    <li class="list-group-item" @onclick="@(() => Navigation("MaintainWarehouse"))">Maintain Warehouse</li>
+                    <li class="list-group-item" @onclick="@(() => Navigation("viewappversion"))">View App Version</li>
+                    <li class="list-group-item" @onclick="@(() => Navigation("ViewWareHouseStock"))">View Ware House Stock</li>
+                    <li class="list-group-item" @onclick="@(() => Navigation("ViewVanStock/true"))">View Van Stock</li>
+                </ul>
+                <hr />
+                <h4>Niranjan</h4>
+                <ul class="list-group">
+
+                    <li class="list-group-item" @onclick="@(() => Navigation("addroute"))">Add route</li>
+                    <li class="list-group-item" @onclick="@(() => Navigation("routemanagement"))">Route management</li>
+
+
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@code {
+    private bool showMenu = false;
+    private bool showDiv = false;
+    private bool showPopup = false;
+    private bool ShowAllMenu { get; set; }
+    private bool showDropdown = false;
+
+    private void ToggleMenu()
+    {
+        showMenu = !showMenu;
+    }
+
+    private void ShowDiv()
+    {
+        showDiv = true;
+    }
+
+    private void HideDiv()
+    {
+        showDiv = false;
+    }
+
+    private void TogglePopup()
+    {
+        showPopup = !showPopup;
+    }
+
+    // Mouseover functions for Sales Management dropdown
+    private void ShowDropdown()
+    {
+        showDropdown = true;
+    }
+
+    private void HideDropdown()
+    {
+        showDropdown = false;
+    }
+
+
+    private void ClosePopup()
+    {
+        showPopup = false;
+    }
+    // Navigation methods for each point with UID parameter
+    private void NavigateToCustomerDetails()
+    {
+        showPopup = false;
+        // Implement navigation to the CustomerPriceGroups component with UID
+        NavigationManager.NavigateTo($"CustomerDetailst");
+    }
+    private void Navigation(string pageName)
+    {
+        ShowAllMenu = false;
+        // Implement navigation to the CustomerPriceGroups component with UID
+        NavigationManager.NavigateTo($"{pageName}", true);
+    }
+
+    private void NavigateToContactDetailss()
+    {
+        showPopup = false;
+        // Implement navigation to the Promotions component
+        NavigationManager.NavigateTo("ContactDetails");
+    }
+
+    private void NavigateToBillToAddress()
+    {
+        showPopup = false;
+        // Implement navigation to the MaintainIndividualCustomerPricing component
+        NavigationManager.NavigateTo("BillToAddress");
+    }
+
+    private void NavigateToShipToAddress()
+    {
+        showPopup = false;
+        // Implement navigation to the ViewPayments component
+        NavigationManager.NavigateTo("ShipToAddress");
+    }
+
+    private void NavigateToInvoiceinformation()
+    {
+        showPopup = false;
+        // Implement navigation to the RebateStatus component
+        NavigationManager.NavigateTo("InvoiceInformation");
+    }
+    private void NavigateToOrganisationConfiguration()
+    {
+        showPopup = false;
+        // Implement navigation to the RebateStatus component
+        NavigationManager.NavigateTo("OrganisationConfiguration");
+    }
+    private void NavigateToOrderSettings()
+    {
+        showPopup = false;
+        // Implement navigation to the RebateStatus component
+        NavigationManager.NavigateTo("ShowOrderSettings");
+    }
+
+    private void NavigateToRouteDeliveryProfilet()
+    {
+        showPopup = false;
+        // Implement navigation to the AccountAdjustment component
+        NavigationManager.NavigateTo("RouteDeliveryProfile");
+    }
+
+    private void NavigateToStoredCreditSettings()
+    {
+        showPopup = false;
+        // Implement navigation to the AwayPeriod component
+        NavigationManager.NavigateTo("ShowStoredCreditSettings");
+    }
+
+    private void NavigateToAwayPeriodDetails()
+    {
+        showPopup = false;
+        // Implement navigation to the Invoices component
+        NavigationManager.NavigateTo("ShowAwayPeriodDetails");
+    }
+
+    private void NavigateToLightOrders()
+    {
+        showPopup = false;
+        // Implement navigation to the LightOrders component
+        NavigationManager.NavigateTo("ShowOrderSettings");
+    }
+
+    private void NavigateToCustomerCreationExpiration()
+    {
+        showPopup = false;
+        // Implement navigation to the ForwardOrders component
+        NavigationManager.NavigateTo("ShowCustomerCreationExpiration");
+    }
+
+    private async Task OnLogOutClick()
+    {
+        if (await _alertService.ShowConfirmationReturnType("Logout","Are you sure you want to Logout?"))
+        {
+            await _localStorageService.RemoveItem("token");
+            await _authStateProvider.GetAuthenticationStateAsync();
+            _navigationManager.NavigateToLogout("");
+        }
+    }
+}

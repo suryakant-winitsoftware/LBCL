@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\ApprovalEngine\Winit.Modules.ApprovalEngine.Model\Winit.Modules.ApprovalEngine.Model.csproj" />
+    <ProjectReference Include="..\..\Currency\Winit.Modules.Store.Model\Winit.Modules.Currency.Model.csproj" />
+    <ProjectReference Include="..\..\Emp\Winit.Modules.Emp.Model\Winit.Modules.Emp.Model.csproj" />
+    <ProjectReference Include="..\..\FileSys\Winit.Modules.FileSys.Model\Winit.Modules.FileSys.Model.csproj" />
+    <ProjectReference Include="..\..\JobPosition\Winit.Modules.JobPosition.Model\Winit.Modules.JobPosition.Model.csproj" />
+    <ProjectReference Include="..\..\Location\Winit.Modules.Location.Model\Winit.Modules.Location.Model.csproj" />
+    <ProjectReference Include="..\..\Role\Winit.Modules.Role.Model\Winit.Modules.Role.Model.csproj" />
+    <ProjectReference Include="..\..\Settings\Winit.Modules.Settings.Model\Winit.Modules.Setting.Model.csproj" />
+    <ProjectReference Include="..\..\Tax\Winit.Modules.Tax.Model\Winit.Modules.Tax.Model.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,88 @@
+﻿@using Winit.Shared.Models.Common
+@using Winit.UIComponents.Common.CustomControles
+<PageTitle>View Today Journey Plan</PageTitle>
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize]
+@inject Winit.UIComponents.Common.IAlertService _AlertMessgae;
+@inject Winit.Modules.JourneyPlan.BL.Interfaces.IViewTodayJourneyPlanViewModel _viewTodayJourneyPlanViewModel;
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <table class="table table-hover">
+                <thead>
+                    <tr class="table-dark" style="background-color: #19298B;">
+                        <th>Customer Number</th>
+                        <th>Customer Name</th>
+                        <th>Visit Time</th>
+                        <th>Visit Status</th>
+                        <th>Is Planned</th>
+                    </tr>
+                    
+                </thead>
+                <tbody>
+                    @foreach (var innerRow in GridList)
+                    {
+                        <tr>
+                            <td>@innerRow.StoreNumber</td>
+                            <td>@innerRow.StoreName</td>
+                            <td>@innerRow.VisitTime.ToString(@"hh\:mm")</td>
+                            <td>@innerRow.VisitStatus</td>
+                            <td>@innerRow.IsPlanned</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+@*         <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" DataSource="_viewTodayJourneyPlanViewModel.TodayJourneyPlanInnerGridList" />
+ *@
+    </div>
+</div>
+<style>
+    table {
+        border: 1px solid;
+        width: 100%;
+    }
+
+    td, th {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    tr:hover {
+        background-color: #ddd;
+    }
+
+    th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: left;
+        background-color: #19298B;
+        color: white;
+    }
+
+</style>
+
+
+@code {
+
+    [Parameter]
+    public List<Winit.Modules.JourneyPlan.Model.Interfaces.ITodayJourneyPlanInnerGrid> GridList { get; set; }
+    public List<DataGridColumn> DataGridColumns { get; set; }
+
+    // private async Task GenerateGridColumns()
+    // {
+    //     DataGridColumns = new List<DataGridColumn>
+    //         {
+    //             new DataGridColumn { Header = "Customer Number", GetValue = s => ((Winit.Modules.JourneyPlan.Model.Interfaces.ITodayJourneyPlanInnerGrid)s)?.StoreNumber ?? "N/A" },
+    //             new DataGridColumn { Header = "Customer Name", GetValue = s => ((Winit.Modules.JourneyPlan.Model.Interfaces.ITodayJourneyPlanInnerGrid)s)?.StoreName?? "N/A" },
+    //             new DataGridColumn { Header = "Visit Time", GetValue = s => ((Winit.Modules.JourneyPlan.Model.Interfaces.ITodayJourneyPlanInnerGrid)s)?.VisitTime  },
+    //             new DataGridColumn { Header = "Visit Status", GetValue = s => ((Winit.Modules.JourneyPlan.Model.Interfaces.ITodayJourneyPlanInnerGrid)s)?.VisitStatus ?? "N/A"},
+    //             new DataGridColumn { Header = "Is Planned", GetValue = s => ((Winit.Modules.JourneyPlan.Model.Interfaces.ITodayJourneyPlanInnerGrid)s)?.IsPlanned  },
+    //          };
+    // }
+}

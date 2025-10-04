@@ -1,0 +1,160 @@
+﻿@inherits WinIt.Pages.Base.BaseComponentBase
+@if (IsAddPopUp)
+{
+    <PopUp Title="@Title" OnCloseClick="OnCloseClick" OnOkClick="OnOkbtnClick" OkbtnText="@OkBtnText" CancelbtnText="@CancelbtnText">
+        @if (!string.IsNullOrEmpty(ErrorMsg))
+        {
+            <div class="alert alert-danger">
+                <label><b>@Localizer["the_following_field(s)_have_invalid_value(s)"]:</b>@ErrorMsg</label>
+            </div>
+        }
+        <div class="row" style="padding: 0px;">
+            <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab">
+                    <span class="cls_section_div_purchase2_span">*</span>@Localizer["code"]
+                </label>
+                <input class="form-control" placeholder=@Localizer["code"] type="text" @bind-value="Context.Code">
+            </div>
+            <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab">
+                    <span class="cls_section_div_purchase2_span">*</span>@Localizer["name"]
+                </label>
+                <input class="form-control ng-valid" placeholder=@Localizer["name"] type="text" @bind-value="Context.Name">
+            </div>
+            @* <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab">
+                    <span class="cls_section_div_purchase2_span">*</span>Select Supplier
+                </label>
+                <button class="form-control" disabled="@IsSupplierDisabled" @onclick="() => {if(!IsSupplierDisabled) OnSupplierbtnClicked.InvokeAsync();}">@(string.IsNullOrEmpty(Context.SupplierName) ? "Select Supplier" : Context.SupplierName)</button>
+            </div> *@
+            <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab">
+                    <span class="cls_section_div_purchase2_span">*</span>@Localizer["select_group_type"]
+                </label>
+                <button class="form-control" @onclick="SKUGroupTypebtnClicked">@(string.IsNullOrEmpty(Context.SKUGroupTypeName) ? @Localizer["select_group_type"] : Context.SKUGroupTypeName)</button>
+            </div>
+            <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab">
+                    <span class="cls_section_div_purchase2_span">*</span>@Localizer["parent"]
+                </label>
+                <input class="form-control" type="text" disabled @bind-value="Context.ParentName">
+            </div>
+            <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab">
+                    <span class="cls_section_div_purchase2_span">*</span>@Localizer["level"]
+                </label>
+                <input class="form-control" type="number" disabled @bind="Context.ItemLevel">
+            </div>
+        </div>
+    </PopUp>
+}
+else
+{
+    <PopUp Title="@Title" OnCloseClick="OnCloseClick" OkbtnText="@OkBtnText" CancelbtnText="@CancelbtnText" OnOkClick="OnOkbtnClick">
+        @if (!string.IsNullOrEmpty(ErrorMsg))
+        {
+            <div class="alert alert-danger">
+                <label><b>@Localizer["the_following_field(s)_have_invalid_value(s)"]:</b>@ErrorMsg</label>
+            </div>
+        }
+        <div class="row" style="padding: 0px;">
+            <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab">
+                    <span class="cls_section_div_purchase2_span">*</span>@Localizer["code"]
+                </label>
+                <input class="form-control" placeholder=@Localizer["code"] type ="text" disabled @bind="Context.Code">
+            </div>
+            <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab">
+                    <span class="cls_section_div_purchase2_span">*</span>@Localizer["name"]
+                </label>
+                <input class="form-control ng-valid" placeholder=@Localizer["name"] type="text" @bind-value="Context.Name">
+            </div>
+            @* <div class="col-md-4 cls_padd_l_b" >
+                <label class="cls_new_lab">
+                    <span class="cls_section_div_purchase2_span">*</span>Select Supplier
+                </label>
+                <button class="form-control" disabled="@IsSupplierDisabled">@(string.IsNullOrEmpty(Context.SupplierName) ? "Select Supplier" : Context.SupplierName)</button>
+            </div> *@
+            <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab">
+                    <span class="cls_section_div_purchase2_span">*</span>@Localizer["select_group_type"]
+                </label>
+                <button class="form-control" @onclick="SKUGroupTypebtnClicked">@(string.IsNullOrEmpty(Context.SKUGroupTypeName) ? "Select Group Type" : Context.SKUGroupTypeName)</button>
+            </div>
+            <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab">
+                    <span class="cls_section_div_purchase2_span">*</span>@Localizer["parent"]
+                </label>
+                <input class="form-control" type="text" disabled @bind="Context.ParentName">
+            </div>
+            <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab">
+                    <span class="cls_section_div_purchase2_span">*</span>@Localizer["level"]
+                </label>
+                <input class="form-control" type="number" disabled @bind="Context.ItemLevel">
+            </div>
+        </div>
+    </PopUp>
+}
+@code {
+    [Parameter]
+    public Winit.Modules.SKU.Model.UIInterfaces.ISKUGroupItemView sKUGroupItemView { get; set; }
+    [Parameter]
+    public Winit.Modules.SKU.Model.UIInterfaces.ISKUGroupItemView Context { get; set; }
+    [Parameter]
+    public EventCallback OnOkClick { get; set; }
+    [Parameter]
+    public EventCallback OnCloseClick { get; set; }
+    [Parameter]
+    public EventCallback OnSKUGroupTypebtnClicked { get; set; }
+    [Parameter]
+    public EventCallback OnSupplierbtnClicked { get; set; }
+    [Parameter]
+    public string OkBtnText { get; set; }
+    [Parameter]
+    public string CancelbtnText { get; set; }
+    [Parameter]
+    public string Title { get; set; }
+    [Parameter]
+    public bool IsAddPopUp { get; set; }
+    [Parameter]
+    public bool IsSupplierDisabled { get; set; }
+
+    private string ErrorMsg { get; set; }
+    protected async override Task OnInitializedAsync()
+    {
+        LoadResources(null, _languageService.SelectedCulture);
+    }
+    private void SKUGroupTypebtnClicked()
+    {
+        OnSKUGroupTypebtnClicked.InvokeAsync();
+        StateHasChanged();
+    }
+    private void OnOkbtnClick()
+    {
+        if (ValidateForm())
+        {
+            OnOkClick.InvokeAsync();
+        }
+    }
+    private bool ValidateForm()
+    {
+        ErrorMsg = string.Empty;
+        List<string> missingFields = new List<string>();
+        if (string.IsNullOrEmpty(Context.Code))
+        {
+            missingFields.Add(@Localizer["code"]);
+        }
+        if (string.IsNullOrEmpty(Context.Name))
+        {
+            missingFields.Add(@Localizer["name"]);
+        }
+        if (string.IsNullOrEmpty(Context.SKUGroupTypeUID))
+        {
+            missingFields.Add(@Localizer["sku_group_type"]);
+        }
+        ErrorMsg = string.Join(", ", missingFields);
+        return string.IsNullOrEmpty(ErrorMsg);
+    }
+}

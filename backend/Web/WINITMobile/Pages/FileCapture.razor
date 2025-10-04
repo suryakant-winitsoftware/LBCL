@@ -1,0 +1,68 @@
+﻿@page "/filecapture"
+
+@using System.IO
+
+
+<div class="cls_upload_btn_main" style="width:50px">
+    <div>
+        <label for="file-upload" @onclick='() => ShowOptions()' class="custom-file-upload cls_upload_btn">
+            <span>
+                <img style="width:30px;" src="/Images/Camera.png">
+            </span>
+            <p> Capture</p>
+        </label>
+    </div>
+</div>
+@if (ShowCapturedImages)
+{
+    @if (Files != null && Files.Count > 0)
+    {
+        <div class="d-flex flex-row " style="padding:0px 25px;">
+            @foreach (var file in Files.Take(CaptureData.MaxNumberOfItems))
+            {
+                <div class="">
+                    @if (file != null)
+                    {
+                        <img src="data:image/jpeg;base64,@file.FileData" width="72" height="65" @onclick="() => ShowImage(file)" />
+                    }
+                    else
+                    {
+                        //<p>Image not found: @file.</p>
+                    }
+
+                    @if (CaptureData.IsEditable)
+                    {
+                        <img src="/Images/delete1.png" style="width:25px; padding-left:2px;" @onclick="() => DeleteFile(file)" />
+                    }
+                </div>
+            }
+        </div>
+    }
+}
+
+@if (popupVisible)
+{
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show" tabindex="-1" style="display: block;">
+        <div style="display:flex; flex-direction:column; height:100vh; justify-content:center;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <label></label>
+                    <button type="button" class="close" @onclick="() => popupVisible = false">
+                        <span style="color:black; padding:10px;width:100%">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <img src="data:image/jpeg;base64,@selectedImage.FileData" class="img-fluid" id="capturedImage" />
+                </div>
+                <div class="modal-footer cls_modal_footer">
+                    <div class="cls_btn_new">
+                        <button type="button" class="cls_btn_new2" style="width:100%!important;" @onclick="() => DeleteFile(selectedImage)">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

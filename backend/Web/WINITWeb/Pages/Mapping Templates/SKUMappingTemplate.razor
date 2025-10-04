@@ -1,0 +1,77 @@
+﻿@page "/skugrouptemplate"
+
+@using WinIt.BreadCrum.Classes
+@using WinIt.BreadCrum.Interfaces
+@inject Winit.Modules.SKU.BL.Interfaces.IManageUserSKUMappingTemplateBaseViewModel _SkuTemplateView
+
+@inherits Base.BaseComponentBase
+
+@if (IsLoad)
+{
+    <PageHeaderAndFilter IDataBreadcrumbService="DataBreadCrum" />
+    <button class="cls_add_new_sec" @onclick="@(()=>_navigationManager.NavigateTo($"addSKUMappingTemplate?{PageType.Page}={PageType.New}"))">Add New</button>
+    <TableGridView DataSource="_SkuTemplateView.Templates" Columns="Columns" />
+}
+
+
+@code {
+    bool IsLoad;
+    List<DataGridColumn> Columns;
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsLoad = false;
+        SetColumnsHeaders();
+        await _SkuTemplateView.PopulateViewModel();
+        IsLoad = true;
+    }
+
+    Winit.UIModels.Web.Breadcrum.Interfaces.IDataService DataBreadCrum = new Winit.UIModels.Web.Breadcrum.Classes.DataServiceModel()
+        {
+            HeaderText = "Manage User SKU Mapping",
+            BreadcrumList = new()
+           {
+               new Winit.UIModels.Web.Breadcrum.Classes.BreadCrumModel()
+               {
+                   Text="Manage User SKU Mapping",
+                   SlNo=1,
+                  
+               }
+           }
+        };
+   
+
+
+    protected void SetColumnsHeaders()
+    {
+        Columns = new List<DataGridColumn>()
+            {
+                new(){Header="Mapping Code" ,GetValue=s=>((Winit.Modules.SKU.Model.Interfaces.ISKUTemplate)s).TemplateCode},
+                new(){Header="Mapping Name" ,GetValue=s=>((Winit.Modules.SKU.Model.Interfaces.ISKUTemplate)s).TemplateName},
+                new(){Header="Is Active" ,GetValue=s=>CommonFunctions.GetBooleanValueInYesOrNO(((Winit.Modules.SKU.Model.Interfaces.ISKUTemplate)s).IsActive)},
+
+            new()
+            {
+                Header="Action",
+                IsButtonColumn=true,
+                ButtonActions = new()
+                {
+                    new()
+                    {
+                        ButtonType=ButtonTypes.Image,
+                        URL="Images/edit.png",
+                         Action=item=>ViewOrEdit((Winit.Modules.SKU.Model.Interfaces.ISKUTemplate)item)
+                    }
+                }
+            }
+            };
+    }
+
+
+    protected void ViewOrEdit(Winit.Modules.SKU.Model.Interfaces.ISKUTemplate locationTemplate)
+    {
+        _dataManager?.SetData(locationTemplate.UID, locationTemplate);
+        _navigationManager.NavigateTo($"addSKUMappingTemplate?UID={locationTemplate.UID}&{PageType.Page}={PageType.Edit}");
+    }
+
+}

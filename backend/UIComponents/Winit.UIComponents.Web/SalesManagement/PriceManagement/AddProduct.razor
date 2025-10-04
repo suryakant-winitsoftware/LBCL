@@ -1,0 +1,81 @@
+﻿<div class="modal-backdrop fade show"></div>
+<div class="modal fade show" tabindex="-1" style="display: block;">
+    <div class="modal-dialog" style="top:30%;">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <button type="button" class="close" @onclick="@CloseWithoutUpdating">
+                    <span style="color:black; padding:10px;width:100%">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="max-height: 40vh; overflow-y: auto;">
+
+                @*  <a @onclick="@(()=>CheckORUncheckAll(true))">Check All</a> <a @onclick="@(()=>CheckORUncheckAll(false))">Uncheck All</a>
+                *@
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Select</th>
+                            <th>SKU Code</th>
+                            <th>SKU Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in SKUList)
+                        {
+                            <tr>
+                                <td style="padding: 10px;width:10px;"><input type="checkbox" checked="@item.IsSelected" @onclick=@(()=>SelectSKU(item)) /></td>
+                                <td style="padding: 10px;width:10px;">@item.Code</td>
+                                <td style="padding: 10px;text-align:left;width:10px;">@item.Name</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                @* <ul class="list-group scrole">
+
+                @foreach (var item in SKU)
+                {
+
+                <li class="list-group-item @((@item.IsSelected)?"active":"")" @onclick="()=>item.IsSelected=!item.IsSelected">@item.Name</li>
+                }
+                </ul> *@
+            </div>
+
+            <div style="width:100%;float:left;padding-left: 33%;margin-top: 10px;">
+                <button type="cls_add_new_sec" class="AddNew" @onclick="AddSelectedProducts">Add Selected Products</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    table {
+        border: 1px solid;
+        width: 100%;
+    }
+
+    td, th {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    tr:hover {
+        background-color: #ddd;
+    }
+
+    th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: left;
+        background-color: #19298B;
+        color: white;
+    }
+
+</style>

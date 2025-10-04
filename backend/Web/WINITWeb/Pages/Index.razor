@@ -1,0 +1,256 @@
+﻿@page "/"
+@using Winit.Modules.User.BL.Interface
+@layout WinIt.Shared.EmptyLayout;
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject BreadCrum.Interfaces.IDataService _IDataService
+@inject ICommonMasterData _commonMasterData
+@inject Winit.Modules.Common.Model.Interfaces.IDataManager dataManager;
+@inject Winit.Modules.ErrorHandling.BL.Interfaces.IKnowledgeBaseBL _knowledgeBaseBL;
+@inject SHACommonFunctions _sHACommonFunctions;
+@inject Winit.Modules.Role.BL.Interfaces.IMaintainWebMenuBaseViewModel _mainMenuBVM
+@inject Winit.Modules.Role.BL.Interfaces.IMenu menu
+@inject IUserMasterBaseViewModel _userMasterDataViewModel
+<PageTitle>Login</PageTitle>
+@* <button type="button" @onclick="TriggerClientSideError">Generate Error</button> *@
+@* <div class="container" style="padding:0px">
+
+
+    <!-- login -->
+    <div>
+        <div class="">
+            <div style="max-width: 500px; margin-left: auto; margin-right: auto;">
+                <div class="loginbg">
+
+                    <div class="cls_login_header">
+                        <div style="width:100%;float:left;text-align:center;margin: 41px 0px;">
+                            <img src="/Images/logo.png" style="width:240px">
+                        </div>
+                    </div>
+                    <div>
+                        <div>
+                            <div class="form-group_n">
+                                <label class="form-label" for="UserId">User ID</label>
+<span> <img src="/Images/icon_2.png" alt=""></span>
+<input @bind="UserID" placeholder="User Id" @onkeydown='(e) => KeyHandler(e,"UserId")' maxlength="64" type="text" id="UserId" required />
+
+                            </div>
+<br />
+<div class="form-group_n">
+    <span> <img src="/Images/icon_1.png" alt=""></span>
+    <input @ref="PassWordElement" @oninput="(e) => Password= e.Value.ToString()" @onkeydown='(e) => KeyHandler(e,"Password")' placeholder="Password" type="password" id="UserPassword" required />
+
+</div>
+<br />
+<div class="form-group_n">
+    <div class="">
+        <button class="cls_btn_login" @onclick="OnLoginClick">Login</button>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+<div class="modal-body offlineNote" style="display: none;">
+    <p>This app requires a working internet connection. You seem to be offline. Please reconnect to the internet. This message will clear automatically when you are connected.</p>
+</div>
+
+        </div>
+    </div>
+
+
+</div>
+ *@
+<div class="container cls_bbg" style="max-width: 100%;padding: 0px;">
+    <div class="cls_bgg">
+        <div class="cls_new_image_left">
+            <img alt="" src="./Images/bg.jpg?v=1">
+        </div>
+        <div class="cls_log_main">
+            <div class="loginbg">
+                <div style="width: 100%; float: left; position: relative;">
+                    <div class="dvname">
+                        <img alt="" style="width:250px" src="./Images/logo_m.png" class="img-responsive">
+                    </div>
+                    <h2 class="cls_n_h2">Customer Self Service</h2>
+                </div>
+                <div style="width: 100%; float: left;">
+                    <p class="cls_n_p">Login</p>
+                </div>
+                <form>
+                    <div style="width: 100%; float: left; margin-top: 12px;">
+                        <div class="form-group_n cls_mar_b_10px">
+                            <span>
+                                <img src="./Images/icon_2.png">
+                            </span>
+                            <input name="username" placeholder="@Localizer["user_name"]" id="txtUsername"
+                                   @oninput="(e) => UserID = e?.Value?.ToString()" @bind="UserID"
+                                   @onkeydown='(e) => KeyHandler(e,"UserId")' autocomplete="off">
+                        </div>
+                        <div class="cls_error_main">
+                        </div>
+                        <div class="form-group_n cls_mar_b_10px">
+                            <span><img src="./Images/icon_1.png"></span>
+                            <input name="password" @ref="PassWordElement" placeholder="@Localizer["password"]"
+                                   type="@(ShowPassword ? "text" : "password")" id="txtPassword"
+                                   @oninput="(e) => Password = e?.Value?.ToString()" @bind="Password"
+                                   @onkeydown='(e) => KeyHandler(e,"Password")' autocomplete="off">
+                            <a @onclick="@(() => ShowPassword = !ShowPassword)">@(ShowPassword ? "Hide" : "Show")</a>
+                        </div>
+                        <div class="cls_forgoo">
+                            @* <button @onclick="OnLoginClick" class="cls_n_bttn">@Localizer["login"]</button> *@
+                            <input value="@Localizer["login"]" type="button" @onclick="OnLoginClick" class="cls_n_bttn">
+                            <a class="cls_forget"
+                               @onclick="() => IsForgotPasswordPopUpOpen = true">@Localizer["forgot_password"]?</a>
+                            <a class="cls_forget" style="float:left !important" @onclick="@(() => _navigationManager.NavigateTo("selfRegistration"))">
+                                Self Registration
+                            </a>
+                        </div>
+                    </div>
+                </form>
+                <div class="cls_log_main11">
+                    <div class="cls_or_line">&nbsp;</div>
+                    <div style="text-align: right; margin-bottom: 10px;">
+                        <select @onchange="ChangeLanguage">
+                            <option class="selected" value="en-GB">English</option>
+                            <option value="ar">Arabic</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @* <div class="cls_bgg">
+            <div class="cls_new_image_left">
+
+                <img style="width:100%;min-height:100vh;" src="../Img/products.png?v=2" alt="">
+            </div>
+            <div style="text-align: right; margin-bottom: 10px;">
+                <select @onchange="ChangeLanguage">
+                    <option class="selected" value="en-GB">English</option>
+                    <option value="ar">Arabic</option>
+                </select>
+            </div>
+            <div class="cls_log_main">
+                <div>
+                    <div class="loginbg">
+                        <div class="logoimg">
+                            <img style="width:220px;" src="../Img/logoNew.png?v=2" alt="">
+                        </div>
+                        <div style="float: left; width: 100%; text-align: center;">
+                            <div class="cls_login"></div>
+                            <div class="usermain">
+                                <span style="text-align: left; padding-bottom: 3px;">@Localizer["user_name"]</span>
+                                <input name="txtUsername" type="text" id="txtUsername" @oninput="(e) => UserID = e?.Value?.ToString()" @bind="UserID" @onkeydown='(e) => KeyHandler(e,"UserId")' autocomplete="off">
+                            </div>
+                            <div class="usermain">
+                                <span style="text-align: left; padding-bottom: 3px;">@Localizer["password"]</span>
+                                <input @ref="PassWordElement" name="txtPassword" type="password" id="txtPassword" @oninput="(e) => Password = e?.Value?.ToString()" @bind="Password" @onkeydown='(e) => KeyHandler(e,"Password")' autocomplete="off">
+                            </div>
+
+                            <div class="usrname" style="float: left; margin-bottom: 10px; margin-top: 5px;">
+                                <div class="rember" style="text-align: left;">
+
+                                    <span>
+                                        <input id="Remember" type="checkbox" @bind="RememberMe" />
+                                        <label for="Remember">@Localizer["remember_me"]</label>
+                                    </span>
+
+
+                                </div>
+
+                            </div>
+                            <div class="usermain" style="margin-left: 10.4%;margin-bottom:50px;">
+                                <a class="cls_n_bttn" @onclick="OnLoginClick">
+                                    @Localizer["login"]
+                                </a>
+                                <a class="cls_n_bttn" @onclick="() => IsForgotPasswordPopUpOpen = true">
+                                    @Localizer["forgot_password"]
+                                </a>
+
+                            </div>
+
+                            <a style="text-decoration:none;" href="http://www.winitsoftware.com/" target="_blank">
+                                <img src="../images/l_icon3.png" alt="">
+                            </a>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div> *@
+        <div style="display:none;" class="footernew">
+            <div class="fottermain floatleft">
+                <div class="footer">
+                    <div class="floatleft alignleft cls_wid50p" style="width: 50%;">
+                        Copyright © <a href="http://www.winitsoftware.com/" target="_blank" class="headerlinks">
+                            WINIT
+                        </a>. All rights reserved.
+                    </div>
+                    <div class="floatright cls_padright1p">
+                        Licensed to WINIT.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@if (IsForgotPasswordPopUpOpen)
+{
+    <PopUp CancelbtnText=@Localizer["close"] OnCloseClick="() => IsForgotPasswordPopUpOpen = false"
+           OkbtnText=@Localizer["ok"] OnOkClick="OnForgotPassowrdOkClick">
+        @if (!string.IsNullOrEmpty(ErrorMsg))
+        {
+            <div class="alert alert-danger">
+                <label><b>@Localizer["the_following_field(s)_have_invalid_value(s)"]:</b>@ErrorMsg</label>
+            </div>
+        }
+        <div class="row" style="padding: 0px;">
+            <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab">
+                    <span style="color:red;">*</span>@Localizer["login_id"]
+                </label>
+                <input class="form-control" placeholder=@Localizer["login_id"] type="text"
+                       @oninput="(e) => UserID = e?.Value?.ToString()" @bind="UserID">
+            </div>
+        </div>
+    </PopUp>
+}
+@* @if (IsShowLangPopUp)
+{
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show" tabindex="-1" style="display: block;">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content" style="border-radius: 10px;">
+                <div class="modal-header">
+                    <h5 class="modal-title">Select Language</h5>
+                    <button type="button" class="close" @onclick="() => IsShowLangPopUp = false">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="cls_sel_language">
+                        <div>
+                            <label>
+                                <input type="radio" name="language" value="en-GB" checked="@IsLanguageSelected("en-GB")" @onclick='() => SelectLanguage("en-GB")'>
+                                English
+                            </label>
+                        </div>
+                        <div>
+                            <label>
+                                <input type="radio" name="language" value="ar" checked="@IsLanguageSelected("ar")" @onclick='() => SelectLanguage("ar")'>
+                                Arabic
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" @onclick="Proceed">
+                        Proceed
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+} *@
+

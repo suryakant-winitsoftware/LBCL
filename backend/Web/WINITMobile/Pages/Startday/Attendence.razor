@@ -1,0 +1,101 @@
+﻿@page "/Attendence"
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+@using System.IO
+@using Microsoft.AspNetCore.Components;
+@inject Winit.Modules.JourneyPlan.BL.Interfaces.IStartDayViewModel _viewmodel
+@inject Winit.Modules.Store.BL.Interfaces.IStoreBL _storeBL
+@inject Winit.Modules.Address.BL.Interfaces.IAddressBL _addressbl
+@inject Winit.Modules.DashBoard.BL.Classes.UserConfig _userConfig
+@inject Winit.Modules.JourneyPlan.BL.Interfaces.IBeatHistoryViewModel _beatHistoryViewModel;
+@inject Winit.Modules.DashBoard.BL.Interfaces.IDashBoardViewModel _dashBoardViewModel;
+@inject Winit.Modules.Syncing.BL.Interfaces.IMobileDataSyncBL _mobileDataSyncBL;
+
+<div class="cls_container_div1">
+
+    <div class="cls_section_header">
+        <h2 class="cls_section_header_h2">@Localizer["mark"] @Localizer["attendance"]</h2><!--!-->
+        <div class="cls_section_header_div"></div>
+    </div>
+
+    @*     <div class="cls_make_attandance_1">
+        <h2>@Localizer["mark"] <br>@Localizer["attendance"] </h2>
+    </div> *@
+
+    <div class="cls_section1  rounded">
+        <div class="cls_section2">
+            <div class="cls_div">
+                <label class="cls_section_label ">@Localizer["attendance_details"]</label>
+                <select @bind="Status" class="form-select cls_section_input">
+                    <option value="Present">@Localizer["present"]</option>
+
+                    <option value="Leave">Leave</option>
+                    <option value="Weekoff">Weekoff</option>
+                    <option value="Holiday">Holiday</option>
+                </select>
+            </div>
+
+
+            @if (CapturedImage == null)
+            {
+                <div class="cls_section_div">
+                    <div class="cls_upload_btn_main " style="width:50px">
+                        <div>
+
+                            <label for="file-upload" @onclick="CaptureFile" class="custom-file-upload cls_upload_btn" style="padding: 7px 15px">
+                                <span>
+                                    <img style="width:30px;" src="/Images/Camera.png">
+                                </span>
+                                <p>@Localizer["take_selfie"] </p>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                @*  <div class="cls_section_div"  >
+                    <div class="cls_upload_btn_main" style="width:50px;">
+                        <div>
+                            <label for="file-upload" class="custom-file-upload cls_upload_btn">
+                                <span><img style="width:30px;" src="/Images/Camera.png"></span>
+                               <p> Capture</p>
+                            </label>
+                        </div>
+                    </div>
+                </div> *@
+
+            }
+
+
+            <div class="col position-relative">
+                @if (CapturedImage != null)
+                {
+                    <div class="cls_take_details_main">
+                        <div class="cls_take_details_img">
+                            @*   <img src="@CapturedImage" class="img-fluid" id="capturedImage" /> *@
+                            <img src="@CapturedImage" style="border-radius:0px 0px 16px 16px;" class="img-fluid" id="capturedImage" />
+                            <div class="cls_take_details">
+                                <div class="cls_take_details_left">
+                                    <h3>@CurrentDate @CurrentTime</h3>
+                                    <p>@CurrentAddress</p>
+                                </div>
+                                <div class="cls_take_details_right">
+                                    <button class="cls_retake_btn" @onclick="RetakePhoto">
+                                        <span><img style="width:15px;" src="/Images/re_camera.png"></span><p>@Localizer["retake"]</p>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="cls_dashboard_7">
+        <a @onclick="SaveImage" class="cls_btn_check2">@Localizer["proceed"]</a>
+    </div>
+</div>
+
+

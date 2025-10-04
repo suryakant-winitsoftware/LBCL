@@ -1,0 +1,27 @@
+﻿@model RuleViewModel
+@if(Model.ruleMaster.Id!="" && Model.ruleActions.Count>0)
+{
+    <h3>Rule</h3>
+    <p>
+        @Model.ruleMaster.Name
+    </p>
+    <p>@Model.ruleMaster.Description</p>
+    <h3>Rule Parameters</h3>
+    <p>
+        @await Html.PartialAsync("~/Views/Shared/_parameters.cshtml", Model.ruleParameters)
+    </p>
+    <h3>Parameters Condition</h3>
+    <p>
+        @await Html.PartialAsync("~/Views/Shared/_conditions.cshtml", Model.ruleConditions)
+    </p>
+    <h3>Rule Action</h3>
+
+    <p>@Model.ruleActions[0].ActionType</p>
+    <p>@Model.ruleActions[0].Template</p>
+
+    <h3>Approval Hierarchy</h3>
+    <p>
+        @await Html.PartialAsync("~/Views/Shared/_approvers.cshtml", Model.approvalHierarchies)
+    </p>
+
+}

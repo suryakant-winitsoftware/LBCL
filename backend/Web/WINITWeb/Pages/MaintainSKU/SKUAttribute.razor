@@ -1,0 +1,33 @@
+﻿@inherits WinIt.Pages.Base.BaseComponentBase
+
+
+<div class="cls_section" >
+    @if (!string.IsNullOrEmpty(ErrorMsg))
+    {
+        <div class="alert alert-danger">
+            <div class="col-md-12">
+                <div style="color: red;">@ErrorMsg</div>
+            </div>
+        </div>
+    }
+    <h3 class="cls_container_p_full" >@Localizer["sku_attribute"]</h3>
+    <div class="cls_container_div1" >
+        @foreach (var dropdown in DataSource)
+        {
+            <div class="cls_section_div_sku">
+                <label class="cls_section_div_purchase2_label">
+                    <span class="cls_section_div_purchase2_span">*</span> @dropdown.DropDownTitle
+                </label>
+                <Winit.UIComponents.Common.CustomControls.DropDown DataSource="dropdown.DropDownDataSource"
+                                                                   Title="@dropdown.DropDownTitle"
+                                                                   IsButtonVisible="true"
+                                                                   OnSelect="(e) => OnDropDownSelect(dropdown,e)" IsSearchable="false" />
+            </div>
+        }
+    </div>
+    <div class="cls_button_bottom_purchase" >
+        <button class="cls_button_blue" @onclick="OnSave_Click">
+            @(IsSave ? @Localizer["save"] :@Localizer["update"] )
+        </button>
+    </div>
+</div>

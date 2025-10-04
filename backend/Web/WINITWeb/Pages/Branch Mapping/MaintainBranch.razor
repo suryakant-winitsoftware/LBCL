@@ -1,0 +1,74 @@
+﻿@page "/MaintainBranch"
+@inject Winit.Modules.Location.BL.Interfaces.IMaintainBranchMappingViewModel maintainBranchMappingViewModel;
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+
+@if (IsInitailised)
+{
+    <div>
+
+        <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@FilterColumns" IsSearchCriteriaNeeded="false"
+                             OnFilterApplied="@OnFilterApply" />
+    </div>
+    <div class="cls_export_main">
+        <button class="cls_add_new_sec" @onclick="AddNewBranchDetails">Add New</button>
+    </div>
+
+    @if (DataGridColumns != null && maintainBranchMappingViewModel.BranchDetailsList != null)
+    {
+        <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns"
+                                                    DataSource="maintainBranchMappingViewModel.BranchDetailsList"
+                                                    TotalItemsCount="maintainBranchMappingViewModel.TotalItems"
+                                                    PageSize="maintainBranchMappingViewModel.PagingRequest.PageSize"
+                                                    PageNumber="maintainBranchMappingViewModel.PagingRequest.PageNumber"
+                                                    ShowRecordsCount="true"
+                                                    IsPaginationRequired="true"
+                                                    OnPageChange="maintainBranchMappingViewModel.OnPageChange" OnSort="maintainBranchMappingViewModel.OnSort" />
+
+    }
+
+    @if (AddEditSalesOffice)
+    {
+        <PopUp Title="Manage Sales Office Details" CancelbtnText="Back" DisableOkBtn="true"
+               OnCloseClick="() => AddEditSalesOffice = false">
+
+            <div class="cls_logo_section3">
+                <div class="cls_section_div_purchase2">
+                    <label class="cls_section_div_purchase2_label">
+                        <span class="cls_section_div_purchase2_span">*</span>Code
+                    </label>
+                    <div class="cls_select">
+                        <input placeholder="Enter Code" type="number" @bind=SalesOffice.Code />
+                    </div>
+                </div>
+                <div class="cls_section_div_purchase2">
+                    <label class="cls_section_div_purchase2_label">
+                        <span class="cls_section_div_purchase2_span">*</span>Name
+                    </label>
+                    <div class="cls_select">
+                        <input placeholder="Enter Name" type="text" @bind=SalesOffice.Name />
+                    </div>
+                </div>
+                <div class="cls_section_div_purchase2">
+                    <label class="cls_section_div_purchase2_label">
+                        <span class="cls_section_div_purchase2_span">*</span>Warehouse
+                    </label>
+                    <Winit.UIComponents.Common.CustomControls.DropDown DataSource="maintainBranchMappingViewModel.SalesOfficeOrgType"
+                                                                       IsButtonVisible="true"
+                                                                       Title="Ware House"
+                                                                       OnSelect="OnSalesOfficeOrgSelect"
+                                                                       _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single" />
+                </div>
+                <div class="cls_section_div_purchase2" style="margin-top:14px;">
+                    <button class="cls_comman_btn " @onclick="AddSalesOfficeDetails"> Add </button>
+                </div>
+
+            </div>
+
+            <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridSalesOfficeColumns" DataSource="maintainBranchMappingViewModel.SalesOfficeDetails" />
+
+
+        </PopUp>
+    }
+
+}

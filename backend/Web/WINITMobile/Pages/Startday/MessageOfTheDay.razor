@@ -1,0 +1,25 @@
+﻿@page "/MessageOfTheDay"
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+@inject WINITMobile.Data.IImageUploadService _imageUploadService
+@inject Winit.Modules.JourneyPlan.BL.Interfaces.IBeatHistoryViewModel _beatHistoryViewModel;
+<div class="container">
+    <div class="cls_messageoftheday">
+        <div class="cls_messageoftheday_top">
+            <h3>
+                @Localizer["message"]<b>
+                    @Localizer["of_the_day"]
+                </b>
+            </h3>
+        </div>
+        <div class="cls_messageoftheday_bottom">
+            <span> <img style="width:355px;" src="/Images/gole.png" /></span>
+            <p>@SuccessMessage</p>
+
+        </div>
+    </div>
+    <div class="cls_proceed">
+        <a @onclick="Continue">
+            @Localizer["continue"]
+        </a>
+    </div>
+</div>

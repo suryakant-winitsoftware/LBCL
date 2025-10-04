@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MassTransit" Version="8.3.4" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="8.3.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Auth\Winit.Modules.Auth.Model\Winit.Modules.Auth.Model.csproj" />
+    <ProjectReference Include="..\..\Base\Winit.Modules.Base.BL\Winit.Modules.Base.BL.csproj" />
+    <ProjectReference Include="..\..\Email\Winit.Modules.Email.BL\Winit.Modules.Email.BL.csproj" />
+    <ProjectReference Include="..\..\Email\Winit.Modules.Email.DL\Winit.Modules.Email.DL.csproj" />
+    <ProjectReference Include="..\..\SMS\Winit.Modules.SMS.DL\Winit.Modules.SMS.DL.csproj" />
+    <ProjectReference Include="..\Winit.Modules.Notification.Model\Winit.Modules.Notification.Model.csproj" />
+  </ItemGroup>
+
+</Project>

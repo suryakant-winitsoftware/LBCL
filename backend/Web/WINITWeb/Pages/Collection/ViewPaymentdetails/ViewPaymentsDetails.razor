@@ -1,0 +1,116 @@
+﻿@page "/viewpaymentdetails"
+@inject NavigationManager _navigate
+@inject Winit.Modules.CollectionModule.BL.Interfaces.IViewPaymentsViewModel _viewPaymentsViewModel
+@inject Winit.Modules.CollectionModule.BL.Interfaces.ICreatePaymentViewModel _createPaymentViewModel;
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+
+
+
+
+<style>
+    .inputfild {
+        width: 32%;
+        float: left;
+        border-bottom: 0 solid #f1f2f3;
+        padding: 8px 0;
+    }
+
+    .input_tile {
+        width: 100%;
+        font-size: 15px;
+        color: #000;
+        font-weight: 700;
+    }
+
+    .input_details {
+        width: 100% !important;
+        font-size: 15px;
+        color: #000;
+        font-weight: 400;
+    }
+
+    .Details {
+        min-height: 100px;
+    }
+
+    .cls_new_box {
+        width: 100%;
+        float: left;
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        background: #fff;
+    }
+</style>
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="false" />
+<WinIt.Pages.Collection.CreatePayment.MultiCurrencyPopUp @ref="_multi" IsShow="IsShowMultiCurrency" _currencyCls="ViewMultiCurrencyDetails" IsReadOnly="true" Closebtn="@(() => CloseMultiCurrency())"></WinIt.Pages.Collection.CreatePayment.MultiCurrencyPopUp>
+
+@if (IsInitialised)
+{
+
+    <div class="Details" style="width: 100%; float: left; border: 1px solid #ccc; padding: 10px; margin-top:0px; margin-bottom: 10px;">
+        <div class="inputfild">
+            <div class="input_tile">
+                @Localizer["receipt_no"]
+            </div>
+            <div class="input_details counter" style="width:64%;">
+                @ReceiptNumber
+            </div>
+        </div>
+        <div class="inputfild">
+            <div class="input_tile">
+                @Localizer["collected_date"]
+            </div>
+            <div class="input_details counter" style="width:64%;">
+                @CollectedDate
+            </div>
+        </div>
+        <div class="inputfild">
+            <div class="input_tile">
+                @Localizer["customer_name"]
+            </div>
+            <div class="input_details counter" style="width:64%;">
+                @CustomerName
+            </div>
+        </div>
+        <div class="inputfild">
+            <div class="input_tile">
+                @Localizer["payment_type"]
+            </div>
+            <div class="input_details counter" style="width:64%;">
+                @PaymentType
+            </div>
+        </div>
+        <div class="inputfild">
+            <div class="input_tile">
+                @Localizer["status"]
+            </div>
+            <div class="input_details counter" style="width:64%;">
+                @Status
+            </div>
+        </div>
+        <div class="inputfild">
+            <div class="input_tile">
+                @Localizer["amount"]
+            </div>
+            <div class="input_details counter" style="width:64%;">
+                @* @((Convert.ToDecimal(Amount) / 80M).ToString()) *@
+                @(_viewDetailsList.FirstOrDefault().CurrencyUID.Contains("USD") ? (Convert.ToDecimal(Amount)).ToString() : Amount)
+            </div>
+        </div>
+        <div class="inputfild">
+            <div class="input_tile">
+                @Localizer["currency_details"]
+            </div>
+            <div class="input_details counter" style="width:64%;">
+                <img class="view_cls" style="width:25px;" src="Images/view_eye.png" @onclick="() => View()" />
+            </div>
+        </div>
+
+    </div>
+    <div class="cls_new_box">
+        <Winit.UIComponents.Web.Table.TableGridView Columns="ViewPaymentDetailsColumns" DataSource="_viewDetailsList" />
+    </div>
+}

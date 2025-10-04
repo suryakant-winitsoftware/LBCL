@@ -1,0 +1,259 @@
+﻿@page "/SalesOrderListView"
+@inject IJSRuntime JSRuntime
+@inject IServiceProvider _serviceProvider;
+@using WINITMobile.Pages.Sales
+@using Winit.Shared.CommonUtilities.Common
+@using Winit.Shared.Models.Events
+@using Microsoft.JSInterop
+@using Winit.Modules.SalesOrder.Model.UIInterfaces
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+
+
+<!-- CSS styles for enabling scrolling -->
+
+<div class="container" style="padding:0px 5px;">
+
+    <!-- Grid View -->
+    <div class="grid-view cls_main_grid_view">
+        <div class="row">
+            <div class="cls_salesorder_gridview">
+                <div class="cls_salesorder_gridview_left">
+                    <ul>
+                        @foreach (var item in LeftScrollItems)
+                        {
+                            <li>
+                                <a @onclick="() => OnLeftItemSelect(item)">
+                                    <span class='@(item.IsSelected ? "cls_salesorder_gridview_left_sel":"")'>
+                                        <img style="width:45px;" src="@((item as
+                                            Winit.Shared.Models.Common.SelectionItemFilter).ImgPath)">
+                                    </span>
+                                    <p>
+                                        @((item as
+                                            Winit.Shared.Models.Common.SelectionItemFilter).Label)
+                                    </p>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <div class="cls_salesorder_gridview_right">
+                    @if (SelectedPromotion != null)
+                    {
+                        <div class="cls_promo_order_tost">
+                            <div class="cls_promo_order_tost1">
+                                @SelectedPromotion.Remarks
+                                <button @onclick="OnPromotionRemoveClick" style="float: right;position: absolute;right: 0px;top: -3px;font-size: 10px;" class="btn-close">
+                                </button>
+                            </div>
+                            <div class="cls_promo_order_tost2">
+                                <div class="cls_promo_order_tost2_rep">
+                                    <label>@Localizer["start_date"] :</label>
+                                    <p>@(CommonFunctions.GetDateTimeInFormat(SelectedPromotion.ValidFrom))</p>
+                                </div>
+                                <div class="cls_promo_order_tost2_rep">
+                                    <label>@Localizer["end_date"] :</label><p>@(CommonFunctions.GetDateTimeInFormat(SelectedPromotion.ValidUpto))</p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <div class="row fade-in" style="margin:0px !important">
+                    @if (SalesOrderItemViewList != null && SalesOrderItemViewList.Count > 0)
+                    {
+
+                            <Virtualize @ref="@virtualizeRef" ItemsProvider="@LoadItems" ItemSize="300" OverscanCount="40">
+                            <ItemContent Context="product">
+                              
+                                    @if (IsGridView)
+                                    {
+                                        <div class="col-lg-3 col-md-4 col-sm-6 col-6 cls_main_grid_view_rep">
+                                            <div class="cls_card @(product.ItemType == Winit.Shared.Models.Enums.ItemType.FOC ? "cls_card_border": "")">
+                                                <!-- Grid view card content -->
+                                                <div class="cls_top_img">
+                                                    @if (product.IsPromo)
+                                                    {
+                                                        <span>
+                                                            <img style="width:14px;" @onclick="() => ShowPromotionData(product)"
+                                                                 src="/Images/promo_icon.png">
+                                                        </span>
+                                                    }
+                                                    @if (product.ItemType == Winit.Shared.Models.Enums.ItemType.FOC)
+                                                    {
+                                                        <span>
+                                                            <img style="width:36px;"
+                                                                 src="/Images/foc_icon.png" alt="FOC">
+                                                        </span>
+                                                    }
+
+                                                </div>
+                                                <div>
+                                                    <div class="cls_card_header text-center" @onclick="() => ShowProductDetails(product)">
+                                                        <img class="card-img-top" src="@(product.SKUImage)"
+                                                             onerror="this.src='/Data/SKU/no_image_available.jpg'" style="width:100%; height:150px" />
+                                                    </div>
+                                                    <div class="cls_card_body">
+                                                        <h3>
+                                                            [@product.SKUCode]@product.SKULabel
+                                                        </h3>
+                                                        <p>Selling Price: </p><span>@product.CurrencyLabel</span>
+                                                        @if (product.ItemType == Winit.Shared.Models.Enums.ItemType.FOC)
+                                                        {
+                                                            <label class="cls_strike">@product.BasePrice</label>
+                                                            <label style="color:#4EB12C;margin-left:3px;">@Localizer["free"]</label>
+                                                        }
+                                                        else
+                                                        {
+                                                            <label>@product.UnitPrice</label>
+                                                            <span @onclick="() =>{IsEditPriceOpen = true; SelectedProduct = product;}"><img style="width:13px;" src="/Images/edit.png"></span>
+                                                        }
+                                                        <p>
+                                                            @if (product.Qty > 0)
+                                                            {
+                                                                <span style="display:none;" class="text-secondary text-muted fs-6">GSV: @product.CurrencyLabel@product.GSVText</span>
+                                                                <br>
+                                                            }
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div class="cls_card_footer">
+                                                    <div class="cls_card_footer_top">
+                                                        <div class="cls_card_footer_top_rep">
+                                                            <label>@Localizer["sc_qty"]:</label>
+                                                            <h3>@product.SCQty</h3>
+                                                        </div>
+                                                        <div class="cls_card_footer_top_rep">
+                                                            <label>@Localizer["rc_qty"]:</label>
+                                                            <h3>@product.RCQty</h3>
+                                                            <button style="display:none;" class="oi oi-bar-chart btn btn-danger">@Localizer["jp"]prom</button>
+                                                        </div>
+                                                        <div class="cls_card_footer_top_rep">
+                                                            <label>@Localizer["van_qty"]:</label>
+                                                            <h3>@product.VanQty</h3>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="cls_card_footer_bottom @(product.ItemType == Winit.Shared.Models.Enums.ItemType.FOC ? "cls_divdisabled" : "")">
+                                                        <div class="cls_card_footer_bottom_left dn">
+                                                            <div class="cls_card_footer_bottom_left_1">
+                                                                <button @onclick="()=> OnUOMButtonClick(product)">@((product.SelectedUOM == null) ? "UOM" : product.SelectedUOM.Label)</button>
+                                                            </div>
+                                                            <div class="cls_card_footer_bottom_left_2">
+                                                                <button @onclick="() => OnCloneUOMButtonClick(product)">
+                                                                    <img src='@(product.ItemStatus == Winit.Shared.Models.Enums.ItemState.Cloned ? "/Images/delete.png":"/Images/plus.png")' style="width:14px;" />
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                        <div class="cls_card_footer_bottom_right">
+                                                            <AddButtonForCreateSalesOrder UID="@product.UID" MinQty="0" MaxQty="@product.MaxQty" Qty="@product.Qty" OnQtyChange="AddButtonOnQtyChange"
+                                                                                          OnPreValidateQtyChange="PreValidateQtyChange" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="cls_sales_order_list_view">
+                                            <div class="cls_sales_order_list_view_top ">
+                                                <h3>
+                                                    [@product.SKUCode] @product.SKUName
+                                                </h3>
+                                                @if (product.IsPromo)
+                                                {
+                                                    <span>
+                                                        <img style="width:14px;" @onclick="() => ShowPromotionData(product)"
+                                                             src="/Images/promo_icon.png">
+                                                    </span>
+                                                }
+                                                @* <span><img style="width:24px;" src="/Images/mcl.png"></span> *@
+                                                @* <span><img style="width:24px;" src="/Images/promo.png"></span>
+                                        <span><img style="width:24px;" src="/Images/n.png"></span> *@
+                                            </div>
+                                            <div class="cls_sales_order_list_view_cen">
+                                                <div class="cls_sales_order_list_view_cen_left dn">
+                                                    <div class="cls_sales_order_list_view_cen_left_rep">
+                                                        <label>@Localizer["sc_qty"]:</label>
+                                                        <p>@product.SCQty</p>
+                                                    </div>
+                                                    <div class="cls_sales_order_list_view_cen_left_rep">
+                                                        <label>@Localizer["rc_qty"]: </label>
+                                                        <p>@product.RCQty</p>
+                                                    </div>
+                                                    <div class="cls_sales_order_list_view_cen_left_rep">
+                                                        <label>@Localizer["van_qty"]: </label>
+                                                        <p>@product.VanQty</p>
+                                                    </div>
+                                                </div>
+                                                <div class="cls_sales_order_list_view_cen_cen dn">
+                                                    <div class="d-flex border-2  border border-dark-subtle rounded cls_new_ii_put dn">
+                                                        <button @onclick="()=> OnUOMButtonClick(product)">@((product.SelectedUOM == null) ? "UOM" : product.SelectedUOM.Label)</button>
+                                                        <button @onclick="() => OnCloneUOMButtonClick(product)">
+                                                            <img src='@(product.ItemStatus == Winit.Shared.Models.Enums.ItemState.Cloned ? "/Images/delete.png":"/Images/plus.png")' style="width:14px;" />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                 <div style="width:auto" class="cls_sales_order_list_view_bottom">
+                                                <label>Selling Price: </label><p>@product.CurrencyLabel</p><h3>@product.UnitPrice</h3>
+                                            </div>
+                                                <div class="cls_sales_order_list_view_cen_right"> <AddButtonForCreateSalesOrder UID="@product.UID" MinQty="0" MaxQty="5" Qty="@product.Qty" OnQtyChange="AddButtonOnQtyChange" /></div>
+                                            </div>
+
+                                           
+
+                                        </div>
+                                    }
+                           
+                            </ItemContent>
+                            <Placeholder>
+                                   @*  <div class="loader">
+                                        <div class="spinner"></div>
+                                        <p>Loading...</p>
+                                    </div> *@
+                                    @for (int i = 0; i < 10; i++)
+                                    {
+                                        <div class="placeholder-item">
+                                            <div class="skeleton-image"></div>
+                                            <div class="skeleton-text"></div>
+                                            <div class="skeleton-text skeleton-text-short"></div>
+                                        </div>
+                                    }
+                            </Placeholder>
+                        </Virtualize>
+                       
+                    }
+                    else
+                    {
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-12 text-danger">
+                                    @Localizer["no_record_found"]
+                                </div>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (IsModalOpen)
+{
+    <ProductDetails Product="SelectedProduct" OnQtyChange="AddButtonOnQtyChange" OnPreValidateQtyChange="PreValidateQtyChange"
+                    OnEditPriceBtnClick="() => IsEditPriceOpen = true"
+                    Promotions="ItemPromotions"
+                    OnCloseProductDetails="() => IsModalOpen = false" />
+}
+
+@if (IsEditPriceOpen)
+{
+    <EditPricePopUp OnClose="() => IsEditPriceOpen = false" OnApply="@UpdatePriceValue"
+                    ActualPrice="SelectedProduct.UnitPrice"
+                    MinPrice="@SelectedProduct.PriceLowerLimit"
+                    MaxPrice="@SelectedProduct.PriceUpperLimit"
+                    SKULable='@($"[{SelectedProduct.SKUCode}]{SelectedProduct.SKUName})")'
+                    SKUImg="@(SelectedProduct.SKUImage)"
+                    NewPrice="SelectedProduct.UnitPrice" />
+}

@@ -1,0 +1,33 @@
+﻿@inherits WinIt.Pages.Base.BaseComponentBase
+
+
+
+@if (IsInitialised)
+{
+    <div class="cls_state_section1">
+    <div class="cls_state_section_div">
+        <label class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span">*</span>Type</label>
+        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="UserLocationTypes"
+                                                           IsButtonVisible="true"
+                                                           Title="Location Type"
+                                                           OnSelect="OnUserLocationTypeSelect"
+                                                           _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single" />
+    </div>
+    <div class="cls_state_section_div">
+        <label class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span">*</span>Value</label>
+        <Winit.UIComponents.Common.CustomControls.DropDown DataSource="UserLocationValues"
+                                                           IsButtonVisible="true"
+                                                           Title="Location Value"
+                                                           OnSelect="OnUserLocationValueSelect"
+                                                           _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single" />
+    </div>
+    <div class="cls_button_bottom_purchase">
+
+
+        <button class="cls_button_blue" @onclick="() => SaveUpdateLocationMapping()">
+            @( ( (IsNew ? "save" : "Update")) )
+        </button>
+
+    </div>
+    </div>
+}

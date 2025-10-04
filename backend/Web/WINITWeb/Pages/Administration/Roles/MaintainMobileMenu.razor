@@ -1,0 +1,237 @@
+﻿@page "/maintainmobilemenu"
+@using Winit.Modules.Role.BL.Interfaces
+@inject IMaintainMobileMenuBaseViewModel _mobileMenu
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+@if (_mobileMenu.IsLoad && _mobileMenu.ModuleMasters != null)
+{
+    <div class="cls_container_div4">
+        
+        <div class="cls_container_div1">
+            <label class="cls_mobMenu_check_label">Selected Role:@_mobileMenu.RoleName </label>
+        </div>
+        
+    </div>
+    foreach (var module in _mobileMenu.ModuleMasters)
+    {
+        <div class="cls_container_div1">
+            
+                <div class="cls_container_div1">
+                    <div>
+                        <table style="width:100%;">
+                            <tbody>
+                                @foreach (var subModule in module.SubModuleHierarchies)
+                                {
+                                    @if (subModule.SubModule != null && subModule.SubModulePermissions != null)
+                                    {
+                                        @if (string.IsNullOrEmpty(subModule.SubModule.RelativePath))
+                                        {
+                                            <div style="width:100%;float:left">
+                                                <div class="storeupper">
+                                                    <div class="sectionheader panel-heading" style="padding:0px;">
+                                                        <table class="table" style="margin:0px;">
+                                                            <thead>
+                                                                <tr class="panel-heading">
+                                                                    <th>@subModule.SubModule.SubModuleNameEn</th>
+                                                                    <th style="text-align:center">
+                                                                        <input type="radio" name="@(subModule.SubModule.SubModuleNameEn)"
+                                                                               checked="@(subModule.SubModulePermissions.FullAccess==null?false:subModule.SubModulePermissions.FullAccess)"
+                                                                               value="@(subModule.SubModule.SubModuleNameEn+1)"
+                                                                               @onclick="@(()=>_mobileMenu.SelectOrDeselectSubModules(subModule,true))" />
+                                                                        <label for="@(subModule.SubModule.SubModuleNameEn+1)"
+                                                                               @onclick="@(()=>_mobileMenu.SelectOrDeselectSubModules(subModule,true))">@Localizer["yes"]</label>
+                                                                    </th>
+                                                                <th style="text-align:center">
+                                                                        <input type="radio" name="@(subModule.SubModule.SubModuleNameEn)"
+                                                                               checked="@(@subModule.SubModulePermissions.FullAccess==null?false:!subModule.SubModulePermissions.FullAccess)"
+                                                                               value="@(subModule.SubModule.SubModuleNameEn+2)"
+                                                                               @onclick="@(()=>_mobileMenu.SelectOrDeselectSubModules(subModule,false))" />
+                                                                        <label for="@(subModule.SubModule.SubModuleNameEn+2)"
+                                                                               @onclick="@(()=>_mobileMenu.SelectOrDeselectSubModules(subModule,false))">@Localizer["no"]</label>
+                                                                    </th>
+                                                                </tr>
+                                                            </thead>
+                                                        </table>
+                                                    </div>
+                                                    <div class="div1">
+                                                        
+                                                                    <table >
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th>@Localizer["name"]</th>
+                                                                                <th style="text-align:center">@Localizer["yes"]</th>
+                                                                                <th style="text-align:center">@Localizer["no"]</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            @foreach (var subSubModule in subModule.SubSubModules)
+                                                                            {
+                                                                                <tr>
+                                                                                    <td>@subSubModule.SubSubModule.SubSubModuleNameEn</td>
+                                                                    <td style="text-align:center">
+                                                                                        <input type="radio" checked="@(subSubModule.Permissions.FullAccess==null?false:subSubModule.Permissions.FullAccess)"
+                                                                                               name="@(subSubModule.SubSubModule.SubSubModuleNameEn+10)" value="@(subSubModule.SubSubModule.SubSubModuleNameEn+10)"
+                                                                                               @onclick="@(()=>_mobileMenu.SelectOrDeselectSubSubModules(subSubModule,subModule,true))" />
+
+                                                                                        <label @onclick="@(()=>_mobileMenu.SelectOrDeselectSubSubModules(subSubModule,subModule,true))"
+                                                                                               for="@(subSubModule.SubSubModule.SubSubModuleNameEn+10)">
+                                                                                            @Localizer["yes"]
+                                                                                        </label>
+                                                                                    </td>
+                                                                                    <td style="text-align:center">
+                                                                                        <input type="radio" checked="@(subSubModule.Permissions.FullAccess==null?false:!subSubModule.Permissions.FullAccess)"
+                                                                                               name="@(subSubModule.SubSubModule.SubSubModuleNameEn+10)" value="@(subSubModule.SubSubModule.SubSubModuleNameEn+20)"
+                                                                                               @onclick="@(()=>_mobileMenu.SelectOrDeselectSubSubModules(subSubModule,subModule,false))" />
+                                                                                        <label @onclick="@(()=>_mobileMenu.SelectOrDeselectSubSubModules(subSubModule,subModule,false))"
+                                                                                               for="@(subSubModule.SubSubModule.SubSubModuleNameEn+20)">
+                                                                                            @Localizer["no"]
+                                                                                        </label>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            }
+                                                                        </tbody>
+                                                                    </table>
+                                                                   
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td>@subModule.SubModule.SubModuleNameEn</td>
+                                                <td>
+                                                    <input type="radio" name="@(subModule.SubModule.SubModuleNameEn)"
+                                                           checked="@(subModule.SubModulePermissions.FullAccess==null?false:subModule.SubModulePermissions.FullAccess)"
+                                                           value="@(subModule.SubModule.SubModuleNameEn+1)"
+                                                           @onclick="@(()=>_mobileMenu.SelectOrDeselectSubModules(subModule,true))" />
+
+                                                    <label for="@(subModule.SubModule.SubModuleNameEn+1)"
+                                                           @onclick="@(()=>_mobileMenu.SelectOrDeselectSubModules(subModule,true))">
+                                                        @Localizer["yes"]
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <input type="radio" name="@(subModule.SubModule.SubModuleNameEn)"
+                                                           checked="@(@subModule.SubModulePermissions.FullAccess==null?false:!subModule.SubModulePermissions.FullAccess)"
+                                                           value="@(subModule.SubModule.SubModuleNameEn+2)"
+                                                           @onclick="@(()=>_mobileMenu.SelectOrDeselectSubModules(subModule,false))" />
+
+                                                    <label for="@(subModule.SubModule.SubModuleNameEn+2)"
+                                                           @onclick="@(()=>_mobileMenu.SelectOrDeselectSubModules(subModule,false))">
+                                                        @Localizer["no"]
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+           
+        </div>
+    }
+    <div class="cls_button_bottom_purchase">
+        <button class="cls_button_light" @onclick="@(()=>_navigationManager.NavigateTo("maintainUserRole"))">
+            @Localizer["back"]
+        </button>
+        <button class="cls_button_blue" @onclick="@_mobileMenu.SavePermissions">
+            @Localizer["save"]
+        </button>
+
+    </div>
+}
+<style>
+    .storeupper {
+        width: 100%;
+        float: left;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        -webkit-box-shadow: 0 1px #fff inset, 0 1px 5px rgba(34,25,25,.4);
+        box-shadow: 0 1px #fff inset, 0 1px 5px rgba(34,25,25,.4);
+        padding: 15px;
+        border-bottom: 3px solid #2298c4 !important;
+        border-top: 1px solid #ccc !important;
+        border-radius: 5px;
+        background: #fff;
+    }
+
+    .sectionheader {
+        width: 100%;
+        float: left;
+    }
+
+    .panel-heading {
+        padding: 10px 15px;
+        border-bottom: 1px solid transparent;
+        border-top-left-radius: 3px;
+        border-top-right-radius: 3px;
+    }
+
+    .panel-title {
+        margin-top: 20px;
+        margin-bottom: 5px;
+        font-size: 20px;
+        color: #2f2f2f;
+        font-weight: 700;
+    }
+
+    .formfield {
+        float: left;
+        margin: 5px 0 10px;
+        width: 100%;
+    }
+
+    .gridheadernew {
+        background: #7c7c7c;
+        width: 100%;
+    }
+
+    .table[_ngcontent-c7] {
+        border-collapse: separate;
+        border-spacing: 0 0;
+        margin-top: 0;
+    }
+
+    .table {
+        border-collapse: separate;
+        border-spacing: 0px 7px;
+    }
+
+    table {
+        border-collapse: separate;
+        text-indent: initial;
+        border-spacing: 2px;
+    }
+
+    tbody {
+        margin: 0;
+        min-height: 100%;
+        padding: 0;
+        overflow-x: hidden;
+        overflow-y: auto;
+        font-weight: 400;
+        color: #333c40;
+        -webkit-font-smoothing: antialiased;
+        font-size: 14px;
+    }
+
+    tr {
+        display: table-row;
+        vertical-align: inherit;
+        unicode-bidi: isolate;
+        border-color: inherit;
+    }
+
+    table {
+        display: table;
+        border-collapse: separate;
+        box-sizing: border-box;
+        text-indent: initial;
+        unicode-bidi: isolate;
+        border-spacing: 2px;
+        border-color: gray;
+    }
+</style>

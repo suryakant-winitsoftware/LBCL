@@ -1,0 +1,269 @@
+﻿@page "/addSKUMappingTemplate"
+@using Winit.Modules.SKU.BL.Classes
+@using Winit.Modules.SKU.Model.Classes
+@using Winit.Modules.SKU.Model.Interfaces
+
+
+@inject Winit.Modules.SKU.BL.Interfaces.IAddEditSKUMappingTemplateBaseViewModel _addEditSKUMapping
+<PageHeaderAndFilter IDataBreadcrumbService="DataBreadCrum" />
+<div class="cls_container_div4">
+    <div class="cls_section">
+        <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label" for="mappingCode">Mapping Code</label>
+            <input class="cls_select2_button" type="text" id="mappingCode" @bind="@_addEditSKUMapping.SKUTemplate.TemplateCode" placeholder="Enter here" />
+        </div>
+
+        <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label" for="mappingName">Mapping Name</label>
+            <input class="cls_select2_button" type="text" id="mappingName" @bind="@_addEditSKUMapping.SKUTemplate.TemplateName" placeholder="Enter here" />
+        </div>
+
+        <div class="cls_section_div_purchase2">
+            <div class="cls_btn_radio">
+                <input type="radio" class="cls_btn_radio_input" id="isActiveYes" @onclick="@(()=>{_addEditSKUMapping.SKUTemplate.IsActive=true;})" checked="@_addEditSKUMapping.SKUTemplate.IsActive" />
+                <label class="cls_btn_radio_label" for="isActiveYes">Yes</label>
+            </div>
+            <div class="cls_btn_radio">
+                <input type="radio" class="cls_btn_radio_input" id="isActiveNo" @onclick="@(()=>{_addEditSKUMapping.SKUTemplate.IsActive=true;})" checked="@(!_addEditSKUMapping.SKUTemplate.IsActive)" />
+                <label class="cls_btn_radio_label" for="isActiveNo">No</label>
+            </div>
+        </div>
+
+        
+
+    </div>
+    <div class="cls_container_div1 margin_top">
+        <button @onclick="@(()=>_addEditSKUMapping.IsAdd=true)" class="cls_add_new_sec">Add</button>
+    </div>
+    <div class="cls_container_div1">
+        <TableGridView DataSource="_addEditSKUMapping.SKUTemplateLineList" Columns="Columns" />
+    </div>
+
+    <div class="cls_button_bottom_purchase">
+        <button class="cls_button_light"> Cancel</button>
+        <button class="cls_button_blue" @onclick=@(((AddEditSKUMappingTemplateWebViewModel)_addEditSKUMapping).FinalizeMapping)> Finalize</button>
+        <button class="cls_button_light" @onclick=@DeleteSelectedTemplateLines> Delete Selected Items</button>
+        
+        </div>
+    
+
+
+</div>
+
+
+
+
+
+
+@if (_addEditSKUMapping.IsAdd)
+{
+    <PopUp Title="Add Product" OkbtnText="Save" CancelbtnText="Close" OnOkClick="_addEditSKUMapping.SaveMapping"
+           OnCloseClick="() => { _addEditSKUMapping.IsAdd=false;}">
+        <div class="cls_pop_up_style_div1">
+            <div class="cls_btn_radio">
+                <input type="checkbox" class="cls_btn_radio_input" @bind-value="_addEditSKUMapping.IsExcluded" />
+
+                <label class="cls_btn_radio_label">Is Excluded</label>
+
+            </div>
+        </div>
+
+
+
+
+        <div class="cls_pop_up_style_div">
+            <label class="cls_section_div_purchase2_label">
+                                    Type
+                                </label>
+
+                                <Winit.UIComponents.Common.CustomControls.DropDown IsButtonVisible="true"
+                                                                                   DataSource="_addEditSKUMapping.SKUGroupsTypes"
+                                                                                   OnSelect="_addEditSKUMapping.OnSKUGroupTypeSelected" />
+                            </div>
+        <div class="cls_pop_up_style_div">
+            <label class="cls_section_div_purchase2_label">
+                Value
+                                </label>
+                                <Winit.UIComponents.Common.CustomControls.DropDown IsButtonVisible="true"
+                                                                                   _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Multiple"
+                                                                                   DataSource="_addEditSKUMapping.SKUGroups"
+                                                                                   OnSelect="_addEditSKUMapping.OnSKUGroupSelected" />
+                            </div>
+
+                        
+       </PopUp>
+   @*  <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show" tabindex="-1" style="display: block; ">
+        <div class="modal-dialog" style="top:20%;max-width:800px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close">
+                        <span class="close" @onclick="()=> { _addEditSKUMapping.IsAdd=false;}" style="color:black; padding:10px;">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <input type="checkbox" @bind-value="_addEditSKUMapping.IsExcluded" />
+
+                    <span>Is Excluded</span>
+                    <br />
+
+                    <div>
+
+
+
+                        <div class="row">
+                            <div class="col">
+                                <label>
+                                    <span>Type</span>
+                                </label>
+
+                                <Winit.UIComponents.Common.CustomControls.DropDown IsButtonVisible="true"
+                                                                                   DataSource="_addEditSKUMapping.SKUGroupsTypes"
+                                                                                   OnSelect="_addEditSKUMapping.OnSKUGroupTypeSelected" />
+                            </div>
+                            <div class="col">
+                                <label>
+                                    <span>Value</span>
+                                </label>
+                                <Winit.UIComponents.Common.CustomControls.DropDown IsButtonVisible="true"
+                                                                                   _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Multiple"
+                                                                                   DataSource="_addEditSKUMapping.SKUGroups"
+                                                                                   OnSelect="_addEditSKUMapping.OnSKUGroupSelected" />
+                            </div>
+
+                        </div>
+                        <br />
+                        <br />
+                        <div>
+                        </div>
+                        <br />
+                        <div class="row justify-content-center">
+                            <div class="col-md-6 text-center">
+                                <button class="cls_add_new_sec" @onclick="_addEditSKUMapping.SaveMapping">
+                                    Save
+                                </button>
+                            </div>
+                        </div>
+                        <br />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> *@
+}
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        SetColumnsHeaders();
+       // await SetBreadCrum();
+        await _addEditSKUMapping.PopulateViewModel();
+    }
+
+    Winit.UIModels.Web.Breadcrum.Interfaces.IDataService DataBreadCrum = new Winit.UIModels.Web.Breadcrum.Classes.DataServiceModel()
+        {
+            HeaderText = "Add/Edit SKU Group Template",
+            BreadcrumList = new()
+           {
+               new Winit.UIModels.Web.Breadcrum.Classes.BreadCrumModel()
+               {
+                   Text="Manage User SKU Mapping",
+                   SlNo=1,
+                   URL="skugrouptemplate",
+                   IsClickable=true
+               }, new Winit.UIModels.Web.Breadcrum.Classes.BreadCrumModel()
+               {
+                   Text="Add/Edit SKU Group Template",
+                   SlNo=2,
+               },
+           }
+        };
+    // [CascadingParameter]
+    // public EventCallback<WinIt.BreadCrum.Interfaces.IDataService> CallbackService { get; set; }
+    // public async Task SetBreadCrum()
+    // {
+    //     _IDataService.BreadcrumList = new List<IBreadCrum>();
+    //     _IDataService.HeaderText = "Add/Edit SKU Group Template";
+    //     _IDataService.BreadcrumList = new()
+    //     {
+    //         new BreadCrumModel(){ SlNo=1,Text="SKU Group Template",IsClickable=true,URL="skugrouptemplate"},
+    //         new BreadCrumModel(){ SlNo=1,Text="Add/Edit SKU Group Template"},
+    //     }; 
+    //     await CallbackService.InvokeAsync(_IDataService);
+    // }
+   
+
+
+    List<DataGridColumn> Columns;
+    protected void SetColumnsHeaders()
+    {
+        Columns = new List<DataGridColumn>()
+            {
+            new()
+            {
+                Header="Select",
+                IsButtonColumn=true,
+                ButtonActions = new()
+                {
+                    new()
+                    {
+                        ButtonType=ButtonTypes.CheckBox,
+                        GetValue=s=>((SKUTemplateLine)s).IsSelected,
+                        Action=item=>OnTemplateLineSelected((ISKUTemplateLine)item),
+                    }
+                }
+            },
+                new(){Header="Type" ,GetValue=s=>((SKUTemplateLine)s).SKUGroupTypeName},
+                new(){Header="Value" ,GetValue=s=>((SKUTemplateLine)s).SKUGroupName},
+                new(){Header="Parent Level" ,GetValue=s=>string.IsNullOrEmpty(((SKUTemplateLine)s).SKUGroupParentName)?"-":((SKUTemplateLine)s).SKUGroupParentName},
+                new(){Header="Is Excluded" ,GetValue=s=>CommonFunctions.GetBooleanValueInYesOrNO(((SKUTemplateLine)s).IsExcluded)},
+
+            new()
+            {
+                Header="Action",
+                IsButtonColumn=true,
+                ButtonActions = new()
+                {
+                    new()
+                    {
+                        ButtonType=ButtonTypes.Image,
+                        URL="Images/delete.png",
+                        Action=item=>DeleteTemplateline((ISKUTemplateLine)item),
+                    }
+                }
+            }
+          };
+    }
+    protected async void DeleteTemplateline(ISKUTemplateLine SKUTemplateLine)
+    {
+        await ((AddEditSKUMappingTemplateWebViewModel)_addEditSKUMapping).DeleteSelectedTemplateLines(SKUTemplateLine);
+        StateHasChanged();
+    }
+    protected async void DeleteSelectedTemplateLines()
+    {
+        await ((AddEditSKUMappingTemplateWebViewModel)_addEditSKUMapping).DeleteSelectedTemplateLines();
+        StateHasChanged();
+    }
+    protected void OnTemplateLineSelected(ISKUTemplateLine SKUTemplateLine)
+    {
+        int records = _addEditSKUMapping.SKUTemplateLineList.Count;
+        int j = records-1;
+        for (int i = 0; i < records / 2; i++)
+        {
+            if (SKUTemplateLine.UID == _addEditSKUMapping.SKUTemplateLineList[i].UID)
+                {
+                _addEditSKUMapping.SKUTemplateLineList[i].IsSelected = !_addEditSKUMapping.SKUTemplateLineList[i].IsSelected;
+                    break;
+                }
+            if (i < j && SKUTemplateLine.UID == _addEditSKUMapping.SKUTemplateLineList[j].UID)
+                {
+                _addEditSKUMapping.SKUTemplateLineList[j].IsSelected = !_addEditSKUMapping.SKUTemplateLineList[j].IsSelected;
+                    break;
+                }
+            j--;
+        }
+        StateHasChanged();
+    }
+
+}

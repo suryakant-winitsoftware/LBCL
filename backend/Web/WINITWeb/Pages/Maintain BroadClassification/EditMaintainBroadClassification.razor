@@ -1,0 +1,106 @@
+﻿@page "/EditMaintainBroadClassification"
+
+@using Winit.UIComponents.Web.Table
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.BroadClassification.BL.Interfaces.IBroadClassificationHeaderViewModel _broadClassificationHeaderViewModel;
+@inject Winit.Modules.BroadClassification.BL.Interfaces.IBroadClassificationLineViewModel _broadClassificationLineViewModel;
+
+
+@if (IsInitialized)
+
+{
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService"/>
+    <div class="cls_logo_section3">
+        
+            <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label">
+                <span class="cls_section_div_purchase2_span">*</span>Broad Classification Name
+            </label>
+                <div class="cls_select">
+            <input  placeholder="Enter Name" type="text"  @bind-value="BroadClassificationName" readonly/>
+                </div>
+        </div>
+
+
+        <div class="cls_section_div_purchase2 cls_broad_section_width">
+            <label class="cls_section_div_purchase2_label">
+                <span class="cls_section_div_purchase2_span">*</span>Active
+            </label>
+            <input class="cls_section_div_purchase2_input" type="checkbox" @bind="IsActive" />
+        </div>
+       
+        <div class="">
+            <div class="margin_top">
+                <button class="cls_comman_btn margin_top" @onclick="ShowUnAssignedCustomerClassificationForSelection">Add Unassigned Customer Classification</button>
+        </div>
+        </div>
+    </div>
+
+    <div class="cls_container_div4">
+    <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" DataSource="broadClassificationLines.Where(p => p.BroadClassificationHeaderUID==BroadClassificationUID).ToList()" />
+    </div>
+
+    <div class="cls_button_bottom_purchase">
+
+        <button class="cls_button_light " @onclick="BackBtnClicked">Back</button>
+        <button class="cls_button_blue " @onclick="() =>UpdateBroadCustomerClassification()">Update</button>
+       
+    </div>
+
+
+    @if (ISShowUnAssignedCustomerClassificationForSelection)
+    {
+        <PopUp Title="Add Unassigned Customer Classification" OkbtnText="Submit" CancelbtnText="Cancel"
+               OnOkClick="OnAddBroadCustomerClassification"
+               OnCloseClick="() => ISShowUnAssignedCustomerClassificationForSelection = false">
+
+            <div class="div1">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>
+                                <input type="checkbox" @onclick="ToggleAllCheckboxes" checked="@_selectAllChecked" /> 
+                            </th>
+                            <th>Customer Classification</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var classification in CustomerClassifications
+                       .Where(c => !broadClassificationLines.Any(line => line.ClassificationCode == c.Name))
+                       .ToList())
+                        {
+                        <tr @onclick='@(e => OnRowClicked(classification))'>
+                                <td>
+                                    <input class="cls_btn_radio_input" type="checkbox" id="@classification.UID" checked="@classification.IsSelected" @onchange='@(e => OnCheckboxChange(e, classification))' />
+                                </td>
+                                <td>
+                                    <label class="cls_btn_radio_label" for="@classification.UID" @onclick ='@(e => OnRowClicked(classification))'>@classification.Name</label>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </PopUp>
+    }
+    @if (IsDeleteBtnPopUp)
+    {
+        <PopUp Title="Delete" OnCloseClick="() => IsDeleteBtnPopUp = false" OkbtnText="Delete" CancelbtnText="Cancel" OnOkClick="OnOkFromDeleteBTnPopUpClick">
+            <label>
+                Are you sure you want to delete ?
+            </label>
+        </PopUp>
+
+    }
+    @* @if (HasUnsavedChanges)
+    {
+        <PopUp Title="Confirm Changes " OkbtnText="Submit" CancelbtnText="Cancel"
+               OnOkClick="ConfirmHasUnsavedChanges"
+               OnCloseClick="() => HasUnsavedChanges = false">
+            <label>
+                There are some Changes Applied.Are you sure to undo those changes ?
+            </label>
+       </PopUp>
+    } *@
+}

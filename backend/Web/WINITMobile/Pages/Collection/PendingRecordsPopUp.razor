@@ -1,0 +1,246 @@
+﻿@using Winit.Modules.CollectionModule.Model.Classes
+@using Winit.Modules.CollectionModule.Model.Interfaces
+@using Winit.Shared.CommonUtilities.Common
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+@if (IsShowPopUp)
+{
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show" tabindex="-1" style="display: block;z-index:20">
+        <div>
+            <div class="modal-content body_cls" style="width: 331px;margin-top: -80px;margin-left: -1px;">
+                <div class="modal-header" style="border-bottom: 1px solid #B0B0B0;">
+                    <h3 class="modal-title" style="font-weight: 600;padding: 10px;font-size: 15px;width: 200px;">
+                        @Localizer["invoices_details"]
+                    </h3>
+                    <div class="info-btn-container">
+                        <button type="button" @onclick="ToggleInfo" class="info-btn">
+                            <img class="info-icon" src="Images/info_1.png" />
+                        </button>
+                        @if (showInfo)
+                        {
+                            <div id="info" class="popover">
+                                <div class="popover-content">
+                                    Below records are in pending as it is non-cash payments.
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <button type="button" class="close" @onclick="Close">
+                        <span style="color:black;font-size: 30px;font-weight: 400;">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div style="overflow-y:auto;height:200px;">
+                        @if (PendingRecords.Count != 0)
+                        {
+                            @foreach (var data in PendingRecords)
+                            {
+                                <div>
+                                    <p class="num_cls">@data.ReceiptNumber</p>
+                                    <p class="date_cls">
+                                        @(CommonFunctions.GetDateTimeInFormat(data.ModifiedTime))
+                                        <span class="dot_cls">.</span>
+                                        @Localizer["sales_invoice"]
+                                    </p>
+                                </div>
+                                <div class="record_cls">
+                                    <div class="d-flex flex-row record_data_cls">
+                                        <div class="data-column">
+                                            <label class="lbl_cls">@Localizer["cheque_number"]</label>
+                                            <label class="lbl_cls_data">@data.ChequeNo</label>
+                                        </div>
+                                        <div class="data-column">
+                                            <label class="lbl_cls">@Localizer["date"]</label>
+                                            <label class="lbl_cls_data">@(CommonFunctions.GetDateTimeInFormat(data.ChequeDate))</label>
+                                        </div>
+                                        <div class="data-column">
+                                            <label class="lbl_cls">@Localizer["amount"]</label>
+                                            <label class="lbl_cls_data">@data.DefaultCurrencyAmount</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="margin-bottom: 20px;"></div>
+                            }
+                        }
+                        else
+                        {
+                            <div style="margin-bottom: 3px;"></div>
+                            <div class="container">
+                                <div class="row">
+                                    <div>
+                                        <div class="card-title" style="color:red;margin-left: 75px;margin-top: 70px;">
+                                            @Localizer["no_records_available"]
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="modal-footer" style="padding: 0px;border: 0px;">
+                    <div class="cls_btn_new">
+                        <button type="button" class="cls_btn_new2" style="width:100%;height: 45px;" @onclick="Close">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<style>
+    .body_cls {
+        z-index: 25;
+        width: 380px;
+        height: 320px;
+        top: 201px;
+        left: 15px;
+    }
+
+    .data-column {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .num_cls {
+        font-size: 14px;
+        font-weight: 700;
+        color: #1B478A;
+    }
+
+    .info_cls {
+        width: 20px;
+        margin-left: 110px;
+        margin-top: -1px;
+    }
+
+    .date_cls {
+        font-size: 8px;
+        font-weight: 600;
+        color: #464850;
+        margin-top: -20px;
+    }
+
+    .dot_cls {
+        font-size: 15px; /* Adjust size of the dot */
+        font-weight: 900;
+        color: #8B7E7E;
+        margin: 0 3px;
+    }
+
+    .record_cls {
+        box-shadow: 2px 16px 51px -16px #314F7C70;
+        border: 1px solid #FFFFFF;
+        background: #EDF5FF;
+        width: 313px;
+        height: 86px;
+        margin-left: -16px;
+    }
+
+    .record_data_cls {
+        gap: 35px;
+        margin-left: 20px;
+        margin-top: 10px;
+    }
+
+    .lbl_cls {
+        margin-top: 4px;
+        font-size: 10px;
+        font-weight: 600;
+    }
+
+    .lbl_cls_data {
+        margin-top: 10px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .info-btn-container {
+        position: relative;
+    }
+
+    .info-btn {
+        background: transparent;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+    }
+
+    .info-icon {
+        width: 20px;
+        height: 20px;
+    }
+
+    .popover {
+        display: none;
+        position: absolute;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        padding: 10px;
+        z-index: 1;
+        top: calc(100% + 5px); /* Position below the button */
+        left: 50%; /* Center horizontally */
+        transform: translateX(-50%);
+        width: 200px;
+        height: 200px;
+    }
+
+        .popover:before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 0 10px 10px;
+            border-style: solid;
+            border-color: transparent transparent #ccc;
+        }
+
+    .popover-content {
+        margin-top: 5px;
+        font-size: 14px;
+        color: #333;
+    }
+
+    .popover {
+        display: block;
+    }
+
+</style>
+
+@code {
+    public bool IsShowPopUp { get; set; } = true;
+    [Parameter] public EventCallback CloseBtn { get; set; }
+    private bool showInfo = false;
+    [Parameter] public List<IAccCollectionPaymentMode> PendingRecords { get; set; } = new List<IAccCollectionPaymentMode>();
+
+    private void ToggleInfo()
+    {
+        showInfo = !showInfo;
+    }
+    public async Task Close()
+    {
+        try
+        {
+            await CloseBtn.InvokeAsync();
+            await Task.CompletedTask;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.ToString());
+        }
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        LoadResources(null, _languageService.SelectedCulture);
+    }
+    protected async Task OpenInfo()
+    {
+        await
+         Task.CompletedTask;
+    }
+
+}

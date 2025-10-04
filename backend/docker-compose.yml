@@ -1,0 +1,23 @@
+
+services:
+  winitapi:
+    image: ${DOCKER_REGISTRY-}winitapi
+    build: 
+      context: .
+      dockerfile: WINITAPI/Dockerfile
+    volumes:
+      - dataprotection-keys:/root/.aspnet/DataProtection-Keys
+      
+  winitweb:
+    image: ${DOCKER_REGISTRY-}winitweb
+    build: 
+      context: .
+      dockerfile: Web/WINITWeb/Dockerfile
+volumes:
+  dataprotection-keys:    
+# volumes:
+#   mongo_data:
+#   portainer_data:
+#   postgres_data:
+#   pgadmin_data:
+#   elasticsearch-data:  

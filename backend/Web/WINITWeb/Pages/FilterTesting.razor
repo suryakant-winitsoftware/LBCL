@@ -1,0 +1,357 @@
+﻿@page "/filtertest"
+@attribute [Authorize]
+@using Winit.UIComponents.Web.Filter
+@using Winit.UIModels.Common.Filter
+@using Winit.Shared.Models.Common
+
+<button class="cls_add_new_sec" style="float:right;margin-right:0px" @onclick="ShowFilter">Filter</button>
+
+<Filter @ref="filterRef" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+        OnFilterApplied="@OnFilterApply" OnChildDropdownChanged="@OnChildDropdownChange" />
+@code {
+    public List<FilterModel> ColumnsForFilter;
+    // private List<EmployeeModel> EmployeeData = new List<EmployeeModel>();
+
+    private bool showFilterComponent = false;
+    private Winit.UIComponents.Web.Filter.Filter filterRef;
+    public async void ShowFilter()
+    {
+        showFilterComponent = !showFilterComponent;
+        filterRef.ToggleFilter();
+    }
+    private List<SouthRegion> SouthRegionData = new List<SouthRegion>();
+    private List<NorthRegion> NorthRegionData = new List<NorthRegion>();
+    private List<NorthStateDistrict> northStateDistrict = new List<NorthStateDistrict>();
+    private List<SouthStateDistrict> southStateDistrict = new List<SouthStateDistrict>();
+
+
+    public void FilterInitialized()
+    {
+        List<ISelectionItem> CountryLIst = Winit.Shared.CommonUtilities.Common.CommonFunctions.ConvertToSelectionItems(countries, new List<string> { "UID", "UID", "CountryName" });
+
+        ColumnsForFilter = new List<FilterModel>
+        {
+             new FilterModel { FilterType = Winit.Shared.Models.Constants.FilterConst.Date, Label = "InitialStartDate",ColumnName = "DateBox1"},
+             new FilterModel { FilterType = Winit.Shared.Models.Constants.FilterConst.Date, Label = "InitialEndDate",ColumnName = "DateBox2"},
+            new FilterModel { FilterType = Winit.Shared.Models.Constants.FilterConst.TextBox, Label = "TestBox",ColumnName = "TestBox"},
+            new FilterModel { FilterType = Winit.Shared.Models.Constants.FilterConst.DropDown,DropDownValues=CountryLIst, ColumnName = "CountryName", Label = "Country",HasChildDependency=true},
+            new FilterModel { FilterType = Winit.Shared.Models.Constants.FilterConst.DropDown, ColumnName = "SouthRegionState", Label = "South Region State",IsDependent=true},
+            new FilterModel { FilterType = Winit.Shared.Models.Constants.FilterConst.DropDown, ColumnName = "NorthRegionState", Label = "North Region State",IsDependent=true,HasChildDependency=true},
+            new FilterModel { FilterType = Winit.Shared.Models.Constants.FilterConst.DropDown, Label = "North State District",ColumnName ="District",IsDependent=true, SelectionMode= Winit.Shared.Models.Enums.SelectionMode.Multiple},
+               
+        };
+    }
+
+
+    public async Task OnChildDropdownChange(ChildDropdownChangedEventArgs args)
+    {
+        string parentColumn = args.ParentColumnName;
+        List<ISelectionItem> selectionItems = args.SelectionItems;
+        if (parentColumn == "CountryName")
+        {
+            await SouthRegionState(selectionItems);
+            await NorthRegionState(selectionItems);
+        }
+        else if (parentColumn == "NorthRegionState")
+        {
+            await FindNorthSateDistrict(selectionItems);
+        }
+        else if (parentColumn == "SouthRegionState")
+        {
+            //await FindSouthSateDistrict(selectionItems);
+        }
+
+    }
+    public async Task SouthRegionState(List<ISelectionItem> selectionItems)
+    {
+        List<string> selectedRouteUIDs = selectionItems.Select(item => item.UID).ToList();
+        var SelectedSouthRegion = SouthRegionData
+            .Where(item => selectedRouteUIDs.Contains(item.CountryUID))
+            .Select(item => new SelectionItem
+                {
+                    UID = item.UID,
+                    Code = item.UID,
+                    Label = item.SouthRegionState
+                })
+            .ToList();
+        var ISelectedSouthRegion = SelectedSouthRegion.Cast<ISelectionItem>().ToList();
+        await filterRef.UpdateDataSoure("SouthRegionState", ISelectedSouthRegion);
+
+    }
+    public async Task NorthRegionState(List<ISelectionItem> selectionItems)
+    {
+        List<string> selectedRouteUIDs = selectionItems.Select(item => item.UID).ToList();
+        var SelectedSouthRegion = NorthRegionData
+            .Where(item => selectedRouteUIDs.Contains(item.CountryUID))
+            .Select(item => new SelectionItem
+                {
+                    UID = item.UID,
+                    Code = item.UID,
+                    Label = item.NorthRegionState
+                })
+            .ToList();
+        var ISelectedSouthRegion = SelectedSouthRegion.Cast<ISelectionItem>().ToList();
+        await filterRef.UpdateDataSoure("NorthRegionState", ISelectedSouthRegion);
+        await filterRef.UpdateDataSoure("District", new List<ISelectionItem>());
+    }
+
+    public async Task FindNorthSateDistrict(List<ISelectionItem> selectionItems)
+    {
+        List<string> selectedRouteUIDs = selectionItems.Select(item => item.UID).ToList();
+        var SelectedSouthRegion = northStateDistrict
+            .Where(item => selectedRouteUIDs.Contains(item.StateUID))
+            .Select(item => new SelectionItem
+                {
+                    UID = item.UID,
+                    Code = item.UID,
+                    Label = item.District
+                })
+            .ToList();
+        var ISelectedSouthRegion = SelectedSouthRegion.Cast<ISelectionItem>().ToList();
+        await filterRef.UpdateDataSoure("District", ISelectedSouthRegion);
+
+
+
+    }
+
+    private void OnFilterApply(Dictionary<string, string> filterCriteria)
+    {
+        var jsonData = JsonConvert.SerializeObject(filterCriteria);
+    }
+
+    protected override void OnInitialized()
+    {
+        InitializeData();
+        FilterInitialized();
+        base.OnInitialized();
+    }
+
+    public class Country
+    {
+        public string UID { get; set; }
+        public string UserName { get; set; }
+        public string Continent { get; set; }
+        public string CountryName { get; set; }
+        public string Region { get; set; }
+        public string State { get; set; }
+        public string District { get; set; }
+        public string SouthRegionState { get; set; } // New column
+        public string NorthRegionState { get; set; } // New column
+    }
+    public class SouthRegion
+    {
+        public string UID { get; set; }
+        public string SouthRegionState { get; set; }
+
+        public string CountryUID { get; set; }
+
+    }
+    public class NorthRegion
+    {
+        public string UID { get; set; }
+        public string NorthRegionState { get; set; }
+
+        public string CountryUID { get; set; }
+
+    }
+    public class NorthStateDistrict
+    {
+        public string UID { get; set; }
+        public string District { get; set; }
+
+        public string StateUID { get; set; }
+
+    }
+    public class SouthStateDistrict
+    {
+        public string UID { get; set; }
+        public string District { get; set; }
+
+        public string StateUID { get; set; }
+
+    }
+
+
+    public List<Country> countries = new List<Country>();
+
+    // Adding data for the first continent
+    public void InitializeData()
+    {
+        countries.Add(new Country
+            {
+                UID = "1001",
+                UserName = "User1",
+                Continent = "Asia",
+                CountryName = "India",
+                Region = "South Asia",
+                State = "Maharashtra",
+                District = "SiddharthNagar",
+                SouthRegionState = "Maharashtra",
+                NorthRegionState = "Uttar Pradesh" // Adding a NorthRegionState value for India
+            });
+
+        countries.Add(new Country
+            {
+                UID = "1002",
+                UserName = "User2",
+                Continent = "North America",
+                CountryName = "United States",
+                Region = "North America",
+                State = "California",
+                District = "Los Angeles",
+                SouthRegionState = "Texas", // Adding a SouthRegionState value for the United States
+                NorthRegionState = "California"
+            });
+
+        countries.Add(new Country
+            {
+                UID = "1003",
+                UserName = "User3",
+                Continent = "North America",
+                CountryName = "Canada",
+                Region = "North America",
+                State = "Ontario",
+                District = "Toronto",
+                SouthRegionState = "British Columbia", // Empty because Canada is in the North Region
+                NorthRegionState = "Ontario"
+            });
+
+
+        NorthRegionData.Add(new NorthRegion
+            {
+                CountryUID = "1003",
+                UID = "1",
+                NorthRegionState = "Ontario"
+            });
+        SouthRegionData.Add(new SouthRegion
+            {
+                CountryUID = "1003",
+                UID = "2",
+                SouthRegionState = "British Columbia"
+            });
+        northStateDistrict.Add(new NorthStateDistrict
+            {
+                StateUID = "1",
+                UID = "3",
+                District = "Toronto"
+            });
+
+
+
+        NorthRegionData.Add(new NorthRegion
+            {
+                CountryUID = "1002",
+                UID = "4",
+                NorthRegionState = "Texas"
+            });
+        SouthRegionData.Add(new SouthRegion
+            {
+                CountryUID = "1002",
+                UID = "5",
+                SouthRegionState = "California"
+            });
+        northStateDistrict.Add(new NorthStateDistrict
+            {
+                StateUID = "4",
+                UID = "6",
+                District = "Los Angles"
+            });
+
+        NorthRegionData.Add(new NorthRegion
+            {
+                CountryUID = "1001",
+                UID = "7",
+                NorthRegionState = "Uttar Pradesh"
+            });
+        NorthRegionData.Add(new NorthRegion
+            {
+                CountryUID = "1001",
+                UID = "8",
+                NorthRegionState = "Punjab"
+            });
+
+        SouthRegionData.Add(new SouthRegion
+            {
+                CountryUID = "1001",
+                UID = "9",
+                SouthRegionState = "Maharashtra"
+            });
+        northStateDistrict.Add(new NorthStateDistrict
+            {
+                StateUID = "7",
+                UID = "10",
+                District = "SidharthNagar"
+            });
+        northStateDistrict.Add(new NorthStateDistrict
+            {
+                StateUID = "7",
+                UID = "11",
+                District = "Lucknow"
+            });
+        northStateDistrict.Add(new NorthStateDistrict
+            {
+                StateUID = "7",
+                UID = "18",
+                District = "Gorakhpur"
+            });
+        northStateDistrict.Add(new NorthStateDistrict
+            {
+                StateUID = "7",
+                UID = "19",
+                District = "Aligarh"
+            });
+        northStateDistrict.Add(new NorthStateDistrict
+            {
+                StateUID = "7",
+                UID = "20",
+                District = "Greater Noida"
+            });
+        northStateDistrict.Add(new NorthStateDistrict
+            {
+                StateUID = "7",
+                UID = "21",
+                District = "Faizabad"
+            });
+        northStateDistrict.Add(new NorthStateDistrict
+            {
+                StateUID = "8",
+                UID = "12",
+                District = "Amritsar"
+            });
+        northStateDistrict.Add(new NorthStateDistrict
+            {
+                StateUID = "8",
+                UID = "13",
+                District = "Jalandhar"
+            });
+        northStateDistrict.Add(new NorthStateDistrict
+            {
+                StateUID = "8",
+                UID = "15",
+                District = "Bhatinda"
+            });
+        northStateDistrict.Add(new NorthStateDistrict
+            {
+                StateUID = "8",
+                UID = "16",
+                District = "Faridkot"
+            });
+        northStateDistrict.Add(new NorthStateDistrict
+            {
+                StateUID = "8",
+                UID = "17",
+                District = "Fatehgarh"
+            });
+
+        southStateDistrict.Add(new SouthStateDistrict
+            {
+                StateUID = "9",
+                UID = "14",
+                District = "Mumbait"
+            });
+
+
+    }
+}
+
+

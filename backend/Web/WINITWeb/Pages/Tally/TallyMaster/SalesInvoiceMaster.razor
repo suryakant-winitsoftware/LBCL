@@ -1,0 +1,39 @@
+﻿@page "/SalesInvoiceMaster"
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.Tally.BL.Interfaces.ITallyMasterViewModel tallyMasterViewModel;
+
+@if (IsInitialised)
+{
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@ColumnsForFilter"
+                         IsSearchCriteriaNeeded="false"
+                         OnFilterApplied="@OnFilterApply" />
+    <div class="cls_container_div1">
+        <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label"><span class="cls_section_div_purchase2_span">*</span>Channel Partner</label>
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="tallyMasterViewModel.ChannelPartnerList"
+                                                               IsButtonVisible="true"
+                                                               Title="Channel Partner" IsSearchable="true"
+                                                               OnSelect="OnChannelPartnerSelect"
+                                                               _SelectionMode="Winit.Shared.Models.Enums.SelectionMode.Single" />
+        </div>
+        @if (IsChannelPartnerSelected)
+        {
+            <div class="cls_header_right">
+                <Winit.UIComponents.Web.ExportToExcel.ExportToExcel ColumnHeaders="@DataGridColumns" OnExportButtonClick="OnExcelDownloadClick"
+                                                                    ButtonName="Export to Excel" DataSource="@tallyMasterViewModel.SalesInvoiceMasterDataListForExcel"
+                                                                    FileName="SalesInvoiceMasterTally.xlsx" />
+            </div>
+        }
+    </div>
+    @if (IsChannelPartnerSelected)
+    {
+        <div class="cls_container_div1">
+            <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" DataSource="tallyMasterViewModel.SalesInvoiceMasterDataList" PageNumber="tallyMasterViewModel.PageNumber"
+                                                        PageSize="tallyMasterViewModel.PageSize" OnSort="OnSortApply"
+                                                        TotalItemsCount="tallyMasterViewModel.TotalItemsCount" ShowRecordsCount="true" />
+            <Winit.UIComponents.Web.Paging.Paging CurrentPage="tallyMasterViewModel.PageNumber" OnPageChange="PageIndexChanged"
+                                                  PageSize="tallyMasterViewModel.PageSize" TotalItems="tallyMasterViewModel.TotalItemsCount" />
+        </div>
+    }
+  
+}

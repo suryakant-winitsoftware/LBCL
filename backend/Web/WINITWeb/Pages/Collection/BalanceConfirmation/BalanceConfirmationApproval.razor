@@ -1,0 +1,376 @@
+﻿@page "/balanceconfirmationapproval"
+@inject Winit.Modules.Distributor.Model.Interfaces.IDistributorToggle toggle
+@inject Winit.Modules.CollectionModule.BL.Interfaces.IBalanceConfirmationViewModel _balanceConfirmationViewmodel
+@using Winit.UIComponents.Common.TimeTracker
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+
+
+<PageHeaderAndFilter IDataBreadcrumbService="iDataBreadcrumbService"></PageHeaderAndFilter>
+@* <div class="card p-3 mb-4" style="width: 1840px;border-radius: 10px;">
+    <div class="row align-items-center justify-content-between">
+        <div class="d-flex flex-column">
+            <div class="d-flex flex-row" style="margin-left: 20px;font-weight: 600;">
+                Are You Sure You Want To Confirm This Amount?
+            </div>
+            <div style="margin-bottom: 20px;"></div>
+            <div>
+                <div class="col-md-4" style="font-size:14px;font-weight:700;">
+                    <span style="color:#19298B;font-size:20px;">@FormatNumberInIndianStyle(Convert.ToDecimal(Amount))</span>
+                    <span>   </span>
+                    <label style="color:gray;font-size: 12px;">Closing Balance</label>
+                </div>
+            </div>
+            <div style="margin-bottom: 10px;"></div>
+            <div>
+                <div class="d-flex flex-row">
+                    <div class="col-md-4" style="font-size:14px;font-weight:700;">
+                        <label style="color:gray;">@DateFormat(Convert.ToDateTime(Date))</label>
+                    </div>
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 text-center">
+        </div>
+
+        <div class="col-md-2 text-right mr-3">
+        </div>
+
+    </div>
+</div>
+ *@
+
+<div class="cls_section">
+    <div class="cls_balance_container">
+        <p class="cls_balance_container1_p">Are you sure you want to Confirm this amount?</p>
+    </div>
+
+    <div class="cls_container_div1">
+        <div class="cls_balance_container_date">
+
+            <div class="cls_balance_container">
+                <label class="cls_balance_container_price1">@FormatNumberInIndianStyle(Convert.ToDecimal(Amount))</label>
+                <span class="cls_balance_container_text">Closing Balance</span>
+            </div>
+            <div class="cls_balance_container">
+                <div class="cls_container_div1">
+                    <label class="cls_balance_container_date_p1">@DateFormat(Convert.ToDateTime(Date))</label>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="cls_section2">
+
+    @* <button class="cls_add_cust_drilldown"
+                @onclick="@(() =>toggle.IsCaptureSelfie=true)" style="width: 1840px;">
+            <span>Capture Selfie</span>
+            <span>
+                @if (toggle.IsCaptureSelfie)
+                {
+                    <img src="./Images/arrow_up.png" class="cls_arrow_up">
+                }
+                else
+                {
+                    <img src="./Images/arrow_down.png" class="cls_arrow_down">
+                }
+            </span>
+        </button> *@
+
+    <div class="cls_balance_container1" @onclick="@(() =>toggle.IsCaptureSelfie=true)">
+        <label class="cls_balance_container_p1">Capture Selfie </label>
+        @if (toggle.IsCaptureSelfie)
+        {
+            <img src="./Images/arrow_up.png" class="cls_arrow_up">
+        }
+        else
+        {
+            <img src="./Images/arrow_down.png" class="cls_arrow_down">
+        }
+
+    </div>
+
+    @*         <div style="width:100%;float:left;margin:30px 0px;display:@(toggle.IsCaptureSelfie?"block":"none")">
+            <div class="card p-3 mb-4" style="width: 1840px;border-radius: 10px;top:-28px;">
+                <div class="d-flex flex-column">
+                    <div class="d-flex flex-row">
+                        <div>
+                            <WebCam CapturedImage="GetCapturedImage"></WebCam>
+                        </div>
+                        <div>
+
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <button class="cls_continue_btn">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div> *@
+
+    <div class="cls_image_section_outline" style="display:@(toggle.IsCaptureSelfie?"block":"none")">
+
+        <WebCam CapturedImage="GetCapturedImage"></WebCam>
+
+
+
+        <div class="cls_image_section_button_outline">
+            <div class="cls_image_section_button">
+                <button class="cls_image_section_button_s">Submit</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="cls_section2">
+    @* <button class="cls_add_cust_drilldown"
+                @onclick="@(() =>toggle.IsOtpVerified=true)" style="width: 1840px;">
+            <span>Otp Verification</span>
+            <span>
+                @if (toggle.IsOtpVerified)
+                {
+                    <img src="./Images/arrow_up.png" class="cls_arrow_up">
+                }
+                else
+                {
+                    <img src="./Images/arrow_down.png" class="cls_arrow_down">
+                }
+            </span>
+        </button> *@
+
+    <div class="cls_balance_container1" @onclick="@(() =>toggle.IsOtpVerified=true)">
+        <label class="cls_balance_container_p1">OTP Verification </label>
+        @if (toggle.IsOtpVerified)
+        {
+            <img src="./Images/arrow_up.png" class="cls_arrow_up">
+        }
+        else
+        {
+            <img src="./Images/arrow_down.png" class="cls_arrow_down">
+        }
+
+    </div>
+
+    @*         <div style="width:100%;float:left;margin:30px 0px;display:@(toggle.IsOtpVerified?"block":"none")">
+            <div class="card p-3 mb-4" style="width: 1840px;border-radius: 10px;top:-28px;">
+                <div class="d-flex flex-column">
+                    @if (IsOtpSent)
+                    {
+                        <div class="col-3" style="font-size: 12px;font-weight: 600;">
+                            4 digit <span>OTP</span> has been <span>@OtpMessage</span> to your Registered Mobile Number & Mail *********gmail.com
+                        </div>
+                    }
+                    <div class="d-flex flex-row col-3 justify-content-between">
+                        <div class="d-flex flex-column">
+                            <label style="font-weight:600;">OTP</label>
+                            <input type="text" class="dropdown" @bind="_balanceConfirmationViewmodel.BalanceConfirmationDetails.OTPCode" />
+                        </div>
+                        <div class="d-flex flex-column">
+                            <label></label>
+                            <button class="cls_continue_btn" style=@(EnableGenerateOtp ? "background-color:gray;position: relative;top: 13px;" : "position: relative;top: 13px;") @onclick="SendOTP" disabled="@EnableGenerateOtp">
+                                @Message
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <label style="font-size: 12px;color: gray;">
+                            Otp Didn't received Re Generate
+                        </label>
+                        <div style="font-size: 16px;font-weight: 700;color: #19298B;">
+                            @if (IsOtpSent)
+                            {
+                                <OtpTimer @ref="otpTimer" Timerstopped="OnTimerCompleted"></OtpTimer>
+                            }
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <button class="cls_continue_btn" @onclick="Submit">Verify & Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div> *@
+    <div style="display:@(toggle.IsOtpVerified?"block":"none")" class="cls_container_div1">
+
+        @if (IsOtpSent)
+        {
+            <label class="cls_balance_container_p2">4 digit OTP has been @OtpMessage to your Registered Mail & Mobile Number <br> Email :  <span class="cls_balance_container_span">@_commonFunctions.MaskSensitiveData(_balanceConfirmationViewmodel.ContactDetails.Email)</span> <br> Mobile : <span class="cls_balance_container_span">@_commonFunctions.MaskSensitiveData(_balanceConfirmationViewmodel.ContactDetails.Mobile)</span></label>
+        }
+
+        <div class="cls_balance_otp">
+            <div class="cls_balance_otp_div_right">
+                <button class="@(EnableGenerateOtp ? "disable_btn" : "cls_comman_btn")" @onclick="SendOTP" disabled="@EnableGenerateOtp">@Message</button>
+            </div>
+            <div class="cls_balance_otp_div">
+                <div class="cls_balance_otp_div_left">
+                    <input type="text" placeholder="Enter Otp Here" class="cls_balance_otp_div_left_input" @bind="_balanceConfirmationViewmodel.BalanceConfirmationDetails.OTPCode">
+
+                </div>
+
+
+            </div>
+            <label class="cls_balance_otp_label">OTP Didn't recieved Re Generate</label>
+
+            @if (Showtimer)
+            {
+                <p class="cls_balance_otp_time">
+                    <ReverseTimer @ref="otpTimer" Timerstopped="OnTimerCompleted" CountdownMinutes="1"></ReverseTimer>
+                </p>
+            }
+
+        </div>
+
+        <div class="cls_container_div1">
+            <span class="cls_balance_span">*</span><input type="checkbox" class="cls_balance_input" @bind="TermsAndConditions" />
+            <a @onclick="ShowTermsAndConditions" @onclick:preventDefault href="#" class="cls_balance_a">I have read and accepted terms & conditions.</a>
+
+        </div>
+
+        <div class="cls_container_div4">
+            <button class="cls_comman_btn" @onclick="Submit">Verify & Submit </button>
+        </div>
+
+
+    </div>
+
+    @*     <div>
+        <div class="d-flex flex-row">
+            <span style="color:red;">*</span><input type="checkbox" @bind="TermsAndConditions" />
+            <a @onclick="ShowTermsAndConditions" @onclick:preventDefault href="#">I have read and accepted terms & conditions.</a>
+        </div>
+    </div> *@
+</div>
+
+@if (IsShowTermsAndConditions)
+{
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show" tabindex="-1" style="display: block; overflow:auto;">
+        <div class="modal-dialog cls_pop_up_style1">
+            <div class="modal-content">
+                <div class="modal-header">
+
+                    <span aria-hidden="true" @onclick="Close" style="color:#000000;" class="close">&times;</span>
+
+                </div>
+                <div class="modal-body">
+                    <div class="cls_place_order">
+                        <div class="cls_place_order_top">
+
+                            <div class="d-flex flex-column">
+                                <p style="margin-bottom:0px;">
+                                    As per our books of sum of Rs. <b>4,72,200</b> is payable  by you as on
+                                    31-DEC-24 to our company. If this is agreed with your books, please send back your
+                                    confirmation for the same either on your  letter head or you may sign and  affix your
+                                    seal on page 2 of this letter.
+                                </p>
+
+                                <p>
+                                    In case of any mismatch or any discrepancy, we request you to bring  it  to our notice
+                                    with necessary details in the prescribed format in page 2 of this letter within 10 days
+                                    from the date of receipt of this communication failing which we would treat our account
+                                    balance as below correct and final.
+                                </p>
+                            </div>
+
+                            <div>
+
+                                @* <div>Summary of Statement for the Period 01-NOV-24 to 31-DEC-24</div> *@
+                                <div class="div1">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th colspan="3">Summary of Statement for the Period 01-NOV-24 to 31-DEC-24</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Particular</td>
+                                                <td>Amount</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Opening for the Period</td>
+                                                <td>4,32,200</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Total Debit for the Period</td>
+                                                <td>2,72,450</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Totla Credit for the Period</td>
+                                                <td>6,58,750</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Closing Balance</td>
+                                                <td>17,85,400</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+
+                            <div class="cls_container_div4">
+                                <p>
+                                    Herewith we are sending you the account transaction statement for the period as
+                                    mentioned above. We kindly request you to release our due payment as per the
+                                    agreed terms.
+                                </p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@if (IsShowSuccessPopUp)
+{
+    <div class="modal fade show" tabindex="-1" style="display: block;">
+        <div class="modal-dialog">
+            <div class="modal-content" style="padding: 10px; margin-left:0%;border-radius: 13px;top: 200px;height: 200px;">
+                <div class="modal-header" style="padding:0px;border:0px;">
+                    <div class="col-12">
+                        <button type="button" class="close w-16 h-16" @onclick="CloseSuccess">
+                            <span aria-hidden="true" style="color:#000000;">&times;</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-body" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 10px;">
+                    <div class="cls_place_order">
+                        <div class="cls_place_order_top">
+                            <div class="cls_place_order_top1" style="position: relative;top: -15px;margin-left: 135px;">
+                                <img style="width:72px;" src="/Images/checked1.png" />
+                            </div>
+                            <div class="cls_place_order_top2">
+                                <h6>
+                                    Balance Confirmation Successfully Completed
+                                </h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<style>
+    .disable_btn {
+        cursor: not-allowed;
+        background-color: darkgrey !important;
+        border: 1px solid darkgrey !important;
+        border-radius: 5px;
+        color: white;
+        font-weight: bold;
+    }
+</style>
+

@@ -1,0 +1,94 @@
+﻿@using Winit.UIModels.Common
+
+<!-- Bootstrap Modal (Always Open) -->
+<div class="modal-backdrop fade show"></div>
+<div class="modal fade show" id="approvalLogModal" tabindex="-1" aria-labelledby="approvalLogModalLabel" aria-hidden="true" style="display: block;overflow:auto;">
+    <div class="modal-dialog cls_pop_up_style1">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="approvalLogModalLabel">Approval Logs</h5>
+                <span class="close" aria-label="Close" @onclick="() => CloseLog()"> &times;</span>
+            </div>
+            <div class="modal-body">
+                @if (ApprovalLogs != null && ApprovalLogs.Any())
+                {
+                    <div class="div1">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Action</th>
+                                <th>Reassigned To</th>
+                                <th>Reassigned By</th>
+                                <th>Remarks</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var log in ApprovalLogs)
+                            {
+                                var level = string.IsNullOrEmpty(log.ReassignTo) ? 0 : int.Parse(log.ReassignTo);
+                                <tr>
+                                    <td>@log.Status</td>
+                                    @if (level == 0)
+                                    {
+                                        <td></td>
+                                        <td></td>
+                                    }
+                                    else if (log.Level <= CurrentUser)
+                                    {
+                                        int reassignKey;
+                                        string reassignValue = string.Empty;
+                                        if (int.TryParse(log.ReassignTo, out reassignKey) && UserLevelCodeMap.TryGetValue(reassignKey, out reassignValue))
+                                        {
+                                        }
+                                        <td>@reassignValue </td>
+                                        <td></td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                        <td>[@log.ApproverId] @log.ModifiedBy</td>
+                                    }
+                                    @if (log.Status=="Assigned")
+                                    {
+                                        <td>Assigned</td>
+                                    }
+                                    else
+                                    {
+                                        <td>@log.Comments</td>
+                                    }
+                                    <td>@log.CreatedOn</td> <!-- Assuming CreatedOn is a DateTime field -->
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    </div>
+                }
+                else
+                {
+                    <p>No approval logs available.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public List<ApprovalLogDetail> ApprovalLogs { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> OnCloseLog { get; set; }  // Event callback
+
+    [Parameter]
+    public int CurrentUser { get; set; }  // Event callback
+
+    [Parameter]
+    public Dictionary<int, string> UserLevelCodeMap { get; set; }
+
+    private async Task CloseLog()
+    {
+        ApprovalLogs.Clear();  // Example: Clearing the logs
+        await OnCloseLog.InvokeAsync(false);  // Trigger the callback and pass `false`
+    }
+}

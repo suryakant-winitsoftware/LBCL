@@ -1,0 +1,94 @@
+﻿@page "/ManageScheme"
+@using Winit.Modules.Scheme.BL.Interfaces
+@using Winit.Modules.Scheme.Model.Constants
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+@inject IManageSchemeViewModel _viewModel
+@if (IsLoad)
+{
+    <AuthorizeView Roles="@(HasViewAccess)">
+        <Authorized>
+
+            <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true"
+                                 ColumnsForFilter="@ColumnsForFilter"
+                                 IsSearchCriteriaNeeded="true"
+                                 OnFilterApplied="@OnFilterApply" />
+
+            <div class="cls_container_div1">
+                <div class="cls_section_div_purchase2">
+                    <Winit.UIComponents.Common.CustomControls.DropDown IsButtonVisible="true" IsSearchable="true"
+                                                                       DataSource=SchemesRoutes OnSelect="OnSchemeSelected" Title="Schemes" />
+                </div>
+                <button class="cls_comman_btn" @onclick="@(()=>{
+            if(string.IsNullOrEmpty(SelectedSchemePath))
+            {
+                _alertService.ShowErrorAlert("Alert","Select any one scheme type!");
+                return;
+            }
+            _navigationManager.NavigateTo($"{SelectedSchemePath}?{PageType.Page}={PageType.New}");
+        })">
+                    Add
+                </button>
+            </div>
+            <TableGridView Columns="productColumns"
+                           DataSource="_viewModel.ManageSchemes"
+                           TotalItemsCount="_viewModel.TotalItems"
+                           PageSize="_viewModel.PageSize"
+                           PageNumber="_viewModel.CurrentPage"
+                           ShowRecordsCount="true"
+                           IsPaginationRequired="true"
+                           OnPageChange="OnPageChange"
+                            />
+            @*             <Winit.UIComponents.Web.Paging.Paging TotalItems=@_viewModel.TotalItems PageSize="_viewModel.PageSize" CurrentPage="_viewModel.CurrentPage" OnPageChange="OnPageChange" />
+ *@
+        </Authorized>
+        <NotAuthorized>
+            <p>you are not authorized to view this page</p>
+        </NotAuthorized>
+    </AuthorizeView>
+}
+
+@if (IsShowPopup)
+{
+
+    <PopUp Title=@Title OkbtnText="Save" CancelbtnText="Cancel" OnOkClick="@(async()=>await HandleOkClick())"
+           OnCloseClick="@(() => IsShowPopup=false)">
+        <div class="cls_container_div4">
+            <div class="cls_container_div1">
+
+                <div class="cls_section_div_purchase4">
+                    <label for="title" class="cls_section_div_purchase2_label">Original End Date</label>
+                    <label class="cls_credit_label">@CommonFunctions.GetDateTimeInFormat(OriginalEndDate)</label>
+                </div>
+                @if (IsExtend)
+                {
+                    <div class="cls_section_div_purchase4">
+                        <label for="title" class="cls_section_div_purchase2_label">Extended End Date</label>
+                        <input type="date" min="@OriginalEndDate.ToString("yyyy-MM-dd")" @bind=@NewEndDate class="cls_select_date" />
+                    </div>
+                }
+
+            </div>
+            <div class="cls_container_div4">
+                <div class="cls_container_div1">
+                    <label for="title" class="cls_section_div_purchase2_label">Title</label>
+                    <textarea id="title" name="title" @bind=@_manageScheme.EndDateRemarks placeholder="Enter Reason" class="cls_scheme_textarea"></textarea>
+                </div>
+            </div>
+
+
+        </div>
+
+    </PopUp>
+
+}
+
+@if (IsShowViewHistoryPopup)
+{
+    <PopUp Title=@Title OkbtnText="Ok" DisableCancelBtn="true" OnOkClick="@(() => IsShowViewHistoryPopup=false)"
+           OnCloseClick="@(() => IsShowViewHistoryPopup=false)">
+        <TableGridView Columns="historyColumns"
+                       DataSource="_viewModel.SchemeExtendHistories">
+        </TableGridView>
+    </PopUp>
+}

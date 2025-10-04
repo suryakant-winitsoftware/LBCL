@@ -1,0 +1,116 @@
+﻿@page "/CustomerList"
+
+@using Winit.Modules.Store.Model.Interfaces;
+@using Winit.Shared.Models.Common
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+@inject Winit.Modules.JourneyPlan.BL.Interfaces.IJourneyPlanViewModelFactory _viewmodel
+@inject Winit.Modules.DashBoard.BL.Interfaces.IDashBoardViewModel _dashboard
+@inject Winit.Modules.Base.DL.DBManager.SqliteDBManager _sqlite
+@inject Winit.Modules.Syncing.BL.Interfaces.IMobileDataSyncBL _mobileDataSyncBL;
+@inject Winit.Modules.Mapping.BL.Interfaces.ISelectionMapCriteriaBL _selectionMapCriteriaBL
+@inject Winit.Modules.SKUClass.BL.Interfaces.ISKUClassGroupItemsBL _sKUClassGroupItemsBL
+@* @inject Winit.Modules.Store.BL.Interfaces.IStoreViewModel _journeyplanviewmodel
+@inject Winit.Modules.Store.BL.Interfaces.IStoreBL _storeBL
+@inject Winit.Modules.JourneyPlan.BL.Interfaces.IJourneyPlanViewModel _journeyplanviewmodel *@
+<div style="padding:0px;">
+    <div class="modal fade show" role="alert" style="@($"display: {(ShowMap ? "block" : "none")}")">
+        <div class="modal-dialog" style="top:0%;margin:10px;">
+            <div class="modal-content" style="margin:0px;">
+                <div class="modal-header">
+                    <h5 class="modal-title">@Localizer["map"]</h5>
+                    <button type="button" class="close" @onclick="HideMapModal">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="map" style="height: 500px; width: 100%;"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">@Localizer["close"]</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+ @if (SalesOrganizationPop)
+{
+    <WINITMobile.Pages.JourneyPlan.StoreOrganizationPopup IsOpnedScoreCredit="IsOpnedScoreCredit"
+                                                          SelectedCustomer="_journeyplanviewmodel.SelectedCustomer"
+                                                          StoreCreditList="_journeyplanviewmodel.SelectedCustomer.StoreCredits"
+                                                          IsVisibleChanged="HandlePopupVisibilityChange" 
+                   StoreCreditSelected="HandleStoreCreditSelected" />
+}
+<div class="container m-0 p-0">
+    <div class="cls_Dash_customer">
+        <h2 class="cls_main_heading">My Store(s)</h2>
+        <div class="cls_customer_top">
+            @if (_journeyplanviewmodel != null)
+            {
+                <div class="cls_menu_top_right">
+                    <p @onclick="OnRouteDDClick">
+                        <label style="width:auto"> @Localizer["route"]  :</label> @((_appUser.SelectedRoute is null) ?
+                    "Select Route" : _appUser.SelectedRoute.Name)
+                    </p>
+                </div>
+              @*   <p>@_journeyplanviewmodel.SelectedRoute.Name</p>
+                <p style="float:right">@_journeyplanviewmodel.SelectedBeatHistory.VisitDate.ToString("dd MMM, yyyy")</p> *@
+            }
+
+        </div>
+        <div class="row mt-2" style="margin: -1px;">
+            <div class="col-11" style="padding-left:5px;">
+                <div class="cls_serch_nn" style="margin-bottom:10px;">
+                    <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder="Search by store code/name/address"
+                                                                           MaxLength="200" DebounceInterval="500"
+                                                                           KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+                                                                           IsForSearch="true" OnDebounceIntervalElapsed="OnSearching" @ref="wtbSearch" />
+                </div>
+            </div>
+
+            <div class="col-1" style="padding:0px;margin-top:8px;">
+                <a @onclick="ShowMapModal"><img style="width:22px;" src="/Images/ic44.png"></a>
+            </div>
+        </div>
+
+        @if (CustomerlisttoShow != null && CustomerlisttoShow.Any())
+        {
+            <Virtualize Items="CustomerlisttoShow" Context="item" OverscanCount="50">
+                <div style="width:100%;float:left;" @onclick="() => CheckAndBindOrgUID(item)">
+
+                    <div class="cls_sel_customer_popup3">
+                        <div class="cls_sel_customer_popup3_top">
+                            <div class="cls_sel_customer_popup3_top_left dn">
+                                <img style="width:35px;" src="/Images/p1.png">
+                            </div>
+                            <div class="cls_sel_customer_popup3_top_right">
+                                <h3>@item.Name - @item.StoreNumber</h3>
+                                <label>@item.Code</label>
+                                @* <span><img src="/Images/dot1.png"></span><p>@Localizer["visited_today"]</p><span style="display:none"><img src="/Images/ic1.png"></span> *@
+
+                            </div>
+                            <p>@item.Address</p>
+                        </div>
+                        @* <div class="cls_sel_customer_popup3_bottom">
+                            <div class="cls_sel_customer_popup3_bottom_left">
+                                <img style="width:25px;" src="/Images/ic2.png">
+                            </div>
+                            <div class="cls_sel_customer_popup3_bottom_cen">
+                                <h3>Ramana Kumar</h3>
+                                <label>@Localizer["manager"]</label><span><img src="/Images/dot1.png" @onclick="OpenDialPad"></span><p>9436742566</p>
+                            </div>
+                            <div class="cls_sel_customer_popup3_bottom_right"><img src="/Images/ic3.png"></div>
+                        </div> *@
+                    </div>
+
+                </div>
+
+
+            </Virtualize>
+        }
+    </div>
+</div>
+
+@code {
+  
+}

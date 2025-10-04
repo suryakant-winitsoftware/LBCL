@@ -1,0 +1,31 @@
+﻿@page "/maintaindistributor"
+@using Winit.Shared.Models.Constants
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+
+@inject Winit.Modules.Distributor.BL.Interfaces.IMaintainDistributorBaseViewModel _maintainDistributor;
+
+
+
+<PageHeaderAndFilter IDataBreadcrumbService="BreadCrumDTO" IsShowFilter=true ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+                     OnFilterApplied="@OnFilterApply" />
+<div class="cls_container_div4">
+    <div class="cls_container_div1">
+        <button class="cls_add_new_sec" @onclick=@(() => _navigationManager.NavigateTo($"newdistributor?{PageType.Page}={PageType.New}"))>@Localizer["add_new"]</button>
+    </div>
+    @if (_maintainDistributor.IsLoad)
+    {
+
+
+
+        <Winit.UIComponents.Web.Table.TableGridView Columns="Columns"
+                                                    DataSource="_maintainDistributor.DispayDistributorsList"
+                                                    TotalItemsCount=@_maintainDistributor.TotalItems
+                                                    PageSize="_maintainDistributor.PagingRequest.PageSize"
+                                                    PageNumber="_maintainDistributor.PagingRequest.PageNumber"
+                                                    OnPageChange="_maintainDistributor.OnPageChange"
+                                                    OnSort="_maintainDistributor.OnSort" IsPaginationRequired=true ShowRecordsCount=true />
+     
+
+    }
+</div>

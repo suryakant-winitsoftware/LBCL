@@ -1,0 +1,76 @@
+﻿@page "/AddEditMaintainError"
+@inherits WinIt.Pages.Base.BaseComponentBase;
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize]
+@inject Winit.Modules.ErrorHandling.BL.Interfaces.IAddEditMaintainErrorViewModel _addEditMaintainErrorViewModel;
+
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" />
+@if (IsLoaded)
+{
+    <div class="content">
+        <div class="cls_section">
+            
+                <div class="cls_section_div_purchase2">
+                    <label class="cls_section_div_purchase2_label">
+                        <span class="cls_section_div_purchase2_span">*</span>@Localizer["error_code"] 
+                    </label>
+
+                <input type="text" class="cls_select2_button" disabled="@IsEditError" placeholder=@Localizer["enter_here"] @bind="_addEditMaintainErrorViewModel.ErrorDetail.ErrorCode">
+                    
+                </div>
+                <div class="cls_section_div_purchase2">
+                    <label class="cls_section_div_purchase2_label">
+                        <span class="cls_section_div_purchase2_span">*</span>@Localizer["severity"] 
+                    </label>
+                    
+                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource=" _addEditMaintainErrorViewModel.ServeritySelectionItems" Title=@Localizer["severity"] IsButtonVisible="true" OnSelect="OnSeveritySelection" IsSearchable="false" />
+                    
+                </div>
+                <div class="cls_section_div_purchase2">
+                    <label class="cls_section_div_purchase2_label">
+                        <span class="cls_section_div_purchase2_span">*</span>@Localizer["category"]
+                    </label>
+                    
+                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource=" _addEditMaintainErrorViewModel.CategorySelectionItems" Title=@Localizer["category"] IsButtonVisible="true" OnSelect="OnCategorySelection" IsSearchable="false" />
+                   
+                </div>
+                <div class="cls_section_div_purchase2">
+                    <label class="cls_section_div_purchase2_label">
+                        <span class="cls_section_div_purchase2_span">*</span>@Localizer["platform"] 
+                    </label>
+                    
+                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource=" _addEditMaintainErrorViewModel.PlatformSelectionItems" Title=@Localizer["platform"] IsButtonVisible="true" OnSelect="OnPlatformSelection" IsSearchable="false" />
+                    
+                </div>
+                <div class="cls_section_div_purchase2">
+                    <label class="cls_section_div_purchase2_label">
+                        <span class="cls_section_div_purchase2_span">*</span>@Localizer["module"]
+                    </label>
+                    
+                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource=" _addEditMaintainErrorViewModel.ModuleSelectionItems" Title=@Localizer["module"] IsButtonVisible="true" OnSelect="OnModuleSelection" IsSearchable="false" />
+                   
+                </div>
+            <div class="cls_section_div_sku">
+                    <label class="cls_section_div_purchase2_label">
+                        <span class="cls_section_div_purchase2_span">*</span>@Localizer["sub_module"] 
+                    </label>
+                    
+                        <Winit.UIComponents.Common.CustomControls.DropDown DataSource=" _addEditMaintainErrorViewModel.SubModuleSelectionItems" Title=@Localizer["sub_module"] IsButtonVisible="true" OnSelect="OnSubModuleSelection" IsSearchable="false" />
+                    
+                </div>
+            
+        </div>
+    </div>
+
+
+    <div class="cls_button_bottom_purchase">
+        @* <button class="cls_add_new_sec" @onclick="Cancel">Cancel</button> *@
+        <button class="cls_button_blue " @onclick="SaveOrUpdate"> @(IsEditError ? @Localizer["update"] : @Localizer["save"])</button>
+    </div>
+}
+
+
+
+
+
+

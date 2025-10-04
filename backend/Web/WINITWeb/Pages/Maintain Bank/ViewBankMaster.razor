@@ -1,0 +1,49 @@
+﻿@page "/ViewBankMaster"
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize]
+@using System.ComponentModel.DataAnnotations;
+@using System.Linq
+@using Winit.Modules.Org.Model.Interfaces;
+@inject Winit.Modules.Bank.BL.Interfaces.IViewBankDetailsViewModel _ViewBankDetailsViewModel;
+@using Newtonsoft.Json;
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+
+@if (IsIntialized)
+{
+    <div class="cls_container_div4">
+    <div class="cls_section">
+       
+            <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label"> <span class="cls_section_div_purchase2_span">*</span>@Localizer["bank_code"] </label>
+            <input class="cls_select2_button" placeholder="Enter Here" @bind="_ViewBankDetailsViewModel.ViewBankDetails.BankCode" type="text" disabled="@(!IsAddNewDetails)">
+            </div>
+        <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label"> <span class="cls_section_div_purchase2_span">*</span>@Localizer["bank_name"] </label>
+            <input class="cls_select2_button" placeholder="Enter Here" disabled="@(IsEditBankDetails)" @bind-value="_ViewBankDetailsViewModel.ViewBankDetails.BankName" type="text">
+            </div>
+        <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label"> <span class="cls_section_div_purchase2_span">*</span>@Localizer["country"] </label>
+                <Winit.UIComponents.Common.CustomControls.DropDown DataSource=" _ViewBankDetailsViewModel.CountrySelectionItems" Title=@Localizer["country"] IsButtonVisible="true" OnSelect="OnCountrySelection" IsSearchable="false" />
+            </div>
+
+
+        <div class="cls_section_div_purchase2">
+            <label class="cls_section_div_purchase2_label"> <span class="cls_section_div_purchase2_span">*</span>@Localizer["cheque_fee"] </label>
+            <input class="cls_select2_button" disabled="@(IsEditBankDetails)" @bind-value="_ViewBankDetailsViewModel.ViewBankDetails.ChequeFee" type="number">
+            </div>
+        
+
+    </div>
+    </div>
+    <div class="cls_button_bottom_purchase">
+
+        <button class="cls_button_light" style="margin-right:5px;" @onclick="BackBtnClicked">@Localizer["back"]</button>
+            @if (Operation != "View")
+            {
+            <button class="cls_button_blue" @onclick="() =>SaveBank()">@(IsAddNewDetails ? @Localizer["save"] : @Localizer["update"])</button>
+            }
+        
+    </div>
+
+}

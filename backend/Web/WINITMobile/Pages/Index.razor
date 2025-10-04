@@ -1,0 +1,187 @@
+﻿@page "/"
+@using Winit.Modules.Auth.BL.Classes
+@using Winit.Modules.Auth.BL.Interfaces
+@using Winit.Modules.Base.BL
+@using Winit.Modules.Common.BL.Interfaces
+@using WINITMobile.Data
+@using Microsoft.Extensions.Localization
+@using System.Globalization
+@using System.Resources
+@* @inject IStringLocalizer<Index> Localizer *@
+@layout EmptyLayout
+@inject Winit.Modules.Base.DL.DBManager.SqliteDBManager _sqlite
+@inherits WINITMobile.Pages.Base.BaseComponentBase;
+@inject Winit.Modules.Emp.BL.Interfaces.IEmpBL _empbl;
+@inject Winit.Modules.Auth.BL.Interfaces.ILoginViewModel _loginViewModel;
+@inject Winit.Modules.Base.BL.ILocalStorageService _localStorageService;
+@inject AuthenticationStateProvider _authStateProvider
+@inject Winit.Shared.CommonUtilities.Common.SHACommonFunctions _sHACommonFunctions;
+@inject Winit.Modules.DashBoard.BL.Classes.UserConfig _userConfig;
+@inject IAppUser _iAppUser
+@inject Winit.Modules.Role.BL.Interfaces.IMenu menu
+@inject IJSRuntime jsRuntime
+@inject IDeviceService _deviceService
+@inject SyncDbInit _syncDbHelper
+@inject Winit.Modules.User.BL.Interface.IUserMasterBaseViewModel _userMasterDataViewModel
+@inject IDeviceService _deviceService
+@inject SyncDbInit _syncDbHelper
+@inject ISyncViewModel _syncViewModel
+@inject Winit.Shared.Models.Common.IAppConfig _appconfig
+@inject Winit.Modules.Common.BL.Interfaces.IDataSyncValidationServiceBL _dataSyncValidationService
+@inject Winit.Modules.Auth.BL.Interfaces.IClearDataServiceBL _clearDataService
+@inject Winit.Modules.Mobile.BL.Interfaces.IAppVersionUserBL _appVersionUserBL
+@inject Winit.Modules.Auth.BL.Interfaces.IDeviceValidationServiceBL _deviceValidationService
+@inject WINITMobile.Services.AppVersionApiService _appVersionApiService
+
+<!-- Main -->
+
+<div class="container login_bg" style="padding:0px">
+    <!-- login -->
+    <div>
+        <div class="">
+            <div style="max-width: 500px; margin-left: auto; margin-right: auto;">
+                <div class="loginbg">
+
+                    <div class="cls_login_header">
+                        <div style="width:100%;float:left;text-align:center;margin: 41px 0px 10px 0px">
+                            <img src="/Images/applogo.png" style="width:240px" @onclick="@(() => _loadingService.ShowLoading("vishal"))">
+                        </div>
+
+                        <div style="width:100%;float:left;text-align:center;margin: 10px 0px;">
+                            <img src="/Images/auto.png" style="width:222px">
+                        </div>
+                    </div>
+                    <div>
+                        <div>
+                            <div class="form-group_n">
+                                <label>Mobile Number</label>
+                                <span> <img src="/Images/icon_2.png" alt=""></span>
+                                <input @bind="_userID" placeholder="Enter Mobile Number" @onkeydown='(e) => KeyHandler(e,"UserId")' maxlength="64" type="number" id="UserId" disabled="@IsLoginInProgress" required />
+
+                            </div>
+                            <br />
+                            <div class="form-group_n">
+                                <label>@Localizer["password"]</label>
+                                <span> <img src="/Images/icon_1.png" alt=""></span>
+                                <input @ref="_passWordElement" value="@_password" @oninput="(e) => _password= e.Value.ToString()" @onkeydown='(e) => KeyHandler(e,"Password")' placeholder="Password" type="password" id="UserPassword" disabled="@IsLoginInProgress" required />
+
+                            </div>
+                            <div class="cls_forget">
+                                <div class="cls_forget_left">
+                                    <a >
+                                        <span>
+                                            <input type="checkbox" @bind="RememberMe"/>
+                                        </span>
+                                        <label> @Localizer["remember_me"]</label>
+                                    </a>
+                                </div>
+                                <div class="cls_forget_right dn">
+                                    <a @onclick="() => IsForgotPasswordPopUpOpen = true">
+                                        @Localizer["forgot_password"]
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="form-group_n">
+                                <div class="">
+                                    <button class="cls_btn_login" @onclick="OnLoginButtonClick" disabled="@IsLoginInProgress">
+                                        @if (IsLoginInProgress)
+                                        {
+                                            <span>Logging in...</span>
+                                        }
+                                        else
+                                        {
+                                            <span>Login</span>
+                                        }
+                                    </button>
+                                </div>
+                               @*  <a class="cls_forget" style="float:left !important" @onclick="@(() => _navigationManager.NavigateTo("selfRegistration"))">
+                                    Self Registration
+                                </a> *@
+                                <div style="width:100%;text-align:center; float:left;margin-top:15px;" class="cls_forget_right dn">
+                                    <a style="width:100%;text-align:center; float:left;" @onclick="OpenLanguage">
+                                    Change Language
+                                </a>
+                                </div>
+                            </div>
+                            <div style="width:100%;float:left;text-align:center;margin: 10px 0px;">
+                                <label class="cls_powered">Powered by</label>
+                                <img src="/Images/Winitlogo_f.png" style="width:98px">
+                            </div>
+                            <div class="cls_container_div1" style="    position: fixed; bottom: 0px; right: 0px; background-color: #1B478A; text-align: center;">
+                                <label style=" font-size: 10px; color: #FFF;padding: 4px 0px;">
+                                    Version: @version | Release Date: @releaseDate | Build: @buildType
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body offlineNote" style="display: none;">
+                <p>This app requires a working internet connection. You seem to be offline. Please reconnect to the internet. This message will clear automatically when you are connected.</p>
+            </div>
+
+        </div>
+    </div>
+
+
+</div> <!--/container-->
+<!-- /Main -->
+@if (IsForgotPasswordPopUpOpen)
+{
+    <PopUp Title="Forgot Password" CancelbtnText="Cancel" OnCloseClick="() => IsForgotPasswordPopUpOpen = false" OkbtnText="Proceed" OnOkClick="OnForgotPasswordOkClick">
+        @if (!string.IsNullOrEmpty(_errorMsg))
+        {
+            <div class="alert alert-danger">
+                <label><b>The following field(s) have invalid value(s):</b>@_errorMsg</label>
+            </div>
+        }
+        <div class="row" style="padding: 0px;">
+            <div class="col-md-4 cls_padd_l_b">
+                <label class="cls_new_lab">
+                    <span style="color:red;">*</span>Enter User Name
+                </label>
+                <input class="form-control" placeholder="Enter Here" type="text" @oninput="(e) => _userID = e?.Value?.ToString()" @bind="_userID">
+            </div>
+        </div>
+    </PopUp>
+}
+@if (IsShowLangPopUp)
+{
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show" tabindex="-1" style="display: block;">
+        <div style="margin-top:30%">
+            <div class="modal-content" style="width: 100%;margin-left: 0%;bottom: 0px;border-radius: 10px 10px 0px 0px;">
+                <div class="modal-header">
+                    <h5 class="modal-title">Select Language</h5>
+                    <button type="button" class="close" @onclick="() => IsShowLangPopUp = false">
+                        <span style="color:black; padding:10px;width:100%">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="padding:0px;">
+                    <div class="cls_sel_language">
+                        <ul>
+                            <li>
+                                <a class="@(IsLanguageSelected("en-GB") ? "cls_sel_language_sel" : "")" @onclick='() => SelectLanguage("en-GB")'>English</a>
+                            </li>
+                            <li>
+                                <a class="@(IsLanguageSelected("ar") ? "cls_sel_language_sel" : "")" @onclick='() => SelectLanguage("ar")'>Arabic</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div style="width:100%;float:left">
+                        <div class="modal-footer" style="padding: 0px;border: 0px;">
+                            <div class="cls_btn_new">
+                                <button type="button" class="cls_btn_langu" style="width:100%" @onclick="Proceed">
+                                    Proceed
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+

@@ -1,0 +1,57 @@
+﻿
+@inject Winit.UIComponents.Common.Services.IDropDownService _dropdownService
+@using Winit.UIComponents.Common.Services
+@using Winit.Shared.Models.Events;
+@if (ShowPopUp)
+{
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show" tabindex="-1" style="display: block;z-index:20">
+        <div style="margin-top:4%">
+            <div class="modal-content" style="z-index:25;">
+                <div class="modal-header">
+                    <h5 class="modal-title">@Title  </h5>
+                    <button type="button" class="close" @onclick="@CloseWithoutUpdating">
+                        <span style="color:black; padding:10px;width:100%">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="cls_radio_check">
+                        <ul>
+                            @foreach (var item in DataSource)
+                            {
+                                <li>
+                                    <span>
+                                        @if (_SelectionMode == Shared.Models.Enums.SelectionMode.Single)
+                                        {
+                                            <input type="radio"
+                                                   id="@item.UID" name="name" checked="@item.IsSelected" @onclick="() => OnSelectionChange(item)" />
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox"
+                                                   id="@item.UID" @bind="@item.IsSelected" @onclick="() => OnSelectionChange(item)" />
+                                        }
+                                    </span><label for="@item.UID">@item.Label</label>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                    @if (ShowOtherOption && IsOtherSelected)
+                    {
+                        <div class="cls_other_option">
+                            <textarea @bind="OtherReason"></textarea>
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer" style="padding: 0px;border: 0px;">
+                    <div class="cls_btn_new">
+                        <button type="button" class="cls_btn_check2" style="width:100%" @onclick="Handle_ProceedClick">
+                            @OkBtnTxt
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

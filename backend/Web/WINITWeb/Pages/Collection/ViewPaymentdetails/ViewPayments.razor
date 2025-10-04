@@ -1,0 +1,25 @@
+﻿@page "/viewpayments"
+@inject Winit.Modules.CollectionModule.BL.Interfaces.IViewPaymentsViewModel _viewPaymentsViewModel
+@using Winit.UIComponents.Web.Filter
+@inject NavigationManager _navigate;
+@inherits WinIt.Pages.Base.BaseComponentBase 
+
+
+
+<div style="margin-bottom: 30px;"></div>
+<div>
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="false" />
+    <WinIt.Pages.Collection.CreatePayment.TotalCollectionCalculationTabs DataSource="_viewPaymentsViewModel.CollectionTabDetails"></WinIt.Pages.Collection.CreatePayment.TotalCollectionCalculationTabs>
+    <div>
+        <button class="cls_add_new_sec" style="float:right;margin-right:0px" @onclick="ShowFilter">@Localizer["filter"]</button>
+        <div style="margin-bottom: 20px;"></div>
+        <Filter @ref="filterRef" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+                OnFilterApplied="@OnFilterApply" />
+        @if (@IsInitialised)
+        {
+            <Winit.UIComponents.Web.Table.TableGridView Columns="showPaymentDetailsColumns" DataSource="_viewPaymentsViewModel.Payments" OnSort="Product_OnSort" />
+        }
+        <Winit.UIComponents.Web.Paging.Paging TotalItems=@_viewPaymentsViewModel.TotalCount PageSize="@_viewPaymentsViewModel.PageSize" CurrentPage="@_viewPaymentsViewModel.PageNumber" OnPageChange="Product_OnPageChange" />
+
+    </div>
+</div>

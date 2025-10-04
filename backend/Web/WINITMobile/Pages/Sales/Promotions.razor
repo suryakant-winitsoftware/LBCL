@@ -1,0 +1,151 @@
+﻿@page "/Promotions"
+@using Winit.Shared.CommonUtilities.Common;
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+
+
+<div class="modal fade show" tabindex="-1" style="display: block;">
+    <div style="margin-top:4%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Promotions</h5>
+                <button type="button" class="close" @onclick="() => OnPromotionsCloseClick.InvokeAsync()">
+                    <span style="color:black; padding:10px;width:100%">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding:0px 2%;">
+                <div class="cls_promotion">
+                    @foreach (var promo in PromotionsHeaderDict.Values)
+                    {
+                        <div class="cls_promotion_rep">
+                            <div class="cls_promotion_rep1">@promo.Remarks</div>
+                            <div class="cls_promotion_rep2">
+                                <div class="cls_promotion_rep2_rep">
+                                    <label>Start date :</label><p>@(CommonFunctions.GetDateTimeInFormat(promo.ValidFrom))</p>
+                                </div>
+                                <div class="cls_promotion_rep2_rep">
+                                    <label>End date :</label><p>@(CommonFunctions.GetDateTimeInFormat(promo.ValidUpto))</p>
+                                </div>
+                            </div>
+                            @if (promo.Type != Winit.Shared.Models.Constants.PromotionType.Invoice)
+                            {
+                                <div class="cls_promotion_rep3">
+                                    @{
+                                        List<Winit.Shared.Models.Common.ISelectionItem> promoItems;
+                                        PromotionItems.TryGetValue(promo.UID, out promoItems);
+
+                                    }
+                                    @if (promoItems != null && promoItems.Any())
+                                    {
+                                        @foreach (var promoItem in promoItems.Take(3))
+                                        {
+                                            <div class="cls_promotion_rep3_rep">
+                                                <div class="cls_promotion_rep3_rep_left">
+                                                    <img style="width:16px;" src="@(Path.Combine(_appConfigs.ApiDataBaseUrl, promoItem.ExtData?.ToString()))">
+                                                </div>
+                                                <div class="cls_promotion_rep3_rep_right">
+                                                    @($"[{promoItem.Code}]{promoItem.Label}")
+                                                </div>
+                                            </div>
+                                        }
+                                        if (promoItems.Count > 3)
+                                        {
+                                            <a @onclick="() => HandleMoreClick(promo,promoItems)">@(promoItems.Count - 3) More..</a>
+                                        }
+                                    }
+
+                                </div>
+                                <div class="cls_promotion_rep4">
+                                    <div style="float:left;width:100%;">
+                                        <button type="button" class="cls_btn_pr_new1" @onclick="() => HandleMoreClick(promo,promoItems)">View Products</button>
+                                        <button type="button" class="cls_btn_pr_new2" @onclick="() => Handle_ProceedClick(promo)">Order</button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (ShowPromotionPopUp)
+{
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show" style="display: block;">
+        <div style="margin-top:4%">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Promotion Products  </h5>
+                    <button type="button" class="close" @onclick="() => ShowPromotionPopUp = false">
+                        <span style="color:black; padding:10px;width:100%">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="cls_promotion_popup">
+                        <div class="cls_promotion_popup_rep">
+                            <div class="cls_promotion_popup_rep1">@SelectedPromotion.Name</div>
+                            <div class="cls_promotion_popup_rep2">
+                                <div class="cls_promotion_popup_rep2_rep">
+                                    <label>Start date :</label><p>@(CommonFunctions.GetDateTimeInFormat(SelectedPromotion.ValidFrom))</p>
+                                </div>
+                                <div class="cls_promotion_popup_rep2_rep">
+                                    <label>End date :</label><p>@(CommonFunctions.GetDateTimeInFormat(SelectedPromotion.ValidUpto))</p>
+                                </div>
+                            </div>
+                            <div class="cls_promotion_popup_rep3">
+
+                                <div class="div1">
+                                    <table width="100%" class="table" style="table-layout: fixed;">
+                                        <thead>
+                                            <tr class="gridheadernew11">
+                                                <th style="text-align:left;width:16%;"><span>Item Code/Description</span></th>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody class="cls_new_grid_style">
+                                            @if (SelectedPromoItems != null && SelectedPromoItems.Any())
+                                            {
+                                                @foreach (var promoItem in SelectedPromoItems)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            <div style="float:left;margin-right:10px;">
+                                                                <img style="width:16px;"
+                                                                     src="@(Path.Combine(_appConfigs.ApiDataBaseUrl, promoItem.ExtData?.ToString()))">
+                                                            </div><div style="float:left;">
+                                                                @($"[{promoItem.Code}]{promoItem.Label}")
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <p>no items</p>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="padding: 0px;border: 0px;">
+                    <div class="cls_btn_new">
+                        <button type="button" class="cls_btn_new2" style="width:100%" @onclick="() => Handle_ProceedClick(SelectedPromotion)">
+                            Order
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}

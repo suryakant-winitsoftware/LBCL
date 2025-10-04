@@ -1,0 +1,76 @@
+﻿@using ClosedXML.Excel
+@using Microsoft.AspNetCore.Components.Forms
+@using System.IO
+@using System.Text
+@using System.Collections
+@using Winit.Shared.Models.Common
+@using Microsoft.JSInterop
+@inject IJSRuntime jsRunTime
+
+<div class="cls_container_div1">
+    <button class="cls_button_blue" @onclick="ExportHandler">@ButtonName</button>
+</div>
+
+@code {
+    [Parameter] public IList DataSource { get; set; }
+    [Parameter] public string FileName { get; set; }
+    [Parameter] public string ButtonName { get; set; }
+    [Parameter] public List<DataGridColumn> ColumnHeaders { get; set; }
+    [Parameter] public Func<Task> OnExportButtonClick { get; set; }
+    private string ExcelBase64String { get; set; }
+
+    private async Task ExportHandler()
+    {
+        // If custom export logic is provided
+        if (OnExportButtonClick != null)
+        {
+            await OnExportButtonClick.Invoke(); // Execute custom logic
+        }
+
+        // Proceed with exporting the current (possibly updated) DataSource
+        await Export();
+    }
+
+    private async Task Export()
+    {
+        var workbook = new XLWorkbook();
+        var worksheet = workbook.Worksheets.Add("Sheet1");
+
+        if (ColumnHeaders != null && ColumnHeaders.Count > 0) // Check if Columns is not null
+        {
+            // Use DataGridColumn headers and values
+            int headerIndex = 1;
+            foreach (var column in ColumnHeaders)
+            {
+                worksheet.Cell(1, headerIndex).Value = column.Header;
+                worksheet.Cell(1, headerIndex).Style.Font.Bold = true;
+                headerIndex++;
+            }
+
+            // Fill data rows based on Columns
+            for (int row = 0; row < DataSource.Count; row++)
+            {
+                int colIndex = 1;
+                foreach (var column in ColumnHeaders)
+                {
+                    var getValueFunc = column.GetValue;
+                    var cellValue = getValueFunc?.Invoke(DataSource[row])?.ToString();
+                    worksheet.Cell(row + 2, colIndex).Value = cellValue;
+                    colIndex++;
+                }
+            }
+        }
+
+        // Center-align all cells in the worksheet
+        worksheet.Cells().Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+        worksheet.Columns().AdjustToContents();
+        using var memoryStream = new MemoryStream();
+        workbook.SaveAs(memoryStream);
+        byte[] byteArray = memoryStream.ToArray();
+        ExcelBase64String = Convert.ToBase64String(byteArray);
+        await jsRunTime.InvokeVoidAsync(
+            "eval",
+            $"var a = document.createElement('a'); a.href = 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{ExcelBase64String}'; a.download = '{FileName}.xlsx'; a.click();"
+        );
+    }
+}

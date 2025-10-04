@@ -1,0 +1,11 @@
+﻿@page "/multiselectdropdown"
+<select @onchange="OnSelectionChange" multiple="@isMultiple">
+    <option value="">Select an item</option>
+    @foreach (var item in data)
+    {
+        <option value="@item.Code" selected="@item.IsSelected">@item.Label</option>
+    }
+</select>
+<button @onclick="GetSelectedItem">GetSelectedItem</button>
+
+<p>Selected Item: @selectedItem</p>

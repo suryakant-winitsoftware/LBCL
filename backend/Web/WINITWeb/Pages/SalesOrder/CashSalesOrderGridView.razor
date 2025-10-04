@@ -1,0 +1,116 @@
+﻿@using System.ComponentModel.DataAnnotations
+@using System.Linq
+@inherits WinIt.Pages.Base.BaseComponentBase
+<div class="div1">
+<table>
+    <!-- Table header content -->
+    <thead>
+        <tr>
+            <th>
+                <input type="checkbox" @onchange="HandleRowSelectAll" value="@IsSelectAll" disabled="@DisableAfterFinalize" />
+            </th>
+            <th>
+                @Localizer["sku_code"]
+            </th>
+            <th>
+                @Localizer["sku_name"] 
+            </th>
+            <th>
+                @Localizer["order_qty"]
+            </th>
+            <th>
+                @Localizer["uom"]
+            </th>
+            <th>
+                @Localizer["base_price"]
+            </th>
+            @if (IsBasePriceRequired)
+            {
+                <th>
+                    @Localizer["unit_price"]
+                </th>
+            }
+            <th>
+                @Localizer["total_amount"]
+            </th>
+             @if(!DisableAfterFinalize)
+              {  
+                <th>
+                    @Localizer["action"]
+                </th>
+                 }
+        </tr>
+    </thead>
+
+    <!-- Table row template -->
+    <tbody>
+        @if (DisplayedSKUList != null && DisplayedSKUList.Any())
+        {
+            @foreach (var item in DisplayedSKUList)
+            {
+                <tr>
+                    <td>
+                        <input @onchange="(e) => Handle_CheckBox(e,item)" type="checkbox" disabled="@DisableAfterFinalize" />
+                    </td>
+                    <td>
+                        @item.SKUCode
+                    </td>
+                    <td>
+                        @item.SKUName
+                    </td>
+                    <td>
+                        <input value="@CommonFunctions.RoundForSystem(item.Qty)" disabled="@DisableAfterFinalize"
+                               @oninput="(e) => {selectedProduct = item;
+Winit.Shared.CommonUtilities.Common.CommonFunctions.Debounce<string>(OnQtyChange, e?.Value?.ToString() ?? string.Empty, TimeSpan.FromMilliseconds(300));}"
+                               type="number" min="0" class="w-50" />
+                    </td>
+
+                    <td>
+                        <button disabled="@DisableAfterFinalize" class="form-control" @onclick="() => {selectedProduct=item; OnGetDDLSelectionItem.InvokeAsync(item); IsDDLOpen = true;}">
+                            @(@item.SelectedUOM == null ? @Localizer["select"] : @item.SelectedUOM?.Label)
+                        </button>
+                    </td>
+                    <td>
+                        @CommonFunctions.RoundForSystem(item.BasePriceLabel,_appSetting.RoundOffDecimal)
+                    </td>
+                    @if (IsBasePriceRequired)
+                    {
+                        <td>
+                            <input disabled="@DisableAfterFinalize" @bind="@item.UnitPrice" 
+                                   @oninput="(e) => {selectedProduct = item;
+Winit.Shared.CommonUtilities.Common.CommonFunctions.Debounce<string>(OnPriceChange, e?.Value?.ToString() ?? string.Empty, TimeSpan.FromMicroseconds(300));}"
+                                   type="number" min="1" class="w-50" />
+                        </td>
+                    }
+                    <td>
+                        @CommonFunctions.RoundForSystem(item.TotalAmount)
+                    </td>
+                        @if(!DisableAfterFinalize)
+                        {   
+                            <td>
+                                <img @onclick="() => HandleRowBtnClick(item)" style="width:20px"
+                                     src='@(item.ItemStatus == Winit.Shared.Models.Enums.ItemState.Cloned ? "Images/delete.png" : "Images/plus.png")' />
+                            </td>
+                        }
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="8" style="text-align: center;color:red">@Localizer["no_record_found"]</td>
+            </tr>
+        }
+    </tbody>
+</table>
+</div>
+
+@if (IsDDLOpen)
+{
+    <Winit.UIComponents.Common.CustomControls.DropDown UniqueUID="@selectedProduct?.UID" DataSource="UOMselectionItems" IsButtonVisible="false" IsSearchable="false" Title=@Localizer["uom"] OnSelect="OnUOMSelection" />
+}
+@if (IsCloneItemOpen)
+{
+    <Winit.UIComponents.Common.CustomControls.DropDown UniqueUID="@selectedProduct?.UID" DataSource="UOMCloneselectionItems" IsButtonVisible="false" IsSearchable="false" Title=@Localizer["uom"] OnSelect="SelectedAddUOMType" />
+}
+

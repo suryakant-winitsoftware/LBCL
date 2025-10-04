@@ -1,0 +1,57 @@
+﻿@page "/popup"
+@using Microsoft.JSInterop;
+@inject IJSRuntime JSRuntime;
+@inject HttpClient http;
+@using Newtonsoft.Json;
+@using OfficeOpenXml;
+@using Newtonsoft.Json.Linq;
+@inject NavigationManager _NavigationManager;
+@using System.Collections.Generic;
+@using System.IO;
+@using System.Linq;
+@using System.Threading.Tasks;
+@using Microsoft.AspNetCore.Components;
+
+@using OfficeOpenXml.Table;
+@using System.Data;
+@using Microsoft.AspNetCore.Components.Forms;
+@using Winit.Modules.CollectionModule.Model.Classes;
+@using Winit.Modules.CollectionModule.Model.Interfaces;
+@using Winit.Modules.Address.Model.Classes;
+@using static Winit.Modules.CollectionModule.Model.Interfaces.IAccCollection;
+@using static Winit.Modules.CollectionModule.Model.Interfaces.IAccReceivable;
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.CollectionModule.BL.Interfaces.ICashSettlementViewModel _cashSettlementViewModel
+
+
+<h6>.</h6>
+
+<InputFile @key=@(inputFileId) @ref="fileInput" OnChange="HandleFileUpload" />
+<a href="CollectionExcelFiles\BulkCollectionRecord.xlsx" download="BulkCollectionRecord.xlsx">@Localizer["download_sample_file"]</a>
+<button value="Reset" @onclick="()=>ResetInputFile()">@Localizer["reset"]</button>
+<div style="margin-bottom: 10px;"></div>
+<div>
+    <p style="color:red;">@Localizer["while_uploading_please_check_all_fields_are_correctly_filled_or_not."]</p>
+</div>
+<button @onclick="Redirect"></button>
+
+@if (showDiv)
+{
+    <Parent _showDiv="Close" People="separateList2" Recipt="@(Recipt)" OnDataSent="HandleListFromChild" OnDataSend="HandleDataFromChild"></Parent>
+    <div style="margin-bottom: 40px;"></div>
+    <button class="toggle-button" @onclick="SendListToParent">@Localizer["create_collection"]</button>
+}
+
+<style>
+    .toggle-button {
+        background-color: #19298B;
+        color: #fff;
+        padding: 5px 15px;
+        border: none;
+        border-radius: 2px;
+        height: 40px;
+        margin-right: 790px;
+        margin-top: 4px;
+    }
+</style>
+

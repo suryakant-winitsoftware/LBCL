@@ -1,0 +1,41 @@
+﻿using SyncManagerModel.Base;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Winit.Modules.Int_CustomerMasterPush.Model.Interfaces;
+
+namespace Winit.Modules.Int_CustomerMasterPush.Model.Classes
+{
+    public class CustomerMasterDetails :SyncBaseModel, ICustomerMasterDetails
+    {
+        public string? CustomerName { get ; set ; }
+        public string? SalesOffice { get ; set ; }
+        public string? StoreCode { get; set; }
+        public string? Classification { get ; set ; }
+        public string? Address1 { get ; set ; }
+        public string? Address2 { get ; set ; }
+        public string? Pincode { get ; set ; }
+        public string? City { get ; set ; }
+        public string? State { get ; set ; }
+        public string? Country { get ; set ; }
+        public string? FirstName { get ; set ; }
+        public string? PhnNo { get ; set ; }
+        public string? Mobile { get ; set ; }
+        public string? Email { get ; set ; }
+        public string? PanNoGstNo { get ; set ; }
+        public string? Warehouse { get ; set ; }
+        public string? Purpose { get ; set ; }
+        public string? PrimaryCustomer { get ; set ; }
+        public string? LegalName { get ; set ; }
+        public string? AddressKey { get ; set ; }
+        public string? OracleCustomerCode { get ; set ; }
+        public string? OracleLocationCode { get ; set ; }
+        public int? ReadFromOracle { get ; set ; }
+        public long SyncLogDetailId { get ; set ; }
+        public string? UID { get ; set  ; }
+        public string? StoreUID { get; set; }
+
+    }
+}

@@ -1,0 +1,21 @@
+﻿@model IEnumerable<RuleParameter>
+
+
+@foreach (RuleParameter u in Model)
+{
+
+
+    <div class="col-md-3">
+        @u.Name
+    </div>
+    <div class="col-md-3">
+        @u.DataType
+    </div>
+    <div class="col-md-3">
+        @u.Description
+    </div>
+    <div class="col-md-3">
+        @*<a class="btn cls_contact" href="@Url.Action("AddEditUser","Partner", new {id=u.Id })">Edit</a>*@
+    </div>
+
+}

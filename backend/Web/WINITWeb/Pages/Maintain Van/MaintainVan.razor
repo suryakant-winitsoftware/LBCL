@@ -1,0 +1,43 @@
+﻿@page "/MaintainVan"
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize]
+<PageTitle>Maintain Van</PageTitle>
+@inject Winit.Modules.Vehicle.BL.Interfaces.IMaintainVanViewModel _maintainvanViewModel;
+@inject Winit.UIComponents.Common.IAlertService _AlertMessgae;
+@using Winit.UIComponents.Web.Filter
+@using Winit.UIModels.Common.Filter
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+
+<div>
+
+   @*  <button class="cls_add_new_sec" style="float:right;margin-right:0px" @onclick="ShowFilter">@Localizer["filter"]</button>
+    <Filter @ref="filterRef" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+            OnFilterApplied=@ApplyFilter /> *@
+    <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+                         OnFilterApplied="@ApplyFilter" />
+</div>
+<div class="cls_export_main">
+    <button class="cls_add_new_sec" @onclick="AddNewVehicle">@Localizer["add_new"]</button>
+    <button class="cls_add_new_sec dn">@Localizer["export_to_excel"]</button>
+    <button class="cls_add_new_sec dn">@Localizer["export_to_csv"]</button>
+    <button class="cls_add_new_sec dn">@Localizer["export_to_pdf"]</button>
+</div>
+
+@if (IsLoaded)
+{
+    <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" DataSource="_maintainvanViewModel.MaintainVanList" OnSort="OnSortApply" />
+    <Winit.UIComponents.Web.Paging.Paging CurrentPage="_maintainvanViewModel.PageNumber" OnPageChange="_maintainvanViewModel.PageIndexChanged" PageSize="_maintainvanViewModel.PageSize" TotalItems="_maintainvanViewModel.TotalItemsCount" />
+}
+@* @if (IsDeleteBtnPopUp)
+{
+    <PopUp Title="Delete" OnCloseClick="() => IsDeleteBtnPopUp = false" OkbtnText="Delete" CancelbtnText="Cancel" OnOkClick="OnOkFromDeleteBTnPopUpClick">
+        <label>
+            Are you sure you want to Delete?
+        </label>
+    </PopUp>
+} *@
+
+@code {
+
+}

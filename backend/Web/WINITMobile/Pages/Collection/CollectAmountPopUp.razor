@@ -1,0 +1,79 @@
+﻿@using System.Text.RegularExpressions
+
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+@if (ShowPopUp)
+{
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show" tabindex="-1" style="display: block;z-index:20">
+        <div style="margin-top:55%">
+            <div class="modal-content" style="z-index:25;">
+                <div class="modal-header">
+                    <h3 class="modal-title" style="font-weight: 600;padding: 10px;font-size: 15px;">
+                        @Localizer["collect_amount"]
+                    </h3>
+                    <button type="button" class="close" @onclick="Close">
+                        <span style="color:black;font-size: 35px;font-weight: 400;">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <input class="cls_num" type="number" placeholder="Enter Amount" @bind="Amount" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);" />
+                </div>
+                <div class="modal-footer" style="padding: 0px;border: 0px;">
+                    <div class="cls_btn_new">
+                        <button type="button" class="cls_btn_new2" style="width:100%" @onclick="Submit">
+                            @Localizer["ok"]
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<style>
+    .cls_num{
+        width: 100%;
+        border: 1px solid #ddd;
+        padding: 5px 10px;
+        border-radius: 5px;
+    }
+</style>
+
+@code {
+    public bool ShowPopUp { get; set; } = true;
+    [Parameter]public EventCallback Closebtn { get; set; }
+    [Parameter]public EventCallback<decimal> EnteredAmount { get; set; }
+    public decimal Amount { get; set; }
+
+    public async Task Close()
+    {
+        try
+        {
+            await Closebtn.InvokeAsync();
+            await Task.CompletedTask;
+        }
+        catch(Exception ex)
+        {
+            throw new Exception(ex.ToString());
+        }
+    }
+
+    public async Task Submit()
+    {
+        try
+        {
+            await EnteredAmount.InvokeAsync(Amount);
+            await Task.CompletedTask;
+        }
+        catch(Exception ex)
+        {
+            throw new Exception(ex.ToString());
+        }
+    }
+    protected override async Task OnInitializedAsync()
+    {
+
+        LoadResources(null, _languageService.SelectedCulture);
+
+    }
+}

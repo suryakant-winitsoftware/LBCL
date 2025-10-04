@@ -1,0 +1,54 @@
+﻿@page "/MaintainSKU"
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize]
+<PageTitle>Maintain SKU</PageTitle>
+@inject Winit.Modules.SKU.BL.Interfaces.IMaintainSKUViewModel _skuViewModel;
+@inject Winit.UIComponents.Common.IAlertService _AlertMessgae;
+@using WinIt.Pages;
+@using Winit.UIComponents.Web.Filter
+@using Winit.UIModels.Common.Filter
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+
+
+
+
+@if (IsLoaded)
+{
+    <div>
+        <PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+                             OnFilterApplied="@OnFilterApply" />
+       @*  <div>
+            @if (_skuViewModel.TotalSKUItemsCount > 0)
+            {
+                <p>@ViewingMessage</p>
+            }
+            else
+            {
+                <p>@ViewingMessage</p>
+            }
+
+        </div> *@
+    </div>
+   
+    <div class="cls_export_main">
+        <button class="cls_add_new_sec" @onclick="AddNewProduct">
+            @Localizer["add_new"]
+        </button>
+@*          <Winit.UIComponents.Web.ExportToExcel.ExportToExcel ColumnHeaders="@DataGridColumns1" DataSource="@_skuViewModel.MaintainSKUGridList" FileName="MaintainSKU.xlsx" />
+ *@         <button class="cls_add_new_sec dn">@Localizer["export_to_csv"]</button>
+        <button class="cls_add_new_sec dn">@Localizer["export_to_pdf"]</button>
+    </div>
+    <Winit.UIComponents.Web.Table.TableGridView Columns="DataGridColumns" DataSource="_skuViewModel.MaintainSKUGridList" OnSort="OnSortApply" PageNumber="_skuViewModel.PageNumber" PageSize="_skuViewModel.PageSize" TotalItemsCount="_skuViewModel.TotalSKUItemsCount" ShowRecordsCount="true" />
+    <Winit.UIComponents.Web.Paging.Paging CurrentPage="_skuViewModel.PageNumber" OnPageChange="PageIndexChanged" PageSize="_skuViewModel.PageSize" TotalItems="_skuViewModel.TotalSKUItemsCount" />
+}
+
+@* @if (IsDeleteBtnPopUp)
+{
+    <PopUp Title="Delete" OnCloseClick="() => IsDeleteBtnPopUp = false" OkbtnText="Delete" CancelbtnText="Cancel" OnOkClick="OnOkFromDeleteBTnPopUpClick">
+        <label>
+            Are you sure you want to Delete? Your work will be lost.
+        </label>
+    </PopUp>
+
+} *@

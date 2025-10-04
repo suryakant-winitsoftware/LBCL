@@ -1,0 +1,7 @@
+﻿@page "/SelloutrealSecondarySchem123e"
+@layout MainLayout
+
+<PageTitle>Page Title</PageTitle>
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" />
+<button class="cls_add_new_sec" @onclick="@(()=>{_navigationManager.NavigateTo($"AddQPSOrSelloutrealSecondaryScheme?{PageType.Page}={PageType.New}");})">Add</button>
+<TableGridView Columns="productColumns" />

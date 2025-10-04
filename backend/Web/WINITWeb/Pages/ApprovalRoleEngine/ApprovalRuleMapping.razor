@@ -1,0 +1,47 @@
+﻿@page "/approvalrulemap"
+@inject Winit.Modules.ApprovalEngine.BL.Interfaces.IApprovalEngineView _ApprovalEngine;
+
+@if (!IsLoading)
+{
+
+    <div class="cls_section" >
+        <div class="cls_section_div_sku">
+            <label class="cls_section_div_purchase2_label">Type<span class="cls_section_div_purchase2_span">*</span></label>
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_ApprovalEngine.Type"
+                                                               IsButtonVisible="true"
+                                                               Title="Firm Type"
+                                                               OnSelect="OnTypeSelect"
+                                                               IsSearchable="true" />
+        </div>
+        
+            <div class="cls_section_div_sku">
+            <label class="cls_section_div_purchase2_label">Type Code<span class="cls_section_div_purchase2_span">*</span></label>
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_ApprovalEngine.TypeCode"
+                                                               IsButtonVisible="true"
+                                                               Title="Type Code"
+                                                               OnSelect="OnTypeCodeSelect"
+                                                               IsSearchable="true" />
+        </div>
+
+        
+            <div class="cls_section_div_sku">
+            <label class="cls_section_div_purchase2_label">Rule Id<span class="cls_section_div_purchase2_span">*</span></label>
+            <Winit.UIComponents.Common.CustomControls.DropDown DataSource="_ApprovalEngine.RuleIDs"
+                                                               IsButtonVisible="true"
+                                                               Title="Rule Id"
+                                                               OnSelect="OnRuleIdSelect"
+                                                               IsSearchable="true" />
+            </div>
+        <div class="cls_button_bottom_purchase">
+            <button class="cls_button_blue" type="submit" @onclick="IntegrateRule">Integrate Rule</button>
+        </div>
+
+        
+    </div>
+
+  
+}
+@code {
+    
+}
+

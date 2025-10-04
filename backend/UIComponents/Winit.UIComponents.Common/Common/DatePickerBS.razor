@@ -1,0 +1,76 @@
+﻿@using Microsoft.AspNetCore.Components
+@using Microsoft.JSInterop
+@using System.Globalization
+@inject IJSRuntime JSRuntime
+
+<script>
+    window.initializeDatePicker = (element, dotNetReference, startDate, endDate) => {
+        var options = {
+            format: 'dd/mm/yyyy',
+            autoclose: true,
+            todayHighlight: true // Highlight today's date
+        };
+
+        if (startDate) {
+            options.startDate = new Date(startDate);
+        }
+
+        if (endDate) {
+            options.endDate = new Date(endDate);
+        }
+
+        $(element).datepicker(options).on('changeDate', function (e) {
+            var selectedDate = e.format(0, 'mm/dd/yyyy');
+            dotNetReference.invokeMethodAsync('DateSelected', selectedDate);
+        });
+    };
+</script>
+@* <div class="input-group">
+<input type="text" class="form-control datepicker" @bind-value="@SelectedDate"
+       autocomplete="off" placeholder="@(DateTime.Today.Date.ToString("dd/MM/yyyy"))" @ref="datePickerRef" />
+    <div class="input-group-append">
+        <span class="input-group-text">
+            <i class="fa fa-calendar"></i> <!-- Bootstrap Icon -->
+        </span>
+    </div>
+</div> *@
+
+<div class="cls_select2_button">
+    <input type="text" class="cls_calender_input" @bind-value="@SelectedDate"
+           autocomplete="off" placeholder="@(DateTime.Today.Date.ToString("dd/MM/yyyy"))" @ref="datePickerRef" />
+    <img src="./Images/calender.svg" class="cls_calender_img" />
+</div>
+
+
+@code {
+    [Parameter]
+    public string SelectedDate { get; set; }
+
+    [Parameter]
+    public EventCallback<string> SelectedDateChanged { get; set; }
+
+    [Parameter]
+    public string StartDate { get; set; }
+
+    [Parameter]
+    public string EndDate { get; set; }
+
+    private ElementReference datePickerRef;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("initializeDatePicker", datePickerRef, DotNetObjectReference.Create(this), StartDate, EndDate);
+        }
+    }
+
+    [JSInvokable]
+    public async Task DateSelected(string selectedDate)
+    {
+        SelectedDate = selectedDate;
+        //string formattedDate = DateTime.ParseExact(selectedDate, "dd/MM/yyyy", CultureInfo.InvariantCulture).ToString("MM/dd/yyyy");
+
+        await SelectedDateChanged.InvokeAsync(selectedDate);
+    }
+}

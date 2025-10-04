@@ -1,0 +1,71 @@
+﻿@page "/karta"
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+
+
+<head>
+    <!-- Other head elements -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<div class="card" style="float:left;">
+    <div class="card-body">
+        <div class="cls_cust_information">
+            <div class="row">
+                <div class="col-12 col-md-12 col-lg-12 mb-12">
+                    <h6 class="cls_copy_adress_span">Name & Address of Proprietor /All Partners /All Directors /Karta</h6>
+                </div>
+                @foreach (var karta in KartaDetails)
+                {
+                    <div class="col-12 col-md-6 col-lg-4 mb-4">
+                        <label class="cls_customer_label">Name</label>
+                        <input autocomplete="off" class="cls_select2_button" type="text" placeholder="Enter here" @bind="karta.Name" />
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-4 mb-4">
+                        <label class="cls_customer_label">Father Name</label>
+                        <input autocomplete="off" class="cls_select2_button" type="text" placeholder="Enter here" @bind="karta.FatherName" />
+                    </div>
+                    
+                    <div class="col-12 col-md-6 col-lg-4 mb-4">
+                        <label class="cls_customer_label">Address</label>
+                        <input autocomplete="off" class="cls_select2_button" type="text" placeholder="Enter here" @bind="karta.Address" />
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-4 mb-4">
+                        <label class="cls_customer_label">Phone Number</label>
+                        <input autocomplete="off" class="cls_select2_button" type="text" placeholder="Enter here" @bind="karta.PhoneNumber" @oninput='(e) => ValidateMobileNumber(e, karta)' />
+                        <div class="invalid-feedback" style="display: @(string.IsNullOrEmpty(karta.MobilevalidationMessage) ? "none" : "block")">
+                            @karta.MobilevalidationMessage
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-4 mb-4">
+                        <label class="cls_customer_label">Aadhar Number</label>
+                        <input autocomplete="off" class="cls_select2_button" type="text" placeholder="Enter here" @bind="karta.AadharNumber" @oninput='(e) => ValidateaadharNumber(e, karta)'/>
+                        <div class="invalid-feedback" style="display: @(string.IsNullOrEmpty(karta.AadharNumbervalidationMessage) ? "none" : "block")">
+                            @karta.AadharNumbervalidationMessage
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-4 mb-4">
+                        <label class="cls_customer_label">Pan Number</label>
+                        <input autocomplete="off" class="cls_select2_button" type="text" placeholder="Enter here" @bind="karta.PanNumber" maxlength="10" @oninput='(e) => ValidatePanNumber(e, karta)' />
+                        <div class="invalid-feedback" style="display: @(string.IsNullOrEmpty(karta.PanValidationMessage) ? "none" : "block")">
+                            @karta.PanValidationMessage
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-4 mb-4 d-flex align-items-end">
+                        @if (karta == KartaDetails.Last())
+                        {
+                            <button style="margin-top: 17px;" class="btn btn-primary mb-2" @onclick="AddRow"><i class="fas fa-plus"></i></button>
+                        }
+                        else
+                        {
+                            <button style="margin-top: 17px;" class="btn btn-danger mb-2" @onclick="() => RemoveRow(karta)"><i class="fas fa-minus"></i></button>
+                        }
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-4 mb-4"></div>
+                    <div class="col-12 col-md-6 col-lg-4 mb-4"></div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<div class="cls_button_bottom_purchase">
+        <button class="cls_button_blue" type="submit" @onclick="SaveKartaDetails">@ButtonName</button>
+</div>

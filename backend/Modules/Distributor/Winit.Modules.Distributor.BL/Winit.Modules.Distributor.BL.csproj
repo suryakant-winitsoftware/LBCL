@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Address\Winit.Modules.Address.DL\Winit.Modules.Address.DL.csproj" />
+    <ProjectReference Include="..\..\Contact\Winit.Modules.Contact.DL\Winit.Modules.Contact.DL.csproj" />
+    <ProjectReference Include="..\..\Currency\Winit.Modules.Store.DL\Winit.Modules.Currency.DL.csproj" />
+    <ProjectReference Include="..\..\Emp\Winit.Modules.Emp.Model\Winit.Modules.Emp.Model.csproj" />
+    <ProjectReference Include="..\..\FileSys\Winit.Modules.FileSys.DL\Winit.Modules.FileSys.DL.csproj" />
+    <ProjectReference Include="..\..\JobPosition\Winit.Modules.JobPosition.Model\Winit.Modules.JobPosition.Model.csproj" />
+    <ProjectReference Include="..\..\Org\Winit.Modules.Store.DL\Winit.Modules.Org.DL.csproj" />
+    <ProjectReference Include="..\..\StoreDocument\Winit.Modules.StoreDocument.BL\Winit.Modules.StoreDocument.BL.csproj" />
+    <ProjectReference Include="..\..\StoreDocument\Winit.Modules.StoreDocument.DL\Winit.Modules.StoreDocument.DL.csproj" />
+    <ProjectReference Include="..\..\StoreDocument\Winit.Modules.StoreDocument.Model\Winit.Modules.StoreDocument.Model.csproj" />
+    <ProjectReference Include="..\..\Store\Winit.Modules.Store.DL\Winit.Modules.Store.DL.csproj" />
+    <ProjectReference Include="..\Winit.Modules.Distributor.DL\Winit.Modules.Distributor.DL.csproj" />
+    <ProjectReference Include="..\Winit.Modules.Distributor.Model\Winit.Modules.Distributor.Model.csproj" />
+  </ItemGroup>
+</Project>

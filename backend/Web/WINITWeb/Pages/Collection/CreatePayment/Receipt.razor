@@ -1,0 +1,183 @@
+﻿@page "/receipt"
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject NavigationManager _NavigationManager
+@layout MainLayout
+@inject HttpClient http;
+
+@using Practice;
+@inject IJSRuntime JSRuntime;
+@inject Winit.Modules.CollectionModule.BL.Interfaces.ICreatePaymentViewModel _createPaymentViewModel;
+
+
+
+
+
+<MultiCurrencyPopUp @ref="_multi" OnSubmitPaymentAmount="OnSubmitAmount" IsShow="IsShow" Closebtn="@(() => OpenCloseMultiCurrency(""))"></MultiCurrencyPopUp>
+@if (ShowChequefields || ShowOnlinefields || ShowPOSfields)
+{
+
+@if (ShowChequefields)
+{
+    <div class="cls_container_div4">
+        <h5 class="cls_container_p_full1">@Localizer["cheque_details"]</h5>
+        <div class="cls_container_div1">
+
+            <div class="cls_section_div_sku1">
+                <select class="cls_select2_button" @bind="_createPaymentViewModel.collectionAmount.ChequeBank">
+                        <option>--@Localizer["select_bank"]--</option>
+                        @foreach (var item in _bank)
+                        {
+                            <option value="@($"{item.BankName}")">@item.BankName</option>
+                        }
+                    </select>
+                </div>
+           
+
+            <div class="cls_section_div_sku1"  >
+                <input class="cls_select2_button" @bind="_createPaymentViewModel.collectionAmount.ChequeBranchName" placeholder=@Localizer["enter_cheque_bank_name"] />
+            </div>
+            <div class="cls_section_div_sku1"  >
+                <input class="cls_select2_button" @bind="_createPaymentViewModel.collectionAmount.ChequeNo" placeholder=@Localizer["enter_cheque_no"] onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode === 46" />
+            </div>
+
+            <div class="cls_section_div_sku1"  >
+
+                    @if (true)// !_iAppUser.IsMultiCurrency
+                    {
+                        <input class="cls_select2_button" @bind="_createPaymentViewModel.collectionAmount.ChequeAmount" placeholder=@Localizer["enter_cheque_amount"] onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode === 46" />
+                    }
+                    else
+                    {
+                        <button class="cls_select2" @onclick="@(() => OpenCloseMultiCurrency("Cheque"))">
+
+                            <label class="cls_select2_label1">@_createPaymentViewModel.collectionAmount.ChequeAmount</label>
+                            <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+                        </button>
+                    }
+                
+            </div>
+            <div class="cls_section_div_sku1"  >
+                <Winit.UIComponents.Common.Common.DatePickerBS SelectedDateChanged="@((e) => OnDatePickerChanged(e,"Cheque"))" StartDate="@DateTime.Today.AddDays(-90).ToString("yyyy-MM-dd")"></Winit.UIComponents.Common.Common.DatePickerBS>
+            </div>
+        </div>
+    </div>
+}
+
+@if (ShowPOSfields)
+{
+    <div Class="cls_container_div4">
+        <h5 class="cls_container_p_full1">POS Details</h5>
+        <div class="cls_container_div1">
+            <div class="cls_section_div_sku1"  >
+
+                <select class="cls_select2_button" @bind="_createPaymentViewModel.collectionAmount.POSBank">
+                        <option>--Select Bank--</option>
+                        @foreach (var item in _bank)
+                        {
+                            <option value="@($"{item.BankName}")">@item.BankName</option>
+                        }
+                    </select>
+                
+            </div>
+
+            <div class="cls_section_div_sku1"  >
+                <input class="cls_select2_button" @bind="_createPaymentViewModel.collectionAmount.POSBranchName" placeholder=@Localizer["enter_pos_branch_name"] />
+            </div>
+            <div class="cls_section_div_sku1"  >
+                <input class="cls_select2_button" @bind="_createPaymentViewModel.collectionAmount.POSNo" placeholder=@Localizer["enter_pos_no"] onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode === 46" />
+            </div>
+
+            <div class="cls_section_div_sku1"  >
+               
+                    @if (true)
+                    {
+                        <input class="cls_select2_button" @bind="_createPaymentViewModel.collectionAmount.POSAmount" placeholder=@Localizer["enter_pos_amount"] onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode === 46" />
+                    }
+                    else
+                    {
+                    <button class="cls_select2" @onclick="@(() => OpenCloseMultiCurrency("POS"))">
+
+                        <label class="cls_select2_label1">@_createPaymentViewModel.collectionAmount.POSAmount</label>
+                        <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+                        </button>
+                    }
+                
+            </div>
+            <div class="cls_section_div_sku1"  >
+                <Winit.UIComponents.Common.Common.DatePickerBS SelectedDateChanged="@((e) => OnDatePickerChanged(e,"POS"))"></Winit.UIComponents.Common.Common.DatePickerBS>
+            </div>
+
+        </div>
+    </div>
+}
+
+@if (ShowOnlinefields)
+{
+    <div Class="cls_container_div4">
+        <h5 class="cls_container_p_full1">@Localizer["online_details"]</h5>
+        <div class="cls_container_div1">
+            <div class="cls_section_div_sku1"  >
+                
+                    <select class="cls_select2_button" @bind="_createPaymentViewModel.collectionAmount.OnlineBank">
+                        <option>--@Localizer["select_bank"]--</option>
+                        @foreach (var item in _bank)
+                        {
+                            <option value="@($"{item.BankName}")">@item.BankName</option>
+                        }
+                    </select>
+              
+            </div>
+
+            <div class="cls_section_div_sku1"  >
+                <input class="cls_select2_button" @bind="_createPaymentViewModel.collectionAmount.OnlineBranchName" placeholder=@Localizer["enter_online_branch_name"] />
+            </div>
+            <div class="cls_section_div_sku1"  >
+                <input class="cls_select2_button" @bind="_createPaymentViewModel.collectionAmount.OnlineNo" placeholder=@Localizer["enter_online_no"] onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode === 46" />
+            </div>
+
+            <div class="cls_section_div_sku1"  >
+                
+                    @if (true)
+                    {
+                        <input class="cls_select2_button" @bind="_createPaymentViewModel.collectionAmount.OnlineAmount" placeholder=@Localizer["enter_online_amount"] onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode === 46" />
+                    }
+                    else
+                    {
+                    <button class="cls_select2" @onclick="@(() => OpenCloseMultiCurrency("Online"))">
+                            
+                        <label class="cls_select2_label1">@(_createPaymentViewModel.collectionAmount.OnlineAmount)</label>
+                        <img src="./Images/arrow_down.png" height="20px" width="20px" class="cls_select2_img1" />
+                        </button>
+                    }
+                
+            </div>
+            <div class="cls_section_div_sku1"  >
+                <Winit.UIComponents.Common.Common.DatePickerBS SelectedDateChanged="@((e) => OnDatePickerChanged(e,"Online"))"></Winit.UIComponents.Common.Common.DatePickerBS>
+            </div>
+
+        </div>
+    </div>
+}
+
+}
+
+@if (_show123 && !IsAutoAllocate)
+{
+    <Heirarchy receipt=@this @ref=heirarchy OnTextChanged="Changed" Textvalue="EnteredAmount" AfterCheckBoxSelection="Product_AfterCheckBoxSelection" IsFirstColumnCheckbox="_checkbox" DataSource="ElementsList" Columns="productColumns" DataSource2="ResponseDaystabList.OrderBy(p => p.DueDate).ToList()" Columns2="customerColumns" OnSort="Product_OnSort" />
+}
+@if (_show123 && IsAutoAllocate)
+{
+    <Heirarchy receipt=@this @ref=heirarchy OnTextChanged="Changed" Textvalue="EnteredAmount" AfterCheckBoxSelection="Product_AfterCheckBoxSelection" IsFirstColumnCheckbox="_checkbox" DataSource="ElementsList" Columns="productColumns" DataSource2="ResponseDaystabList.OrderBy(p => p.DueDate).ToList()" Columns2="customerColumns" OnSort="Product_OnSort" />
+}
+
+
+
+
+<div style="margin-bottom: 40px;"></div>
+
+<div class="cls_button_bottom_purchase">
+    <button class="cls_button_blue "
+            @onclick="(()=>{ Routing(ReceiptNumber) ;})">
+        @Localizer["create"]
+    </button>
+</div>

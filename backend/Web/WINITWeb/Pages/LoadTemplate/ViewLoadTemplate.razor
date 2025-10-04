@@ -1,0 +1,161 @@
+﻿@page "/loadrequestemplate"
+@inject NavigationManager NavManager
+@attribute [Authorize]
+@inject Winit.Modules.Route.BL.Interfaces.IRouteLoadViewModel _RouteLoadViewModel
+@inject BreadCrum.Interfaces.IDataService _IDataService
+@using Microsoft.JSInterop
+@inject IJSRuntime JSRuntime
+@inherits WinIt.Pages.Base.BaseComponentBase
+
+
+@if (showFilterComponent)
+{
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" IsShowFilter="true" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+                     OnFilterApplied="@OnFilterApply" />
+
+}
+@* <button class="cls_add_new_sec" style="float:right;margin-right:0px" @onclick="ShowFilter">@Localizer["filter"]</button> *@
+@* @if (showFilterComponent)
+{
+    <Filter @ref="filterRef" ColumnsForFilter="@ColumnsForFilter" IsSearchCriteriaNeeded="true"
+            OnFilterApplied="@OnFilterApply" />
+} *@
+
+
+
+<div>
+    <div style="height: 1em;"></div>
+</div>
+
+                    <div class="cls_export_main">
+
+    <button class="cls_add_new_sec" @onclick="AddNewProduct">@Localizer["add_new"]</button>
+    <button class="cls_add_new_sec">@Localizer["export_to_excel"]</button>
+    <button class="cls_add_new_sec">@Localizer["export_to_csv"]</button>
+    <button class="cls_add_new_sec">@Localizer["export_to_pdf"]</button>
+                    </div>
+                 
+
+@* <hr style="border-top: 2px solid #ccc; margin: 10px 0;"> *@
+<div class="div1">
+<table class="table">
+    <thead>
+        <tr>
+            <th class="tblHeader">@Localizer["sn"]</th>
+            <th class="tblHeader">@Localizer["template_name"]</th>
+            <th class="tblHeader">@Localizer["template_description"]</th>
+            <th class="tblHeader">@Localizer["routes"]</th>
+            <th class="tblHeader">@Localizer["actions"]</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (_RouteLoadViewModel.DisplayRouteLoadTruckTemplateView == null || _RouteLoadViewModel.DisplayRouteLoadTruckTemplateView.Count == 0)
+        {
+
+            <tr>
+                <td colspan="5" style="text-align: center;color:red">@Localizer["no_record_found"]</td>
+            </tr>
+
+
+        }
+        else
+        {
+            @for (int i = 0; i < _RouteLoadViewModel.DisplayRouteLoadTruckTemplateView.Count; i++)
+            {
+                var row = _RouteLoadViewModel.DisplayRouteLoadTruckTemplateView[i];
+                <tr class="@GetRowClass(row)">
+                    <td>@(i + 1)</td>
+                    <td>@row.TemplateName</td>
+                    <td>@row.TemplateDescription</td>
+                    <td>
+                        @{
+                            var route = _RouteLoadViewModel.RouteList?.FirstOrDefault(r => r.UID == row.RouteUID);
+                            var routeName = route != null ? route.Name : "N/A";
+                        }
+                        @routeName
+                    </td>
+
+                    <td>
+                        <button class="btn btn-link" style="color: #003898;" title="Edit" @onclick="() => EditRouteloadTemplate(row)">
+                            <img src="Images/edit.png"/> 
+                        </button>
+                        <button class="btn btn-link" style="color: #003898;" title="Delete" @onclick="() => DeleteRouteloadTemplate(row)">
+                            <img src="Images/delete.png"/>
+                        </button>
+                    </td>
+                </tr>
+            }
+        }
+
+    </tbody>
+</table>
+</div>
+@code {
+
+   
+}
+
+
+<style>
+
+
+
+    .common-button {
+        background-color: white;
+        color: #003898;
+        border: 1px solid #003898;
+        cursor: pointer;
+        transition: background-color 0.3s, color 0.3s, border-color 0.3s, font-weight 0.3s;
+        border-radius: 5px;
+        font-weight: bold;
+        padding: 5px 10px;
+    }
+
+        .common-button:hover {
+            background-color: #003898;
+            color: white;
+            border-color: white;
+        }
+
+    .floating-alert {
+        position: fixed;
+        top: 172px;
+        right: 543px;
+        background-color: lightgreen; /* Red */
+        color: white;
+        padding: 10px;
+        border-radius: 5px;
+        display: none;
+        z-index: 9999;
+    }
+
+    .close {
+        position: absolute;
+        top: -5px;
+        right: 2px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: white;
+        font-size: 18px;
+    }
+
+    .background-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+        display: none;
+        z-index: 9998; /* Below the alert */
+    }
+
+
+    /* Hide the spinner in the input[type=number] */
+    .no-spinner::-webkit-inner-spin-button,
+    .no-spinner::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+</style>

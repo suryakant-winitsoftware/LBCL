@@ -1,0 +1,100 @@
+﻿@inject Winit.Modules.Base.BL.ILocalStorageService _localStorageService
+@inject AuthenticationStateProvider _authStateProvider
+@inject NavigationManager _navigationManager
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+@inject WINITMobile.Data.SideBarService _sideBarService
+@inject Winit.Modules.Role.Model.Interfaces.IMenuMasterHierarchyView _menuHierarchy
+
+<div>
+    <nav class="flex-column">
+        <div class="cls_menu_n_main">
+            <div class="cls_menu_top1">
+                <div class="cls_menu_top1_left">
+                    <img style="width:54px;" src="/Images/group_bg.png">
+                </div>
+                <div class="cls_menu_top1_right">
+                    @if (_appUser?.Emp != null)
+                    {
+                        <h3>@_appUser.Emp.Name</h3>
+                        <h3>@_appUser.Emp.Code</h3> 
+                    }
+                </div>
+            </div>
+            @if (_menuHierarchy != null)
+            {
+                foreach (var module in _menuHierarchy.ModuleMasterHierarchies)
+                {
+                    if (module.SubModuleHierarchies != null)
+                    {
+                        foreach (var subModule in module.SubModuleHierarchies)
+                        {
+                            if (subModule?.SubModule != null)
+                            {
+                                if (_appUser?.IsCheckedIn == true)
+                                {
+                                    if (subModule.SubModule.CheckInPermission == 2 || subModule.SubModule.CheckInPermission == 3)
+                                    {
+                                        <div class="cls_menu_n">
+                                            <NavLink class="nav-link" @onclick="@(() => ToggleSubMenu(subModule.SubModule))">
+                                                <span><img style="width:18px;" src="/Images/d2.png"></span><p>@subModule.SubModule.SubModuleNameEn</p>
+                                            </NavLink>
+                                            <div class="submenu" style="display:@(subModule.SubModule.IsSubSubMenuDisplay ? "block" : "none")">
+                                                @if (subModule.SubSubModules != null)
+                                                {
+                                                    foreach (var subSubModule in subModule.SubSubModules)
+                                                    {
+                                                        <NavLink class="expand-menu" @onclick="(e => HandleClick(subSubModule.RelativePath))">
+                                                            <span><img style="width:18px;" src="/Images/d3.png"></span> <p>@subSubModule.SubSubModuleNameEn</p>
+                                                        </NavLink>
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    if (subModule.SubModule.CheckInPermission == 1 || subModule.SubModule.CheckInPermission == 3)
+                                    {
+                                        <div class="cls_menu_n">
+                                            <NavLink class="nav-link" @onclick="@(() => ToggleSubMenu(subModule.SubModule))">
+                                                <span><img style="width:18px;" src="/Images/d2.png"></span><p>@subModule.SubModule.SubModuleNameEn</p>
+                                            </NavLink>
+                                            <div class="submenu" style="display:@(subModule.SubModule.IsSubSubMenuDisplay ? "block" : "none")">
+                                                @if (subModule.SubSubModules != null)
+                                                {
+                                                    foreach (var subSubModule in subModule.SubSubModules)
+                                                    {
+                                                        <NavLink class="expand-menu" @onclick="(e => HandleClick(subSubModule.RelativePath))">
+                                                            <span><img style="width:18px;" src="/Images/d3.png"></span> <p>@subSubModule.SubSubModuleNameEn</p>
+                                                        </NavLink>
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            @if (_appUser?.IsCheckedIn == false)
+            {
+                <div class="cls_menu_n">
+                    <NavLink class="nav-link" @onclick="OnLogoutClick">
+                        <span><img style="width:18px;" src="/Images/d1.png"></span> <p>Logout</p>
+                    </NavLink>
+                </div>
+            }
+            @if (_appUser?.IsCheckedIn == true)
+            {
+                <div class="cls_menu_n">
+                    <NavLink class="nav-link" @onclick="HandleCheckOutClicked">
+                        <span><img style="width:18px;" src="/Images/d4.png"></span> <p>CheckOut</p>
+                    </NavLink>
+                </div>
+            }
+        </div>
+    </nav>
+</div>

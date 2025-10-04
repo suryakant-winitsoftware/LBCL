@@ -1,0 +1,14 @@
+﻿@page "/MaintainTaxGroup"
+@inherits WinIt.Pages.Base.BaseComponentBase
+@inject Winit.Modules.Tax.BL.UIInterfaces.ITaxGroupViewModel _taxGroupViewModel
+
+
+<PageHeaderAndFilter IDataBreadcrumbService="dataService" />
+
+<button class="cls_add_new_sec" @onclick='() => _navigationManager.NavigateTo("AddEditTaxGroup")'>@Localizer["add_taxgroup"]</button>
+
+@if (IsLoaded)
+{
+    <Winit.UIComponents.Web.Table.DivGridView Columns="DataGridColumns" DataSource="_taxGroupViewModel.TaxGroupItemViews" />
+    <Winit.UIComponents.Web.Paging.Paging CurrentPage="_taxGroupViewModel.PageNumber" OnPageChange="_taxGroupViewModel.PageIndexChanged" PageSize="_taxGroupViewModel.PageSize" TotalItems="_taxGroupViewModel.TotalTaxGroupItemsCount" />
+}

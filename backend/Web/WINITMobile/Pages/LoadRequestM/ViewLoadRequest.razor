@@ -1,0 +1,65 @@
+﻿@page "/ViewRequest/{RequestLoadType}"
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+@inject SideBarService _sidebarService
+@using Winit.Shared.Models.Enums
+@using Winit.UIComponents.Common.CustomControls
+@inject Winit.Modules.WHStock.BL.Interfaces.ILoadRequestView _LoadRequestView
+<h3>@Heading</h3>
+<div style="width:100%;float:left;padding:8px;">
+<div style="width:100%;float:left;margin-top:5px;">
+    <Winit.UIComponents.Common.CustomControles.Tabs TabItems="TabSelectionItems" OnTabSelect="OnTabSelect" />
+</div>
+<div class="container" style="padding:0px;">
+      
+<div class="cls_view_load_request_main">
+@if (_LoadRequestView.DisplayWHStockRequestItemView != null)
+{
+    @foreach (var item in _LoadRequestView.DisplayWHStockRequestItemView)
+    {
+            <div class="cls_view_load_request">
+        <button style="width:100%;float:left" @onclick='() => ViewEditQuantity(item)'>
+
+               <div class="d-flex flex-row">
+
+                                <div class="cls_view_load_request_rep">
+                                    <p>@Localizer["moment_code"]</p>
+                                    <br />
+                                    <label>@item.RequestCode</label>
+                                </div>
+                                <div class="cls_view_load_request_rep">
+                                    <p>@Localizer["date_&_time"] </p>
+                                    <br />
+                                    <label>@item.ModifiedTime.ToString("d MMM yyyy")</label>
+                                </div>
+                                <div class="cls_view_load_request_rep">
+                                    <p>@Localizer["status"]</p>
+                                    <br/>
+                                    <label style="color:red">@item.Status</label>
+                                </div>
+
+               </div>
+           
+        </button>
+
+            </div>
+    }
+}
+    </div>
+</div>
+
+   
+</div>
+@if (IsNewRequestAllowed)
+{
+    <div class="position-fixed bottom-0 end-0 p-3">
+        <div class="d-flex align-items-center">
+            <img src="/Images/plus.png" alt="Add" @onclick="RequestLoad" />
+            @* <br/>
+        <label class="me-2">@ButtonText</label> *@
+        </div>
+    </div>
+}
+
+

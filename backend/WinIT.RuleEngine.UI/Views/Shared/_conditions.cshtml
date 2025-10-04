@@ -1,0 +1,19 @@
+﻿@model IEnumerable<RuleCondition>
+
+
+    @foreach (RuleCondition u in Model)
+    {
+        <div class="col-md-3">
+            @u.ParameterName
+        </div>
+        <div class="col-md-3">
+            @u.Operator
+        </div>
+        <div class="col-md-3">
+            @u.Value
+        </div>
+        <div class="col-md-3">
+            @*<a class="btn cls_contact" href="@Url.Action("","Home", new {id=u.Id })">Delete</a>*@
+        </div>
+
+    }

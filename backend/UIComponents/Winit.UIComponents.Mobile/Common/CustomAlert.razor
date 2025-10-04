@@ -1,0 +1,394 @@
+﻿@* // AlertComponent.razor
+@inherits ComponentBase
+
+@if (isAlertVisible)
+{
+    <div class="alert alert-@(AlertType) alert-dismissible fade show" role="alert" style="Postion:absolute; top:0%; bottom:10%;">
+        <div class="modal-content">
+            <div class="modal-header">
+        @if (!string.IsNullOrWhiteSpace(Heading))
+        {
+                    <h5 class="modal-title">@Heading</h5>
+                }
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="CloseAlert"></button>
+            </div>
+            <div class="custom-dialog-content">
+                <div class="custom-dialog-body">
+                    <p class="cls_alert">@Body</p>
+            </div>
+            </div>
+        <div class="d-flex justify-content-end">
+            @if (!string.IsNullOrWhiteSpace(Button1Text))
+            {
+                <button type="button" class="btn @(Button1Class)" @onclick="HandleButton1">@Button1Text</button>
+            }
+            @if (!string.IsNullOrWhiteSpace(Button2Text))
+            {
+                <button type="button" class="btn @(Button2Class)" @onclick="HandleButton2">@Button2Text</button>
+            }
+            @if (!string.IsNullOrWhiteSpace(Button3Text))
+            {
+                <button type="button" class="btn @(Button3Class)" @onclick="HandleButton3">@Button3Text</button>
+            }
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="CloseAlert"></button>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string Heading { get; set; }
+
+    [Parameter]
+    public string Body { get; set; }
+
+    [Parameter]
+    public string Button1Text { get; set; }
+
+    [Parameter]
+    public string Button1Class { get; set; }
+
+    [Parameter]
+    public EventCallback Button1Action { get; set; }
+
+    [Parameter]
+    public string Button2Text { get; set; }
+
+    [Parameter]
+    public string Button2Class { get; set; }
+
+    [Parameter]
+    public EventCallback Button2Action { get; set; }
+
+    [Parameter]
+    public string Button3Text { get; set; }
+
+    [Parameter]
+    public string Button3Class { get; set; }
+
+    [Parameter]
+    public EventCallback Button3Action { get; set; }
+
+    [Parameter]
+    public string AlertType { get; set; } = "info"; // Default to Bootstrap alert-info, you can change it
+
+    [Parameter]
+    public string BackgroundColor { get; set; } = "transparent"; // Default background color
+
+    private bool isAlertVisible = true;
+
+    private void CloseAlert()
+    {
+        isAlertVisible = false;
+    }
+
+    private async Task HandleButton1()
+    {
+        await Button1Action.InvokeAsync(null);
+    }
+
+    private async Task HandleButton2()
+    {
+        await Button2Action.InvokeAsync(null);
+    }
+
+    private async Task HandleButton3()
+    {
+        await Button3Action.InvokeAsync(null);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@* @inherits ComponentBase
+@if (isAlertVisible)
+{
+    <div class="alert alert-@(AlertType) alert-dismissible fade show" role="alert" style="background-color: @BackgroundColor; border-color: #f5c6cb; color: #721c24;">
+        @if (!string.IsNullOrWhiteSpace(Heading))
+        {
+            <h4 class="alert-heading">@Heading</h4>
+        }
+        <p>@Body</p>
+        <hr>
+        <div class="d-flex justify-content-end">
+            @if (!string.IsNullOrWhiteSpace(Button1Text))
+            {
+                <button type="button" class="btn @(Button1Class)" @onclick="Button1Action">@Button1Text</button>
+            }
+            @if (!string.IsNullOrWhiteSpace(Button2Text))
+            {
+                <button type="button" class="btn @(Button2Class)" @onclick="Button2Action">@Button2Text</button>
+            }
+            @if (!string.IsNullOrWhiteSpace(Button3Text))
+            {
+                <button type="button" class="btn @(Button3Class)" @onclick="Button3Action">@Button3Text</button>
+            }
+           
+        </div>
+        </div>
+    </div>
+}
+@code {
+    [Parameter]
+    public string Heading { get; set; }
+
+    [Parameter]
+    public string Body { get; set; }
+
+    [Parameter]
+    public string Button1Text { get; set; }
+
+    [Parameter]
+    public string Button1Class { get; set; }
+
+    [Parameter]
+    public EventCallback Button1Action { get; set; }
+
+    [Parameter]
+    public string Button2Text { get; set; }
+
+    [Parameter]
+    public string Button2Class { get; set; }
+
+    [Parameter]
+    public EventCallback Button2Action { get; set; }
+
+    [Parameter]
+    public string Button3Text { get; set; }
+
+    [Parameter]
+    public string Button3Class { get; set; }
+
+    [Parameter]
+    public EventCallback Button3Action { get; set; }
+
+    [Parameter]
+    public string AlertType { get; set; } = "info"; // Default to Bootstrap alert-info, you can change it
+
+    [Parameter]
+    public string BackgroundColor { get; set; } = "transparent"; // Default background color
+
+
+    private bool isAlertVisible = true;
+
+    private void CloseAlert()
+    {
+        isAlertVisible = false;
+    }
+}
+ *@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- CustomAlert.razor -->
+@* @inherits ComponentBase
+with styles
+<div class="custom-alert alert alert-@(AlertType) fade show" role="alert">
+    @if (!string.IsNullOrWhiteSpace(Heading))
+    {
+        <h4 class="alert-heading">@Heading</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    }
+    <p>@Body</p>
+    <hr>
+    <div class="d-flex justify-content-end button-container">
+        @if (!string.IsNullOrWhiteSpace(Button1Text))
+        {
+            <button type="button" class="btn @(Button1Class)" @onclick="Button1Action">@Button1Text</button>
+        }
+        @if (!string.IsNullOrWhiteSpace(Button2Text))
+        {
+            <button type="button" class="btn @(Button2Class)" @onclick="Button2Action">@Button2Text</button>
+        }
+        @if (!string.IsNullOrWhiteSpace(Button3Text))
+        {
+            <button type="button" class="btn @(Button3Class)" @onclick="Button3Action">@Button3Text</button>
+        }
+        
+    </div>
+</div> *@
+
+
+
+@*completely working code 
+    
+@inherits ComponentBase
+@if (isAlertVisible)
+{
+    <div class="alert alert-@(AlertType) alert-dismissible fade show" role="alert">
+        @if (!string.IsNullOrWhiteSpace(Heading))
+        {
+            <h4 class="alert-heading">@Heading</h4>
+        }
+        <p>@Body</p>
+        <hr>
+        <div class="d-flex justify-content-end">
+            @if (!string.IsNullOrWhiteSpace(Button1Text))
+            {
+                <button type="button" class="btn @(Button1Class)" @onclick="Button1Action">@Button1Text</button>
+            }
+            @if (!string.IsNullOrWhiteSpace(Button2Text))
+            {
+                <button type="button" class="btn @(Button2Class)" @onclick="Button2Action">@Button2Text</button>
+            }
+            @if (!string.IsNullOrWhiteSpace(Button3Text))
+            {
+                <button type="button" class="btn @(Button3Class)" @onclick="Button3Action">@Button3Text</button>
+            }
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="CloseAlert"></button>
+        </div>
+    </div>
+}
+@code {
+    [Parameter]
+    public string Heading { get; set; }
+
+    [Parameter]
+    public string Body { get; set; }
+
+    [Parameter]
+    public string Button1Text { get; set; }
+
+    [Parameter]
+    public string Button1Class { get; set; }
+
+    [Parameter]
+    public EventCallback Button1Action { get; set; }
+
+    [Parameter]
+    public string Button2Text { get; set; }
+
+    [Parameter]
+    public string Button2Class { get; set; }
+
+    [Parameter]
+    public EventCallback Button2Action { get; set; }
+
+    [Parameter]
+    public string Button3Text { get; set; }
+
+    [Parameter]
+    public string Button3Class { get; set; }
+
+    [Parameter]
+    public EventCallback Button3Action { get; set; }
+
+    [Parameter]
+    public string AlertType { get; set; } = "info"; // Default to Bootstrap alert-info, you can change it
+
+    private bool isAlertVisible = true;
+
+    private void CloseAlert()
+    {
+        isAlertVisible = false;
+    }
+}
+ *@
+
+
+@* @inherits ComponentBase
+
+<div class="alert alert-@(AlertType) alert-dismissible fade show" role="alert">
+    @if (!string.IsNullOrWhiteSpace(Heading))
+    {
+        <h4 class="alert-heading">@Heading</h4>
+    }
+    <p>@Body</p>
+    <hr>
+    <div class="d-flex justify-content-end">
+        @if (!string.IsNullOrWhiteSpace(Button1Text))
+        {
+            <button type="button" class="btn @(Button1Class)" @onclick="Button1Action">@Button1Text</button>
+        }
+        @if (!string.IsNullOrWhiteSpace(Button2Text))
+        {
+            <button type="button" class="btn @(Button2Class)" @onclick="Button2Action">@Button2Text</button>
+        }
+        @if (!string.IsNullOrWhiteSpace(Button3Text))
+        {
+            <button type="button" class="btn @(Button3Class)" @onclick="Button3Action">@Button3Text</button>
+        }
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Heading { get; set; }
+
+    [Parameter]
+    public string Body { get; set; }
+
+    [Parameter]
+    public string Button1Text { get; set; }
+
+    [Parameter]
+    public string Button1Class { get; set; }
+
+    [Parameter]
+    public EventCallback Button1Action { get; set; }
+
+    [Parameter]
+    public string Button2Text { get; set; }
+
+    [Parameter]
+    public string Button2Class { get; set; }
+
+    [Parameter]
+    public EventCallback Button2Action { get; set; }
+
+    [Parameter]
+    public string Button3Text { get; set; }
+
+    [Parameter]
+    public string Button3Class { get; set; }
+
+    [Parameter]
+    public EventCallback Button3Action { get; set; }
+
+    [Parameter]
+    public string AlertType { get; set; } = "info"; // Default to Bootstrap alert-info, you can change it
+} *@
+ 

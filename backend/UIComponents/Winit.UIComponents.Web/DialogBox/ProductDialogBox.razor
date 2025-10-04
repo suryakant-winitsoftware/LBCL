@@ -1,0 +1,83 @@
+﻿@typeparam T
+<div style="display:@Display">
+    <PopUp Title="Add Product" OkbtnText="Add" CancelbtnText="close" OnOkClick="HandleOkClick" OnCloseClick="() => OnCancelClick.InvokeAsync()">
+        <div>
+            <Winit.UIComponents.Common.CustomControls.WinitTextBox Placeholder="Search by Item /Item Code"
+                                                                   MaxLength="200" DebounceInterval="500"
+                                                                   OnDebounceIntervalElapsed="e => SearchString = e"
+                                                                   KeyboardType="Winit.Shared.Models.Enums.InputType.Text"
+                                                                   IsForSearch="true" />
+            @* <Winit.UIComponents.Mobile.DialogBox.FilterDialog TabDataDictionary="FilterDataList" OnFilterChange="ApplyFilter" @ref="FilterDialog" /> *@
+            @* <img style="width:20px;" src="/Images/carbon_filter.png" @onclick="() => FilterDialog.ShowFilterDialog()" /> *@
+        </div>
+
+            @* @if (FilteredItems != null && FilteredItems.Any())
+            {
+            @foreach (var item in FilteredItems)
+            {
+            <div class="cls_item_details">
+            <div class="cls_item_details_left">
+            <input type="checkbox" @onchange="(e) => OnItemSelect(item,e)">
+            @* <img src="@(ImageUrl?.Invoke(item) ?? "N/A")" height="40px" width="40px" class="image"> *@
+
+            @* </div> *@
+            @* <div class="cls_item_details_right"> *@
+            @* <h3>@(SKUHeader?.Invoke(item) ?? "N/A")</h3> *@
+            @* <label>@(SKUCode?.Invoke(item) ?? "N/A")</label> *@
+            @* </div> *@
+            @* </div> *@
+            @*}
+            }
+            else
+            {
+            <div class="cls_item_details"> No Items</div>
+            } *@
+        <div class="div1">
+            <table>
+                <thead>
+                    <tr>
+                        <th>
+                            <input type="checkbox" @onchange="OnSelectAllClick" />
+                        </th>
+                        <th>
+                            <span style="cursor:default;"> Code</span>
+                        </th>
+                        <th>
+                            <span style="cursor:default;"> Name</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @if (FilteredItems != null && FilteredItems.Any())
+                    {
+                        @foreach (var item in FilteredItems)
+                        {
+                            <tr>
+                                <td>
+                                    <input id="@SKUCode" type="checkbox" @onchange="(e) => OnItemSelect(item,e)"
+                                           checked="@(SelectedItems.Contains(item))" />
+                                </td>
+                                <td>
+                                    <label>@(SKUCode?.Invoke(item))</label>
+                                </td>
+                                <td>
+                                    <label>
+                                        @(SKUHeader?.Invoke(item))
+                                    </label>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="3" style="text-align: center; font-weight:700;color:orangered;font-size:14px;">No Items</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+    </PopUp>
+</div>

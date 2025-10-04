@@ -1,0 +1,134 @@
+﻿@page "/previewpageforSummary/{SalesOrderUID}"
+@inject Winit.Modules.SalesOrder.BL.UIInterfaces.ISalesSummaryViewModel _SalesSummeryViewModel
+@inject Winit.Modules.SalesOrder.BL.Interfaces.ISalesOrderBL _SalesOrderBL
+@using Winit.Modules.Printing.BL.Interfaces
+@using Winit.Modules.Printing.BL.Factory
+@using Winit.Modules.Printing.BL.Classes
+@using WINITMobile.Models.TopBar
+@using Winit.Modules.Printing.Model.Enum
+@using Winit.Modules.Printing.BL.Classes.SalesOrder
+@inject Winit.Modules.Printing.Model.Classes.BluetoothDeviceInfo _bluetoothDeviceInfo
+@inherits WINITMobile.Pages.Base.BaseComponentBase
+<style>
+    .vertical-div {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 5px;
+    }
+
+    .horizontal-div {
+        display: flex;
+        height: 60;
+        flex-direction: row;
+        flex: 1; 
+        justify-content: space-between; 
+        margin: 0; 
+    }
+
+    .part-a {
+        flex: 20%;
+        background-color: transparent; 
+    }
+
+    .part-b {
+        flex: 80%;
+    }
+
+    .vertical-part {
+        flex: 50%;
+        text-align: center;
+        background-color: transparent; 
+    }
+
+    .horizontal-half {
+        display: flex;
+        flex-direction: row;
+        flex: 50%;
+    }
+
+    .horizontal-part {
+        flex: 16.67%; 
+        background-color: transparent; 
+    }
+
+    .vertical-half {
+        display: flex;
+        flex-direction: column;
+        margin: 0; 
+    }
+
+</style>
+
+<div class="order-details-container">
+    <h2 class="cls_main_heading">Sales Report Preview</h2>
+    <div class="card">
+        <div class="dn">
+            <h7 class="card-title">@Localizer["line_number"]: @salesOrderHeader.AddressLine1 </h7>
+            <p class="card-text">@Localizer["status"] : @salesOrderHeader.Status </p>
+            <p class="card-text">@Localizer["orderdate"]: @salesOrderHeader.OrderDate</p>
+            <p class="card-text">@Localizer["expecteddeliverydate"] : @salesOrderHeader.ExpectedDeliveryDate </p>
+            
+        </div>
+    </div>
+
+    @if (salesOrderLines != null && salesOrderLines.Any())
+    {
+        @foreach (var orderLine in salesOrderLines)
+        {
+            <div class="cls_product_preview">
+                <div class="cls_product_preview1">
+                    <h2>
+                        [@orderLine.SKUCode]@orderLine.SKUDescription
+                    </h2>
+                </div>
+                <div class="cls_product_preview2 dn">
+                    <span><img style="width:38px;" src="/Images/mcl.png"></span><span><img style="width:18px;" src="/Images/promo1.png"></span><span><img style="width:18px;" src="/Images/n.png"></span>
+                    <p>@Localizer["unit_price"]: (@orderLine.SKUDescription)</p><h3>@orderLine.UnitPrice</h3>
+                </div>
+                <div class="cls_product_preview3 ">
+                    <div class="cls_product_preview3_rep">
+                        <label>Selling Price</label>
+                        <h3>@orderLine.UnitPrice</h3>
+                    </div>
+                    <div class="cls_product_preview3_rep">
+                        <label>Order Qty</label>
+                        <h3>@orderLine.Qty</h3>
+                    </div>
+                    <div class="cls_product_preview3_rep">
+                        <label>Total Price</label>
+                        <h3>@orderLine.TotalAmount</h3>
+                    </div>
+                    <div class="cls_product_preview3_rep dn">
+                        <label> @Localizer["uom"] </label>
+                        <h3>@orderLine.UoM</h3>
+                    </div>
+                    <div class="cls_product_preview3_rep dn">
+                        <label>@Localizer["disc"]</label>
+                        <h3>@orderLine.TotalDiscount</h3>
+                    </div>
+                    <div class="cls_product_preview3_rep dn">
+                        <label>@Localizer["tax"]</label>
+                        <h3> @orderLine.TotalTax</h3>
+                    </div>
+                    <div class="cls_product_preview3_rep dn" style="width:20%;">
+                        <label>@Localizer["invoice_price"] @orderLine.SKUDescription</label>
+                        <h3> @orderLine.NetAmount</h3>
+                    </div>
+
+                </div>
+
+            </div>
+        }
+    }
+    else
+    {
+        <p class="no-order-details">@Localizer["no_order_details_available"].</p>
+    }
+
+  @*   <button class="btn btn-primary back-button" @onclick="GoBack">@Localizer["back"]</button> *@
+</div>
+
+
+
+
+

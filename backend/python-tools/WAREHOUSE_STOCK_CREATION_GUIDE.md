@@ -236,7 +236,7 @@ Before creating stock, ensure:
 ## Testing with cURL
 
 ```bash
-curl -X POST 'http://localhost:8000/api/WHStock/CUDWHStock' \
+curl -X POST 'https://multiplex-promotions-api.winitsoftware.com/api/WHStock/CUDWHStock' \
   -H 'Content-Type: application/json' \
   -H 'Authorization: Bearer YOUR_TOKEN_HERE' \
   -d '{

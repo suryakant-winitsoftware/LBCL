@@ -2,7 +2,7 @@ import { getAuthHeaders } from "@/lib/auth-service";
 import { PagingRequest, PagedResponse } from "@/types/common.types";
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+  process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
 
 // SKU Price interfaces
 export interface ISKUPrice {

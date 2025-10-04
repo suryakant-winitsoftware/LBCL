@@ -2,7 +2,7 @@ import axios from "axios";
 import { authService } from "@/lib/auth-service";
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+  process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
 
 export interface PlanogramSetup {
   UID?: string; // API returns uppercase UID
@@ -787,7 +787,7 @@ class PlanogramService {
     try {
       if (fileSys.RelativePath) {
         // If we have a relative path, construct the full URL to the image
-        const baseUrl = API_BASE_URL || "http://localhost:8000/api";
+        const baseUrl = API_BASE_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
         // Remove 'api' from the URL if present since static files are served from root
         const staticUrl = baseUrl.replace("/api", "");
 
@@ -802,7 +802,7 @@ class PlanogramService {
         return `${staticUrl}${imagePath}`;
       } else if (fileSys.TempPath) {
         // Handle temp path similarly
-        const baseUrl = API_BASE_URL || "http://localhost:8000/api";
+        const baseUrl = API_BASE_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
         const staticUrl = baseUrl.replace("/api", "");
 
         let imagePath = fileSys.TempPath;

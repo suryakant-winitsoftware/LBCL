@@ -35,7 +35,7 @@ export interface PagedResponseData<T> {
 
 class InitiativeFileService {
   private baseURL =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
 
   // Helper to generate UUID
   private generateUID(): string {

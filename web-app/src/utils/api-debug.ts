@@ -3,7 +3,7 @@ import { authService } from "@/lib/auth-service";
 // API Debug utility to help identify available endpoints
 export class ApiDebug {
   private static baseUrl =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
 
   static async testEndpoint(
     endpoint: string,

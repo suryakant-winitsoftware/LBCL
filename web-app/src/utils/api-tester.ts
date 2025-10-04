@@ -1,5 +1,5 @@
 // API Testing Utility for Deep Investigation
-const API_BASE_URL = "http://localhost:8000/api";
+const API_BASE_URL = "https://multiplex-promotions-api.winitsoftware.com/api";
 
 const AUTH_TOKEN =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiQURNSU4iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3VzZXJkYXRhIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsInBlcm1pc3Npb25zIjpbInJlYWQiLCJ3cml0ZSJdLCJleHAiOjE3NTQ1NjM1ODEsImlzcyI6Im15aXNzdWVyIn0.QXc2NiYt64mRNNYJytLrWkTiX20KgFdSDjl2kLsuR1A";

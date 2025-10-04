@@ -17,7 +17,7 @@ import {
 
 class AuditService {
   private readonly API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
   // Use main API instead of separate microservice to avoid CORS issues
   private readonly AUDIT_API_URL = this.API_BASE_URL;
   private auditQueue: AuditTrailEntry[] = [];

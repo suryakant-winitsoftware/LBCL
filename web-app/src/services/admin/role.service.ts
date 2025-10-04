@@ -10,7 +10,7 @@ import { authService } from "@/lib/auth-service";
 import { apiService } from "../api";
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+  process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
 
 // Helper function to extract paged data from various response formats
 function extractPagedData(response: any): { items: any[]; totalCount: number } {

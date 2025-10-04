@@ -1201,7 +1201,7 @@ export default function PlanogramSetupPage() {
                           src={(() => {
                             // Generate image URL from RelativePath
                             if (image.RelativePath) {
-                              const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+                              const baseUrl = process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
                               const staticUrl = baseUrl.replace("/api", "");
                               let imagePath = image.RelativePath;
                               if (imagePath.startsWith("Data/")) {

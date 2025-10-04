@@ -5,7 +5,7 @@ import { PagingRequest } from "@/types/common.types";
 // Service for Store-SKU Linking functionality
 // Handles API calls for linking SKUs to stores through various methods
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
 
 export interface SKUConfig {
   UID: string;

@@ -115,7 +115,7 @@ export default function ProfilePage() {
 
       // Use correct production endpoint: /api/Emp/GetEmpByUID
       const API_BASE_URL =
-        process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+        process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
       const response = await fetch(
         `${API_BASE_URL}/Emp/GetEmpByUID?UID=${encodeURIComponent(
           currentUser.uid
@@ -232,7 +232,7 @@ export default function ProfilePage() {
 
       // Use correct production endpoint: /api/Emp/UpdateEmp
       const API_BASE_URL =
-        process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+        process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
       const response = await fetch(`${API_BASE_URL}/Emp/UpdateEmp`, {
         method: "PUT",
         headers: {
@@ -297,7 +297,7 @@ export default function ProfilePage() {
 
       // Use correct production endpoint: /api/Auth/UpdateExistingPasswordWithNewPassword
       const API_BASE_URL =
-        process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+        process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
       const response = await fetch(
         `${API_BASE_URL}/Auth/UpdateExistingPasswordWithNewPassword`,
         {

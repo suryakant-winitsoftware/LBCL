@@ -133,7 +133,7 @@ export interface ValidationResult {
 }
 
 class InitiativeService {
-  private baseUrl = "http://localhost:8000/api/Initiative";
+  private baseUrl = "https://multiplex-promotions-api.winitsoftware.com/api/Initiative";
 
   // Initiative CRUD operations
   async getInitiativeById(id: number): Promise<Initiative> {

@@ -24,7 +24,7 @@ import type {
 
 class CommissionService {
   private readonly API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
 
   private async makeRequest<T>(
     endpoint: string,

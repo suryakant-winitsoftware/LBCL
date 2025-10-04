@@ -124,7 +124,7 @@ export default function CreatePriceListPage() {
 
         const response = await fetch(
           `${
-            process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+            process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
           }/Store/SelectAllStore`,
           {
             method: "POST",
@@ -176,7 +176,7 @@ export default function CreatePriceListPage() {
 
             const fallbackResponse = await fetch(
               `${
-                process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+                process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
               }/Store/SelectAllStore`,
               {
                 method: "POST",

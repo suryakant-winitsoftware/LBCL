@@ -147,7 +147,7 @@ export interface ApiResponse<T> {
 
 class InventoryService {
   private baseUrl =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
 
   // Stock Updater APIs
   async getWHStockSummary(

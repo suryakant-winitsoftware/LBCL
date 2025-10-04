@@ -57,7 +57,7 @@ export interface PagingRequest {
 
 class SKUAttributesService {
   private baseURL =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
 
   /**
    * Get all SKU attributes with pagination, sorting, and filtering

@@ -112,7 +112,7 @@ export interface ApiResponse<T> {
 
 class TaxService {
   private baseUrl =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
 
   // Tax APIs (Working)
   async getTaxDetails(request: PagingRequest): Promise<PagedResponse<ITax>> {

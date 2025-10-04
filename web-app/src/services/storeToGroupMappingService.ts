@@ -42,7 +42,7 @@ interface PagedResponse<T> {
 
 class StoreToGroupMappingService {
   private getBaseUrl(): string {
-    return process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+    return process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
   }
 
   /**

@@ -537,7 +537,7 @@ export function EmployeeProductAttributes() {
       // Call the SelectionMap API using the correct endpoint from store-linking service
       const response = await fetch(
         `${
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+          process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
         }/Mapping/CUDSelectiomMapMaster`,
         {
           method: "POST",

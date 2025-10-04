@@ -28,7 +28,7 @@ export interface PagedResponse<T> {
 
 class SKUGroupService {
   private baseURL =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
 
   /**
    * Create a new SKU Group

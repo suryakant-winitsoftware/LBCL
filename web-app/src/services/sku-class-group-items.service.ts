@@ -1,6 +1,6 @@
 import { getAuthHeaders } from "@/lib/auth-service";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
 
 export interface SKUClassGroupItem {
   Id?: number;

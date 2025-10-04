@@ -131,7 +131,7 @@ export default function ClassManagementPage() {
       // Use the SelectAllSKUClassDetails endpoint
       const response = await fetch(
         `${
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+          process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
         }/SKUClass/SelectAllSKUClassDetails`,
         {
           method: "POST",
@@ -166,7 +166,7 @@ export default function ClassManagementPage() {
       // Fallback: Try to get classes from SKUClassGroups
       const groupsResponse = await fetch(
         `${
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+          process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
         }/SKUClassGroup/SelectAllSKUClassGroupDetails`,
         {
           method: "POST",
@@ -199,7 +199,7 @@ export default function ClassManagementPage() {
             try {
               const classResponse = await fetch(
                 `${
-                  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+                  process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
                 }/SKUClass/GetSKUClassByUID?UID=${uid}`,
                 {
                   method: "GET",
@@ -232,7 +232,7 @@ export default function ClassManagementPage() {
                 const classResponse = await fetch(
                   `${
                     process.env.NEXT_PUBLIC_API_URL ||
-                    "http://localhost:8000/api"
+                    "https://multiplex-promotions-api.winitsoftware.com/api"
                   }/SKUClass/GetSKUClassByUID?UID=${uid}`,
                   {
                     method: "GET",
@@ -292,7 +292,7 @@ export default function ClassManagementPage() {
 
       const response = await fetch(
         `${
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+          process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
         }/SKUClass/CreateSKUClass`,
         {
           method: "POST",
@@ -316,7 +316,7 @@ export default function ClassManagementPage() {
 
           const newClassResponse = await fetch(
             `${
-              process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+              process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
             }/SKUClass/GetSKUClassByUID?UID=${uid}`,
             {
               headers: {
@@ -369,7 +369,7 @@ export default function ClassManagementPage() {
 
       const response = await fetch(
         `${
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+          process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
         }/SKUClass/UpdateSKUClass`,
         {
           method: "PUT",
@@ -410,7 +410,7 @@ export default function ClassManagementPage() {
     try {
       const response = await fetch(
         `${
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+          process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
         }/SKUClass/DeleteSKUClass?UID=${selectedClass.UID}`,
         {
           method: "DELETE",

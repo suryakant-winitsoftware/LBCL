@@ -133,32 +133,32 @@ namespace Winit.Modules.Address.DL.Classes
         }
         public async Task<int> CreateAddressDetails(Winit.Modules.Address.Model.Interfaces.IAddress createAddress)
         {
-                 var sql = @"INSERT INTO address (uid, created_by, created_time, modified_by, modified_time, server_add_time, 
-                            server_modified_time, type, name, line1, line2, line3, landmark, area, sub_area, zip_code, city, 
-                            country_code, region_code, phone, phone_extension, mobile1, mobile2, email, fax, latitude, longitude, 
-                            altitude, linked_item_uid, linked_item_type, status, state_code, territory_code, pan, aadhar, ssn, 
-                            is_editable, is_default, line4, info, depot, location_uid, locality, state, branch_uid,  sales_office_uid, org_unit_uid) 
+                 var sql = @"INSERT INTO address (uid, created_by, created_time, modified_by, modified_time, server_add_time,
+                            server_modified_time, type, name, line1, line2, line3, landmark, area, sub_area, zip_code, city,
+                            country_code, region_code, phone, phone_extension, mobile1, mobile2, email, fax, latitude, longitude,
+                            altitude, linked_item_uid, linked_item_type, status, state_code, territory_code, pan, aadhar, ssn,
+                            is_editable, is_default, line4, info, depot, location_uid, locality, state, branch_uid,  sales_office_uid, org_unit_uid)
                             VALUES
-                            (@UID, @CreatedBy, @CreatedTime,@ModifiedBy, @ModifiedTime, @ServerAddTime, @ServerModifiedTime, 
-                            @Type, @Name, @Line1, @Line2, @Line3, @Landmark,@Area, @SubArea, @ZipCode, @City, @CountryCode, 
-                            @RegionCode, @Phone, @PhoneExtension, @Mobile1, @Mobile2, @Email, @Fax, @Latitude, @Longitude, 
-                            @Altitude, @LinkedItemUID, @LinkedItemType, @Status, @StateCode, @TerritoryCode, @PAN, @AADHAR, @SSN, 
+                            (@UID, @CreatedBy, @CreatedTime,@ModifiedBy, @ModifiedTime, @ServerAddTime, @ServerModifiedTime,
+                            @Type, @Name, @Line1, @Line2, @Line3, @Landmark,@Area, @SubArea, @ZipCode, @City, @CountryCode,
+                            @RegionCode, @Phone, @PhoneExtension, @Mobile1, @Mobile2, @Email, @Fax, @Latitude, @Longitude,
+                            @Altitude, @LinkedItemUID, @LinkedItemType, @Status, @StateCode, @TerritoryCode, @PAN, @AADHAR, @SSN,
                             @IsEditable, @IsDefault, @Line4, @Info, @Depot, @LocationUID, @Locality, @State, @BranchUID,  @SalesOfficeUID, @OrgUnitUID);;";
 
             return await ExecuteNonQueryAsync(sql, createAddress);
         }
         public async Task<int> CreateAddressDetailsList(List<Winit.Modules.Address.Model.Interfaces.IAddress> createAddress)
         {
-                 var sql = @"INSERT INTO address (uid, created_by, created_time, modified_by, modified_time, server_add_time, 
-                            server_modified_time, type, name, line1, line2, line3, landmark, area, sub_area, zip_code, city, 
-                            country_code, region_code, phone, phone_extension, mobile1, mobile2, email, fax, latitude, longitude, 
-                            altitude, linked_item_uid, linked_item_type, status, state_code, territory_code, pan, aadhar, ssn, 
-                            is_editable, is_default, line4, info, depot, location_uid, locality, state, branch_uid,  sales_office_uid, org_unit_uid) 
+                 var sql = @"INSERT INTO address (uid, created_by, created_time, modified_by, modified_time, server_add_time,
+                            server_modified_time, type, name, line1, line2, line3, landmark, area, sub_area, zip_code, city,
+                            country_code, region_code, phone, phone_extension, mobile1, mobile2, email, fax, latitude, longitude,
+                            altitude, linked_item_uid, linked_item_type, status, state_code, territory_code, pan, aadhar, ssn,
+                            is_editable, is_default, line4, info, depot, location_uid, locality, state, branch_uid,  sales_office_uid, org_unit_uid)
                             VALUES
-                            (@UID, @CreatedBy, @CreatedTime,@ModifiedBy, @ModifiedTime, @ServerAddTime, @ServerModifiedTime, 
-                            @Type, @Name, @Line1, @Line2, @Line3, @Landmark,@Area, @SubArea, @ZipCode, @City, @CountryCode, 
-                            @RegionCode, @Phone, @PhoneExtension, @Mobile1, @Mobile2, @Email, @Fax, @Latitude, @Longitude, 
-                            @Altitude, @LinkedItemUID, @LinkedItemType, @Status, @StateCode, @TerritoryCode, @PAN, @AADHAR, @SSN, 
+                            (@UID, @CreatedBy, @CreatedTime,@ModifiedBy, @ModifiedTime, @ServerAddTime, @ServerModifiedTime,
+                            @Type, @Name, @Line1, @Line2, @Line3, @Landmark,@Area, @SubArea, @ZipCode, @City, @CountryCode,
+                            @RegionCode, @Phone, @PhoneExtension, @Mobile1, @Mobile2, @Email, @Fax, @Latitude, @Longitude,
+                            @Altitude, @LinkedItemUID, @LinkedItemType, @Status, @StateCode, @TerritoryCode, @PAN, @AADHAR, @SSN,
                             @IsEditable, @IsDefault, @Line4, @Info, @Depot, @LocationUID, @Locality, @State, @BranchUID,  @SalesOfficeUID, @OrgUnitUID);;";
 
             return await ExecuteNonQueryAsync(sql, createAddress);

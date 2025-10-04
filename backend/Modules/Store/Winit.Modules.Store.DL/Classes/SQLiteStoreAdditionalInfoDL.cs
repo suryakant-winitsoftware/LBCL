@@ -168,7 +168,7 @@ namespace Winit.Modules.Store.DL.Classes
             try
             {
 
-                var sql = @"INSERT INTO store_additional_info (uid,created_by,created_time,modified_by,modified_time,server_add_time,server_modified_time,
+                var sql = @"INSERT INTO store_additional_info (id,uid,created_by,created_time,modified_by,modified_time,server_add_time,server_modified_time,
                             store_uid,order_type,is_promotions_block,customer_start_date,customer_end_date,school_warehouse,purchase_order_number,
                             delivery_docket_is_purchase_order_required,is_with_printed_invoices,is_capture_signature_required,is_always_printed,building_delivery_code,
                             delivery_information,is_stop_delivery,is_forecast_top_up_qty,is_temperature_check,invoice_start_date,invoice_end_date,invoice_format,
@@ -181,8 +181,8 @@ namespace Winit.Modules.Store.DL.Classes
                             allow_replacement,is_invoice_cancellation_allowed,is_delivery_note_required,e_invoicing_enabled,image_recognition_enabled,max_outstanding_invoices,
                             negative_invoice_allowed,delivery_mode,store_size,visit_frequency,shipping_contact_same_as_store,billing_address_same_as_shipping,payment_mode,
                             price_type,average_monthly_income,default_bank_uid,account_number,no_of_cash_counters,custom_field1,custom_field2,custom_field3,custom_field4,
-                            custom_field5,custom_field6,custom_field7, custom_field8,custom_field9,custom_field10,aging_cycle,depot) 
-                        VALUES (@UID , @CreatedBy , @CreatedTime , @ModifiedBy , @ModifiedTime , @ServerAddTime , @ServerModifiedTime , @StoreUID , @OrderType , @IsPromotionsBlock , 
+                            custom_field5,custom_field6,custom_field7, custom_field8,custom_field9,custom_field10,aging_cycle,depot)
+                        VALUES (@Id, @UID , @CreatedBy , @CreatedTime , @ModifiedBy , @ModifiedTime , @ServerAddTime , @ServerModifiedTime , @StoreUID , @OrderType , @IsPromotionsBlock , 
                             @CustomerStartDate , @CustomerEndDate , @SchoolWarehouse , @PurchaseOrderNumber , @DeliveryDocketIsPurchaseOrderRequired , @IsWithPrintedInvoices , 
                             @IsCaptureSignatureRequired , @IsAlwaysPrinted , @BuildingDeliveryCode , @DeliveryInformation , @IsStopDelivery , @IsForeCastTopUpQty , @IsTemperatureCheck , 
                             @InvoiceStartDate , @InvoiceEndDate , @InvoiceFormat , @InvoiceDeliveryMethod , @DisplayDeliveryDocket , @DisplayPrice , @ShowCustPO , @InvoiceText , 
@@ -198,6 +198,7 @@ namespace Winit.Modules.Store.DL.Classes
 
                 Dictionary<string, object?> parameters = new Dictionary<string, object?>
                 {
+                    {"Id",storeAdditionalInfo.Id},
                     {"UID",storeAdditionalInfo.UID},
                     {"CreatedBy",storeAdditionalInfo.CreatedBy},
                     {"CreatedTime",storeAdditionalInfo.CreatedTime},

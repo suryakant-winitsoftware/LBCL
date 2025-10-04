@@ -81,11 +81,14 @@ namespace Winit.Modules.Distributor.BL.Classes
                 count += await _storeCreditDL.UpdateStoreCredit(distributorMasterView.StoreCredit);
 
             //Address
-            var Address = await _addressBL.GetAddressDetailsByUID(distributorMasterView.Address.UID);
-            if (Address == null)
-                count += await _addressBL.CreateAddressDetails(distributorMasterView.Address);
-            else
-                count += await _addressBL.UpdateAddressDetails(distributorMasterView.Address);
+            if (distributorMasterView.Address != null)
+            {
+                var Address = await _addressBL.GetAddressDetailsByUID(distributorMasterView.Address.UID);
+                if (Address == null)
+                    count += await _addressBL.CreateAddressDetails(distributorMasterView.Address);
+                else
+                    count += await _addressBL.UpdateAddressDetails(distributorMasterView.Address);
+            }
 
             int count1 = 0, count2 = 0, count3 = 0;
 
@@ -113,11 +116,14 @@ namespace Winit.Modules.Distributor.BL.Classes
                 count2 += isExist ? await _storeDocumentBL.UpdateStoreDocumentDetails(document) : await _storeDocumentBL.CreateStoreDocumentDetails(document);
             }
             //Currency
-            var CurrencyList = await _currencyDL.GetOrgCurrencyListByOrgUID(distributorMasterView?.Org?.UID);
-            foreach (var item in distributorMasterView.OrgCurrencyList)
+            if (distributorMasterView.OrgCurrencyList != null && distributorMasterView.OrgCurrencyList.Count > 0)
             {
-                bool isexist = CurrencyList.Any(i => i.UID == item.UID);
-                count3 += isexist ? await _currencyDL.UpdateOrgCurrency(item) : await _currencyDL.CreateOrgCurrency(item);
+                var CurrencyList = await _currencyDL.GetOrgCurrencyListByOrgUID(distributorMasterView?.Org?.UID);
+                foreach (var item in distributorMasterView.OrgCurrencyList)
+                {
+                    bool isexist = CurrencyList.Any(i => i.UID == item.UID);
+                    count3 += isexist ? await _currencyDL.UpdateOrgCurrency(item) : await _currencyDL.CreateOrgCurrency(item);
+                }
             }
             retVal = count + count1 + count2 + count3;
 

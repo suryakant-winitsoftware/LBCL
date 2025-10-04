@@ -152,12 +152,13 @@ namespace Winit.Modules.Org.DL.Classes
         {
             try
             {
-                var sql = @"Insert Into  org (uid, created_by, created_time, modified_by, modified_time, server_add_time, server_modified_time, code, name, is_active, org_type_uid,
-                parent_uid, country_uid, company_uid, tax_group_uid, status, seq_code, has_early_access ) Values(@UID, @CreatedBy, @CreatedTime, @ModifiedBy, @ModifiedTime,
+                var sql = @"Insert Into  org (id, uid, created_by, created_time, modified_by, modified_time, server_add_time, server_modified_time, code, name, is_active, org_type_uid,
+                parent_uid, country_uid, company_uid, tax_group_uid, status, seq_code, has_early_access ) Values(@Id, @UID, @CreatedBy, @CreatedTime, @ModifiedBy, @ModifiedTime,
                     @ServerAddTime, @ServerModifiedTime, @Code, @Name, @IsActive, @OrgTypeUID
                           , @ParentUID, @CountryUID, @CompanyUID, @TaxGroupUID, @Status, @SeqCode, @HasEarlyAccess)";
                 Dictionary<string, object?> parameters = new Dictionary<string, object?>
                 {
+                   {"Id", createOrg.Id},
                    {"UID", createOrg.UID},
                    {"CreatedBy", createOrg.CreatedBy},
                    {"ModifiedBy", createOrg.ModifiedBy},

@@ -9,7 +9,7 @@ namespace Winit.Modules.Base.Model
 {
     public class BaseModel:  Base.Model.IBaseModel
     {
-        public int Id { get; set; }
+        public int Id { get; set; } = 0;
         [AuditTrail]
         public string UID { get; set; }
         public int? SS { get; set; }

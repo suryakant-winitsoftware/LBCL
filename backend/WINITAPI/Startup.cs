@@ -971,6 +971,15 @@ public class Startup
             .AddTransient<Winit.Modules.Location.Model.Interfaces.ILocationTemplateLine,
                 Winit.Modules.Location.Model.Classes.LocationTemplateLine>();
 
+        // Territory
+        _ = services
+            .AddTransient<Winit.Modules.Territory.Model.Interfaces.ITerritory,
+                Winit.Modules.Territory.Model.Classes.Territory>();
+        _ = services.AddDatabaseProvider<Winit.Modules.Territory.DL.Interfaces.ITerritoryDL, Winit.Modules.Territory.DL.Classes.PGSQLTerritoryDL, Winit.Modules.Territory.DL.Classes.MSSQLTerritoryDL>(Configuration);
+        _ = services
+            .AddTransient<Winit.Modules.Territory.BL.Interfaces.ITerritoryBL,
+                Winit.Modules.Territory.BL.Classes.TerritoryBL>();
+
         // Vehicle
         _ = services
             .AddTransient<Winit.Modules.Vehicle.Model.Interfaces.IVehicle,

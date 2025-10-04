@@ -336,30 +336,41 @@ export function EmployeeManagement() {
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Employee Management</h1>
-          <p className="text-muted-foreground">
-            Manage employees, assign roles, and control access permissions
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Button variant="outline" onClick={handleExportAll} disabled={isExporting}>
-            {isExporting ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <Download className="mr-2 h-4 w-4" />
-            )}
-            {isExporting ? 'Exporting...' : 'Export'}
-          </Button>
-          <Button variant="outline">
-            <Upload className="mr-2 h-4 w-4" />
-            Import
-          </Button>
-          <Button onClick={handleCreateEmployee}>
-            <Plus className="mr-2 h-4 w-4" />
-            Add Employee
-          </Button>
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 -mx-6 -mt-6 px-6 py-8 mb-2 border-b border-blue-100 dark:border-blue-900/30">
+        <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+          <div className="space-y-2">
+            <div className="flex items-center gap-3">
+              <div className="h-12 w-12 rounded-xl bg-blue-500 dark:bg-blue-600 flex items-center justify-center shadow-lg">
+                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Employee Management</h1>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  Manage employees, assign roles, and control access permissions
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline" onClick={handleExportAll} disabled={isExporting} className="bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 border-gray-200 dark:border-gray-700">
+              {isExporting ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="mr-2 h-4 w-4" />
+              )}
+              {isExporting ? 'Exporting...' : 'Export'}
+            </Button>
+            <Button variant="outline" className="bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 border-gray-200 dark:border-gray-700">
+              <Upload className="mr-2 h-4 w-4" />
+              Import
+            </Button>
+            <Button onClick={handleCreateEmployee} className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg transition-shadow">
+              <Plus className="mr-2 h-4 w-4" />
+              Add Employee
+            </Button>
+          </div>
         </div>
       </div>
 

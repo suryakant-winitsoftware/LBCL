@@ -65,12 +65,13 @@ namespace Winit.Modules.Distributor.DL.Classes
 			   											sa.customer_start_date as OpenAccountDate
                                                     FROM
                                                         org o
-                                                    Left JOIN
-                                                        store s ON o.code = s.code AND o.org_type_uid = 'FR'
-                                                    inner JOIN
+                                                    INNER JOIN
+                                                        store s ON o.code = s.code
+                                                    LEFT JOIN
                                                         store_additional_info sa ON sa.store_uid = s.uid
                                                     LEFT JOIN
-                                                        contact c ON s.uid = c.linked_item_uid AND c.is_default = 1) as SubQuery ");
+                                                        contact c ON s.uid = c.linked_item_uid AND c.is_default = 1
+                                                    WHERE o.org_type_uid = 'FR') as SubQuery ");
                 var sqlCount = new StringBuilder();
                 if (isCountRequired)
                 {
@@ -86,11 +87,12 @@ namespace Winit.Modules.Distributor.DL.Classes
                                                         FROM
                                                             org o
                                                         INNER JOIN
-                                                            store s ON o.code = s.code AND o.org_type_uid = 'FR'
+                                                            store s ON o.code = s.code
                                                         LEFT JOIN
                                                             store_additional_info sa ON sa.store_uid = s.uid
                                                         LEFT JOIN
-                                                            contact c ON s.uid = c.linked_item_uid AND c.is_default = 1) as SubQuery");
+                                                            contact c ON s.uid = c.linked_item_uid AND c.is_default = 1
+                                                        WHERE o.org_type_uid = 'FR') as SubQuery");
                 }
                 var parameters = new Dictionary<string, object>();
 
@@ -119,7 +121,7 @@ namespace Winit.Modules.Distributor.DL.Classes
                     }
                     else
                     {
-                        sql.Append($" ORDER BY Id OFFSET {(pageNumber - 1) * pageSize} ROWS FETCH NEXT {pageSize} ROWS ONLY");
+                        sql.Append($" ORDER BY UID OFFSET {(pageNumber - 1) * pageSize} ROWS FETCH NEXT {pageSize} ROWS ONLY");
                     }
                 }
                IEnumerable<Winit.Modules.Distributor.Model.Interfaces.IDistributor> distributors = await ExecuteQueryAsync<Winit.Modules.Distributor.Model.Interfaces.IDistributor>(sql.ToString(), parameters);
@@ -244,15 +246,15 @@ namespace Winit.Modules.Distributor.DL.Classes
             int retVal = -1;
             try
             {
-                var sql = @"INSERT INTO contact (uid, created_by, created_time, modified_by, modified_time, server_add_time, 
-                server_modified_time, title, name, phone, phone_extension, description, designation, 
-                mobile, email, email2, email3, invoice_for_email1, invoice_for_email2, invoice_for_email3, 
-                fax, linked_item_uid, linked_item_type, is_default, is_editable, enabled_for_invoice_email, 
-                enabled_for_docket_email, enabled_for_promo_email, is_email_cc, mobile2) 
-                VALUES (@UID, @CreatedBy, @CreatedTime, @ModifiedBy, @ModifiedTime, @ServerAddTime, @ServerModifiedTime, 
-                @Title, @Name, @Phone, @PhoneExtension, @Description, @Designation, @Mobile, @Email, @Email2, 
-                @Email3, @InvoiceForEmail1, @InvoiceForEmail2, @InvoiceForEmail3, @Fax, @LinkedItemUID, 
-                @LinkedItemType, @IsDefault, @IsEditable, @EnabledForInvoiceEmail, @EnabledForDocketEmail, 
+                var sql = @"INSERT INTO contact (id, uid, created_by, created_time, modified_by, modified_time, server_add_time,
+                server_modified_time, title, name, phone, phone_extension, description, designation,
+                mobile, email, email2, email3, invoice_for_email1, invoice_for_email2, invoice_for_email3,
+                fax, linked_item_uid, linked_item_type, is_default, is_editable, enabled_for_invoice_email,
+                enabled_for_docket_email, enabled_for_promo_email, is_email_cc, mobile2)
+                VALUES (@Id, @UID, @CreatedBy, @CreatedTime, @ModifiedBy, @ModifiedTime, @ServerAddTime, @ServerModifiedTime,
+                @Title, @Name, @Phone, @PhoneExtension, @Description, @Designation, @Mobile, @Email, @Email2,
+                @Email3, @InvoiceForEmail1, @InvoiceForEmail2, @InvoiceForEmail3, @Fax, @LinkedItemUID,
+                @LinkedItemType, @IsDefault, @IsEditable, @EnabledForInvoiceEmail, @EnabledForDocketEmail,
                 @EnabledForPromoEmail, @IsEmailCC, @Mobile2);";
                 retVal= await ExecuteNonQueryAsync(sql, Contacts);
             }
@@ -310,10 +312,10 @@ namespace Winit.Modules.Distributor.DL.Classes
             try
             {
                 
-                var sql = @"insert into store_document (uid, created_by, created_time, modified_by, modified_time, server_add_time, 
+                var sql = @"insert into store_document (id, uid, created_by, created_time, modified_by, modified_time, server_add_time,
                         server_modified_time, store_uid, document_type, document_no, valid_from, valid_up_to)
-                        values 
-                        (@UID, @CreatedBy, @CreatedTime, @ModifiedBy, @ModifiedTime, @ServerAddTime, @ServerModifiedTime, @StoreUID, 
+                        values
+                        (@Id, @UID, @CreatedBy, @CreatedTime, @ModifiedBy, @ModifiedTime, @ServerAddTime, @ServerModifiedTime, @StoreUID,
                         @DocumentType, @DocumentNo, @ValidFrom, @ValidUpTo);";
                 retVal= await ExecuteNonQueryAsync(sql, storeDocuments);
             }

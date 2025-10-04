@@ -58,6 +58,6 @@ namespace Winit.Modules.Store.Model.Classes
         public int CreditDays { get; set; }
         public int TemporaryCreditDays { get; set; }
         public string DivisionOrgUID { get; set; }
-        public DateTime TemporaryCreditApprovalDate { get; set; }
+        public DateTime? TemporaryCreditApprovalDate { get; set; }
     }
 }

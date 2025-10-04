@@ -16305,3 +16305,36 @@ Error Number:102,State:1,Class:15
 2025-10-04 14:25:32.161 [INF] Executed action WINITAPI.Controllers.Role.RoleController.GetModulesMasterByPlatForm (WINITAPI) in 58.8857ms
 2025-10-04 14:25:32.161 [INF] Executed endpoint 'WINITAPI.Controllers.Role.RoleController.GetModulesMasterByPlatForm (WINITAPI)'
 2025-10-04 14:25:32.161 [INF] Request finished HTTP/1.1 GET http://localhost:8000/api/Role/GetModulesMasterByPlatForm?Platform=Web - 200 108342 application/json; charset=utf-8 64.6133ms
+2025-10-04 14:31:38.372 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:8000/api/PurchaseOrder/GetPurchaseOrderHeaders - null null
+2025-10-04 14:31:38.376 [INF] CORS policy execution successful.
+2025-10-04 14:31:38.383 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:8000/api/PurchaseOrder/GetPurchaseOrderHeaders - 204 null null 11.216ms
+2025-10-04 14:31:38.383 [INF] Request starting HTTP/1.1 POST http://localhost:8000/api/PurchaseOrder/GetPurchaseOrderHeaders - application/json 74
+2025-10-04 14:31:38.385 [INF] CORS policy execution successful.
+2025-10-04 14:31:38.450 [INF] Executing endpoint 'WINITAPI.Controllers.PurchaseOrder.PurchaseOrderController.GetPurchaseOrderHeadersAsync (WINITAPI)'
+2025-10-04 14:31:38.495 [INF] Route matched with {action = "GetPurchaseOrderHeaders", controller = "PurchaseOrder"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult] GetPurchaseOrderHeadersAsync(Winit.Shared.Models.Common.PagingRequest) on controller WINITAPI.Controllers.PurchaseOrder.PurchaseOrderController (WINITAPI).
+2025-10-04 14:31:38.611 [INF] Executing OkObjectResult, writing value of type 'Winit.Shared.Models.Common.ApiResponse`1[[Winit.Shared.Models.Common.PagedResponse`1[[Winit.Modules.PurchaseOrder.Model.Interfaces.IPurchaseOrderHeaderItem, Winit.Modules.PurchaseOrder.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], Winit.Shared.Models, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-10-04 14:31:38.615 [INF] Executed action WINITAPI.Controllers.PurchaseOrder.PurchaseOrderController.GetPurchaseOrderHeadersAsync (WINITAPI) in 119.9664ms
+2025-10-04 14:31:38.615 [INF] Executed endpoint 'WINITAPI.Controllers.PurchaseOrder.PurchaseOrderController.GetPurchaseOrderHeadersAsync (WINITAPI)'
+2025-10-04 14:31:38.615 [INF] Request finished HTTP/1.1 POST http://localhost:8000/api/PurchaseOrder/GetPurchaseOrderHeaders - 200 74 application/json; charset=utf-8 231.7261ms
+2025-10-04 14:31:46.198 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:8000/api/PurchaseOrder/GetPurchaseOrderHeaders - null null
+2025-10-04 14:31:46.199 [INF] CORS policy execution successful.
+2025-10-04 14:31:46.199 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:8000/api/PurchaseOrder/GetPurchaseOrderHeaders - 204 null null 0.988ms
+2025-10-04 14:31:46.200 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:8000/api/PurchaseOrder/GetPurchaseOrderHeaders - null null
+2025-10-04 14:31:46.200 [INF] CORS policy execution successful.
+2025-10-04 14:31:46.201 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:8000/api/PurchaseOrder/GetPurchaseOrderHeaders - 204 null null 0.396ms
+2025-10-04 14:31:46.201 [INF] Request starting HTTP/1.1 POST http://localhost:8000/api/PurchaseOrder/GetPurchaseOrderHeaders - application/json 74
+2025-10-04 14:31:46.201 [INF] CORS policy execution successful.
+2025-10-04 14:31:46.202 [INF] Executing endpoint 'WINITAPI.Controllers.PurchaseOrder.PurchaseOrderController.GetPurchaseOrderHeadersAsync (WINITAPI)'
+2025-10-04 14:31:46.202 [INF] Route matched with {action = "GetPurchaseOrderHeaders", controller = "PurchaseOrder"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult] GetPurchaseOrderHeadersAsync(Winit.Shared.Models.Common.PagingRequest) on controller WINITAPI.Controllers.PurchaseOrder.PurchaseOrderController (WINITAPI).
+2025-10-04 14:31:46.204 [INF] Request starting HTTP/1.1 POST http://localhost:8000/api/PurchaseOrder/GetPurchaseOrderHeaders - application/json 74
+2025-10-04 14:31:46.205 [INF] CORS policy execution successful.
+2025-10-04 14:31:46.205 [INF] Executing endpoint 'WINITAPI.Controllers.PurchaseOrder.PurchaseOrderController.GetPurchaseOrderHeadersAsync (WINITAPI)'
+2025-10-04 14:31:46.205 [INF] Route matched with {action = "GetPurchaseOrderHeaders", controller = "PurchaseOrder"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.ActionResult] GetPurchaseOrderHeadersAsync(Winit.Shared.Models.Common.PagingRequest) on controller WINITAPI.Controllers.PurchaseOrder.PurchaseOrderController (WINITAPI).
+2025-10-04 14:31:46.233 [INF] Executing OkObjectResult, writing value of type 'Winit.Shared.Models.Common.ApiResponse`1[[Winit.Shared.Models.Common.PagedResponse`1[[Winit.Modules.PurchaseOrder.Model.Interfaces.IPurchaseOrderHeaderItem, Winit.Modules.PurchaseOrder.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], Winit.Shared.Models, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-10-04 14:31:46.235 [INF] Executing OkObjectResult, writing value of type 'Winit.Shared.Models.Common.ApiResponse`1[[Winit.Shared.Models.Common.PagedResponse`1[[Winit.Modules.PurchaseOrder.Model.Interfaces.IPurchaseOrderHeaderItem, Winit.Modules.PurchaseOrder.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], Winit.Shared.Models, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-10-04 14:31:46.235 [INF] Executed action WINITAPI.Controllers.PurchaseOrder.PurchaseOrderController.GetPurchaseOrderHeadersAsync (WINITAPI) in 29.6945ms
+2025-10-04 14:31:46.235 [INF] Executed endpoint 'WINITAPI.Controllers.PurchaseOrder.PurchaseOrderController.GetPurchaseOrderHeadersAsync (WINITAPI)'
+2025-10-04 14:31:46.235 [INF] Executed action WINITAPI.Controllers.PurchaseOrder.PurchaseOrderController.GetPurchaseOrderHeadersAsync (WINITAPI) in 32.8109ms
+2025-10-04 14:31:46.235 [INF] Request finished HTTP/1.1 POST http://localhost:8000/api/PurchaseOrder/GetPurchaseOrderHeaders - 200 74 application/json; charset=utf-8 31.0342ms
+2025-10-04 14:31:46.235 [INF] Executed endpoint 'WINITAPI.Controllers.PurchaseOrder.PurchaseOrderController.GetPurchaseOrderHeadersAsync (WINITAPI)'
+2025-10-04 14:31:46.238 [INF] Request finished HTTP/1.1 POST http://localhost:8000/api/PurchaseOrder/GetPurchaseOrderHeaders - 200 74 application/json; charset=utf-8 36.4963ms

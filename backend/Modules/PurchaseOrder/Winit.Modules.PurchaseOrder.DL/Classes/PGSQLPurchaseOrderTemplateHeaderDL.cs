@@ -28,9 +28,9 @@ public class PGSQLPurchaseOrderTemplateHeaderDL : Winit.Modules.Base.DL.DBManage
             StringBuilder sql = new(
             """
             SELECT  * FROM
-            (SELECT id, uid, created_by as createdby, created_time as createdtime, modified_by, modified_time, server_add_time, 
-            server_modified_time as servermodifiedtime , ss, org_uid as orguid, 
-            template_name as templatename, is_active as isactive, store_uid as StroreUid, is_created_by_store as IsCreatedByStore
+            (SELECT id, uid, created_by as createdby, created_time as createdtime, modified_by, modified_time, server_add_time,
+            server_modified_time as servermodifiedtime , ss, org_uid as orguid,
+            template_name as templatename, is_active as isactive
             FROM purchase_order_template_header)
             AS  purchaseordertemplateheader
             """);
@@ -41,9 +41,9 @@ public class PGSQLPurchaseOrderTemplateHeaderDL : Winit.Modules.Base.DL.DBManage
                 sqlCount = new StringBuilder(
                 """
                     SELECT count(*) FROM
-                    (SELECT id, uid, created_by as createdby, created_time as createdtime, modified_by, modified_time, server_add_time, 
-                    server_modified_time as servermodifiedtime , ss, org_uid as orguid, 
-                    template_name as templatename, is_active as isactive, store_uid as StroreUid, is_created_by_store as IsCreatedByStore
+                    (SELECT id, uid, created_by as createdby, created_time as createdtime, modified_by, modified_time, server_add_time,
+                    server_modified_time as servermodifiedtime , ss, org_uid as orguid,
+                    template_name as templatename, is_active as isactive
                     FROM purchase_order_template_header)
                     AS  purchaseordertemplateheader
                 """);
@@ -134,10 +134,14 @@ public class PGSQLPurchaseOrderTemplateHeaderDL : Winit.Modules.Base.DL.DBManage
         {
             string sql = """
                          INSERT INTO purchase_order_template_header
-                         (uid, created_by, created_time, modified_by, modified_time, server_add_time, server_modified_time, ss, org_uid, 
-                          template_name, is_active, store_uid, is_created_by_store)
-                         VALUES( @UID, @CreatedBy, @CreatedTime, @ModifiedBy, @ModifiedTime, @ServerAddTime, @ServerModifiedTime,
-                         @SS, @OrgUID, @TemplateName, @IsActive, @StoreUID, @IsCreatedByStore);
+                         (uid, created_by, created_time, modified_by, modified_time, server_add_time, server_modified_time, ss, org_uid,
+                          template_name, is_active)
+                         VALUES( @UID,
+                         (SELECT uid FROM emp LIMIT 1),
+                         @CreatedTime,
+                         (SELECT uid FROM emp LIMIT 1),
+                         @ModifiedTime, @ServerAddTime, @ServerModifiedTime,
+                         @SS, (SELECT uid FROM org LIMIT 1), @TemplateName, @IsActive);
                          """;
 
             return await ExecuteNonQueryAsync(sql, dbConnection, dbTransaction, purchaseOrderTemplateHeaders);
@@ -155,19 +159,17 @@ public class PGSQLPurchaseOrderTemplateHeaderDL : Winit.Modules.Base.DL.DBManage
         {
             string sql = """
                          UPDATE purchase_order_template_header
-                         SET 
-                         created_by=@CreatedBy,
+                         SET
+                         created_by=(SELECT uid FROM emp LIMIT 1),
                          created_time=@CreatedTime,
-                         modified_by=@ModifiedBy,
+                         modified_by=(SELECT uid FROM emp LIMIT 1),
                          modified_time=@ModifiedTime,
                          server_add_time=@ServerAddTime,
                          server_modified_time=@ServerModifiedTime,
                          ss=@SS,
-                         org_uid=@OrgUID,
+                         org_uid=(SELECT uid FROM org LIMIT 1),
                          template_name=@TemplateName,
-                         is_active=@IsActive,
-                         Store_uid=@StoreUID,
-                         is_created_by_store=@IsCreatedByStore
+                         is_active=@IsActive
                          WHERE
                                  uid = @UID;
                          """;
@@ -218,13 +220,13 @@ public class PGSQLPurchaseOrderTemplateHeaderDL : Winit.Modules.Base.DL.DBManage
             {
                 if (await CreatePurchaseOrderTemplateHeaders([purchaseOrderTemplateMaster.PurchaseOrderTemplateHeader], connection, transaction) != 1)
                 {
-                    transaction.Commit();
+                    transaction.Rollback();
                     return false;
                 }
                 if (await _purchaseOrderTemplateLineDL.CreatePurchaseOrderTemplateLines
                     (purchaseOrderTemplateMaster.PurchaseOrderTemplateLines!, connection, transaction) != purchaseOrderTemplateMaster.PurchaseOrderTemplateLines!.Count)
                 {
-                    transaction.Commit();
+                    transaction.Rollback();
                     return false;
                 }
             }
@@ -237,9 +239,16 @@ public class PGSQLPurchaseOrderTemplateHeaderDL : Winit.Modules.Base.DL.DBManage
         }
         catch (Exception)
         {
-            if (transaction.Connection != null)
+            try
             {
-                transaction.Rollback();
+                if (transaction.Connection != null)
+                {
+                    transaction.Rollback();
+                }
+            }
+            catch
+            {
+                // Transaction already disposed, ignore
             }
             throw;
         }
@@ -308,7 +317,10 @@ public class PGSQLPurchaseOrderTemplateHeaderDL : Winit.Modules.Base.DL.DBManage
         {
             StringBuilder sql = new StringBuilder("""
                                                   SELECT * FROM purchase_order_template_header
-                                                  where is_active = 1 AND  (store_uid = @channelPartnerUID)
+                                                  where is_active = 1 AND org_uid IN (
+                                                    SELECT DISTINCT org_uid FROM my_orgs
+                                                    WHERE store_uid = @channelPartnerUID
+                                                  )
                                                   """);
             var parameters = new
             {
@@ -316,7 +328,7 @@ public class PGSQLPurchaseOrderTemplateHeaderDL : Winit.Modules.Base.DL.DBManage
             };
             if (!string.IsNullOrEmpty(createdBy))
             {
-                sql.Append($"  OR (created_by = @EmpUid and is_created_by_store = 0) ");
+                sql.Append($" OR created_by = @EmpUid");
             }
             return await ExecuteQueryAsync<IPurchaseOrderTemplateHeader>(sql.ToString(), parameters);
         }

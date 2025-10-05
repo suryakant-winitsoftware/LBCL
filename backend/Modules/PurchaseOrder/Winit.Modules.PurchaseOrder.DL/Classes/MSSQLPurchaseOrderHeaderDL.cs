@@ -598,7 +598,7 @@ public class MSSQLPurchaseOrderHeaderDL : Winit.Modules.Base.DL.DBManager.SqlSer
                 if (pagedResponse != null && pagedResponse.PagedData != null && pagedResponse.PagedData.Any())
                 {
                     _ = await _purchaseOrderLineProvisionDL.DeletePurchaseOrderLineProvisionsByPurchaseOrderLineUids(
-                    purchaseOrderMasters.SelectMany(e => e.PurchaseOrderLines.Select(item => item.UID))
+                    purchaseOrderMasters.SelectMany(e => e.PurchaseOrderLines!.Select(item => item.UID))
                         .ToList(), connection, transaction);
                     _ = await _purchaseOrderLineDL.DeletePurchaseOrderLinesByPurchaseOrderHeaderUID(
                     pagedResponse.PagedData.First().UID, connection, transaction);
@@ -611,7 +611,7 @@ public class MSSQLPurchaseOrderHeaderDL : Winit.Modules.Base.DL.DBManager.SqlSer
             }
             if (purchaseOrderMasters.First().ActionType == ActionType.Update)
             {
-                int purchaseOrderHeaderUpdateCount = await UpdatePurchaseOrderHeader([purchaseOrderMasters.First().PurchaseOrderHeader], connection,
+                int purchaseOrderHeaderUpdateCount = await UpdatePurchaseOrderHeader([purchaseOrderMasters.First().PurchaseOrderHeader!], connection,
                 transaction);
                 if (purchaseOrderHeaderUpdateCount != 1)
                 {
@@ -649,7 +649,7 @@ public class MSSQLPurchaseOrderHeaderDL : Winit.Modules.Base.DL.DBManager.SqlSer
                     List<string>? existingPurchaseOrderLineProvisionsUids = await _purchaseOrderLineProvisionDL.GetPurchaseOrderLineProvisionUidsByPurchaseOrderUID(
                     purchaseOrderMasters.First().PurchaseOrderHeader!.UID, connection,
                     transaction);
-                    var purchaseOrderLineProvisionsForupdate = purchaseOrderMasters.First().PurchaseOrderLineProvisions.FindAll(e => existingPurchaseOrderLineProvisionsUids.Contains(e.UID));
+                    var purchaseOrderLineProvisionsForupdate = purchaseOrderMasters.First().PurchaseOrderLineProvisions!.FindAll(e => existingPurchaseOrderLineProvisionsUids!.Contains(e.UID));
 
                     var purchaseOrderLinesProvisionForDelete = existingPurchaseOrderLineProvisionsUids?.
                         Where(p => !purchaseOrderMasters.First().PurchaseOrderLineProvisions.Select(q => q.UID).ToList().Contains(p)).ToList();
@@ -661,23 +661,23 @@ public class MSSQLPurchaseOrderHeaderDL : Winit.Modules.Base.DL.DBManager.SqlSer
                     {
                         _ = await _purchaseOrderLineProvisionDL.UpdatePurchaseOrderLineProvisions(purchaseOrderLineProvisionsForupdate, connection, transaction);
                     }
-                    var purchaseOrderLineProvisionsForAdd = purchaseOrderMasters.First().PurchaseOrderLineProvisions.FindAll(e => !existingPurchaseOrderLineProvisionsUids.Contains(e.UID));
+                    var purchaseOrderLineProvisionsForAdd = purchaseOrderMasters.First().PurchaseOrderLineProvisions!.FindAll(e => !existingPurchaseOrderLineProvisionsUids!.Contains(e.UID));
                     if (purchaseOrderLineProvisionsForAdd != null && purchaseOrderLineProvisionsForAdd.Any())
                     {
                         _ = await _purchaseOrderLineProvisionDL.CreatePurchaseOrderLineProvisions(purchaseOrderLineProvisionsForAdd, connection, transaction);
                     }
                 }
                 transaction.Commit();
-                if (purchaseOrderMasters.First().PurchaseOrderHeader.Status == PurchaseOrderStatusConst.Draft) return true;
-                if (await _approvalEngineHelper.UpdateApprovalStatus(purchaseOrderMasters.First().ApprovalStatusUpdate))
+                if (purchaseOrderMasters.First().PurchaseOrderHeader!.Status == PurchaseOrderStatusConst.Draft) return true;
+                if (await _approvalEngineHelper.UpdateApprovalStatus(purchaseOrderMasters.First().ApprovalStatusUpdate!))
                 {
-                    if (purchaseOrderMasters.First().ApprovalStatusUpdate.IsFinalApproval)
+                    if (purchaseOrderMasters.First().ApprovalStatusUpdate!.IsFinalApproval)
                     {
-                        purchaseOrderMasters.First().PurchaseOrderHeader.Status = PurchaseOrderStatusConst.InProcessERP;
-                        purchaseOrderMasters.First().PurchaseOrderHeader.OracleOrderStatus = PurchaseOrderErpStatusConst.InProcess;
-                        purchaseOrderMasters.First().PurchaseOrderHeader.App6Date = DateTime.Now;
-                        purchaseOrderMasters.First().PurchaseOrderHeader.App6EmpUID = purchaseOrderMasters.First().PurchaseOrderHeader.ModifiedBy;
-                        await UpdatePurchaseOrderHeader([purchaseOrderMasters.First().PurchaseOrderHeader]);
+                        purchaseOrderMasters.First().PurchaseOrderHeader!.Status = PurchaseOrderStatusConst.InProcessERP;
+                        purchaseOrderMasters.First().PurchaseOrderHeader!.OracleOrderStatus = PurchaseOrderErpStatusConst.InProcess;
+                        purchaseOrderMasters.First().PurchaseOrderHeader!.App6Date = DateTime.Now;
+                        purchaseOrderMasters.First().PurchaseOrderHeader!.App6EmpUID = purchaseOrderMasters.First().PurchaseOrderHeader!.ModifiedBy;
+                        await UpdatePurchaseOrderHeader([purchaseOrderMasters.First().PurchaseOrderHeader!]);
                         return true;
                     }
                     else
@@ -694,11 +694,11 @@ public class MSSQLPurchaseOrderHeaderDL : Winit.Modules.Base.DL.DBManager.SqlSer
             {
                 foreach (IPurchaseOrderMaster purchaseOrder in purchaseOrderMasters)
                 {
-                    if (!string.IsNullOrEmpty(purchaseOrder.PurchaseOrderHeader.OrderNumber))
+                    if (!string.IsNullOrEmpty(purchaseOrder.PurchaseOrderHeader!.OrderNumber))
                     {
-                        purchaseOrder.PurchaseOrderHeader.DraftOrderNumber = null;
+                        purchaseOrder.PurchaseOrderHeader!.DraftOrderNumber = null;
                     }
-                    if (await CreatePurchaseOrderHeaders([purchaseOrder.PurchaseOrderHeader], connection, transaction) != 1)
+                    if (await CreatePurchaseOrderHeaders([purchaseOrder.PurchaseOrderHeader!], connection, transaction) != 1)
                     {
                         transaction.Rollback();
                         return false;
@@ -720,11 +720,11 @@ public class MSSQLPurchaseOrderHeaderDL : Winit.Modules.Base.DL.DBManager.SqlSer
 
                 foreach (IPurchaseOrderMaster purchaseOrder in purchaseOrderMasters)
                 {
-                    if (purchaseOrder.PurchaseOrderHeader.Status == PurchaseOrderStatusConst.Draft) continue;
-                    purchaseOrder.ApprovalRequestItem.HierarchyUid = purchaseOrder.PurchaseOrderHeader.ReportingEmpUID;
-                    await CreateApprovalRequest(purchaseOrder.PurchaseOrderHeader.UID, purchaseOrder.ApprovalRequestItem);
-                    purchaseOrder.PurchaseOrderHeader.IsApprovalCreated = true;
-                    await UpdatePurchaseOrderHeader([purchaseOrder.PurchaseOrderHeader]);
+                    if (purchaseOrder.PurchaseOrderHeader!.Status == PurchaseOrderStatusConst.Draft) continue;
+                    purchaseOrder.ApprovalRequestItem!.HierarchyUid = purchaseOrder.PurchaseOrderHeader!.ReportingEmpUID;
+                    await CreateApprovalRequest(purchaseOrder.PurchaseOrderHeader!.UID, purchaseOrder.ApprovalRequestItem!);
+                    purchaseOrder.PurchaseOrderHeader!.IsApprovalCreated = true;
+                    await UpdatePurchaseOrderHeader([purchaseOrder.PurchaseOrderHeader!]);
                 }
                 return true;
             }
@@ -825,7 +825,7 @@ public class MSSQLPurchaseOrderHeaderDL : Winit.Modules.Base.DL.DBManager.SqlSer
             return await Query(async (e) => (await e.QueryAsync(sql.ToString(), parameters)).ToDictionary(
             row => (string)row.status,
             row => (int)row.count
-            ));
+            )) ?? new Dictionary<string, int>();
         }
         catch (Exception)
         {
@@ -950,7 +950,7 @@ public class MSSQLPurchaseOrderHeaderDL : Winit.Modules.Base.DL.DBManager.SqlSer
             ApprovalApiResponse<ApprovalStatus> approvalRequestCreated = await _approvalEngineHelper.CreateApprovalRequest(approvalRequestItem, approvalRequest);
             return approvalRequestCreated.Success;
         }
-        catch (Exception e)
+        catch (Exception)
         {
             throw;
         }

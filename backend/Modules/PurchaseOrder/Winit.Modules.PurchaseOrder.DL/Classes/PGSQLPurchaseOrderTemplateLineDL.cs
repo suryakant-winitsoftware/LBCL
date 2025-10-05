@@ -102,7 +102,7 @@ public class PGSQLPurchaseOrderTemplateLineDL : Winit.Modules.Base.DL.DBManager.
                          INSERT INTO purchase_order_template_line
                          (uid, created_by, created_time, modified_by, modified_time, server_add_time, server_modified_time,
                          ss, purchase_order_template_header_uid, line_number, sku_uid, sku_code, uom, qty)
-                         VALUES( @UID, @CreatedBy, @CreatedTime, @ModifiedBy, @ModifiedTime, @ServerAddTime, @ServerModifiedTime,
+                         VALUES( @UID, (SELECT uid FROM emp LIMIT 1), @CreatedTime, (SELECT uid FROM emp LIMIT 1), @ModifiedTime, @ServerAddTime, @ServerModifiedTime,
                          @SS, @PurchaseOrderTemplateHeaderUID, @LineNumber, @SKUUID, @SKUCode, @UOM, @Qty);
                          """;
 
@@ -122,10 +122,10 @@ public class PGSQLPurchaseOrderTemplateLineDL : Winit.Modules.Base.DL.DBManager.
         {
             string sql = """
                          UPDATE purchase_order_template_line
-                         SET 
-                         created_by=@CreatedBy,
+                         SET
+                         created_by=(SELECT uid FROM emp LIMIT 1),
                          created_time=@CreatedTime,
-                         modified_by=@ModifiedBy,
+                         modified_by=(SELECT uid FROM emp LIMIT 1),
                          modified_time=@ModifiedTime,
                          server_add_time=@ServerAddTime,
                          server_modified_time=@ServerModifiedTime,
@@ -133,8 +133,8 @@ public class PGSQLPurchaseOrderTemplateLineDL : Winit.Modules.Base.DL.DBManager.
                          purchase_order_template_header_uid= @PurchaseOrderTemplateHeaderUID,
                          line_number=@LineNumber,
                          sku_uid=@SKUUID,
-                         sku_code=@SKUCode, 
-                         uom=@UOM, 
+                         sku_code=@SKUCode,
+                         uom=@UOM,
                          qty=@Qty
                          WHERE
                          uid = @UID;

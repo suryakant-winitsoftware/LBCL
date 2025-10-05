@@ -5,7 +5,7 @@ import { Search, Calendar, ArrowLeft, Home } from 'lucide-react'
 import { Button } from '../../../components/ui/button'
 import ProductSelectionModal from './ProductSelectionModal'
 import purchaseOrderService from '../../../services/purchaseOrder'
-import organizationService from '../../../services/organization'
+import { organizationService } from '../../../services/organizationService'
 
 const AddPurchaseOrder = () => {
   const router = useRouter()
@@ -43,33 +43,39 @@ const AddPurchaseOrder = () => {
       setPlantsLoading(true)
       console.log('🏭 Loading plants from organization service...')
 
-      const response = await organizationService.getOrganizationDropdownOptions()
+      // Fetch organizations using the proper organizationService (same as administration section)
+      const filters = [
+        {
+          Name: "IsActive",
+          Value: true,
+          Type: 0, // Equal
+          FilterType: 0
+        }
+      ]
+
+      const response = await organizationService.getOrganizations(1, 1000, filters)
       console.log('🏭 Organization service response:', response)
 
-      if (response.success && response.organizations) {
-        const plantList = response.organizations.map(org => ({
-          value: org.uid,
-          label: org.name,
-          type: org.type
+      if (response && response.data) {
+        // Filter to show only organizations with ShowInUI = true (same as administration)
+        const visibleOrgs = response.data.filter(org => org.ShowInUI !== false && org.IsActive)
+
+        const plantList = visibleOrgs.map(org => ({
+          value: org.UID,
+          label: org.Name,
+          code: org.Code,
+          type: org.OrgTypeName || 'Organization'
         }))
 
         console.log('🏭 Loaded plants successfully:', plantList)
         setPlants(plantList)
       } else {
-        console.error('❌ Failed to load plants:', response.error || 'No response data')
-        const fallbackPlants = [
-          { value: 'EPIC01', label: 'EPIC01', type: 'Organization' },
-          { value: 'Farmley', label: 'Farmley', type: 'Organization' }
-        ]
-        setPlants(fallbackPlants)
+        console.error('❌ Failed to load plants: No response data')
+        setPlants([])
       }
     } catch (error) {
       console.error('❌ Error loading plants:', error)
-      const fallbackPlants = [
-        { value: 'EPIC01', label: 'EPIC01', type: 'Organization' },
-        { value: 'Farmley', label: 'Farmley', type: 'Organization' }
-      ]
-      setPlants(fallbackPlants)
+      setPlants([])
     } finally {
       setPlantsLoading(false)
     }
@@ -213,7 +219,7 @@ const AddPurchaseOrder = () => {
       // Find the selected plant to get its UID
       const selectedPlant = plants.find(plant => plant.value === orderData.plant)
       const plantUID = selectedPlant ? selectedPlant.value : orderData.plant
-      const plantCode = selectedPlant ? selectedPlant.label : 'PLANT'
+      const plantCode = selectedPlant ? (selectedPlant.code || selectedPlant.label) : 'PLANT'
 
       // Get user and org UIDs from localStorage - backend will handle invalid values
       const userUID = typeof window !== 'undefined' ? localStorage.getItem('userUID') : ''
@@ -226,17 +232,21 @@ const AddPurchaseOrder = () => {
       const currentDate = new Date().toISOString()
 
       // Generate order number based on saveType
-      // Format for DRAFT: PlantCode/ddMMyy/HHmmss
-      // Format for CONFIRMED: DIV-PlantCode/ddMMyy/HHmmss
+      // Format for DRAFT: PLANTCODE-YYYYMMDD-XXX (e.g., LBCL-20250510-001)
+      // Format for CONFIRMED: PO-PLANTCODE-YYYYMMDD-XXX (e.g., PO-LBCL-20250510-001)
       const now = new Date()
-      const dateStr = String(now.getDate()).padStart(2, '0') +
+      const dateStr = String(now.getFullYear()) +
                       String(now.getMonth() + 1).padStart(2, '0') +
-                      String(now.getFullYear()).slice(-2)
-      const timeStr = String(now.getHours()).padStart(2, '0') +
-                      String(now.getMinutes()).padStart(2, '0') +
-                      String(now.getSeconds()).padStart(2, '0')
+                      String(now.getDate()).padStart(2, '0')
 
-      const draftOrderNumber = `${plantCode}/${dateStr}/${timeStr}`
+      // Generate sequence number (3 digits) based on current time for uniqueness
+      // In production, this should come from a database sequence
+      const timeBasedSeq = String(now.getHours()).padStart(2, '0') +
+                           String(now.getMinutes()).padStart(2, '0') +
+                           String(now.getSeconds()).padStart(2, '0')
+      const sequenceNum = timeBasedSeq.slice(-3) // Take last 3 digits
+
+      const draftOrderNumber = `${plantCode}-${dateStr}-${sequenceNum}`
       const orderNumber = saveType === 'confirm' ? `PO-${draftOrderNumber}` : null
 
       console.log('🔢 Generated Order Numbers:', {
@@ -435,7 +445,7 @@ const AddPurchaseOrder = () => {
                 </option>
                 {plants.map((plant) => (
                   <option key={plant.value} value={plant.value}>
-                    {plant.label} ({plant.type})
+                    {plant.label}
                   </option>
                 ))}
               </select>

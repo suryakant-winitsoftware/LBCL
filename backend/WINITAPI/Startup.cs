@@ -753,6 +753,12 @@ public class Startup
         _ = services
             .AddTransient<Winit.Modules.PurchaseOrder.Model.Classes.PurchaseOrderApprovalDTO>();
 
+        // Delivery Loading Tracking
+        _ = services.AddDatabaseProvider<Winit.Modules.PurchaseOrder.DL.Interfaces.IDeliveryLoadingTrackingDL, Winit.Modules.PurchaseOrder.DL.Classes.PGSQLDeliveryLoadingTrackingDL, Winit.Modules.PurchaseOrder.DL.Classes.PGSQLDeliveryLoadingTrackingDL>(Configuration);
+        _ = services
+            .AddTransient<Winit.Modules.PurchaseOrder.Model.Interfaces.IDeliveryLoadingTracking,
+                Winit.Modules.PurchaseOrder.Model.Classes.DeliveryLoadingTracking>();
+
 
         //PurchaseOrderTemplate
         _ = services

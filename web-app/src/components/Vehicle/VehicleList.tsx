@@ -90,6 +90,27 @@ export function VehicleList() {
           typesResult
         )
         setOrgLevels(initialOrgLevels)
+
+        // Auto-select the first organization (Principal) by default
+        if (initialOrgLevels.length > 0 && initialOrgLevels[0].organizations.length > 0) {
+          const firstOrg = initialOrgLevels[0].organizations[0]
+          const { updatedLevels, updatedSelectedOrgs } = handleOrganizationSelection(
+            0,
+            firstOrg.UID,
+            initialOrgLevels,
+            {},
+            activeOrgs,
+            typesResult
+          )
+
+          setOrgLevels(updatedLevels)
+          setSelectedOrgs(updatedSelectedOrgs)
+
+          const finalOrgUID = getFinalSelectedOrganization(updatedSelectedOrgs)
+          if (finalOrgUID) {
+            setSelectedOrgUID(finalOrgUID)
+          }
+        }
       } catch (error) {
         console.error("Error loading organizations:", error)
       }

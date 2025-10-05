@@ -449,13 +449,26 @@ export function CreateVehicle() {
                 <Label htmlFor="model" className="text-sm font-medium">
                   Model <span className="text-red-500">*</span>
                 </Label>
-                <Input
-                  id="model"
+                <Select
                   value={formData.Model || ""}
-                  onChange={(e) => handleInputChange("Model", e.target.value)}
-                  placeholder="e.g., Toyota Hiace"
-                  required
-                />
+                  onValueChange={(value) => handleInputChange("Model", value)}
+                >
+                  <SelectTrigger id="model">
+                    <SelectValue placeholder="Select vehicle model" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Toyota Hiace">Toyota Hiace</SelectItem>
+                    <SelectItem value="Isuzu NQR">Isuzu NQR</SelectItem>
+                    <SelectItem value="Mitsubishi Canter">Mitsubishi Canter</SelectItem>
+                    <SelectItem value="Nissan Urvan">Nissan Urvan</SelectItem>
+                    <SelectItem value="Ford Transit">Ford Transit</SelectItem>
+                    <SelectItem value="Mercedes-Benz Sprinter">Mercedes-Benz Sprinter</SelectItem>
+                    <SelectItem value="Hyundai Porter">Hyundai Porter</SelectItem>
+                    <SelectItem value="Tata 407">Tata 407</SelectItem>
+                    <SelectItem value="Mahindra Bolero">Mahindra Bolero</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
                 <p className="text-xs text-muted-foreground">
                   Vehicle model name
                 </p>
@@ -479,6 +492,7 @@ export function CreateVehicle() {
                     <SelectItem value="Lorry">Lorry</SelectItem>
                     <SelectItem value="Pickup">Pickup</SelectItem>
                     <SelectItem value="Car">Car</SelectItem>
+                    <SelectItem value="Prime Mover">Prime Mover</SelectItem>
                   </SelectContent>
                 </Select>
                 <p className="text-xs text-muted-foreground">

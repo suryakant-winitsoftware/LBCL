@@ -2,11 +2,16 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { AuthProvider } from "./auth-provider";
 import { PermissionProvider } from "./permission-provider";
+import { DeliveryAuthProvider } from "./delivery-auth-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 export function Providers({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const isDeliveryRoute = pathname?.startsWith("/lbcl");
+
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -37,9 +42,17 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <AuthProvider>
-          <PermissionProvider>{children}</PermissionProvider>
-        </AuthProvider>
+        {isDeliveryRoute ? (
+          // Delivery routes use DeliveryAuthProvider
+          <DeliveryAuthProvider>
+            {children}
+          </DeliveryAuthProvider>
+        ) : (
+          // LBCL routes use standard AuthProvider with PermissionProvider
+          <AuthProvider>
+            <PermissionProvider>{children}</PermissionProvider>
+          </AuthProvider>
+        )}
       </TooltipProvider>
     </QueryClientProvider>
   );

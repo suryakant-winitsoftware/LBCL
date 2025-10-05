@@ -17,6 +17,7 @@ namespace Winit.Modules.Org.Model.Interfaces
         public string CountryUID { get; set; }
         public string CompanyUID { get; set; }
         public string TaxGroupUID { get; set; }
+        public string TerritoryUid { get; set; }
         public string Status { get; set; }
         public string SeqCode { get; set; }
         public bool HasEarlyAccess { get; set; }

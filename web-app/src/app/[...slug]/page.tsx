@@ -1,6 +1,7 @@
 "use client"
 
 import { useParams, useRouter } from "next/navigation"
+import { notFound } from "next/navigation"
 import { usePermissions } from "@/providers/permission-provider"
 import { useAuth } from "@/providers/auth-provider"
 import { ProtectedRoute } from "@/components/auth/protected-route"
@@ -9,27 +10,35 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { CanAdd, CanEdit, CanDelete, CanView } from "@/components/auth/permission-guard"
-import { 
-  Plus, 
-  Edit, 
-  Trash2, 
-  Download, 
-  CheckCircle, 
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Download,
+  CheckCircle,
   AlertCircle,
   Search,
   Filter
 } from "lucide-react"
 import { getModuleIcon } from "@/lib/navigation-icons"
+import { useEffect, useState } from "react"
 
 export default function DynamicModulePage() {
   const params = useParams()
   const router = useRouter()
-  const { isAuthenticated, isLoading: authLoading } = useAuth()
-  const { modules, permissions } = usePermissions()
-  
+  const [shouldCheckNotFound, setShouldCheckNotFound] = useState(false)
+
   // Get the slug array and construct the path
   const slugArray = Array.isArray(params.slug) ? params.slug : [params.slug || '']
   const fullPath = slugArray.join('/')
+
+  // Exclude LBCL delivery routes - they have their own separate app
+  if (fullPath.startsWith('lbcl')) {
+    return null
+  }
+
+  const { isAuthenticated, isLoading: authLoading } = useAuth()
+  const { modules, permissions } = usePermissions()
   
   // Handle authentication
   if (authLoading) {
@@ -162,33 +171,20 @@ export default function DynamicModulePage() {
   }
   
   const pageInfo = findPageInHierarchy()
-  
+
+  // Trigger not-found page if no matching page is found
+  useEffect(() => {
+    if (!authLoading && isAuthenticated && !pageInfo) {
+      setShouldCheckNotFound(true)
+    }
+  }, [authLoading, isAuthenticated, pageInfo])
+
+  if (shouldCheckNotFound && !pageInfo) {
+    notFound()
+  }
+
   if (!pageInfo) {
-    return (
-      <div className="p-8">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <AlertCircle className="h-5 w-5 text-red-500" />
-              Page Not Found
-            </CardTitle>
-            <CardDescription>
-              The requested page &quot;{fullPath}&quot; was not found in your accessible modules.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-gray-600">
-              This could be because:
-            </p>
-            <ul className="list-disc list-inside text-sm text-gray-600 mt-2 space-y-1">
-              <li>The page doesn&apos;t exist in the system</li>
-              <li>You don&apos;t have permission to access this page</li>
-              <li>The page path has changed</li>
-            </ul>
-          </CardContent>
-        </Card>
-      </div>
-    )
+    return null
   }
   
   const { type, item, parentModule, parentSubModule } = pageInfo

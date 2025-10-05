@@ -17,6 +17,9 @@ public class PurchaseOrderHeaderItem : IPurchaseOrderHeaderItem
     public DateTime RequestedDeliveryDate { get; set; }
     public DateTime CPEConfirmDateTime { get; set; }
     public decimal NetAmount { get; set; }
+    public decimal QtyCount { get; set; }
+    public int LineCount { get; set; }
+    public decimal TotalAmount { get; set; }
     public string Status { get; set; }
     public string ERPStatus { get; set; }
     public int SerialNumber { get; set; }

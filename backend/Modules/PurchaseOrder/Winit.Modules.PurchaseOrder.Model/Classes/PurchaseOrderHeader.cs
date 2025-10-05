@@ -71,4 +71,7 @@ public class PurchaseOrderHeader : BaseModel, IPurchaseOrderHeader
     public decimal TotalCancelledQty { get; set; }
     public string? OracleOrderStatus { get; set; }
     public bool IsApprovalCreated { get; set; }
+    public string? OrgName { get; set; }
+    public string? OrgCode { get; set; }
+    public string? WarehouseName { get; set; }
 }

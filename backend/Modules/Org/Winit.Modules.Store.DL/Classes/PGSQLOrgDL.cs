@@ -32,7 +32,7 @@ namespace Winit.Modules.Org.DL.Classes
         {
             try
             {
-                var sql = new StringBuilder(@"SELECT * FROM   
+                var sql = new StringBuilder(@"SELECT * FROM
                                         (SELECT id AS Id,
                                         uid AS UID,
                                         created_by AS CreatedBy,
@@ -49,6 +49,7 @@ namespace Winit.Modules.Org.DL.Classes
                                         country_uid AS CountryUID,
                                         company_uid AS CompanyUID,
                                         tax_group_uid AS TaxGroupUID,
+                                        territory_uid AS TerritoryUid,
                                         status AS Status,
                                         seq_code AS SeqCode,
                                         has_early_access AS HasEarlyAccess,
@@ -75,6 +76,7 @@ namespace Winit.Modules.Org.DL.Classes
                                         country_uid AS CountryUID,
                                         company_uid AS CompanyUID,
                                         tax_group_uid AS TaxGroupUID,
+                                        territory_uid AS TerritoryUid,
                                         status AS Status,
                                         seq_code AS SeqCode,
                                         has_early_access AS HasEarlyAccess,
@@ -148,6 +150,7 @@ namespace Winit.Modules.Org.DL.Classes
                                         country_uid AS CountryUID,
                                         company_uid AS CompanyUID,
                                         tax_group_uid AS TaxGroupUID,
+                                        territory_uid AS TerritoryUid,
                                         status AS Status,
                                         seq_code AS SeqCode,
                                         has_early_access AS HasEarlyAccess,
@@ -164,8 +167,8 @@ namespace Winit.Modules.Org.DL.Classes
         {
             try
             {
-                var sql = @"INSERT INTO org (id, uid, created_by, created_time, modified_by, modified_time, server_add_time, server_modified_time, code, name, is_active, org_type_uid, parent_uid, country_uid, company_uid, tax_group_uid, status, seq_code, has_early_access, show_in_ui, show_in_template)
-                            VALUES (@Id, @UID, @CreatedBy, @CreatedTime, @ModifiedBy, @ModifiedTime, @ServerAddTime, @ServerModifiedTime, @Code, @Name, @IsActive, @OrgTypeUID, @ParentUID, @CountryUID, @CompanyUID, @TaxGroupUID, @Status, @SeqCode, @HasEarlyAccess, @ShowInUI, @ShowInTemplate);";
+                var sql = @"INSERT INTO org (id, uid, created_by, created_time, modified_by, modified_time, server_add_time, server_modified_time, code, name, is_active, org_type_uid, parent_uid, country_uid, company_uid, tax_group_uid, territory_uid, status, seq_code, has_early_access, show_in_ui, show_in_template)
+                            VALUES (@Id, @UID, @CreatedBy, @CreatedTime, @ModifiedBy, @ModifiedTime, @ServerAddTime, @ServerModifiedTime, @Code, @Name, @IsActive, @OrgTypeUID, @ParentUID, @CountryUID, @CompanyUID, @TaxGroupUID, @TerritoryUID, @Status, @SeqCode, @HasEarlyAccess, @ShowInUI, @ShowInTemplate);";
                 Dictionary<string, object?> parameters = new Dictionary<string, object?>
             {
                    {"Id", createOrg.Id},
@@ -184,6 +187,7 @@ namespace Winit.Modules.Org.DL.Classes
                    {"CountryUID", createOrg.CountryUID},
                    {"CompanyUID", createOrg.CompanyUID},
                    {"TaxGroupUID", createOrg.TaxGroupUID},
+                   {"TerritoryUID", createOrg.TerritoryUid},
                    {"Status", createOrg.Status},
                    {"SeqCode", createOrg.SeqCode},
                    {"HasEarlyAccess", createOrg.HasEarlyAccess},
@@ -205,18 +209,19 @@ namespace Winit.Modules.Org.DL.Classes
             try
             {
 
-                var sql = @"UPDATE org 
-                                    SET 
-                                        modified_by = @ModifiedBy, 
-                                        name = @Name, 
-                                        is_active = @IsActive, 
-                                        modified_time = @ModifiedTime, 
-                                        server_modified_time = @ServerModifiedTime, 
+                var sql = @"UPDATE org
+                                    SET
+                                        modified_by = @ModifiedBy,
+                                        name = @Name,
+                                        is_active = @IsActive,
+                                        modified_time = @ModifiedTime,
+                                        server_modified_time = @ServerModifiedTime,
                                         code = @Code,
                                         status = @Status,
+                                        territory_uid = @TerritoryUID,
                                         show_in_ui = @ShowInUI,
-                                        show_in_template = @ShowInTemplate 
-                                    WHERE 
+                                        show_in_template = @ShowInTemplate
+                                    WHERE
                                         uid = @UID;";
 
                 Dictionary<string, object?> parameters = new Dictionary<string, object?>
@@ -228,6 +233,7 @@ namespace Winit.Modules.Org.DL.Classes
                    {"Name", updateOrg.Name},
                    {"IsActive", updateOrg.IsActive},
                    {"Status", updateOrg.Status},
+                   {"TerritoryUID", updateOrg.TerritoryUid},
                    {"ShowInUI", updateOrg.ShowInUI},
                    {"ShowInTemplate", updateOrg.ShowInTemplate},
                    {"UID", updateOrg.UID},

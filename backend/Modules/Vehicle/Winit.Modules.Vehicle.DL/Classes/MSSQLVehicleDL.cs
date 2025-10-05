@@ -179,12 +179,8 @@ namespace Winit.Modules.Vehicle.DL.Classes
                                @ServerModifiedTime, @CompanyUID, @OrgUID, @VehicleNo, @RegistrationNo, @Model, @Type, @IsActive,
                                @TruckSIDate, @RoadTaxExpiryDate, @InspectionDate,
                                @WeightLimit, @Capacity, @LoadingCapacity, @WarehouseCode, @LocationCode, @TerritoryUID)";
-                
+
                 retVal = await ExecuteNonQueryAsync(sql, createVehicle);
-                if (retVal == 1)
-                {
-                    await CreateOrg_ForVehicle(createVehicle);
-                }
                 return retVal;
             }
             catch (Exception)
@@ -255,12 +251,7 @@ namespace Winit.Modules.Vehicle.DL.Classes
                                 territory_uid = @TerritoryUID
                             where uid = @UID";
 
-                
                 retVal = await ExecuteNonQueryAsync(sql, updateVehicle);
-                if (retVal == 1)
-                {
-                    await UpdateOrg(updateVehicle);
-                }
                 return retVal;
             }
             catch (Exception)

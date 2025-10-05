@@ -11,23 +11,24 @@ const DashboardPage = () => {
       title: "Delivery",
       description: "Access delivery dashboard and manage delivery operations",
       icon: <Truck className="h-12 w-12" />,
-      href: "/delivery/delivery-dashboard",
-      color: "text-blue-600",
+      href: "/delivery-dashboard",
+      color: "text-blue-600"
     },
     {
       title: "Manager",
       description: "Access manager dashboard and stock receiving operations",
       icon: <Package className="h-12 w-12" />,
       href: "/manager/stock-receiving-dashboard",
-      color: "text-green-600",
+      color: "text-green-600"
     },
     {
       title: "Purchase Orders",
-      description: "Manage purchase order templates, create orders, and track status",
+      description:
+        "Manage purchase order templates, create orders, and track status",
       icon: <ShoppingCart className="h-12 w-12" />,
       href: "/manager/purchase-order-templates",
-      color: "text-purple-600",
-    },
+      color: "text-purple-600"
+    }
   ];
 
   return (

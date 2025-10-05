@@ -218,10 +218,6 @@ namespace Winit.Modules.Vehicle.DL.Classes
                    {"ServerModifiedTime", createVehicle.ServerModifiedTime},
                 };
                 retVal = await ExecuteNonQueryAsync(sql, parameters);
-                if (retVal == 1)
-                {
-                    await CreateOrg_ForVehicle(createVehicle);
-                }
                 return retVal;
             }
             catch (Exception)
@@ -320,10 +316,6 @@ namespace Winit.Modules.Vehicle.DL.Classes
                    {"ServerModifiedTime", updateVehicle.ServerModifiedTime},
                  };
                 retVal = await ExecuteNonQueryAsync(sql, parameters);
-                if (retVal == 1)
-                {
-                    await UpdateOrg(updateVehicle);
-                }
                 return retVal;
             }
             catch (Exception)

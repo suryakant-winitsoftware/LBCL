@@ -17,6 +17,9 @@ public interface IPurchaseOrderHeaderItem
     DateTime RequestedDeliveryDate { get; set; }
     DateTime CPEConfirmDateTime { get; set; }
     decimal NetAmount { get; set; }
+    decimal QtyCount { get; set; }
+    int LineCount { get; set; }
+    decimal TotalAmount { get; set; }
     string Status { get; set; }
     string ERPStatus { get; set; }
     int SerialNumber { get; set; }

@@ -370,15 +370,57 @@ public class PGSQLPurchaseOrderHeaderDL : Winit.Modules.Base.DL.DBManager.Postgr
         {
             StringBuilder sql = new(
             """
-            SELECT  *
-            FROM (SELECT uid , ss, created_by, created_time, modified_by, modified_time, server_add_time, server_modified_time, 
-            org_uid, division_uid, has_template, purchase_order_template_header_uid, warehouse_uid, order_date,
-            expected_delivery_date,shipping_address_uid, billing_address_uid, status, qty_count, line_count, 
-            total_amount, total_discount, 
-            line_discount, header_discount, total_tax_amount, line_tax_amount, header_tax_amount, net_amount, 
-            available_credit_limit, tax_data, app1_emp_uid, app2_emp_uid, app3_emp_uid, app4_emp_uid, app5_emp_uid, 
-            app6_emp_uid, app1_date, app2_date, app3_date, app4_date, app5_date, app6_date FROM purchase_order_header)
-            AS  purchaseorderheader
+            SELECT  poh.uid AS UID,
+            poh.ss AS SS,
+            poh.created_by AS CreatedBy,
+            poh.created_time AS CreatedTime,
+            poh.modified_by AS ModifiedBy,
+            poh.modified_time AS ModifiedTime,
+            poh.server_add_time AS ServerAddTime,
+            poh.server_modified_time AS ServerModifiedTime,
+            poh.org_uid AS OrgUID,
+            poh.division_uid AS DivisionUID,
+            poh.has_template AS HasTemplate,
+            poh.purchase_order_template_header_uid AS PurchaseOrderTemplateHeaderUID,
+            poh.warehouse_uid AS WareHouseUID,
+            poh.order_date AS OrderDate,
+            poh.order_number AS OrderNumber,
+            poh.draft_order_number AS DraftOrderNumber,
+            poh.expected_delivery_date AS ExpectedDeliveryDate,
+            poh.shipping_address_uid AS ShippingAddressUID,
+            poh.billing_address_uid AS BillingAddressUID,
+            poh.status AS Status,
+            poh.qty_count AS QtyCount,
+            poh.line_count AS LineCount,
+            poh.total_amount AS TotalAmount,
+            poh.total_discount AS TotalDiscount,
+            poh.line_discount AS LineDiscount,
+            poh.header_discount AS HeaderDiscount,
+            poh.total_tax_amount AS TotalTaxAmount,
+            poh.line_tax_amount AS LineTaxAmount,
+            poh.header_tax_amount AS HeaderTaxAmount,
+            poh.net_amount AS NetAmount,
+            poh.available_credit_limit AS AvailableCreditLimit,
+            poh.tax_data AS TaxData,
+            poh.app1_emp_uid AS App1EmpUID,
+            poh.app2_emp_uid AS App2EmpUID,
+            poh.app3_emp_uid AS App3EmpUID,
+            poh.app4_emp_uid AS App4EmpUID,
+            poh.app5_emp_uid AS App5EmpUID,
+            poh.app6_emp_uid AS App6EmpUID,
+            poh.app1_date AS App1Date,
+            poh.app2_date AS App2Date,
+            poh.app3_date AS App3Date,
+            poh.app4_date AS App4Date,
+            poh.app5_date AS App5Date,
+            poh.app6_date AS App6Date,
+            COALESCE(org.name, franchise_org.name) AS OrgName,
+            COALESCE(org.code, franchise_org.code) AS OrgCode,
+            wh.name AS WarehouseName
+            FROM purchase_order_header poh
+            LEFT JOIN store wh ON poh.warehouse_uid = wh.uid
+            LEFT JOIN org franchise_org ON wh.franchisee_org_uid = franchise_org.uid
+            LEFT JOIN org ON poh.org_uid = org.uid
             """);
 
             StringBuilder sqlCount = new();
@@ -387,20 +429,34 @@ public class PGSQLPurchaseOrderHeaderDL : Winit.Modules.Base.DL.DBManager.Postgr
                 sqlCount = new StringBuilder(
                 """
                     SELECT count(*)
-                    FROM (SELECT uid , ss, created_by, created_time, modified_by, modified_time, server_add_time, server_modified_time, 
-                    org_uid, division_uid, has_template, purchase_order_template_header_uid, warehouse_uid, order_date,
-                    expected_delivery_date,shipping_address_uid, billing_address_uid, status, qty_count, line_count, 
-                    total_amount, total_discount, 
-                    line_discount, header_discount, total_tax_amount, line_tax_amount, header_tax_amount, net_amount, 
-                    available_credit_limit, tax_data, app1_emp_uid, app2_emp_uid, app3_emp_uid, app4_emp_uid, app5_emp_uid, 
-                    app6_emp_uid, app1_date, app2_date, app3_date, app4_date, app5_date, app6_date FROM purchase_order_header)
-                    AS  purchaseorderheader
-                                        
+                    FROM purchase_order_header poh
+                    LEFT JOIN store wh ON poh.warehouse_uid = wh.uid
+                    LEFT JOIN org franchise_org ON wh.franchisee_org_uid = franchise_org.uid
+                    LEFT JOIN org ON poh.org_uid = org.uid
                 """);
             }
             Dictionary<string, object?> parameters = [];
             if (filterCriterias != null && filterCriterias.Count > 0)
             {
+                // Prefix filter columns with table alias to avoid ambiguity
+                foreach (var filterCriteria in filterCriterias)
+                {
+                    if (!filterCriteria.Name.Contains('.'))
+                    {
+                        // Map column names to use poh prefix
+                        filterCriteria.Name = filterCriteria.Name.ToUpper() switch
+                        {
+                            "UID" => "poh.uid",
+                            "PURCHASEORDERHEADERUID" => "poh.uid",
+                            "ORGUID" => "poh.org_uid",
+                            "WAREHOUSEUID" => "poh.warehouse_uid",
+                            "STATUS" => "poh.status",
+                            "ORDERDATE" => "poh.order_date",
+                            _ => $"poh.{filterCriteria.Name.ToLower()}"
+                        };
+                    }
+                }
+
                 StringBuilder sbFilterCriteria = new();
                 AppendFilterCriteria<IPurchaseOrderHeader>(filterCriterias, sbFilterCriteria, parameters);
 

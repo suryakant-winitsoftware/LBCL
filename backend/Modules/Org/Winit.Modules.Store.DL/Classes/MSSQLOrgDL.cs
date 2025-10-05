@@ -44,6 +44,7 @@ namespace Winit.Modules.Org.DL.Classes
                                         country_uid AS CountryUID,
                                         company_uid AS CompanyUID,
                                         tax_group_uid AS TaxGroupUID,
+                                        territory_uid AS TerritoryUid,
                                         status AS Status,
                                         seq_code AS SeqCode,
                                         has_early_access AS HasEarlyAccess,
@@ -70,6 +71,7 @@ namespace Winit.Modules.Org.DL.Classes
                                         country_uid AS CountryUID,
                                         company_uid AS CompanyUID,
                                         tax_group_uid AS TaxGroupUID,
+                                        territory_uid AS TerritoryUid,
                                         status AS Status,
                                         seq_code AS SeqCode,
                                         has_early_access AS HasEarlyAccess,
@@ -147,6 +149,7 @@ namespace Winit.Modules.Org.DL.Classes
                                         country_uid AS CountryUID,
                                         company_uid AS CompanyUID,
                                         tax_group_uid AS TaxGroupUID,
+                                        territory_uid AS TerritoryUid,
                                         status AS Status,
                                         seq_code AS SeqCode,
                                         has_early_access AS HasEarlyAccess,
@@ -163,10 +166,10 @@ namespace Winit.Modules.Org.DL.Classes
             try
             {
                 var sql = @"INSERT INTO org (uid, created_by, created_time, modified_by, modified_time, server_add_time, server_modified_time,
-                            code, name, is_active, org_type_uid, parent_uid, country_uid, company_uid, tax_group_uid, status, seq_code, has_early_access, show_in_ui, show_in_template)
+                            code, name, is_active, org_type_uid, parent_uid, country_uid, company_uid, tax_group_uid, territory_uid, status, seq_code, has_early_access, show_in_ui, show_in_template)
                             VALUES
                             (@UID, @CreatedBy, @CreatedTime, @ModifiedBy, @ModifiedTime, @ServerAddTime, @ServerModifiedTime, @Code, @Name, @IsActive,
-                            @OrgTypeUID, @ParentUID, @CountryUID, @CompanyUID, @TaxGroupUID, @Status, @SeqCode, @HasEarlyAccess, @ShowInUI, @ShowInTemplate);";
+                            @OrgTypeUID, @ParentUID, @CountryUID, @CompanyUID, @TaxGroupUID, @TerritoryUid, @Status, @SeqCode, @HasEarlyAccess, @ShowInUI, @ShowInTemplate);";
                 return await ExecuteNonQueryAsync(sql, createOrg);
             }
             catch (Exception)
@@ -180,10 +183,10 @@ namespace Winit.Modules.Org.DL.Classes
             try
             {
                 var sql = @"INSERT INTO org (uid, created_by, created_time, modified_by, modified_time, server_add_time, server_modified_time,
-                            code, name, is_active, org_type_uid, parent_uid, country_uid, company_uid, tax_group_uid, status, seq_code, has_early_access, show_in_ui, show_in_template)
+                            code, name, is_active, org_type_uid, parent_uid, country_uid, company_uid, tax_group_uid, territory_uid, status, seq_code, has_early_access, show_in_ui, show_in_template)
                             VALUES
                             (@UID, @CreatedBy, @CreatedTime, @ModifiedBy, @ModifiedTime, @ServerAddTime, @ServerModifiedTime, @Code, @Name, @IsActive,
-                            @OrgTypeUID, @ParentUID, @CountryUID, @CompanyUID, @TaxGroupUID, @Status, @SeqCode, @HasEarlyAccess, @ShowInUI, @ShowInTemplate);";
+                            @OrgTypeUID, @ParentUID, @CountryUID, @CompanyUID, @TaxGroupUID, @TerritoryUid, @Status, @SeqCode, @HasEarlyAccess, @ShowInUI, @ShowInTemplate);";
                 return await ExecuteNonQueryAsync(sql, createOrg);
             }
             catch (Exception)
@@ -196,16 +199,17 @@ namespace Winit.Modules.Org.DL.Classes
         {
             try
             {
-                var sql = @"UPDATE org 
-                                    SET 
-                                        modified_by = @ModifiedBy, 
-                                        name = @Name, 
-                                        is_active = @IsActive, 
-                                        modified_time = @ModifiedTime, 
-                                        server_modified_time = @ServerModifiedTime, 
+                var sql = @"UPDATE org
+                                    SET
+                                        modified_by = @ModifiedBy,
+                                        name = @Name,
+                                        is_active = @IsActive,
+                                        modified_time = @ModifiedTime,
+                                        server_modified_time = @ServerModifiedTime,
                                         code = @Code,
-                                        status = @Status 
-                                    WHERE 
+                                        status = @Status,
+                                        territory_uid = @TerritoryUid
+                                    WHERE
                                         uid = @UID;";
                 return await ExecuteNonQueryAsync(sql, updateOrg);
             }

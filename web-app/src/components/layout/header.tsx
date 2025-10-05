@@ -46,6 +46,7 @@ import {
   Home,
   Pin,
   PinOff,
+  Truck,
 } from "lucide-react"
 import { SubModule, SubSubModule } from "@/types/permission.types"
 import { getModuleIcon, getSubModuleIcon } from "@/lib/navigation-icons"
@@ -304,9 +305,31 @@ export function Header() {
         
         {/* Right Section */}
         <div className="flex items-center gap-3">
+          {/* Delivery Management Button */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => router.push("/lbcl/login")}
+                className="h-9 px-3 gap-2 border-blue-200 hover:bg-blue-50 hover:border-blue-300 dark:border-blue-800 dark:hover:bg-blue-950 transition-all duration-200"
+              >
+                <Truck className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                <span className="hidden lg:inline text-sm font-medium text-blue-600 dark:text-blue-400">
+                  Delivery
+                </span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              <p className="text-xs font-medium">Switch to Delivery Management</p>
+            </TooltipContent>
+          </Tooltip>
+
+          <div className="h-5 w-px bg-gray-200 dark:bg-gray-700" />
+
           {/* Notification Button */}
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             size="sm"
             className="relative h-9 w-9 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200"
           >
@@ -315,12 +338,12 @@ export function Header() {
               3
             </span>
           </Button>
-          
+
           <div className="h-5 w-px bg-gray-200 dark:bg-gray-700" />
-          
+
           {/* Refresh Menu Button */}
-          <RefreshMenuButton 
-            variant="ghost" 
+          <RefreshMenuButton
+            variant="ghost"
             size="icon"
             className="h-9 w-9 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200"
           />

@@ -15,7 +15,6 @@ import {
   MapPin
 } from 'lucide-react'
 import { Button } from '../../../components/ui/button'
-import BusinessLayout from '../../../components/layouts/BusinessLayout'
 import ProtectedRoute from '../../../components/ProtectedRoute'
 import ViewDeliveryNote from './ViewDeliveryNote'
 
@@ -62,7 +61,7 @@ const ActivityLogReport = () => {
 
   const handleSubmit = () => {
     console.log('Form submitted:', formData)
-    router.push('/user/manager/physical-count')
+    router.push('/manager/physical-count')
   }
 
   const handleViewDeliveryNote = () => {
@@ -70,7 +69,7 @@ const ActivityLogReport = () => {
   }
 
   const handlePhysicalCount = () => {
-    router.push('/user/manager/physical-count')
+    router.push('/manager/physical-count')
   }
 
   const handleInputChange = (field, value) => {
@@ -485,7 +484,7 @@ const ActivityLogReport = () => {
           isOpen={showDeliveryNote} 
           onClose={() => setShowDeliveryNote(false)} 
         />
-      </BusinessLayout>
+      
     </ProtectedRoute>
   )
 }

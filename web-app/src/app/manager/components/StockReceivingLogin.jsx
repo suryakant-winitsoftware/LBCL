@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { Button } from '../../../components/ui/button'
 import { Input } from '../../../components/ui/input'
 import { User, Lock, ArrowLeft, AlertCircle, Eye, EyeOff, Loader2 } from 'lucide-react'
-import { useAuth } from '../../../contexts/AuthContext'
 
 const StockReceivingLogin = () => {
   const [username, setUsername] = useState('')
@@ -14,7 +13,6 @@ const StockReceivingLogin = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [rememberMe, setRememberMe] = useState(false)
-  const { login } = useAuth()
   const router = useRouter()
 
 
@@ -29,13 +27,9 @@ const StockReceivingLogin = () => {
     setError('')
 
     try {
-      const result = await login(username, password, 'stock')
-      
-      if (result.success) {
-        router.push('/user/manager/stock-receiving-dashboard')
-      } else {
-        setError(result.error || 'Login failed')
-      }
+      // TODO: Implement actual authentication
+      // For now, just navigate to the dashboard
+      router.push('/manager/stock-receiving-dashboard')
     } catch (err) {
       setError('An unexpected error occurred')
     } finally {

@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Truck, Package } from "lucide-react";
+import { Truck, Package, ShoppingCart } from "lucide-react";
 
 const DashboardPage = () => {
   const navigationCards = [
@@ -20,6 +20,13 @@ const DashboardPage = () => {
       icon: <Package className="h-12 w-12" />,
       href: "/manager/stock-receiving-dashboard",
       color: "text-green-600",
+    },
+    {
+      title: "Purchase Orders",
+      description: "Manage purchase order templates, create orders, and track status",
+      icon: <ShoppingCart className="h-12 w-12" />,
+      href: "/manager/purchase-order-templates",
+      color: "text-purple-600",
     },
   ];
 

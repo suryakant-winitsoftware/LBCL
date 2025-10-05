@@ -101,11 +101,11 @@ const PurchaseOrderTemplates = () => {
   const startIndex = (currentPage - 1) * itemsPerPage
 
   const handleEdit = (template) => {
-    router.push(`/user/manager/edit-purchase-order-template/${template.id}`)
+    router.push(`/manager/edit-purchase-order-template/${template.id}`)
   }
 
   const handleCreateOrder = (template) => {
-    router.push(`/user/manager/create-purchase-order/${template.id}`)
+    router.push(`/manager/create-purchase-order/${template.id}`)
   }
 
   const handleDelete = async (template) => {
@@ -198,7 +198,7 @@ const PurchaseOrderTemplates = () => {
       {/* Create New Template Button */}
       <div className="mb-4">
         <Button
-          onClick={() => router.push('/user/manager/add-purchase-order-template')}
+          onClick={() => router.push('/manager/add-purchase-order-template')}
           className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2"
         >
           Create New Template

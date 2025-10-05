@@ -8,13 +8,9 @@ import {
   Trash2
 } from 'lucide-react'
 import { Button } from '../../../components/ui/button'
-import { useAuth } from '../../../contexts/AuthContext'
-import BusinessLayout from '../../../components/layouts/BusinessLayout'
-import ProtectedRoute from '../../../components/ProtectedRoute'
 import ProductSelectionModal from './ProductSelectionModal'
 
 const EditPurchaseOrderTemplate = ({ templateId }) => {
-  const { user } = useAuth()
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
@@ -93,11 +89,11 @@ const EditPurchaseOrderTemplate = ({ templateId }) => {
 
   const handleSave = () => {
     console.log('Saving template:', { templateData, selectedProducts })
-    router.push('/user/manager/purchase-order-templates')
+    router.push('/manager/purchase-order-templates')
   }
 
   const handleCancel = () => {
-    router.push('/user/manager/purchase-order-templates')
+    router.push('/manager/purchase-order-templates')
   }
 
   const handleClearOrder = () => {
@@ -369,7 +365,7 @@ const EditPurchaseOrderTemplate = ({ templateId }) => {
             existingProducts={selectedProducts}
           />
         </div>
-      </BusinessLayout>
+      
     </ProtectedRoute>
   )
 }

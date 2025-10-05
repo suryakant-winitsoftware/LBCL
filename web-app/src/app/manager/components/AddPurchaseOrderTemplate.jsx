@@ -3,14 +3,11 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Search, ArrowLeft, Home } from 'lucide-react'
 import { Button } from '../../../components/ui/button'
-import { useAuth } from '../../../contexts/AuthContext'
-import BusinessLayout from '../../../components/layouts/BusinessLayout'
 import ProductSelectionModal from './ProductSelectionModal'
 import organizationService from '../../../services/organization'
 import purchaseOrderService from '../../../services/purchaseOrder'
 
 const AddPurchaseOrderTemplate = () => {
-  const { user } = useAuth()
   const router = useRouter()
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
@@ -24,19 +21,22 @@ const AddPurchaseOrderTemplate = () => {
     requestedBy: '',
     requestedByFranchisee: '',
     date: 'N/A',
-    preparedBy: user?.username || '[13010435] G & M Paterson'
+    preparedBy: 'Admin'
   })
   const [recentlyAdded, setRecentlyAdded] = useState([])
   const [plants, setPlants] = useState([])
+  const [employees, setEmployees] = useState([])
   const [plantsLoading, setPlantsLoading] = useState(false)
+  const [employeesLoading, setEmployeesLoading] = useState(false)
 
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
         // Start with empty products - user can add products manually
         setProducts([])
-        // Load real plant names from database
+        // Load real plant names and employees from database
         await loadPlants()
+        await loadEmployees()
       } catch (error) {
         console.error('Error fetching initial data:', error)
       } finally {
@@ -97,6 +97,29 @@ const AddPurchaseOrderTemplate = () => {
     }
   }
 
+  const loadEmployees = async () => {
+    try {
+      setEmployeesLoading(true)
+      console.log('👤 Loading employees...')
+
+      const response = await purchaseOrderService.getEmployeeDropdownOptions()
+      console.log('👤 Employee service response:', response)
+
+      if (response.success && response.employees) {
+        console.log('👤 Loaded employees successfully:', response.employees)
+        setEmployees(response.employees)
+      } else {
+        console.error('❌ Failed to load employees')
+        setEmployees([])
+      }
+    } catch (error) {
+      console.error('❌ Error loading employees:', error)
+      setEmployees([])
+    } finally {
+      setEmployeesLoading(false)
+    }
+  }
+
   const handleTemplateChange = (field, value) => {
     setTemplateData(prev => ({
       ...prev,
@@ -144,7 +167,7 @@ const AddPurchaseOrderTemplate = () => {
   }
 
   const handleCancel = () => {
-    router.push('/user/manager/purchase-order-templates')
+    router.push('/manager/purchase-order-templates')
   }
 
   const handleSave = async () => {
@@ -238,7 +261,7 @@ const AddPurchaseOrderTemplate = () => {
 
       if (response.success) {
         alert(`✅ Template "${templateData.templateName}" saved successfully with ${products.length} products!`)
-        router.push('/user/manager/purchase-order-templates')
+        router.push('/manager/purchase-order-templates')
       } else {
         console.error('❌ Failed to save template:', response.error)
         alert(`Failed to save template: ${response.error || 'Unknown error occurred'}`)
@@ -257,13 +280,13 @@ const AddPurchaseOrderTemplate = () => {
   )
 
   return (
-    <BusinessLayout>
+    
       <div className="min-h-screen bg-gray-50">
       {/* Top Navigation Bar */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
         <div className="flex items-center gap-4">
           <Button
-            onClick={() => router.push('/user/manager/purchase-order-templates')}
+            onClick={() => router.push('/manager/purchase-order-templates')}
             variant="ghost"
             size="sm"
             className="flex items-center gap-2 text-blue-600 hover:text-blue-700"
@@ -340,10 +363,14 @@ const AddPurchaseOrderTemplate = () => {
                 value={templateData.requestedBy}
                 onChange={(e) => handleTemplateChange('requestedBy', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                disabled={employeesLoading}
               >
-                <option value="">Select</option>
-                <option value="[13010435] G & M Paterson">[13010435] G & M Paterson</option>
-                <option value="Other Franchisee">Other Franchisee</option>
+                <option value="">{employeesLoading ? 'Loading employees...' : 'Select'}</option>
+                {employees.map((employee) => (
+                  <option key={employee.value} value={employee.value}>
+                    {employee.label}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -354,10 +381,14 @@ const AddPurchaseOrderTemplate = () => {
                 value={templateData.requestedByFranchisee}
                 onChange={(e) => handleTemplateChange('requestedByFranchisee', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                disabled={employeesLoading}
               >
-                <option value="">Select</option>
-                <option value="[13010435] G & M Paterson">[13010435] G & M Paterson</option>
-                <option value="Other Franchisee">Other Franchisee</option>
+                <option value="">{employeesLoading ? 'Loading employees...' : 'Select'}</option>
+                {employees.map((employee) => (
+                  <option key={employee.value} value={employee.value}>
+                    {employee.label}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
@@ -544,7 +575,7 @@ const AddPurchaseOrderTemplate = () => {
         />
       </div>
       </div>
-    </BusinessLayout>
+    
   )
 }
 

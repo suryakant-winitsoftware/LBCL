@@ -13,7 +13,6 @@ import {
   X
 } from 'lucide-react'
 import { Button } from '../../../components/ui/button'
-import BusinessLayout from '../../../components/layouts/BusinessLayout'
 import ProtectedRoute from '../../../components/ProtectedRoute'
 
 const PhysicalCount = () => {
@@ -50,13 +49,13 @@ const PhysicalCount = () => {
   }, [])
 
   const handleSubmit = () => {
-    router.push('/user/manager/physical-count-edit')
+    router.push('/manager/physical-count-edit')
   }
 
   const handleAddProducts = () => {
     setShowAddProductModal(true)
     // Alternative: Navigate to add products page
-    // router.push('/user/manager/add-products')
+    // router.push('/manager/add-products')
   }
 
   const handleSearch = () => {
@@ -442,7 +441,7 @@ const PhysicalCount = () => {
             </div>
           )}
         </div>
-      </BusinessLayout>
+      
     </ProtectedRoute>
   )
 }

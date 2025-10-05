@@ -15,7 +15,6 @@ import {
 } from 'lucide-react'
 import { Button } from '../../../components/ui/button'
 import ProtectedRoute from '../../../components/ProtectedRoute'
-import BusinessLayout from '../../../components/layouts/BusinessLayout'
 
 const PhysicalCountEdit = () => {
   const router = useRouter()
@@ -58,7 +57,7 @@ const PhysicalCountEdit = () => {
 
   const handleSuccessClose = () => {
     setShowSuccess(false)
-    router.push('/user/manager/stock-receiving-history')
+    router.push('/manager/stock-receiving-history')
   }
 
   const updateProduct = (id, field, value) => {
@@ -502,7 +501,7 @@ const PhysicalCountEdit = () => {
             </div>
           )}
         </div>
-      </BusinessLayout>
+      
     </ProtectedRoute>
   )
 }

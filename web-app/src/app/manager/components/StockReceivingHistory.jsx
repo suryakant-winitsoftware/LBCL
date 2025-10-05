@@ -14,7 +14,6 @@ import {
   CheckCircle
 } from 'lucide-react'
 import { Button } from '../../../components/ui/button'
-import BusinessLayout from '../../../components/layouts/BusinessLayout'
 import DataTable from '../../../components/ui/DataTable'
 import ProtectedRoute from '../../../components/ProtectedRoute'
 
@@ -45,11 +44,11 @@ const StockReceivingHistory = () => {
   }, [])
 
   const handleActivityLog = (item) => {
-    router.push(`/user/manager/timeline-stamps/${item.id}`)
+    router.push(`/manager/timeline-stamps/${item.id}`)
   }
 
   const handleViewDetails = (item) => {
-    router.push(`/user/manager/activity-log-report/${item.sapDeliveryNoteNo}`)
+    router.push(`/manager/activity-log-report/${item.sapDeliveryNoteNo}`)
   }
 
   const columns = [
@@ -254,7 +253,7 @@ const StockReceivingHistory = () => {
             />
           </div>
         </div>
-      </BusinessLayout>
+      
     </ProtectedRoute>
   )
 }

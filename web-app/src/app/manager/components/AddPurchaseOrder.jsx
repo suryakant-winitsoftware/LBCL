@@ -3,19 +3,18 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Search, Calendar, ArrowLeft, Home } from 'lucide-react'
 import { Button } from '../../../components/ui/button'
-import { useAuth } from '../../../contexts/AuthContext'
-import BusinessLayout from '../../../components/layouts/BusinessLayout'
 import ProductSelectionModal from './ProductSelectionModal'
 import purchaseOrderService from '../../../services/purchaseOrder'
 import organizationService from '../../../services/organization'
 
 const AddPurchaseOrder = () => {
-  const { user } = useAuth()
   const router = useRouter()
   const [products, setProducts] = useState([])
   const [plants, setPlants] = useState([])
+  const [employees, setEmployees] = useState([])
   const [loading, setLoading] = useState(false)
   const [plantsLoading, setPlantsLoading] = useState(true)
+  const [employeesLoading, setEmployeesLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -29,13 +28,14 @@ const AddPurchaseOrder = () => {
     orderDate: new Date().toISOString().split('T')[0],
     requestedBy: '',
     requestedByFranchisee: '',
-    preparedBy: user?.username || 'Admin',
+    preparedBy: 'Admin',
     sapStatus: 'Pending',
     requestedDeliveryDate: new Date().toISOString().split('T')[0]
   })
 
   useEffect(() => {
     loadPlants()
+    loadEmployees()
   }, [])
 
   const loadPlants = async () => {
@@ -72,6 +72,29 @@ const AddPurchaseOrder = () => {
       setPlants(fallbackPlants)
     } finally {
       setPlantsLoading(false)
+    }
+  }
+
+  const loadEmployees = async () => {
+    try {
+      setEmployeesLoading(true)
+      console.log('👤 Loading employees from purchase order service...')
+
+      const response = await purchaseOrderService.getEmployeeDropdownOptions()
+      console.log('👤 Employee service response:', response)
+
+      if (response.success && response.employees) {
+        console.log('👤 Loaded employees successfully:', response.employees)
+        setEmployees(response.employees)
+      } else {
+        console.error('❌ Failed to load employees')
+        setEmployees([])
+      }
+    } catch (error) {
+      console.error('❌ Error loading employees:', error)
+      setEmployees([])
+    } finally {
+      setEmployeesLoading(false)
     }
   }
 
@@ -162,7 +185,7 @@ const AddPurchaseOrder = () => {
   }
 
   const handleCancel = () => {
-    router.push('/user/manager/purchase-order-status')
+    router.push('/manager/purchase-order-status')
   }
 
   const handleSave = async (saveType = 'draft') => {
@@ -235,6 +258,10 @@ const AddPurchaseOrder = () => {
 
       const purchaseOrderHeaderUID = generateUID()
 
+      // Get employee names from the employees array
+      const requestedByEmployee = employees.find(emp => emp.value === orderData.requestedBy)
+      const requestedByName = requestedByEmployee ? requestedByEmployee.name : orderData.preparedBy
+
       // Prepare purchase order header with dynamic status and order numbers
       const purchaseOrderHeader = {
         uid: purchaseOrderHeaderUID, // CRITICAL: Set the UID so lines can reference it
@@ -243,7 +270,7 @@ const AddPurchaseOrder = () => {
         warehouse_uid: plantUID,
         orderDate: orderData.orderDate ? new Date(orderData.orderDate).toISOString() : currentDate,
         expectedDeliveryDate: orderData.requestedDeliveryDate ? new Date(orderData.requestedDeliveryDate).toISOString() : currentDate,
-        reportingEmpName: orderData.requestedBy || orderData.preparedBy,
+        reportingEmpName: requestedByName,
         createdByEmpName: orderData.preparedBy,
         sapStatus: 'N/A',
         status: saveType === 'confirm' ? 'CONFIRMED' : 'DRAFT',
@@ -320,7 +347,7 @@ const AddPurchaseOrder = () => {
         console.log('✅ Purchase order created successfully!')
         const statusText = saveType === 'confirm' ? 'confirmed' : 'saved as draft'
         alert(`✅ Purchase order ${statusText} successfully with ${validProducts.length} products!`)
-        router.push('/user/manager/purchase-order-status')
+        router.push('/manager/purchase-order-status')
       } else {
         console.error('❌ Failed to create purchase order:', response.error)
         alert(`❌ Failed to create purchase order: ${response.error}`)
@@ -346,13 +373,13 @@ const AddPurchaseOrder = () => {
   )
 
   return (
-    <BusinessLayout>
+    
       <div className="min-h-screen bg-gray-50">
       {/* Top Navigation Bar */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
         <div className="flex items-center gap-4">
           <Button
-            onClick={() => router.push('/user/manager/purchase-order-status')}
+            onClick={() => router.push('/manager/purchase-order-status')}
             variant="ghost"
             size="sm"
             className="flex items-center gap-2 text-blue-600 hover:text-blue-700"
@@ -432,10 +459,14 @@ const AddPurchaseOrder = () => {
                 value={orderData.requestedBy}
                 onChange={(e) => handleOrderChange('requestedBy', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                disabled={employeesLoading}
               >
-                <option value="">Select</option>
-                <option value="[13010435] G & M Paterson">[13010435] G & M Paterson</option>
-                <option value="Other Franchisee">Other Franchisee</option>
+                <option value="">{employeesLoading ? 'Loading employees...' : 'Select'}</option>
+                {employees.map((employee) => (
+                  <option key={employee.value} value={employee.value}>
+                    {employee.label}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -446,10 +477,14 @@ const AddPurchaseOrder = () => {
                 value={orderData.requestedByFranchisee}
                 onChange={(e) => handleOrderChange('requestedByFranchisee', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                disabled={employeesLoading}
               >
-                <option value="">Select</option>
-                <option value="[13010435] G & M Paterson">[13010435] G & M Paterson</option>
-                <option value="Other Franchisee">Other Franchisee</option>
+                <option value="">{employeesLoading ? 'Loading employees...' : 'Select'}</option>
+                {employees.map((employee) => (
+                  <option key={employee.value} value={employee.value}>
+                    {employee.label}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
@@ -695,7 +730,7 @@ const AddPurchaseOrder = () => {
         />
       </div>
       </div>
-    </BusinessLayout>
+    
   )
 }
 

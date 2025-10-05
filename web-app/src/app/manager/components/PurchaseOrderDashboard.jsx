@@ -5,17 +5,17 @@ import {
   FileText,
   ShoppingCart,
   Package,
-  ClipboardList
+  ClipboardList,
+  Warehouse
 } from 'lucide-react'
-import BusinessLayout from '../../../components/layouts/BusinessLayout'
 import PurchaseOrderTemplates from './PurchaseOrderTemplates'
 import PurchaseOrderStatus from './PurchaseOrderStatus'
 import ReceiptStock from './ReceiptStock'
 import ManualStockReceipt from './ManualStockReceipt'
-import { useAuth } from '../../../contexts/AuthContext'
+import StockReceivingDashboard from './StockReceivingDashboard'
 
 const PurchaseOrderDashboard = () => {
-  const { user } = useAuth()
+  const router = useRouter()
   const [activeTab, setActiveTab] = useState('templates')
 
   const tabs = [
@@ -42,42 +42,46 @@ const PurchaseOrderDashboard = () => {
       label: 'Manual Stock Receipt',
       icon: ClipboardList,
       component: ManualStockReceipt
+    },
+    {
+      id: 'stock-receiving',
+      label: 'Stock Receiving Dashboard',
+      icon: Warehouse,
+      component: StockReceivingDashboard
     }
   ]
 
   const ActiveComponent = tabs.find(tab => tab.id === activeTab)?.component
 
   return (
-    <BusinessLayout title="Purchase Order Management">
-        <div className="min-h-screen bg-[var(--background)]">
-          {/* Tab Navigation */}
-          <div className="bg-[var(--card)] border-b border-[var(--border)] shadow-sm sticky top-16 z-30">
-            <div className="px-4 sm:px-6">
-              <div className="flex overflow-x-auto scrollbar-hide">
-                {tabs.map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center gap-2 px-4 py-3 text-sm font-medium whitespace-nowrap transition-all border-b-2 ${
-                      activeTab === tab.id
-                        ? 'text-[var(--primary)] border-[var(--primary)]'
-                        : 'text-[var(--muted-foreground)] border-transparent hover:text-[var(--foreground)] hover:border-[var(--muted)]'
-                    }`}
-                  >
-                    <tab.icon className="w-4 h-4" />
-                    <span>{tab.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Active Tab Content */}
-          <div className="animate-in fade-in duration-200">
-            {ActiveComponent && <ActiveComponent />}
+    <div className="min-h-screen bg-[var(--background)]">
+      {/* Tab Navigation */}
+      <div className="bg-[var(--card)] border-b border-[var(--border)] shadow-sm sticky top-16 z-30">
+        <div className="px-4 sm:px-6">
+          <div className="flex overflow-x-auto scrollbar-hide">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-2 px-4 py-3 text-sm font-medium whitespace-nowrap transition-all border-b-2 ${
+                  activeTab === tab.id
+                    ? 'text-[var(--primary)] border-[var(--primary)]'
+                    : 'text-[var(--muted-foreground)] border-transparent hover:text-[var(--foreground)] hover:border-[var(--muted)]'
+                }`}
+              >
+                <tab.icon className="w-4 h-4" />
+                <span>{tab.label}</span>
+              </button>
+            ))}
           </div>
         </div>
-    </BusinessLayout>
+      </div>
+
+      {/* Active Tab Content */}
+      <div className="animate-in fade-in duration-200">
+        {ActiveComponent && <ActiveComponent />}
+      </div>
+    </div>
   )
 }
 

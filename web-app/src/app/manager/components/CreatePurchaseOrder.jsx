@@ -3,14 +3,11 @@ import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { Search, Calendar, X, ArrowLeft, Home } from 'lucide-react'
 import { Button } from '../../../components/ui/button'
-import { useAuth } from '../../../contexts/AuthContext'
-import BusinessLayout from '../../../components/layouts/BusinessLayout'
 import purchaseOrderService from '../../../services/purchaseOrder'
 import skuService from '../../../services/sku'
 import warehouseService from '../../../services/warehouse'
 
 const CreatePurchaseOrder = () => {
-  const { user } = useAuth()
   const router = useRouter()
   const params = useParams()
   const templateId = params?.templateId
@@ -25,20 +22,20 @@ const CreatePurchaseOrder = () => {
   const [orderData, setOrderData] = useState({
     plant: '',
     orderDate: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
-    requestedBy: '[13010435] G & M Paterson',
+    requestedBy: '',
     requestedByFranchisee: {
-      name: '[13010435] G & M Paterson',
-      poBox: 'PO Box 25666',
-      city: 'St Heliers',
-      region: 'Upper North Island',
-      country: 'New Zealand',
-      postalCode: '1740',
-      telephone: '09 5735220',
-      mobile: '021 499006',
-      address: '10 Southpark Pl\nCity: Auckland\nRegion: Upper North Island\nPostal Code: 1061'
+      name: '',
+      poBox: '',
+      city: '',
+      region: '',
+      country: '',
+      postalCode: '',
+      telephone: '',
+      mobile: '',
+      address: ''
     },
     requestedDeliveryDate: '',
-    preparedBy: user?.username || '[13010435] G & M Paterson'
+    preparedBy: ''
   })
 
   // Load data on component mount
@@ -252,7 +249,7 @@ const CreatePurchaseOrder = () => {
 
       if (response.success) {
         alert('Purchase order saved as draft successfully!')
-        router.push('/user/manager/purchase-order-status')
+        router.push('/manager/purchase-order-status')
       } else {
         setError(response.error || 'Failed to save purchase order as draft')
       }
@@ -292,7 +289,7 @@ const CreatePurchaseOrder = () => {
 
       if (response.success) {
         alert('Purchase order confirmed successfully!')
-        router.push('/user/manager/purchase-order-status')
+        router.push('/manager/purchase-order-status')
       } else {
         setError(response.error || 'Failed to confirm purchase order')
       }
@@ -305,7 +302,7 @@ const CreatePurchaseOrder = () => {
   }
 
   const handleCancel = () => {
-    router.push('/user/manager/purchase-order-templates')
+    router.push('/manager/purchase-order-templates')
   }
 
   const handleAddProduct = () => {
@@ -336,13 +333,13 @@ const CreatePurchaseOrder = () => {
   )
 
   return (
-    <BusinessLayout>
+    
       <div className="min-h-screen bg-gray-50">
       {/* Top Navigation Bar */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
         <div className="flex items-center gap-4">
           <Button
-            onClick={() => router.push('/user/manager/purchase-order-templates')}
+            onClick={() => router.push('/manager/purchase-order-templates')}
             variant="ghost"
             size="sm"
             className="flex items-center gap-2 text-blue-600 hover:text-blue-700"
@@ -633,7 +630,7 @@ const CreatePurchaseOrder = () => {
       </div>
       </div>
       </div>
-    </BusinessLayout>
+    
   )
 }
 

@@ -7,10 +7,8 @@ import {
   Trash2
 } from 'lucide-react'
 import { Button } from '../../../components/ui/button'
-import { useAuth } from '../../../contexts/AuthContext'
 
 const ManualStockReceipt = () => {
-  const { user } = useAuth()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [products, setProducts] = useState([])

@@ -88,7 +88,7 @@ const PurchaseOrderStatus = () => {
   }
 
   const handleCreateNewOrder = () => {
-    router.push('/user/manager/add-purchase-order')
+    router.push('/manager/add-purchase-order')
   }
 
   const handleDeleteOrder = async (order) => {
@@ -339,7 +339,7 @@ const PurchaseOrderStatus = () => {
                         {displayOrderNumber}
                       </td>
                       <td className="px-4 py-3 text-sm">
-                        {order.reportingEmpName || order.ReportingEmpName || order.createdByEmpName || order.CreatedByEmpName || order.franchiseeName || order.FranchiseeName || 'G & M Paterson'}
+                        {order.reportingEmpName || order.ReportingEmpName || order.createdByEmpName || order.CreatedByEmpName || order.franchiseeName || order.FranchiseeName || 'N/A'}
                       </td>
                       <td className="px-4 py-3 text-sm">
                         {orderDate ? new Date(orderDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : 'N/A'}
@@ -356,7 +356,7 @@ const PurchaseOrderStatus = () => {
                       <td className="px-4 py-3 text-sm text-center">
                         <div className="flex items-center justify-center gap-1">
                           <button
-                            onClick={() => router.push(`/user/manager/purchase-order-details/${order.uid || order.id}`)}
+                            onClick={() => router.push(`/manager/purchase-order-details/${order.uid || order.id}`)}
                             className="w-8 h-8 flex items-center justify-center bg-blue-600 text-white rounded hover:bg-blue-700"
                             title="View Details"
                           >

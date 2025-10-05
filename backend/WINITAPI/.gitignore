@@ -5,3 +5,7 @@
 /.claude
 bin/
 obj/
+# Log files
+*.txt
+Logs/
+C:\Logs/

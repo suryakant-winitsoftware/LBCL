@@ -33,10 +33,10 @@ namespace Winit.Modules.Address.DL.Classes
                                      altitude AS Altitude, linked_item_uid AS LinkedItemUID, linked_item_type AS LinkedItemType, a.status AS Status,
                                      state_code AS StateCode, territory_code AS TerritoryCode, pan AS PAN, aadhar AS AADHAR, ssn AS SSN,
                                      is_editable AS IsEditable, is_default AS IsDefault, line4 AS Line4, info AS Info, a.depot AS Depot,
-                                     location_uid AS LocationUID, state as State, locality as Locality, branch_uid as BranchUID, 
+                                     location_uid AS LocationUID, state as State, locality as Locality, branch_uid as BranchUID,
 									 o.code as OrgUnitUID, sales_office_uid as SalesOfficeUID, a.custom_field3 as SiteNo
 									 FROM address a
-									 Inner join store_additional_info sai 
+									 LEFT JOIN store_additional_info sai
 									 on a.linked_item_uid = sai.store_uid
                                      left join org o on a.org_unit_uid = o.uid) AS SubQuery");
 
@@ -52,10 +52,10 @@ namespace Winit.Modules.Address.DL.Classes
                                      altitude AS Altitude, linked_item_uid AS LinkedItemUID, linked_item_type AS LinkedItemType, a.status AS Status,
                                      state_code AS StateCode, territory_code AS TerritoryCode, pan AS PAN, aadhar AS AADHAR, ssn AS SSN,
                                      is_editable AS IsEditable, is_default AS IsDefault, line4 AS Line4, info AS Info, a.depot AS Depot,
-                                     location_uid AS LocationUID, state as State, locality as Locality, branch_uid as BranchUID, 
+                                     location_uid AS LocationUID, state as State, locality as Locality, branch_uid as BranchUID,
 									 o.code as OrgUnitUID, sales_office_uid as SalesOfficeUID, a.custom_field3 as SiteNo
 									 FROM address a
-									 Inner join store_additional_info sai 
+									 LEFT JOIN store_additional_info sai
 									 on a.linked_item_uid = sai.store_uid
                                      left join org o on a.org_unit_uid = o.uid) AS SubQuery");
                 }

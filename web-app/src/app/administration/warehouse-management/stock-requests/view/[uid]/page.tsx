@@ -22,6 +22,10 @@ interface WHStockRequestDetail {
   SourceName?: string
   TargetCode?: string
   TargetName?: string
+  SourceOrgUID?: string
+  SourceWHUID?: string
+  TargetOrgUID?: string
+  TargetWHUID?: string
   Status: string
   StockType?: string
   RequiredByDate: string
@@ -137,8 +141,12 @@ export default function StockRequestViewPage() {
 
       const data = response.Data
 
-      if (data && Array.isArray(data) && data.length >= 2) {
-        // First element is request details array, second is lines array
+      // Backend returns: { WHStockRequest: {...}, WHStockRequestLines: [...] }
+      if (data && data.WHStockRequest) {
+        setRequestData(data.WHStockRequest)
+        setRequestLines(data.WHStockRequestLines || [])
+      } else if (data && Array.isArray(data) && data.length >= 2) {
+        // Fallback: Old array format
         const requestDetails = data[0]
         const lines = data[1]
 
@@ -149,7 +157,7 @@ export default function StockRequestViewPage() {
           setRequestLines(lines)
         }
       } else if (data) {
-        // Alternative structure
+        // Last resort
         setRequestData(data)
         setRequestLines([])
       }
@@ -206,10 +214,6 @@ export default function StockRequestViewPage() {
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back
         </Button>
-        <Button variant="default">
-          <Edit className="h-4 w-4 mr-2" />
-          Edit Request
-        </Button>
       </div>
 
       {/* Request Header */}
@@ -232,18 +236,16 @@ export default function StockRequestViewPage() {
             <div className="flex items-start gap-3">
               <MapPin className="h-5 w-5 text-gray-400 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-gray-600">Source</p>
-                <p className="text-sm font-semibold">{requestData.SourceName || '-'}</p>
-                <p className="text-xs text-gray-500">{requestData.SourceCode || '-'}</p>
+                <p className="text-sm font-medium text-gray-600">Source Warehouse</p>
+                <p className="text-sm font-semibold">{requestData.SourceWHUID || '-'}</p>
               </div>
             </div>
 
             <div className="flex items-start gap-3">
               <MapPin className="h-5 w-5 text-gray-400 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-gray-600">Target</p>
-                <p className="text-sm font-semibold">{requestData.TargetName || '-'}</p>
-                <p className="text-xs text-gray-500">{requestData.TargetCode || '-'}</p>
+                <p className="text-sm font-medium text-gray-600">Target Warehouse</p>
+                <p className="text-sm font-semibold">{requestData.TargetWHUID || '-'}</p>
               </div>
             </div>
 
@@ -261,7 +263,7 @@ export default function StockRequestViewPage() {
               <div>
                 <p className="text-sm font-medium text-gray-600">Required By</p>
                 <p className="text-sm font-semibold">
-                  {new Date(requestData.RequiredByDate).toLocaleDateString()}
+                  {requestData.RequiredByDate ? new Date(requestData.RequiredByDate).toLocaleDateString() : '-'}
                 </p>
               </div>
             </div>
@@ -271,7 +273,7 @@ export default function StockRequestViewPage() {
               <div>
                 <p className="text-sm font-medium text-gray-600">Requested On</p>
                 <p className="text-sm font-semibold">
-                  {new Date(requestData.RequestedTime).toLocaleString()}
+                  {requestData.RequestedTime ? new Date(requestData.RequestedTime).toLocaleString() : '-'}
                 </p>
               </div>
             </div>

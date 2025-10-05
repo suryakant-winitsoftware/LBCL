@@ -417,8 +417,8 @@ namespace Winit.Modules.WHStock.DL.Classes
                                             org s on s.uid = wsr.source_wh_uid
                                         left join 
                                             org t on t.uid = wsr.target_wh_uid 
-                                        where 
-                                            wsr.status = @StockType 
+                                        where
+                                            (@StockType = 'all' OR wsr.status = @StockType) 
                                         order by 
                                             wsr.modified_time desc
                                     ) as subquery
@@ -453,8 +453,8 @@ namespace Winit.Modules.WHStock.DL.Classes
                                                     org s on s.uid = wsr.source_wh_uid
                                                 left join 
                                                     org t on t.uid = wsr.target_wh_uid 
-                                                where 
-                                                    wsr.status = @StockType
+                                                where
+                                                    (@StockType = 'all' OR wsr.status = @StockType)
                                             ) as subquery
                                             ");
                 }

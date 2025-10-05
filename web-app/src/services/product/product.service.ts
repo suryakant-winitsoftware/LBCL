@@ -1,14 +1,14 @@
 import {
   FilterCriteria,
   PagingRequest,
-  SortCriteria,
+  SortCriteria
 } from "@/types/common.types";
 import {
   Product,
   ProductWithAttributes,
   CreateProductWithAttributesRequest,
   UpdateProductRequest,
-  ProductAttribute,
+  ProductAttribute
 } from "@/types/product.types";
 import { getAuthHeaders } from "@/lib/auth-service";
 
@@ -28,7 +28,7 @@ export interface PagedResponse<T> {
 
 class ProductService {
   private baseURL =
-    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
   // Get product by UID
   async getProductByUID(uid: string): Promise<Product> {
@@ -38,8 +38,8 @@ class ProductService {
         method: "GET",
         headers: {
           ...getAuthHeaders(),
-          Accept: "application/json",
-        },
+          Accept: "application/json"
+        }
       }
     );
 
@@ -64,9 +64,9 @@ class ProductService {
       headers: {
         ...getAuthHeaders(),
         "Content-Type": "application/json",
-        Accept: "application/json",
+        Accept: "application/json"
       },
-      body: JSON.stringify(request),
+      body: JSON.stringify(request)
     });
 
     if (!response.ok) {
@@ -94,7 +94,7 @@ class ProductService {
           headers: {
             ...getAuthHeaders(),
             "Content-Type": "application/json",
-            Accept: "application/json",
+            Accept: "application/json"
           },
           body: JSON.stringify({
             UID: request.ProductCode, // Use ProductCode as UID
@@ -113,8 +113,8 @@ class ProductService {
             CreatedTime: new Date().toISOString(),
             ModifiedTime: new Date().toISOString(),
             ServerAddTime: new Date().toISOString(),
-            ServerModifiedTime: new Date().toISOString(),
-          }),
+            ServerModifiedTime: new Date().toISOString()
+          })
         }
       );
 
@@ -140,7 +140,7 @@ class ProductService {
             ...attr,
             ProductCode: request.ProductCode,
             CreatedBy: request.CreatedBy,
-            ModifiedBy: request.ModifiedBy,
+            ModifiedBy: request.ModifiedBy
           });
         }
       }
@@ -163,7 +163,7 @@ class ProductService {
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
         body: JSON.stringify({
           UID: `${attribute.ProductCode}_${
@@ -178,8 +178,8 @@ class ProductService {
           CreatedTime: new Date().toISOString(),
           ModifiedTime: new Date().toISOString(),
           ServerAddTime: new Date().toISOString(),
-          ServerModifiedTime: new Date().toISOString(),
-        }),
+          ServerModifiedTime: new Date().toISOString()
+        })
       }
     );
 
@@ -209,11 +209,11 @@ class ProductService {
       FilterCriterias: [
         {
           Name: "ProductCode",
-          Value: productCode,
-        },
+          Value: productCode
+        }
       ],
       SortCriterias: [],
-      IsCountRequired: false,
+      IsCountRequired: false
     };
 
     const response = await fetch(
@@ -223,9 +223,9 @@ class ProductService {
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify(request),
+        body: JSON.stringify(request)
       }
     );
 
@@ -259,7 +259,7 @@ class ProductService {
 
       return {
         ...product,
-        Attributes: attributes,
+        Attributes: attributes
       };
     } catch (error) {
       console.error("Error fetching product with attributes:", error);
@@ -274,13 +274,13 @@ class ProductService {
       headers: {
         ...getAuthHeaders(),
         "Content-Type": "application/json",
-        Accept: "application/json",
+        Accept: "application/json"
       },
       body: JSON.stringify({
         ...request,
         ModifiedTime: new Date().toISOString(),
-        ServerModifiedTime: new Date().toISOString(),
-      }),
+        ServerModifiedTime: new Date().toISOString()
+      })
     });
 
     if (!response.ok) {
@@ -299,8 +299,8 @@ class ProductService {
         method: "DELETE",
         headers: {
           ...getAuthHeaders(),
-          Accept: "application/json",
-        },
+          Accept: "application/json"
+        }
       }
     );
 
@@ -320,9 +320,7 @@ class ProductService {
       if (value !== undefined && value !== null && value !== "") {
         criteria.push({
           Name: key,
-          Value: Array.isArray(value)
-            ? JSON.stringify(value)
-            : value.toString(),
+          Value: Array.isArray(value) ? JSON.stringify(value) : value.toString()
         });
       }
     });
@@ -337,8 +335,8 @@ class ProductService {
     return [
       {
         SortParameter: sortField,
-        Direction: sortDirection === "asc" ? "Asc" : "Desc",
-      },
+        Direction: sortDirection === "asc" ? "Asc" : "Desc"
+      }
     ];
   }
 }

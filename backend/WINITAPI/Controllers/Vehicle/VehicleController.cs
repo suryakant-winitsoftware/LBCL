@@ -47,6 +47,7 @@ namespace WINITAPI.Controllers.Vehicle
                 {
                     return BadRequest("Invalid page size or page number");
                 }
+
                 PagedResponse<Winit.Modules.Vehicle.Model.Interfaces.IVehicle> PagedResponseVehicleList = null;
                 PagedResponseVehicleList = await _VehicleBL.SelectAllVehicleDetails(pagingRequest.SortCriterias,
                     pagingRequest.PageNumber, pagingRequest.PageSize, pagingRequest.FilterCriterias,
@@ -55,7 +56,7 @@ namespace WINITAPI.Controllers.Vehicle
                 {
                     return NotFound();
                 }
-                
+
                 return CreateOkApiResponse(PagedResponseVehicleList);
             }
 

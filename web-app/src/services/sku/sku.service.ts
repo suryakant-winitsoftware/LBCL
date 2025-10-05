@@ -217,7 +217,7 @@ export interface PagedResponse<T> {
 
 class SKUService {
   private baseURL =
-    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
   // SKU CRUD Operations
   async getSKUByUID(uid: string): Promise<SKU> {
@@ -227,8 +227,8 @@ class SKUService {
         method: "GET",
         headers: {
           ...getAuthHeaders(),
-          Accept: "application/json",
-        },
+          Accept: "application/json"
+        }
       }
     );
 
@@ -256,13 +256,13 @@ class SKUService {
       filterCriterias:
         request.FilterCriterias?.map((f) => ({
           name: f.Name,
-          value: f.Value,
+          value: f.Value
         })) || [],
       sortCriterias:
         request.SortCriterias?.map((s) => ({
           sortParameter: s.SortParameter,
-          direction: s.Direction,
-        })) || [],
+          direction: s.Direction
+        })) || []
     };
 
     // API call to WebView endpoint with LEFT JOIN fix
@@ -273,9 +273,9 @@ class SKUService {
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify(camelCaseRequest),
+        body: JSON.stringify(camelCaseRequest)
       });
 
       // Response received
@@ -288,7 +288,7 @@ class SKUService {
         return {
           success: false,
           error: `Failed to parse response: ${parseError}`,
-          status: response.status,
+          status: response.status
         };
       }
 
@@ -300,7 +300,7 @@ class SKUService {
           success: false,
           error: `HTTP ${response.status}: ${response.statusText}`,
           status: response.status,
-          data: responseData,
+          data: responseData
         };
       }
 
@@ -330,7 +330,7 @@ class SKUService {
                 responseData.isSuccess !== false,
               data: extractedData, // Keep the structure with PagedData
               message: responseData.Message || responseData.message,
-              status: response.status,
+              status: response.status
             };
           } else {
             // Return the extracted data as is
@@ -340,7 +340,7 @@ class SKUService {
                 responseData.isSuccess !== false,
               data: extractedData,
               message: responseData.Message || responseData.message,
-              status: response.status,
+              status: response.status
             };
           }
         } else if ("Data" in responseData || "data" in responseData) {
@@ -349,21 +349,21 @@ class SKUService {
             success: true,
             data: responseData.Data || responseData.data,
             message: responseData.Message || responseData.message,
-            status: response.status,
+            status: response.status
           };
         } else {
           // If response is direct data
           result = {
             success: true,
             data: responseData,
-            status: response.status,
+            status: response.status
           };
         }
       } else {
         result = {
           success: true,
           data: responseData,
-          status: response.status,
+          status: response.status
         };
       }
 
@@ -376,7 +376,7 @@ class SKUService {
         success: false,
         error: error instanceof Error ? error.message : "Network error",
         status: 0,
-        details: error,
+        details: error
       };
     }
   }
@@ -387,9 +387,9 @@ class SKUService {
       headers: {
         ...getAuthHeaders(),
         "Content-Type": "application/json",
-        Accept: "application/json",
+        Accept: "application/json"
       },
-      body: JSON.stringify(sku),
+      body: JSON.stringify(sku)
     });
 
     if (!response.ok) {
@@ -410,9 +410,9 @@ class SKUService {
       headers: {
         ...getAuthHeaders(),
         "Content-Type": "application/json",
-        Accept: "application/json",
+        Accept: "application/json"
       },
-      body: JSON.stringify(sku),
+      body: JSON.stringify(sku)
     });
 
     if (!response.ok) {
@@ -432,8 +432,8 @@ class SKUService {
       method: "DELETE",
       headers: {
         ...getAuthHeaders(),
-        Accept: "application/json",
-      },
+        Accept: "application/json"
+      }
     });
 
     if (!response.ok) {
@@ -453,7 +453,7 @@ class SKUService {
         SKUUIDs: [skuUID],
         OrgUIDs: [],
         DistributionChannelUIDs: [],
-        AttributeTypes: [],
+        AttributeTypes: []
       };
 
       const response = await fetch(
@@ -463,9 +463,9 @@ class SKUService {
           headers: {
             ...getAuthHeaders(),
             "Content-Type": "application/json",
-            Accept: "application/json",
+            Accept: "application/json"
           },
-          body: JSON.stringify(requestBody),
+          body: JSON.stringify(requestBody)
         }
       );
 
@@ -504,7 +504,7 @@ class SKUService {
         FilterCriterias: orgUIDs?.length
           ? [{ Name: "OrgUIDs", Value: JSON.stringify(orgUIDs) }]
           : [],
-        SortCriterias: [{ SortParameter: "SKUCode", Direction: "Asc" }],
+        SortCriterias: [{ SortParameter: "SKUCode", Direction: "Asc" }]
       };
 
       const allSKUsResponse = await this.getAllSKUs(allSKUsRequest);
@@ -534,7 +534,7 @@ class SKUService {
         return {
           success: false,
           totalProcessed: 0,
-          errors: ["No SKUs found to process"],
+          errors: ["No SKUs found to process"]
         };
       }
 
@@ -551,7 +551,7 @@ class SKUService {
       const results = {
         success: true,
         totalProcessed: 0,
-        errors: [] as any[],
+        errors: [] as any[]
       };
 
       // Process each chunk
@@ -568,7 +568,7 @@ class SKUService {
             SKUUIDs: chunk,
             OrgUIDs: orgUIDs || [],
             DistributionChannelUIDs: [],
-            AttributeTypes: [],
+            AttributeTypes: []
           };
 
           const response = await fetch(
@@ -578,9 +578,9 @@ class SKUService {
               headers: {
                 ...getAuthHeaders(),
                 "Content-Type": "application/json",
-                Accept: "application/json",
+                Accept: "application/json"
               },
-              body: JSON.stringify(requestBody),
+              body: JSON.stringify(requestBody)
             }
           );
 
@@ -641,7 +641,7 @@ class SKUService {
       return {
         success: false,
         totalProcessed: 0,
-        errors: [error instanceof Error ? error.message : "Unknown error"],
+        errors: [error instanceof Error ? error.message : "Unknown error"]
       };
     }
   }
@@ -655,10 +655,10 @@ class SKUService {
         FilterCriterias: [
           {
             Name: "SKUUID",
-            Value: skuUID,
-          },
+            Value: skuUID
+          }
         ],
-        SortCriterias: [],
+        SortCriterias: []
       };
 
       const response = await fetch(
@@ -668,9 +668,9 @@ class SKUService {
           headers: {
             ...getAuthHeaders(),
             "Content-Type": "application/json",
-            Accept: "application/json",
+            Accept: "application/json"
           },
-          body: JSON.stringify(request),
+          body: JSON.stringify(request)
         }
       );
 
@@ -699,10 +699,10 @@ class SKUService {
         FilterCriterias: [
           {
             Name: "SKUUID",
-            Value: skuUID,
-          },
+            Value: skuUID
+          }
         ],
-        SortCriterias: [],
+        SortCriterias: []
       };
 
       const response = await fetch(
@@ -712,9 +712,9 @@ class SKUService {
           headers: {
             ...getAuthHeaders(),
             "Content-Type": "application/json",
-            Accept: "application/json",
+            Accept: "application/json"
           },
-          body: JSON.stringify(request),
+          body: JSON.stringify(request)
         }
       );
 
@@ -743,10 +743,10 @@ class SKUService {
         FilterCriterias: [
           {
             Name: "SKUUID",
-            Value: skuUID,
-          },
+            Value: skuUID
+          }
         ],
-        SortCriterias: [],
+        SortCriterias: []
       };
 
       const response = await fetch(
@@ -756,9 +756,9 @@ class SKUService {
           headers: {
             ...getAuthHeaders(),
             "Content-Type": "application/json",
-            Accept: "application/json",
+            Accept: "application/json"
           },
-          body: JSON.stringify(request),
+          body: JSON.stringify(request)
         }
       );
 
@@ -786,9 +786,9 @@ class SKUService {
       headers: {
         ...getAuthHeaders(),
         "Content-Type": "application/json",
-        Accept: "application/json",
+        Accept: "application/json"
       },
-      body: JSON.stringify({ SKUUIDs: skuUIDs }),
+      body: JSON.stringify({ SKUUIDs: skuUIDs })
     });
 
     if (!response.ok) {
@@ -813,8 +813,8 @@ class SKUService {
         method: "GET",
         headers: {
           ...getAuthHeaders(),
-          Accept: "application/json",
-        },
+          Accept: "application/json"
+        }
       }
     );
 
@@ -843,9 +843,9 @@ class SKUService {
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify(request),
+        body: JSON.stringify(request)
       }
     );
 
@@ -871,9 +871,9 @@ class SKUService {
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify(request),
+        body: JSON.stringify(request)
       }
     );
 
@@ -903,9 +903,9 @@ class SKUService {
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify(request),
+        body: JSON.stringify(request)
       }
     );
 
@@ -940,9 +940,9 @@ class SKUService {
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify(mapping),
+        body: JSON.stringify(mapping)
       }
     );
 
@@ -973,9 +973,9 @@ class SKUService {
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify(request),
+        body: JSON.stringify(request)
       }
     );
 
@@ -1003,9 +1003,7 @@ class SKUService {
       if (value !== undefined && value !== null && value !== "") {
         criteria.push({
           Name: key,
-          Value: Array.isArray(value)
-            ? JSON.stringify(value)
-            : value.toString(),
+          Value: Array.isArray(value) ? JSON.stringify(value) : value.toString()
         });
       }
     });
@@ -1020,8 +1018,8 @@ class SKUService {
     return [
       {
         SortParameter: sortField,
-        Direction: sortDirection === "asc" ? "Asc" : "Desc",
-      },
+        Direction: sortDirection === "asc" ? "Asc" : "Desc"
+      }
     ];
   }
 
@@ -1039,7 +1037,7 @@ class SKUService {
           ? [{ Name: "skucodeandname", Value: searchTerm }]
           : [],
         SortCriterias: [{ SortParameter: "SKUCode", Direction: "Asc" }],
-        IsCountRequired: true,
+        IsCountRequired: true
       };
 
       const response = await this.getAllSKUs(request);
@@ -1073,7 +1071,7 @@ class SKUService {
           SKUCode: sku.Code || sku.UID,
           SKULongName: sku.LongName || sku.Name || sku.AliasName,
           IsActive: sku.IsActive !== false,
-          ...sku,
+          ...sku
         }));
       }
 
@@ -1110,7 +1108,7 @@ class SKUService {
       "Created By",
       "Created Date",
       "Modified By",
-      "Modified Date",
+      "Modified Date"
     ];
 
     const csvContent = [
@@ -1147,9 +1145,9 @@ class SKUService {
             sku.ModifiedTime
               ? new Date(sku.ModifiedTime).toLocaleDateString()
               : ""
-          }"`,
+          }"`
         ].join(",")
-      ),
+      )
     ].join("\n");
 
     return new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
@@ -1160,7 +1158,7 @@ class SKUService {
     // In the future, could use libraries like xlsx for proper Excel export
     const csvContent = this.exportToCSV(skus);
     return new Blob([csvContent], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8;",
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8;"
     });
   }
 }

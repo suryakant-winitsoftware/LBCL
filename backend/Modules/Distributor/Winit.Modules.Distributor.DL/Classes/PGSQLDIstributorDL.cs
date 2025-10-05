@@ -57,9 +57,9 @@ namespace Winit.Modules.Distributor.DL.Classes
 			   											sa.customer_start_date as OpenAccountDate
                                                     FROM
                                                         org o
-                                                    Left JOIN
+                                                    INNER JOIN
                                                         store s ON o.code = s.code AND o.org_type_uid = 'FR'
-                                                    inner JOIN
+                                                    LEFT JOIN
                                                         store_additional_info sa ON sa.store_uid = s.uid
                                                     LEFT JOIN
                                                         contact c ON s.uid = c.linked_item_uid AND c.is_default = true) as SubQuery ");
@@ -67,14 +67,7 @@ namespace Winit.Modules.Distributor.DL.Classes
                 if (isCountRequired)
                 {
                      sqlCount = new StringBuilder(@"select COUNT(1) AS Cnt from (SELECT
-                                                            o.uid AS UID,
-                                                        o.code AS Code,
-                                                        o.name AS Name,
-                                                        o.seq_code AS SequenceCode,
-                                                        c.name AS ContactPerson,
-                                                        c.phone AS ContactNumber,
-	                                                    o.status as Status,
-			   											sa.customer_start_date as OpenAccountDate
+                                                        o.uid AS UID
                                                         FROM
                                                             org o
                                                         INNER JOIN
@@ -108,7 +101,7 @@ namespace Winit.Modules.Distributor.DL.Classes
 
                 if (pageNumber > 0 && pageSize > 0)
                 {
-                    sql.Append($" OFFSET {((pageNumber - 1) * pageSize)} ROWS FETCH NEXT {pageSize} ROWS ONLY");
+                    sql.Append($" LIMIT {pageSize} OFFSET {(pageNumber - 1) * pageSize}");
                 }
                 //Data
 
@@ -207,9 +200,9 @@ namespace Winit.Modules.Distributor.DL.Classes
             try
             {
           var query = @$"SELECT O.uid AS ""UID"",O.code AS Code,O.name AS Name,O.seq_code AS SeqCode,O.org_type_uid AS OrgTypeUid,O.parent_uid AS ParentUid,
-                                O.country_uid AS CountryUid,O.company_uid AS CompanyUid,O.tax_group_uid AS TaxGroupUid,O.status AS Status,
+                                O.country_uid AS CountryUid,O.company_uid AS CompanyUid,O.tax_group_uid AS TaxGroupUid,O.territory_uid AS TerritoryUid,O.status AS Status,
                                 O.has_early_access AS HasEarlyAccess,O.created_by AS CreatedBy,O.created_time AS CreatedTime,O.modified_by AS ModifiedBy,
-                                O.modified_time AS ModifiedTime,O.server_add_time AS ServerAddTime,O.server_modified_time AS ServerModifiedTime,O.is_active AS IsActive 
+                                O.modified_time AS ModifiedTime,O.server_add_time AS ServerAddTime,O.server_modified_time AS ServerModifiedTime,O.is_active AS IsActive
                                 FROM org AS O Where o.uid='{UID}';
                           SELECT S.uid AS UID,
                                 S.code AS Code,S.name AS Name,S.alias_name AS AliasName,S.legal_name AS LegalName,S.type AS Type,S.bill_to_store_uid AS BillToStoreUid,
@@ -272,7 +265,9 @@ namespace Winit.Modules.Distributor.DL.Classes
                                     city AS City,country_code AS CountryCode,region_code AS RegionCode,phone AS Phone,phone_extension AS PhoneExtension,mobile1 AS Mobile1,
                                     mobile2 AS Mobile2,email AS Email,fax AS Fax,latitude AS Latitude,longitude AS Longitude,altitude AS Altitude,linked_item_uid AS LinkedItemUID,
                                     linked_item_type AS LinkedItemType,status AS Status,state_code AS StateCode,territory_code AS TerritoryCode,pan AS PAN,aadhar AS AADHAR,
-                                    ssn AS SSN,is_editable AS IsEditable,is_default AS IsDefault,line4 AS Line4,info AS Info,depot AS Depot
+                                    ssn AS SSN,is_editable AS IsEditable,is_default AS IsDefault,line4 AS Line4,info AS Info,depot AS Depot,location_uid AS LocationUID,
+                                    custom_field1 AS CustomField1,custom_field2 AS CustomField2,custom_field3 AS CustomField3,custom_field4 AS CustomField4,
+                                    custom_field5 AS CustomField5,custom_field6 AS CustomField6
                                     FROM  public. address Where linked_item_uid='{UID}';
                          SELECT sd.id AS Id,
                                     sd.uid AS UID,sd.created_by AS CreatedBy,sd.created_time AS CreatedTime,sd.modified_by AS ModifiedBy,sd.modified_time AS ModifiedTime,sd.server_add_time AS ServerAddTime,

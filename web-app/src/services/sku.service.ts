@@ -42,7 +42,7 @@ export interface PagedResponse<T> {
 
 class SKUService {
   private baseURL =
-    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
   /**
    * Get all SKUs with paging
@@ -55,10 +55,10 @@ class SKUService {
       SortCriterias: [
         {
           SortParameter: "Name",
-          Direction: "Asc",
-        },
+          Direction: "Asc"
+        }
       ],
-      IsCountRequired: false,
+      IsCountRequired: false
     };
 
     console.log("🔍 [SKUService] Fetching all SKUs...");
@@ -76,9 +76,9 @@ class SKUService {
       headers: {
         ...getAuthHeaders(),
         "Content-Type": "application/json",
-        Accept: "application/json",
+        Accept: "application/json"
       },
-      body: JSON.stringify(request),
+      body: JSON.stringify(request)
     });
 
     console.log(
@@ -124,7 +124,7 @@ class SKUService {
         result.Data.PagedData.slice(0, 3).map((sku) => ({
           UID: sku.UID,
           Code: sku.Code,
-          Name: sku.Name,
+          Name: sku.Name
         }))
       );
     }
@@ -144,17 +144,17 @@ class SKUService {
             {
               FieldName: "Name",
               FieldValue: searchText,
-              FilterType: "Contains",
-            },
+              FilterType: "Contains"
+            }
           ]
         : [],
       SortCriterias: [
         {
           SortParameter: "Name",
-          Direction: "Asc",
-        },
+          Direction: "Asc"
+        }
       ],
-      IsCountRequired: false,
+      IsCountRequired: false
     };
 
     console.log("🔍 [SKUService] Searching SKUs with text:", searchText);
@@ -164,9 +164,9 @@ class SKUService {
       headers: {
         ...getAuthHeaders(),
         "Content-Type": "application/json",
-        Accept: "application/json",
+        Accept: "application/json"
       },
-      body: JSON.stringify(request),
+      body: JSON.stringify(request)
     });
 
     if (!response.ok) {
@@ -200,17 +200,17 @@ class SKUService {
             {
               FieldName: "OrgUID",
               FieldValue: orgUID,
-              FilterType: "Equals",
-            },
+              FilterType: "Equals"
+            }
           ]
         : [],
       SortCriterias: [
         {
           SortParameter: "Name",
-          Direction: "Asc",
-        },
+          Direction: "Asc"
+        }
       ],
-      IsCountRequired: false,
+      IsCountRequired: false
     };
 
     const response = await fetch(`${this.baseURL}/SKU/SelectAllSKUDetails`, {
@@ -218,9 +218,9 @@ class SKUService {
       headers: {
         ...getAuthHeaders(),
         "Content-Type": "application/json",
-        Accept: "application/json",
+        Accept: "application/json"
       },
-      body: JSON.stringify(request),
+      body: JSON.stringify(request)
     });
 
     if (!response.ok) {

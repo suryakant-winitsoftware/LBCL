@@ -12,12 +12,12 @@ import {
   type AuditContext,
   type SecurityAuditEvent,
   AuditLogLevel,
-  type ChangeLog,
+  type ChangeLog
 } from "@/types/audit.types";
 
 class AuditService {
   private readonly API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
   // Use main API instead of separate microservice to avoid CORS issues
   private readonly AUDIT_API_URL = this.API_BASE_URL;
   private auditQueue: AuditTrailEntry[] = [];
@@ -71,7 +71,7 @@ class AuditService {
         newData: entry.newData || {},
         originalDataId: entry.originalDataId,
         hasChanges: entry.hasChanges || false,
-        changeData: entry.changeData || [],
+        changeData: entry.changeData || []
 
         // Note: Do not include non-existent fields like createdBy, createdTime, companyUID
       };
@@ -84,9 +84,9 @@ class AuditService {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${token}`
             },
-            body: JSON.stringify(auditEntry),
+            body: JSON.stringify(auditEntry)
           }
         );
 
@@ -146,7 +146,7 @@ class AuditService {
         `/AuditTrail/CreateAuditTrail`,
         `/AuditTrail/PublishAuditTrail`,
         `/Audit/CreateAudit`,
-        `/Security/LogEvent`,
+        `/Security/LogEvent`
       ];
 
       for (const entry of entriesToProcess) {
@@ -158,9 +158,9 @@ class AuditService {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${token}`
               },
-              body: JSON.stringify(entry),
+              body: JSON.stringify(entry)
             });
 
             if (response.ok) {
@@ -205,9 +205,9 @@ class AuditService {
         userAgent: event.userAgent,
         sessionId: event.sessionId,
         timestamp: new Date().toISOString(),
-        ...event.details,
+        ...event.details
       },
-      hasChanges: false,
+      hasChanges: false
     });
   }
 
@@ -230,7 +230,7 @@ class AuditService {
           changes.push({
             field: key,
             oldValue: oldData[key],
-            newValue: newData[key],
+            newValue: newData[key]
           });
         }
       }
@@ -243,7 +243,7 @@ class AuditService {
       newData,
       hasChanges: changes.length > 0,
       changeData: changes.length > 0 ? changes : undefined,
-      originalDataId: oldData?.uid,
+      originalDataId: oldData?.uid
     });
   }
 
@@ -262,8 +262,8 @@ class AuditService {
         `${this.AUDIT_API_URL}/AuditTrail/${linkedItemType}/${linkedItemUID}`,
         {
           headers: {
-            Authorization: `Bearer ${token}`,
-          },
+            Authorization: `Bearer ${token}`
+          }
         }
       );
 
@@ -293,7 +293,7 @@ class AuditService {
           data: [],
           pageNumber: request.pageNumber,
           pageSize: request.pageSize,
-          totalCount: 0,
+          totalCount: 0
         };
       }
 
@@ -303,9 +303,9 @@ class AuditService {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`
           },
-          body: JSON.stringify(request),
+          body: JSON.stringify(request)
         }
       );
 
@@ -315,7 +315,7 @@ class AuditService {
           data: [],
           pageNumber: request.pageNumber,
           pageSize: request.pageSize,
-          totalCount: 0,
+          totalCount: 0
         };
       }
 
@@ -330,7 +330,7 @@ class AuditService {
         data: [],
         pageNumber: request.pageNumber,
         pageSize: request.pageSize,
-        totalCount: 0,
+        totalCount: 0
       };
     } catch (error) {
       // Error fetching paged audit trail
@@ -338,7 +338,7 @@ class AuditService {
         data: [],
         pageNumber: request.pageNumber,
         pageSize: request.pageSize,
-        totalCount: 0,
+        totalCount: 0
       };
     }
   }
@@ -354,8 +354,8 @@ class AuditService {
       newData: {
         page: pageName,
         timestamp: new Date().toISOString(),
-        ...metadata,
-      },
+        ...metadata
+      }
     });
   }
 
@@ -376,8 +376,8 @@ class AuditService {
         format,
         recordCount,
         filters,
-        timestamp: new Date().toISOString(),
-      },
+        timestamp: new Date().toISOString()
+      }
     });
   }
 
@@ -409,7 +409,7 @@ export const auditHelpers = {
   createContext: (type: string, uid: string, docNo?: string): AuditContext => ({
     linkedItemType: type,
     linkedItemUID: uid,
-    docNo,
+    docNo
   }),
 
   /**
@@ -420,5 +420,5 @@ export const auditHelpers = {
     const user = entry.empName;
     const date = new Date(entry.commandDate).toLocaleString();
     return `${action} by ${user} on ${date}`;
-  },
+  }
 };

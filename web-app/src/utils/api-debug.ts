@@ -3,7 +3,7 @@ import { authService } from "@/lib/auth-service";
 // API Debug utility to help identify available endpoints
 export class ApiDebug {
   private static baseUrl =
-    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
   static async testEndpoint(
     endpoint: string,
@@ -24,7 +24,7 @@ export class ApiDebug {
         return {
           success: false,
           error: "No authentication token",
-          status: 401,
+          status: 401
         };
       }
 
@@ -32,8 +32,8 @@ export class ApiDebug {
         method,
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+          Authorization: `Bearer ${token}`
+        }
       };
 
       if (body && method !== "GET") {
@@ -63,7 +63,7 @@ export class ApiDebug {
           return {
             success: false,
             error: "No error body",
-            status: response.status,
+            status: response.status
           };
         }
       }
@@ -72,7 +72,7 @@ export class ApiDebug {
       return {
         success: false,
         error: error instanceof Error ? error.message : "Unknown error",
-        status: 0,
+        status: 0
       };
     }
   }
@@ -89,8 +89,8 @@ export class ApiDebug {
           pageSize: 10,
           isCountRequired: true,
           sortCriterias: [],
-          filterCriterias: [],
-        },
+          filterCriterias: []
+        }
       },
 
       // Try different BeatHistory endpoint variations
@@ -101,8 +101,8 @@ export class ApiDebug {
           pageSize: 10,
           isCountRequired: true,
           sortCriterias: [],
-          filterCriterias: [],
-        },
+          filterCriterias: []
+        }
       },
       {
         endpoint: "/BeatHistory/GetBeatHistory",
@@ -111,8 +111,8 @@ export class ApiDebug {
           pageSize: 10,
           isCountRequired: true,
           sortCriterias: [],
-          filterCriterias: [],
-        },
+          filterCriterias: []
+        }
       },
       {
         endpoint: "/BeatHistory/SelectAll",
@@ -121,8 +121,8 @@ export class ApiDebug {
           pageSize: 10,
           isCountRequired: true,
           sortCriterias: [],
-          filterCriterias: [],
-        },
+          filterCriterias: []
+        }
       },
       {
         endpoint: "/BeatHistory/GetAllBeatHistory",
@@ -131,8 +131,8 @@ export class ApiDebug {
           pageSize: 10,
           isCountRequired: true,
           sortCriterias: [],
-          filterCriterias: [],
-        },
+          filterCriterias: []
+        }
       },
 
       // Try UserJourney variations
@@ -143,8 +143,8 @@ export class ApiDebug {
           pageSize: 10,
           isCountRequired: true,
           sortCriterias: [],
-          filterCriterias: [],
-        },
+          filterCriterias: []
+        }
       },
       {
         endpoint: "/UserJourney/SelectAll",
@@ -153,8 +153,8 @@ export class ApiDebug {
           pageSize: 10,
           isCountRequired: true,
           sortCriterias: [],
-          filterCriterias: [],
-        },
+          filterCriterias: []
+        }
       },
       {
         endpoint: "/UserJourney/GetAll",
@@ -163,8 +163,8 @@ export class ApiDebug {
           pageSize: 10,
           isCountRequired: true,
           sortCriterias: [],
-          filterCriterias: [],
-        },
+          filterCriterias: []
+        }
       },
 
       // Try JourneyPlan variations
@@ -175,8 +175,8 @@ export class ApiDebug {
           pageSize: 10,
           isCountRequired: true,
           sortCriterias: [],
-          filterCriterias: [],
-        },
+          filterCriterias: []
+        }
       },
       {
         endpoint: "/JourneyPlan/GetAll",
@@ -185,8 +185,8 @@ export class ApiDebug {
           pageSize: 10,
           isCountRequired: true,
           sortCriterias: [],
-          filterCriterias: [],
-        },
+          filterCriterias: []
+        }
       },
       {
         endpoint: "/JourneyPlan/GetJourneyPlans",
@@ -195,8 +195,8 @@ export class ApiDebug {
           pageSize: 10,
           isCountRequired: true,
           sortCriterias: [],
-          filterCriterias: [],
-        },
+          filterCriterias: []
+        }
       },
 
       // Try Route-based journey endpoints
@@ -207,8 +207,8 @@ export class ApiDebug {
           pageSize: 10,
           isCountRequired: true,
           sortCriterias: [],
-          filterCriterias: [],
-        },
+          filterCriterias: []
+        }
       },
       {
         endpoint: "/Route/SelectAllRouteDetails",
@@ -217,8 +217,8 @@ export class ApiDebug {
           pageSize: 10,
           isCountRequired: true,
           sortCriterias: [],
-          filterCriterias: [],
-        },
+          filterCriterias: []
+        }
       },
 
       // Dropdown endpoints
@@ -226,11 +226,11 @@ export class ApiDebug {
       {
         endpoint:
           "/Dropdown/GetEmpDropDown?orgUID=Farmley&getDataByLoginId=false",
-        body: {},
+        body: {}
       },
       {
         endpoint: "/Dropdown/GetCustomerDropDown?franchiseeOrgUID=Farmley",
-        body: {},
+        body: {}
       },
 
       // Store endpoint
@@ -241,8 +241,8 @@ export class ApiDebug {
           pageSize: 10,
           isCountRequired: true,
           sortCriterias: [],
-          filterCriterias: [],
-        },
+          filterCriterias: []
+        }
       },
 
       // Try Employee-based endpoints
@@ -253,8 +253,8 @@ export class ApiDebug {
           pageSize: 10,
           isCountRequired: true,
           sortCriterias: [],
-          filterCriterias: [],
-        },
+          filterCriterias: []
+        }
       },
       {
         endpoint: "/Employee/SelectAllEmployeeDetails",
@@ -263,9 +263,9 @@ export class ApiDebug {
           pageSize: 10,
           isCountRequired: true,
           sortCriterias: [],
-          filterCriterias: [],
-        },
-      },
+          filterCriterias: []
+        }
+      }
     ];
 
     for (const testCase of testCases) {

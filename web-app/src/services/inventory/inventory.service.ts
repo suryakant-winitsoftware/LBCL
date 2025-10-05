@@ -147,7 +147,7 @@ export interface ApiResponse<T> {
 
 class InventoryService {
   private baseUrl =
-    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
   // Stock Updater APIs
   async getWHStockSummary(
@@ -159,7 +159,7 @@ class InventoryService {
         `${this.baseUrl}/StockUpdater/GetWHStockSummary?orgUID=${orgUID}&wareHouseUID=${wareHouseUID}`,
         {
           method: "GET",
-          headers: getAuthHeaders(),
+          headers: getAuthHeaders()
         }
       );
 
@@ -187,7 +187,7 @@ class InventoryService {
         {
           method: "POST",
           headers: getAuthHeaders(),
-          body: JSON.stringify(stockLedgers),
+          body: JSON.stringify(stockLedgers)
         }
       );
 
@@ -216,7 +216,7 @@ class InventoryService {
         {
           method: "POST",
           headers: getAuthHeaders(),
-          body: JSON.stringify(request),
+          body: JSON.stringify(request)
         }
       );
 
@@ -246,7 +246,7 @@ class InventoryService {
         `${this.baseUrl}/WHStock/SelectLoadRequestDataByUID?UID=${uid}`,
         {
           method: "GET",
-          headers: getAuthHeaders(),
+          headers: getAuthHeaders()
         }
       );
 
@@ -274,7 +274,7 @@ class InventoryService {
       const response = await fetch(`${this.baseUrl}/WHStock/CUDWHStock`, {
         method: "POST",
         headers: getAuthHeaders(),
-        body: JSON.stringify(requestTemplate),
+        body: JSON.stringify(requestTemplate)
       });
 
       if (!response.ok) {
@@ -301,7 +301,7 @@ class InventoryService {
         {
           method: "POST",
           headers: getAuthHeaders(),
-          body: JSON.stringify(requestTemplates),
+          body: JSON.stringify(requestTemplates)
         }
       );
 
@@ -329,7 +329,7 @@ class InventoryService {
         {
           method: "POST",
           headers: getAuthHeaders(),
-          body: JSON.stringify(stockRequestLines),
+          body: JSON.stringify(stockRequestLines)
         }
       );
 

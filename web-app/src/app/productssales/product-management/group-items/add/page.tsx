@@ -8,7 +8,7 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,7 +18,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -44,30 +44,30 @@ import {
   RefreshCw,
   Check,
   Eye,
-  EyeOff,
+  EyeOff
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   skuClassGroupItemsService,
   SKUClassGroupItem,
   SKUClassGroupItemCreateData,
-  SKUClassGroupItemUpdateData,
+  SKUClassGroupItemUpdateData
 } from "@/services/sku-class-group-items.service";
 import {
   skuClassGroupsService,
-  SKUClassGroup,
+  SKUClassGroup
 } from "@/services/sku-class-groups.service";
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
-  CommandItem,
+  CommandItem
 } from "@/components/ui/command";
 import {
   Popover,
   PopoverContent,
-  PopoverTrigger,
+  PopoverTrigger
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
@@ -114,7 +114,7 @@ export default function AddSKUClassGroupItemPage() {
     IsExclusive: false,
     MaxQTY: 9999,
     MinQTY: 1,
-    ActionType: 0,
+    ActionType: 0
   });
 
   // Dropdown data
@@ -132,7 +132,7 @@ export default function AddSKUClassGroupItemPage() {
     "BOX",
     "CASE",
     "PACK",
-    "UNIT",
+    "UNIT"
   ]);
 
   // Search states
@@ -203,7 +203,7 @@ export default function AddSKUClassGroupItemPage() {
     itemsToRemove,
     loadingSKUs,
     hasMoreSKUs,
-    skuSearchOpen,
+    skuSearchOpen
   ]);
 
   const loadSKUs = async (page: number = 1, append: boolean = false) => {
@@ -220,21 +220,21 @@ export default function AddSKUClassGroupItemPage() {
         FilterCriterias: skuSearchValue
           ? [{ Name: "skucodeandname", Value: skuSearchValue }]
           : [],
-        SortCriterias: [{ SortParameter: "SKUCode", Direction: "Asc" }],
+        SortCriterias: [{ SortParameter: "SKUCode", Direction: "Asc" }]
       };
 
       const response = await fetch(
         `${
-          process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
         }/SKU/SelectAllSKUDetailsWebView`,
         {
           method: "POST",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
             "Content-Type": "application/json",
-            Accept: "application/json",
+            Accept: "application/json"
           },
-          body: JSON.stringify(requestBody),
+          body: JSON.stringify(requestBody)
         }
       );
 
@@ -263,7 +263,7 @@ export default function AddSKUClassGroupItemPage() {
               uid: sku.SKUUID || sku.UID || sku.Id, // ✅ Fixed: Try SKUUID first, then fallback to UID/Id
               code: sku.SKUCode || sku.Code,
               name: sku.SKULongName || sku.Name || sku.LongName,
-              longName: sku.LongName || sku.Name || sku.AliasName,
+              longName: sku.LongName || sku.Name || sku.AliasName
             }))
             .filter((sku: SKUOption) => sku.code && sku.name);
 
@@ -285,7 +285,7 @@ export default function AddSKUClassGroupItemPage() {
           toast({
             title: "Warning",
             description: "Failed to load SKUs.",
-            variant: "default",
+            variant: "default"
           });
           setAvailableSKUs([]);
         }
@@ -296,7 +296,7 @@ export default function AddSKUClassGroupItemPage() {
         toast({
           title: "Warning",
           description: "Failed to load SKUs from server.",
-          variant: "default",
+          variant: "default"
         });
         setAvailableSKUs([]);
       }
@@ -369,7 +369,7 @@ export default function AddSKUClassGroupItemPage() {
       // Load supplier organizations
       const suppliers: SupplierOrg[] = [
         { uid: "Supplier", name: "Supplier", code: "SUPP" },
-        { uid: "EPIC01", name: "EPIC01", code: "EPIC01" },
+        { uid: "EPIC01", name: "EPIC01", code: "EPIC01" }
       ];
       setSupplierOrgs(suppliers);
     } catch (error) {
@@ -377,7 +377,7 @@ export default function AddSKUClassGroupItemPage() {
       toast({
         title: "Error",
         description: "Failed to load required data",
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setLoadingInitialData(false);
@@ -395,7 +395,7 @@ export default function AddSKUClassGroupItemPage() {
         ...item,
         CreatedBy: item.CreatedBy || "ADMIN",
         ModifiedBy: "ADMIN",
-        ActionType: item.ActionType || 0,
+        ActionType: item.ActionType || 0
       });
 
       // Set selected items for display
@@ -404,7 +404,7 @@ export default function AddSKUClassGroupItemPage() {
         code: item.SKUCode,
         name: item.SKUCode,
         uid: item.SKUUID || "",
-        longName: "",
+        longName: ""
       };
       setSelectedSKUs([sku]);
 
@@ -417,7 +417,7 @@ export default function AddSKUClassGroupItemPage() {
       toast({
         title: "Error",
         description: "Failed to load item details",
-        variant: "destructive",
+        variant: "destructive"
       });
       router.push("/productssales/product-management/class-groups");
     } finally {
@@ -474,7 +474,7 @@ export default function AddSKUClassGroupItemPage() {
         // Ensure formData is also updated
         setFormData((prev) => ({
           ...prev,
-          SKUClassGroupUID: groupUID,
+          SKUClassGroupUID: groupUID
         }));
 
         // Load existing items in this group to show as duplicates
@@ -533,7 +533,7 @@ export default function AddSKUClassGroupItemPage() {
       toast({
         title: "Validation Error",
         description: "Please fix the errors before submitting",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
@@ -549,13 +549,13 @@ export default function AddSKUClassGroupItemPage() {
           ...formData,
           ModifiedBy: "ADMIN",
           ModifiedTime: now,
-          ServerModifiedTime: now,
+          ServerModifiedTime: now
         };
 
         await skuClassGroupItemsService.updateSKUClassGroupItem(submitData);
         toast({
           title: "Success",
-          description: "SKU Class Group Item updated successfully",
+          description: "SKU Class Group Item updated successfully"
         });
       } else {
         // For create mode, handle both additions and removals
@@ -569,7 +569,7 @@ export default function AddSKUClassGroupItemPage() {
           toast({
             title: "No Changes",
             description: "No items to add or remove.",
-            variant: "default",
+            variant: "default"
           });
           return;
         }
@@ -629,7 +629,7 @@ export default function AddSKUClassGroupItemPage() {
                 CreatedTime: now,
                 ModifiedTime: now,
                 ServerAddTime: now,
-                ServerModifiedTime: now,
+                ServerModifiedTime: now
               };
 
               console.log(`📤 Sending data to API:`, submitData);
@@ -678,19 +678,19 @@ export default function AddSKUClassGroupItemPage() {
         if (hasAnySuccess && !hasAnyFailure) {
           toast({
             title: "Success",
-            description: messages.join(". "),
+            description: messages.join(". ")
           });
         } else if (hasAnySuccess && hasAnyFailure) {
           toast({
             title: "Partial Success",
             description: messages.join(". "),
-            variant: "default",
+            variant: "default"
           });
         } else if (!hasAnySuccess && hasAnyFailure) {
           toast({
             title: "Failed",
             description: messages.join(". "),
-            variant: "destructive",
+            variant: "destructive"
           });
         }
       }
@@ -714,13 +714,13 @@ export default function AddSKUClassGroupItemPage() {
         toast({
           title: "Duplicate Item",
           description: `This SKU (${formData.SKUCode}) already exists in the selected class group. Please choose a different SKU or edit the existing item.`,
-          variant: "destructive",
+          variant: "destructive"
         });
       } else {
         toast({
           title: "Error",
           description: error.message || "Failed to save SKU Class Group Item",
-          variant: "destructive",
+          variant: "destructive"
         });
       }
     } finally {
@@ -894,7 +894,7 @@ export default function AddSKUClassGroupItemPage() {
                         if (!disableGroupSelection) {
                           setFormData((prev) => ({
                             ...prev,
-                            SKUClassGroupUID: value,
+                            SKUClassGroupUID: value
                           }));
                           const group = classGroups.find(
                             (g) => g.UID === value
@@ -902,7 +902,7 @@ export default function AddSKUClassGroupItemPage() {
                           setSelectedGroup(group || null);
                           setErrors((prev) => ({
                             ...prev,
-                            SKUClassGroupUID: "",
+                            SKUClassGroupUID: ""
                           }));
                           // Load existing items for the newly selected group
                           if (value && !isEditMode) {
@@ -1051,7 +1051,7 @@ export default function AddSKUClassGroupItemPage() {
                                       setSelectedSKUs([]);
                                       setFormData((prev) => ({
                                         ...prev,
-                                        SKUCode: "",
+                                        SKUCode: ""
                                       }));
                                     }}
                                   >
@@ -1180,12 +1180,12 @@ export default function AddSKUClassGroupItemPage() {
                                       setSelectedSKUs([sku]);
                                       setFormData((prev) => ({
                                         ...prev,
-                                        SKUCode: sku.code,
+                                        SKUCode: sku.code
                                       }));
                                       setSkuSearchOpen(false);
                                       setErrors((prev) => ({
                                         ...prev,
-                                        SKUCode: "",
+                                        SKUCode: ""
                                       }));
                                     } else {
                                       // Handle both new items and existing items
@@ -1215,23 +1215,23 @@ export default function AddSKUClassGroupItemPage() {
                                             ...prev,
                                             SKUCode: newSKUs
                                               .map((s) => s.code)
-                                              .join(","),
+                                              .join(",")
                                           }));
                                         } else {
                                           const newSelection = [
                                             ...selectedSKUs,
-                                            sku,
+                                            sku
                                           ];
                                           setSelectedSKUs(newSelection);
                                           setFormData((prev) => ({
                                             ...prev,
                                             SKUCode: newSelection
                                               .map((s) => s.code)
-                                              .join(","),
+                                              .join(",")
                                           }));
                                           setErrors((prev) => ({
                                             ...prev,
-                                            SKUCode: "",
+                                            SKUCode: ""
                                           }));
                                         }
                                       }
@@ -1392,7 +1392,7 @@ export default function AddSKUClassGroupItemPage() {
                                     if (code) {
                                       const newSKU: SKUOption = {
                                         code,
-                                        name: code,
+                                        name: code
                                       };
                                       if (
                                         !availableSKUs.some(
@@ -1401,7 +1401,7 @@ export default function AddSKUClassGroupItemPage() {
                                       ) {
                                         setAvailableSKUs((prev) => [
                                           ...prev,
-                                          newSKU,
+                                          newSKU
                                         ]);
                                       }
                                       if (
@@ -1411,20 +1411,20 @@ export default function AddSKUClassGroupItemPage() {
                                       ) {
                                         const newSelection = [
                                           ...selectedSKUs,
-                                          newSKU,
+                                          newSKU
                                         ];
                                         setSelectedSKUs(newSelection);
                                         setFormData((prev) => ({
                                           ...prev,
                                           SKUCode: newSelection
                                             .map((s) => s.code)
-                                            .join(","),
+                                            .join(",")
                                         }));
                                       }
                                       input.value = "";
                                       setErrors((prev) => ({
                                         ...prev,
-                                        SKUCode: "",
+                                        SKUCode: ""
                                       }));
                                     }
                                   }
@@ -1491,7 +1491,7 @@ export default function AddSKUClassGroupItemPage() {
                       onChange={(e) => {
                         setFormData((prev) => ({
                           ...prev,
-                          SerialNumber: parseInt(e.target.value) || 0,
+                          SerialNumber: parseInt(e.target.value) || 0
                         }));
                         setErrors((prev) => ({ ...prev, SerialNumber: "" }));
                       }}
@@ -1514,7 +1514,7 @@ export default function AddSKUClassGroupItemPage() {
                           const supplierUID = value === "none" ? "" : value;
                           setFormData((prev) => ({
                             ...prev,
-                            SupplierOrgUID: supplierUID,
+                            SupplierOrgUID: supplierUID
                           }));
                           const supplier = supplierOrgs.find(
                             (s) => s.uid === supplierUID
@@ -1542,7 +1542,7 @@ export default function AddSKUClassGroupItemPage() {
                           onClick={() => {
                             setFormData((prev) => ({
                               ...prev,
-                              SupplierOrgUID: "",
+                              SupplierOrgUID: ""
                             }));
                             setSelectedSupplier(null);
                           }}
@@ -1575,7 +1575,7 @@ export default function AddSKUClassGroupItemPage() {
                       onChange={(e) => {
                         setFormData((prev) => ({
                           ...prev,
-                          ModelQty: parseFloat(e.target.value) || 0,
+                          ModelQty: parseFloat(e.target.value) || 0
                         }));
                         setErrors((prev) => ({ ...prev, ModelQty: "" }));
                       }}
@@ -1619,7 +1619,7 @@ export default function AddSKUClassGroupItemPage() {
                       onChange={(e) => {
                         setFormData((prev) => ({
                           ...prev,
-                          MinQTY: parseFloat(e.target.value) || 0,
+                          MinQTY: parseFloat(e.target.value) || 0
                         }));
                         setErrors((prev) => ({ ...prev, MinQTY: "" }));
                       }}
@@ -1642,7 +1642,7 @@ export default function AddSKUClassGroupItemPage() {
                       onChange={(e) => {
                         setFormData((prev) => ({
                           ...prev,
-                          MaxQTY: parseFloat(e.target.value) || 0,
+                          MaxQTY: parseFloat(e.target.value) || 0
                         }));
                         setErrors((prev) => ({ ...prev, MaxQTY: "" }));
                       }}
@@ -1680,7 +1680,7 @@ export default function AddSKUClassGroupItemPage() {
                       onCheckedChange={(checked) =>
                         setFormData((prev) => ({
                           ...prev,
-                          IsExclusive: !!checked,
+                          IsExclusive: !!checked
                         }))
                       }
                     />

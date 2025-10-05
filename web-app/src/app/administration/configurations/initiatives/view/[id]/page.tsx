@@ -15,12 +15,12 @@ import {
   Users,
   FileText,
   Image,
-  Mail,
+  Mail
 } from "lucide-react";
 import { initiativeService } from "@/services/initiativeService";
 import {
   InitiativeFile,
-  initiativeFileService,
+  initiativeFileService
 } from "@/services/initiative-file.service";
 
 // Interface matching the actual API response
@@ -110,7 +110,7 @@ export default function InitiativeViewPage() {
               DisplayName: file.DisplayName,
               generatedURL: file.RelativePath
                 ? initiativeFileService.getFileUrl(file.RelativePath)
-                : "No RelativePath",
+                : "No RelativePath"
             });
           });
         }
@@ -125,9 +125,9 @@ export default function InitiativeViewPage() {
             FilterCriterias: [
               { Name: "LinkedItemType", Value: "Initiative" },
               { Name: "LinkedItemUID", Value: id.toString() },
-              { Name: "FileType", Value: "image/jpeg" }, // Only get images
+              { Name: "FileType", Value: "image/jpeg" } // Only get images
             ],
-            SortCriterias: [],
+            SortCriterias: []
           };
 
           console.log(
@@ -137,15 +137,15 @@ export default function InitiativeViewPage() {
 
           const specificResponse = await fetch(
             `${
-              process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
+              process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
             }/FileSys/SelectAllFileSysDetails`,
             {
               method: "POST",
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-                "Content-Type": "application/json",
+                "Content-Type": "application/json"
               },
-              body: JSON.stringify(specificTest),
+              body: JSON.stringify(specificTest)
             }
           );
 
@@ -172,7 +172,7 @@ export default function InitiativeViewPage() {
                 FileSysType: file.FileSysType,
                 FileType: file.FileType,
                 RelativePath: file.RelativePath,
-                DisplayName: file.DisplayName,
+                DisplayName: file.DisplayName
               });
             });
           }

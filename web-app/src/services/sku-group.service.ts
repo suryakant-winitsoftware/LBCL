@@ -28,7 +28,7 @@ export interface PagedResponse<T> {
 
 class SKUGroupService {
   private baseURL =
-    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
   /**
    * Create a new SKU Group
@@ -42,9 +42,9 @@ class SKUGroupService {
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify(skuGroup),
+        body: JSON.stringify(skuGroup)
       });
 
       if (!response.ok) {
@@ -72,14 +72,14 @@ class SKUGroupService {
       SortCriterias: [
         {
           SortParameter: "ItemLevel",
-          Direction: "Asc",
+          Direction: "Asc"
         },
         {
           SortParameter: "Name",
-          Direction: "Asc",
-        },
+          Direction: "Asc"
+        }
       ],
-      IsCountRequired: false,
+      IsCountRequired: false
     };
 
     console.log("🔍 [SKUGroupService] Fetching all SKU Groups...");
@@ -91,9 +91,9 @@ class SKUGroupService {
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify(request),
+        body: JSON.stringify(request)
       }
     );
 
@@ -124,18 +124,22 @@ class SKUGroupService {
     try {
       console.log(`🔍 [SKUGroupService] Fetching SKU Group with UID: ${uid}`);
 
-      const url = `${this.baseURL}/SKUGroup/GetSKUGroupByUID?uid=${encodeURIComponent(uid)}`;
+      const url = `${
+        this.baseURL
+      }/SKUGroup/GetSKUGroupByUID?uid=${encodeURIComponent(uid)}`;
 
       const response = await fetch(url, {
         method: "GET",
         headers: {
           ...getAuthHeaders(),
-          Accept: "application/json",
-        },
+          Accept: "application/json"
+        }
       });
 
       if (!response.ok) {
-        console.error(`❌ [SKUGroupService] Failed to fetch SKU Group with UID ${uid}`);
+        console.error(
+          `❌ [SKUGroupService] Failed to fetch SKU Group with UID ${uid}`
+        );
         return null;
       }
 
@@ -149,7 +153,10 @@ class SKUGroupService {
       console.log(`✅ [SKUGroupService] Found SKU Group: ${result.Data.Name}`);
       return result.Data;
     } catch (error) {
-      console.error(`❌ [SKUGroupService] Error fetching SKU Group with UID ${uid}:`, error);
+      console.error(
+        `❌ [SKUGroupService] Error fetching SKU Group with UID ${uid}:`,
+        error
+      );
       return null;
     }
   }
@@ -175,8 +182,8 @@ class SKUGroupService {
         method: "GET",
         headers: {
           ...getAuthHeaders(),
-          Accept: "application/json",
-        },
+          Accept: "application/json"
+        }
       });
 
       console.log(`📡 [SKUGroupService] Response status: ${response.status}`);
@@ -202,7 +209,7 @@ class SKUGroupService {
           {
             IsSuccess: result.IsSuccess,
             HasData: !!result.Data,
-            ErrorMessage: result.ErrorMessage,
+            ErrorMessage: result.ErrorMessage
           }
         );
         return [];

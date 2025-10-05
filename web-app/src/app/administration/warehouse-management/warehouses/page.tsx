@@ -20,14 +20,14 @@ import { PaginationControls } from '@/components/ui/pagination-controls'
 import { useToast } from '@/components/ui/use-toast'
 import { Plus, Edit, Trash2, Eye, Download, MoreHorizontal, Loader2, Search, Warehouse } from 'lucide-react'
 import { apiService } from '@/services/api'
+import { authService } from '@/lib/auth-service'
 
 interface WarehouseItemView {
   Id: number
   WarehouseCode: string
   WarehouseUID: string
   WarehouseName: string
-  FranchiseCode: string
-  FranchiseName: string
+  ParentName: string
   ModifiedTime: string
   OrgTypeUID: string
 }
@@ -89,6 +89,7 @@ export default function WarehousesPage() {
   const [pageSize, setPageSize] = useState(10)
   const [franchiseeOrgUID, setFranchiseeOrgUID] = useState('')
   const [warehouseTypes, setWarehouseTypes] = useState<Array<{UID: string, WarehouseType: string}>>([])
+  const [selectedWarehouseType, setSelectedWarehouseType] = useState<string>('FRWH') // Hardcoded to FRWH
   const searchInputRef = useRef<HTMLInputElement>(null)
   const { toast } = useToast()
 
@@ -114,17 +115,10 @@ export default function WarehousesPage() {
       )
     },
     {
-      accessorKey: 'FranchiseName',
-      header: 'Franchise',
+      accessorKey: 'ParentName',
+      header: 'Parent',
       cell: ({ row }: any) => (
-        <span className="text-sm">{row.getValue('FranchiseName') || '-'}</span>
-      )
-    },
-    {
-      accessorKey: 'FranchiseCode',
-      header: 'Franchise Code',
-      cell: ({ row }: any) => (
-        <span className="text-sm">{row.getValue('FranchiseCode') || '-'}</span>
+        <span className="text-sm">{row.getValue('ParentName') || '-'}</span>
       )
     },
     {
@@ -178,11 +172,31 @@ export default function WarehousesPage() {
   ]
 
   useEffect(() => {
-    // TODO: Get franchisee UID from user session/context
-    setFranchiseeOrgUID('DEFAULT_ORG_UID')
+    // Get franchisee UID from current user's organization
+    const currentUser = authService.getCurrentUser()
+    const orgUID = currentUser?.currentOrganization?.uid || currentUser?.uid || ''
+
+    console.log('Current User:', currentUser)
+    console.log('Organization UID:', orgUID)
+
+    if (orgUID) {
+      setFranchiseeOrgUID(orgUID)
+    } else {
+      toast({
+        title: 'Warning',
+        description: 'No organization found. Showing all warehouses without parent filter.',
+        variant: 'default'
+      })
+      // Set empty to show all warehouses
+      setFranchiseeOrgUID('')
+    }
+  }, [])
+
+  useEffect(() => {
+    // Always fetch data, even if franchiseeOrgUID is empty (will show all warehouses)
     fetchWarehouseTypes()
     fetchData()
-  }, [currentPage, pageSize])
+  }, [franchiseeOrgUID, currentPage, pageSize, selectedWarehouseType])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -221,23 +235,78 @@ export default function WarehousesPage() {
     try {
       setLoading(true)
 
-      const response: any = await apiService.post('/Org/ViewFranchiseeWarehouse?FranchiseeOrgUID=' + franchiseeOrgUID, {
-        PageNumber: currentPage,
-        PageSize: pageSize,
-        IsCountRequired: true,
-        FilterCriterias: [],
-        SortCriterias: []
+      console.log('Fetching warehouses with:', {
+        franchiseeOrgUID,
+        selectedWarehouseType,
+        currentPage,
+        pageSize
       })
 
-      setWarehouses(response.Data?.PagedData || [])
-      setTotalCount(response.Data?.TotalCount || 0)
+      let warehouseData: any[] = []
+
+      // Hardcoded to always fetch FRWH warehouses
+      const url = `/Org/GetOrgByOrgTypeUID?OrgTypeUID=FRWH`
+      console.log('🔵 API Call:', url)
+
+      const response: any = await apiService.get(url)
+      console.log('🔵 Full API Response:', response)
+      console.log('🔵 Response.Data:', response.Data)
+      console.log('🔵 Response.IsSuccess:', response.IsSuccess)
+
+      // The backend returns { Data: [...], IsSuccess: true, StatusCode: 200 }
+      if (response.IsSuccess && response.Data) {
+        warehouseData = response.Data
+        console.log('🔵 Raw warehouse data from API:', warehouseData)
+
+        // Fetch parent organization names for all warehouses
+        const parentUIDs = [...new Set(warehouseData.map((item: any) => item.ParentUID).filter(Boolean))]
+        console.log('🔵 Unique Parent UIDs:', parentUIDs)
+
+        const parentOrgMap: Record<string, string> = {}
+
+        // Fetch parent organization details
+        for (const parentUID of parentUIDs) {
+          try {
+            const parentResponse: any = await apiService.get(`/Org/GetOrgByUID?UID=${parentUID}`)
+            if (parentResponse.IsSuccess && parentResponse.Data) {
+              parentOrgMap[parentUID] = parentResponse.Data.Name || parentResponse.Data.Code || parentUID
+              console.log(`🔵 Parent ${parentUID}: ${parentOrgMap[parentUID]}`)
+            }
+          } catch (error) {
+            console.warn(`Failed to fetch parent org ${parentUID}:`, error)
+            parentOrgMap[parentUID] = parentUID // Fallback to UID if fetch fails
+          }
+        }
+
+        // Transform the data to match WarehouseItemView interface
+        warehouseData = warehouseData.map((item: any, index: number) => {
+          console.log(`🔵 Transforming item ${index}:`, item)
+          return {
+            Id: item.Id || 0,
+            WarehouseCode: item.Code || item.OrganizationCode,
+            WarehouseUID: item.UID,
+            WarehouseName: item.Name || item.OrganizationNameEn,
+            ParentName: parentOrgMap[item.ParentUID] || item.ParentUID || '-',
+            ModifiedTime: item.ModifiedTime || item.ServerModifiedTime,
+            OrgTypeUID: item.OrgTypeUID || item.org_type_uid
+          }
+        })
+        console.log('🔵 Transformed warehouse data:', warehouseData)
+      } else {
+        console.log('❌ API response not successful or no data')
+        warehouseData = []
+      }
+
+      console.log('Final warehouse data:', warehouseData)
+      setWarehouses(warehouseData)
+      setTotalCount(warehouseData.length)
     } catch (error) {
+      console.error('Error fetching data:', error)
       toast({
         title: 'Error',
-        description: 'Failed to fetch warehouses',
+        description: 'Failed to fetch warehouses. Check console for details.',
         variant: 'destructive'
       })
-      console.error('Error fetching data:', error)
     } finally {
       setLoading(false)
     }
@@ -250,8 +319,7 @@ export default function WarehousesPage() {
       filtered = filtered.filter(item =>
         item.WarehouseCode?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.WarehouseName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.FranchiseName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.FranchiseCode?.toLowerCase().includes(searchTerm.toLowerCase())
+        item.ParentName?.toLowerCase().includes(searchTerm.toLowerCase())
       )
     }
 
@@ -300,8 +368,7 @@ export default function WarehousesPage() {
   }
 
   const handleView = (item: WarehouseItemView) => {
-    // Navigate to details view or show view-only dialog
-    handleEdit(item)
+    router.push(`/administration/warehouse-management/warehouses/view/${item.WarehouseUID}`)
   }
 
   const handleDelete = async (item: WarehouseItemView) => {
@@ -383,13 +450,12 @@ export default function WarehousesPage() {
         return
       }
 
-      const headers = ["Code", "Name", "Franchise", "Franchise Code", "Modified Time"]
+      const headers = ["Code", "Name", "Parent", "Modified Time"]
 
       const exportData = filteredWarehouses.map(wh => [
         wh.WarehouseCode || "",
         wh.WarehouseName || "",
-        wh.FranchiseName || "",
-        wh.FranchiseCode || "",
+        wh.ParentName || "",
         wh.ModifiedTime ? new Date(wh.ModifiedTime).toLocaleDateString() : ""
       ])
 
@@ -460,18 +526,43 @@ export default function WarehousesPage() {
         </div>
       </div>
 
-      {/* Search */}
+      {/* Search and Filter */}
       <Card className="shadow-sm border-gray-200">
         <CardContent className="py-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              ref={searchInputRef}
-              placeholder="Search by code, name, or franchise... (Ctrl+F)"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary/20"
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                ref={searchInputRef}
+                placeholder="Search by code, name, or parent... (Ctrl+F)"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary/20"
+              />
+            </div>
+            <div>
+              <Select
+                value={selectedWarehouseType}
+                onValueChange={(value) => {
+                  setSelectedWarehouseType(value)
+                  setCurrentPage(1)
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Filter by warehouse type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Warehouses</SelectItem>
+                  <SelectItem value="FRWH">Franchise Warehouses (FRWH)</SelectItem>
+                  <SelectItem value="VWH">Van Warehouses (VWH)</SelectItem>
+                  {warehouseTypes.map((type) => (
+                    <SelectItem key={type.UID} value={type.UID}>
+                      {type.WarehouseType}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </CardContent>
       </Card>

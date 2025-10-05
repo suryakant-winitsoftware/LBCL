@@ -31,7 +31,7 @@ export interface PagedResponse<T> {
 
 class UOMTypesService {
   private baseURL =
-    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
   private _cachedUOMTypes: UOMType[] = [];
   private _lastCacheTime: number = 0;
   private readonly CACHE_DURATION = 300000; // 5 minutes
@@ -56,7 +56,7 @@ class UOMTypesService {
         PageSize: 0,
         FilterCriterias: [],
         SortCriterias: [],
-        IsCountRequired: false,
+        IsCountRequired: false
       };
 
       const response = await fetch(
@@ -66,9 +66,9 @@ class UOMTypesService {
           headers: {
             ...getAuthHeaders(),
             "Content-Type": "application/json",
-            Accept: "application/json",
+            Accept: "application/json"
           },
-          body: JSON.stringify(request),
+          body: JSON.stringify(request)
         }
       );
 
@@ -97,7 +97,7 @@ class UOMTypesService {
           uomTypes.slice(0, 5).map((u) => ({
             UID: u.UID,
             Name: u.Name,
-            Label: u.Label,
+            Label: u.Label
           }))
         );
       } else {

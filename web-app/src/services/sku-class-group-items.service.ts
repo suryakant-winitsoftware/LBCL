@@ -1,6 +1,6 @@
 import { getAuthHeaders } from "@/lib/auth-service";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
 export interface SKUClassGroupItem {
   Id?: number;
@@ -113,7 +113,7 @@ class SKUClassGroupItemsService {
         FilterCriterias.push({
           Name: "sku_class_group_uid",
           Value: skuClassGroupUID,
-          Type: 0,
+          Type: 0
         });
       }
 
@@ -123,17 +123,15 @@ class SKUClassGroupItemsService {
           method: "POST",
           headers: {
             ...getAuthHeaders(),
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
           body: JSON.stringify({
             PageNumber: pageNumber - 1, // Convert to 0-based for backend
             PageSize: pageSize,
             IsCountRequired: true,
             FilterCriterias: FilterCriterias,
-            SortCriterias: [
-              { SortParameter: "SerialNumber", Direction: "Asc" },
-            ],
-          }),
+            SortCriterias: [{ SortParameter: "SerialNumber", Direction: "Asc" }]
+          })
         }
       );
 
@@ -143,7 +141,7 @@ class SKUClassGroupItemsService {
       if (result.IsSuccess && result.Data?.PagedData) {
         return {
           data: result.Data.PagedData,
-          totalCount: result.Data.TotalCount || 0,
+          totalCount: result.Data.TotalCount || 0
         };
       }
 
@@ -176,7 +174,7 @@ class SKUClassGroupItemsService {
         filterCriterias.push({
           Name: "sku_class_group_uid",
           Value: skuClassGroupUID,
-          Type: 0,
+          Type: 0
         });
       }
 
@@ -186,17 +184,15 @@ class SKUClassGroupItemsService {
           method: "POST",
           headers: {
             ...getAuthHeaders(),
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
           body: JSON.stringify({
             PageNumber: pageNumber - 1, // Convert to 0-based for backend
             PageSize: pageSize,
             IsCountRequired: true,
             FilterCriterias: filterCriterias,
-            SortCriterias: [
-              { SortParameter: "SerialNumber", Direction: "Asc" },
-            ],
-          }),
+            SortCriterias: [{ SortParameter: "SerialNumber", Direction: "Asc" }]
+          })
         }
       );
 
@@ -206,7 +202,7 @@ class SKUClassGroupItemsService {
       if (result.IsSuccess && result.Data?.PagedData) {
         return {
           data: result.Data.PagedData,
-          totalCount: result.Data.TotalCount || 0,
+          totalCount: result.Data.TotalCount || 0
         };
       }
 
@@ -229,8 +225,8 @@ class SKUClassGroupItemsService {
         {
           method: "GET",
           headers: {
-            ...getAuthHeaders(),
-          },
+            ...getAuthHeaders()
+          }
         }
       );
 
@@ -262,9 +258,9 @@ class SKUClassGroupItemsService {
           method: "POST",
           headers: {
             ...getAuthHeaders(),
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
-          body: JSON.stringify(data),
+          body: JSON.stringify(data)
         }
       );
 
@@ -296,9 +292,9 @@ class SKUClassGroupItemsService {
           method: "PUT",
           headers: {
             ...getAuthHeaders(),
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
-          body: JSON.stringify(data),
+          body: JSON.stringify(data)
         }
       );
 
@@ -327,8 +323,8 @@ class SKUClassGroupItemsService {
         {
           method: "DELETE",
           headers: {
-            ...getAuthHeaders(),
-          },
+            ...getAuthHeaders()
+          }
         }
       );
 
@@ -359,7 +355,7 @@ class SKUClassGroupItemsService {
       return [
         { uid: "sku1", code: "SKU001", name: "Product 1" },
         { uid: "sku2", code: "SKU002", name: "Product 2" },
-        { uid: "sku3", code: "SKU003", name: "Product 3" },
+        { uid: "sku3", code: "SKU003", name: "Product 3" }
       ];
     } catch (error) {
       console.error("Error fetching available SKUs:", error);
@@ -377,7 +373,7 @@ class SKUClassGroupItemsService {
       return [
         { uid: "org1", name: "Supplier Org 1" },
         { uid: "org2", name: "Supplier Org 2" },
-        { uid: "org3", name: "Supplier Org 3" },
+        { uid: "org3", name: "Supplier Org 3" }
       ];
     } catch (error) {
       console.error("Error fetching supplier organizations:", error);
@@ -409,7 +405,7 @@ class SKUClassGroupItemsService {
     try {
       const filterCriterias = [
         { Name: "sku_class_group_uid", Value: skuClassGroupUID, Type: 0 },
-        { Name: "sku_code", Value: skuCode, Type: 0 },
+        { Name: "sku_code", Value: skuCode, Type: 0 }
       ];
 
       const response = await fetch(
@@ -418,15 +414,15 @@ class SKUClassGroupItemsService {
           method: "POST",
           headers: {
             ...getAuthHeaders(),
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
           body: JSON.stringify({
             PageNumber: 1,
             PageSize: 1,
             IsCountRequired: true,
             FilterCriterias: filterCriterias,
-            SortCriterias: [],
-          }),
+            SortCriterias: []
+          })
         }
       );
 

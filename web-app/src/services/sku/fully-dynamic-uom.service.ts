@@ -38,7 +38,7 @@ export interface PagedResponse<T> {
 
 class FullyDynamicUOMService {
   private baseURL =
-    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
   private _loadingSchemas: Set<string> = new Set();
 
   /**
@@ -50,7 +50,7 @@ class FullyDynamicUOMService {
       const discoveryMethods = [
         () => this.discoverFromInformationSchema(),
         () => this.discoverFromAPIEndpoints(),
-        () => this.discoverFromSampleData(),
+        () => this.discoverFromSampleData()
       ];
 
       for (const method of discoveryMethods) {
@@ -82,8 +82,8 @@ class FullyDynamicUOMService {
         method: "GET",
         headers: {
           ...getAuthHeaders(),
-          Accept: "application/json",
-        },
+          Accept: "application/json"
+        }
       });
 
       if (response.ok) {
@@ -101,7 +101,7 @@ class FullyDynamicUOMService {
       "Product",
       "Customer",
       "Order",
-      "Store",
+      "Store"
     ];
     const discoveredTables: string[] = [];
 
@@ -111,7 +111,7 @@ class FullyDynamicUOMService {
           `${this.baseURL}/${pattern}/GetTableInfo`,
           {
             method: "GET",
-            headers: { ...getAuthHeaders() },
+            headers: { ...getAuthHeaders() }
           }
         );
 
@@ -134,7 +134,7 @@ class FullyDynamicUOMService {
       // Try to get API documentation or endpoint list
       const response = await fetch(`${this.baseURL}/swagger/v1/swagger.json`, {
         method: "GET",
-        headers: { Accept: "application/json" },
+        headers: { Accept: "application/json" }
       });
 
       if (response.ok) {
@@ -173,7 +173,7 @@ class FullyDynamicUOMService {
       "Employee",
       "Order",
       "Route",
-      "Organization",
+      "Organization"
     ];
 
     const discoveredTables: string[] = [];
@@ -186,15 +186,15 @@ class FullyDynamicUOMService {
             method: "POST",
             headers: {
               ...getAuthHeaders(),
-              "Content-Type": "application/json",
+              "Content-Type": "application/json"
             },
             body: JSON.stringify({
               PageNumber: 1,
               PageSize: 1,
               FilterCriterias: [],
               SortCriterias: [],
-              IsCountRequired: false,
-            }),
+              IsCountRequired: false
+            })
           }
         );
 
@@ -240,7 +240,7 @@ class FullyDynamicUOMService {
           : [
               () => this.getSchemaFromMetadataAPI(tableName),
               () => this.inferSchemaFromSampleData(tableName),
-              () => this.getSchemaFromDatabaseIntrospection(tableName),
+              () => this.getSchemaFromDatabaseIntrospection(tableName)
             ];
 
       for (const method of methods) {
@@ -275,8 +275,8 @@ class FullyDynamicUOMService {
       method: "GET",
       headers: {
         ...getAuthHeaders(),
-        Accept: "application/json",
-      },
+        Accept: "application/json"
+      }
     });
 
     if (!response.ok) {
@@ -304,15 +304,15 @@ class FullyDynamicUOMService {
             headers: {
               ...getAuthHeaders(),
               "Content-Type": "application/json",
-              Accept: "application/json",
+              Accept: "application/json"
             },
             body: JSON.stringify({
               PageNumber: 0,
               PageSize: 5, // Just get 5 records for schema
               FilterCriterias: [],
               SortCriterias: [],
-              IsCountRequired: false,
-            }),
+              IsCountRequired: false
+            })
           }
         );
 
@@ -346,7 +346,7 @@ class FullyDynamicUOMService {
             values: [],
             types: new Set(),
             nullCount: 0,
-            patterns: new Set(),
+            patterns: new Set()
           };
         }
 
@@ -398,8 +398,8 @@ class FullyDynamicUOMService {
       metadata: {
         sampleSize: sampleData.length,
         inferredAt: new Date().toISOString(),
-        confidence: this.calculateSchemaConfidence(fields, sampleData),
-      },
+        confidence: this.calculateSchemaConfidence(fields, sampleData)
+      }
     };
   }
 
@@ -488,7 +488,7 @@ class FullyDynamicUOMService {
         uniqueValues: new Set(analysis.values).size,
         patterns: patterns,
         sampleValues: analysis.values.slice(0, 3),
-        inferredFrom: "data-analysis",
+        inferredFrom: "data-analysis"
       },
       validationRules: this.generateDynamicValidation(
         fieldName,
@@ -501,7 +501,7 @@ class FullyDynamicUOMService {
         type,
         patterns,
         analysis.values
-      ),
+      )
     };
   }
 
@@ -598,7 +598,7 @@ class FullyDynamicUOMService {
       "modified",
       "server",
       "timestamp",
-      "version",
+      "version"
     ];
     return metadataPatterns.some((pattern) => name.includes(pattern));
   }
@@ -804,7 +804,7 @@ class FullyDynamicUOMService {
         relationships[field.name] = {
           type: "foreign_key",
           relatedTable: relatedTable,
-          confidence: 0.8,
+          confidence: 0.8
         };
       }
     });
@@ -876,8 +876,8 @@ class FullyDynamicUOMService {
           method: "GET",
           headers: {
             ...getAuthHeaders(),
-            Accept: "application/json",
-          },
+            Accept: "application/json"
+          }
         }
       );
 
@@ -915,10 +915,10 @@ class FullyDynamicUOMService {
         numericPrecision: col.numeric_precision,
         isNullable: col.is_nullable === "YES",
         defaultValue: col.column_default,
-        inferredFrom: "database-introspection",
+        inferredFrom: "database-introspection"
       },
       validationRules: this.generateValidationFromDatabaseType(col),
-      uiHints: this.generateUIHintsFromDatabaseType(col),
+      uiHints: this.generateUIHintsFromDatabaseType(col)
     }));
 
     return {
@@ -933,8 +933,8 @@ class FullyDynamicUOMService {
       metadata: {
         source: "database-introspection",
         retrievedAt: new Date().toISOString(),
-        confidence: 1.0,
-      },
+        confidence: 1.0
+      }
     };
   }
 
@@ -1045,7 +1045,7 @@ class FullyDynamicUOMService {
       `${this.baseURL}/${tableName}/SelectAll${tableName}Details`,
       `${this.baseURL}/${tableName}/GetAll`,
       `${this.baseURL}/${tableName}/Select`,
-      `${this.baseURL}/Generic/GetTableData/${tableName}`,
+      `${this.baseURL}/Generic/GetTableData/${tableName}`
     ];
 
     for (const endpoint of endpointPatterns) {
@@ -1075,7 +1075,7 @@ class FullyDynamicUOMService {
       PageSize: 0,
       FilterCriterias: [],
       SortCriterias: [],
-      IsCountRequired: false,
+      IsCountRequired: false
     };
 
     const response = await fetch(endpoint, {
@@ -1083,9 +1083,9 @@ class FullyDynamicUOMService {
       headers: {
         ...getAuthHeaders(),
         "Content-Type": "application/json",
-        Accept: "application/json",
+        Accept: "application/json"
       },
-      body: JSON.stringify(request),
+      body: JSON.stringify(request)
     });
 
     if (!response.ok) {
@@ -1115,7 +1115,7 @@ class FullyDynamicUOMService {
       create: `${this.baseURL}/SKUUOM/CreateSKUUOM`,
       read: `${this.baseURL}/SKUUOM/SelectSKUUOMByUID?UID=${identifier}`,
       update: `${this.baseURL}/SKUUOM/UpdateSKUUOM`,
-      delete: `${this.baseURL}/SKUUOM/DeleteSKUUOMByUID?UID=${identifier}`,
+      delete: `${this.baseURL}/SKUUOM/DeleteSKUUOMByUID?UID=${identifier}`
     };
 
     const endpoint = endpointMap[operation];
@@ -1133,8 +1133,8 @@ class FullyDynamicUOMService {
       headers: {
         ...getAuthHeaders(),
         "Content-Type": "application/json",
-        Accept: "application/json",
-      },
+        Accept: "application/json"
+      }
     };
 
     if (data && (operation === "create" || operation === "update")) {
@@ -1143,12 +1143,12 @@ class FullyDynamicUOMService {
         ...data,
         ...(operation === "create" && {
           CreatedTime: new Date().toISOString(),
-          CreatedBy: "SYSTEM",
+          CreatedBy: "SYSTEM"
         }),
         ModifiedTime: new Date().toISOString(),
         ModifiedBy: "SYSTEM",
         ServerAddTime: new Date().toISOString(),
-        ServerModifiedTime: new Date().toISOString(),
+        ServerModifiedTime: new Date().toISOString()
       };
 
       requestOptions.body = JSON.stringify(enrichedData);
@@ -1180,7 +1180,7 @@ class FullyDynamicUOMService {
         PageSize: 0,
         FilterCriterias: [],
         SortCriterias: [],
-        IsCountRequired: false,
+        IsCountRequired: false
       };
 
       const response = await fetch(
@@ -1190,9 +1190,9 @@ class FullyDynamicUOMService {
           headers: {
             ...getAuthHeaders(),
             "Content-Type": "application/json",
-            Accept: "application/json",
+            Accept: "application/json"
           },
-          body: JSON.stringify(request),
+          body: JSON.stringify(request)
         }
       );
 
@@ -1237,19 +1237,19 @@ class FullyDynamicUOMService {
           Name: "sku_uid",
           Type: 10, // FilterType.Contains = 10
           Value: search,
-          FilterMode: 1, // FilterMode.Or = 1
+          FilterMode: 1 // FilterMode.Or = 1
         });
         filterCriterias.push({
           Name: "code",
           Type: 10, // FilterType.Contains = 10
           Value: search,
-          FilterMode: 1, // FilterMode.Or = 1
+          FilterMode: 1 // FilterMode.Or = 1
         });
         filterCriterias.push({
           Name: "name",
           Type: 10, // FilterType.Contains = 10
           Value: search,
-          FilterMode: 1, // FilterMode.Or = 1
+          FilterMode: 1 // FilterMode.Or = 1
         });
       }
 
@@ -1269,14 +1269,14 @@ class FullyDynamicUOMService {
               Name: "is_base_uom",
               Type: 1, // FilterType.Equal = 1
               Value: true, // Send as boolean, not string
-              FilterMode: index > 0 ? 1 : 0, // OR between type filters, AND with search
+              FilterMode: index > 0 ? 1 : 0 // OR between type filters, AND with search
             });
           } else if (filter === "outer-uom") {
             filterCriterias.push({
               Name: "is_outer_uom",
               Type: 1, // FilterType.Equal = 1
               Value: true, // Send as boolean, not string
-              FilterMode: index > 0 ? 1 : 0, // OR between type filters, AND with search
+              FilterMode: index > 0 ? 1 : 0 // OR between type filters, AND with search
             });
           }
         });
@@ -1288,7 +1288,7 @@ class FullyDynamicUOMService {
         PageSize: pageSize,
         FilterCriterias: filterCriterias,
         SortCriterias: [],
-        IsCountRequired: true,
+        IsCountRequired: true
       };
 
       console.log(
@@ -1303,9 +1303,9 @@ class FullyDynamicUOMService {
           headers: {
             ...getAuthHeaders(),
             "Content-Type": "application/json",
-            Accept: "application/json",
+            Accept: "application/json"
           },
-          body: JSON.stringify(request),
+          body: JSON.stringify(request)
         }
       );
 
@@ -1349,7 +1349,7 @@ class FullyDynamicUOMService {
 
       return {
         data: pagedData,
-        totalCount: totalCount,
+        totalCount: totalCount
       };
     } catch (error) {
       console.error("❌ Failed to fetch paginated SKUUOM data:", error);
@@ -1383,7 +1383,7 @@ class FullyDynamicUOMService {
 
     return {
       isValid: errors.length === 0,
-      errors,
+      errors
     };
   }
 
@@ -1409,7 +1409,7 @@ class FullyDynamicUOMService {
 
         const response = await fetch(testEndpoint, {
           method: "HEAD",
-          headers: getAuthHeaders(),
+          headers: getAuthHeaders()
         });
 
         if (response.ok || response.status === 405) {
@@ -1432,8 +1432,8 @@ class FullyDynamicUOMService {
       systemCapabilities: {
         schemaIntrospection: await this.testCapability("schema"),
         metadataAPI: await this.testCapability("metadata"),
-        dynamicEndpoints: await this.testCapability("dynamic"),
-      },
+        dynamicEndpoints: await this.testCapability("dynamic")
+      }
     };
   }
 
@@ -1446,14 +1446,14 @@ class FullyDynamicUOMService {
         case "schema":
           const response = await fetch(`${this.baseURL}/System/GetTables`, {
             method: "HEAD",
-            headers: getAuthHeaders(),
+            headers: getAuthHeaders()
           });
           return response.ok;
 
         case "metadata":
           const metaResponse = await fetch(`${this.baseURL}/SKUUOM/GetSchema`, {
             method: "HEAD",
-            headers: getAuthHeaders(),
+            headers: getAuthHeaders()
           });
           return metaResponse.ok;
 

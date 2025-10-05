@@ -7,7 +7,7 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,7 +21,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from "@/components/ui/select";
 import {
   Settings as SettingsIcon,
@@ -39,7 +39,7 @@ import {
   Database,
   Activity,
   Save,
-  RefreshCw,
+  RefreshCw
 } from "lucide-react";
 import { authService } from "@/lib/auth-service";
 import { SkeletonLoader } from "@/components/ui/loader";
@@ -137,7 +137,7 @@ export default function SettingsPage() {
       // Use correct production endpoint: /api/Setting/SelectAllSettingDetails
       // This gets all settings as key-value pairs
       const API_BASE_URL =
-        process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
       const systemResponse = await fetch(
         `${API_BASE_URL}/Setting/SelectAllSettingDetails`,
         {
@@ -145,15 +145,15 @@ export default function SettingsPage() {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
-            Accept: "application/json",
+            Accept: "application/json"
           },
           body: JSON.stringify({
             PageNumber: 0,
             PageSize: 1000,
             SortCriterias: [],
             FilterCriterias: [],
-            IsCountRequired: false,
-          }),
+            IsCountRequired: false
+          })
         }
       );
 
@@ -226,7 +226,7 @@ export default function SettingsPage() {
               settingsMap["DeviceTrackingEnabled"] === "1",
             roleBasedMenus:
               settingsMap["RoleBasedMenus"] === "true" ||
-              settingsMap["RoleBasedMenus"] === "1",
+              settingsMap["RoleBasedMenus"] === "1"
           };
           setSystemSettings(mappedSystemSettings);
         } else {
@@ -291,7 +291,7 @@ export default function SettingsPage() {
         sms: currentUser.preferences?.notifications?.sms ?? false,
         push: currentUser.preferences?.notifications?.push ?? true,
         security: true,
-        system: true,
+        system: true
       },
       security: {
         mfaEnabled: currentUser.preferences?.security?.mfaEnabled ?? false,
@@ -299,14 +299,14 @@ export default function SettingsPage() {
           currentUser.preferences?.security?.trustedDevicesOnly ?? false,
         sessionTimeout:
           currentUser.preferences?.security?.sessionTimeout || 120,
-        autoLogout: true,
+        autoLogout: true
       },
       display: {
         dateFormat: "DD/MM/YYYY",
         timeFormat: "24",
         timezone: "UTC+3",
-        compactMode: false,
-      },
+        compactMode: false
+      }
     };
     setUserPreferences(preferences);
   };
@@ -334,8 +334,8 @@ export default function SettingsPage() {
             theme: userPreferences.theme,
             language: userPreferences.language,
             notifications: userPreferences.notifications,
-            security: userPreferences.security,
-          },
+            security: userPreferences.security
+          }
         });
       }
 
@@ -436,7 +436,7 @@ export default function SettingsPage() {
                           onValueChange={(value: "light" | "dark" | "system") =>
                             setUserPreferences({
                               ...userPreferences,
-                              theme: value,
+                              theme: value
                             })
                           }
                         >
@@ -473,7 +473,7 @@ export default function SettingsPage() {
                           onValueChange={(value: "en" | "ar" | "fr") =>
                             setUserPreferences({
                               ...userPreferences,
-                              language: value,
+                              language: value
                             })
                           }
                         >
@@ -508,8 +508,8 @@ export default function SettingsPage() {
                             ...userPreferences,
                             display: {
                               ...userPreferences.display,
-                              compactMode: checked,
-                            },
+                              compactMode: checked
+                            }
                           })
                         }
                       />
@@ -539,8 +539,8 @@ export default function SettingsPage() {
                               ...userPreferences,
                               display: {
                                 ...userPreferences.display,
-                                dateFormat: value,
-                              },
+                                dateFormat: value
+                              }
                             })
                           }
                         >
@@ -570,8 +570,8 @@ export default function SettingsPage() {
                               ...userPreferences,
                               display: {
                                 ...userPreferences.display,
-                                timeFormat: value,
-                              },
+                                timeFormat: value
+                              }
                             })
                           }
                         >
@@ -594,8 +594,8 @@ export default function SettingsPage() {
                               ...userPreferences,
                               display: {
                                 ...userPreferences.display,
-                                timezone: value,
-                              },
+                                timezone: value
+                              }
                             })
                           }
                         >
@@ -664,8 +664,8 @@ export default function SettingsPage() {
                             ...userPreferences,
                             notifications: {
                               ...userPreferences.notifications,
-                              email: checked,
-                            },
+                              email: checked
+                            }
                           })
                         }
                       />
@@ -688,8 +688,8 @@ export default function SettingsPage() {
                             ...userPreferences,
                             notifications: {
                               ...userPreferences.notifications,
-                              sms: checked,
-                            },
+                              sms: checked
+                            }
                           })
                         }
                       />
@@ -712,8 +712,8 @@ export default function SettingsPage() {
                             ...userPreferences,
                             notifications: {
                               ...userPreferences.notifications,
-                              push: checked,
-                            },
+                              push: checked
+                            }
                           })
                         }
                       />
@@ -738,8 +738,8 @@ export default function SettingsPage() {
                             ...userPreferences,
                             notifications: {
                               ...userPreferences.notifications,
-                              security: checked,
-                            },
+                              security: checked
+                            }
                           })
                         }
                       />
@@ -762,8 +762,8 @@ export default function SettingsPage() {
                             ...userPreferences,
                             notifications: {
                               ...userPreferences.notifications,
-                              system: checked,
-                            },
+                              system: checked
+                            }
                           })
                         }
                       />
@@ -816,8 +816,8 @@ export default function SettingsPage() {
                             ...userPreferences,
                             security: {
                               ...userPreferences.security,
-                              mfaEnabled: checked,
-                            },
+                              mfaEnabled: checked
+                            }
                           })
                         }
                       />
@@ -837,8 +837,8 @@ export default function SettingsPage() {
                             ...userPreferences,
                             security: {
                               ...userPreferences.security,
-                              trustedDevicesOnly: checked,
-                            },
+                              trustedDevicesOnly: checked
+                            }
                           })
                         }
                       />
@@ -858,8 +858,8 @@ export default function SettingsPage() {
                             ...userPreferences,
                             security: {
                               ...userPreferences.security,
-                              autoLogout: checked,
-                            },
+                              autoLogout: checked
+                            }
                           })
                         }
                       />
@@ -880,8 +880,8 @@ export default function SettingsPage() {
                             ...userPreferences,
                             security: {
                               ...userPreferences.security,
-                              sessionTimeout: parseInt(e.target.value) || 120,
-                            },
+                              sessionTimeout: parseInt(e.target.value) || 120
+                            }
                           })
                         }
                         className="w-32"

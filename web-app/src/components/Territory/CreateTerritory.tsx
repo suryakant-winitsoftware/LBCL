@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/components/ui/use-toast"
 import { territoryService, Territory } from "@/services/territoryService"
+import { organizationService } from "@/services/organizationService"
 import { authService } from "@/lib/auth-service"
 import { Switch } from "@/components/ui/switch"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -22,6 +23,7 @@ export function CreateTerritory() {
   const [saving, setSaving] = useState(false)
   const [territories, setTerritories] = useState<Territory[]>([])
   const [parentTerritories, setParentTerritories] = useState<Territory[]>([])
+  const [principalOrgUID, setPrincipalOrgUID] = useState<string>("")
 
   const [formData, setFormData] = useState<Partial<Territory>>({
     UID: "",
@@ -55,8 +57,24 @@ export function CreateTerritory() {
   const fetchInitialData = async () => {
     setLoading(true)
     try {
-      const result = await territoryService.getTerritories(1, 1000)
-      setTerritories(result.data)
+      // Fetch territories and organizations in parallel
+      const [territoriesResult, orgsResult] = await Promise.all([
+        territoryService.getTerritories(1, 1000),
+        organizationService.getOrganizations(1, 1000)
+      ])
+
+      setTerritories(territoriesResult.data)
+
+      // Find and auto-select the principal organization (first one with ShowInTemplate = true)
+      const principalOrg = orgsResult.data.find(org => org.ShowInTemplate === true)
+      if (principalOrg) {
+        setPrincipalOrgUID(principalOrg.UID)
+        console.log("Auto-selected principal organization:", principalOrg.UID, principalOrg.Name)
+      } else if (orgsResult.data.length > 0) {
+        // Fallback to first org if no ShowInTemplate found
+        setPrincipalOrgUID(orgsResult.data[0].UID)
+        console.log("Auto-selected first organization:", orgsResult.data[0].UID, orgsResult.data[0].Name)
+      }
     } catch (error) {
       toast({
         title: "Error",
@@ -110,13 +128,20 @@ export function CreateTerritory() {
       const currentUserUID = currentUser?.uid || currentUser?.id || "SYSTEM"
       const currentTime = new Date().toISOString()
 
-      // Get OrgUID from current user or default
-      const orgUID = currentUser?.orgUID || currentUser?.organizationId || "DEFAULT_ORG"
+      // Use the principal organization UID that was auto-selected
+      if (!principalOrgUID) {
+        toast({
+          title: "Error",
+          description: "Organization not loaded. Please refresh the page.",
+          variant: "destructive"
+        })
+        return
+      }
 
       const submitData = {
         ...formData,
         UID: formData.TerritoryCode,
-        OrgUID: orgUID,
+        OrgUID: principalOrgUID,
         CreatedBy: currentUserUID,
         CreatedTime: currentTime,
         ModifiedBy: currentUserUID,
@@ -252,8 +277,8 @@ export function CreateTerritory() {
                 </p>
               </div>
 
-              {/* Manager Employee UID */}
-              <div className="space-y-2">
+              {/* Manager Employee UID - Hidden for now */}
+              {/* <div className="space-y-2">
                 <Label htmlFor="manager" className="text-sm font-medium">
                   Manager Employee UID
                 </Label>
@@ -266,7 +291,7 @@ export function CreateTerritory() {
                 <p className="text-xs text-muted-foreground">
                   Territory manager employee identifier
                 </p>
-              </div>
+              </div> */}
 
               {/* Cluster Code - Hidden for now */}
               {/* <div className="space-y-2">
@@ -284,8 +309,8 @@ export function CreateTerritory() {
                 </p>
               </div> */}
 
-              {/* Item Level */}
-              <div className="space-y-2">
+              {/* Item Level - Hidden for now */}
+              {/* <div className="space-y-2">
                 <Label htmlFor="level" className="text-sm font-medium">
                   Hierarchy Level <span className="text-red-500">*</span>
                 </Label>
@@ -308,26 +333,21 @@ export function CreateTerritory() {
                 <p className="text-xs text-muted-foreground">
                   Position in the territory hierarchy
                 </p>
-              </div>
+              </div> */}
 
               {/* Parent Territory */}
               <div className="space-y-2">
                 <Label htmlFor="parent">
-                  Parent Territory
-                  {formData.ItemLevel && formData.ItemLevel > 1 && (
-                    <span className="text-red-500"> *</span>
-                  )}
+                  Parent Territory (Optional)
                 </Label>
                 <Select
                   value={formData.ParentUID || "none"}
                   onValueChange={(value) => handleInputChange("ParentUID", value === "none" ? null : value)}
-                  disabled={!formData.ItemLevel || formData.ItemLevel <= 1 || parentTerritories.length === 0}
+                  disabled={parentTerritories.length === 0}
                 >
                   <SelectTrigger id="parent">
                     <SelectValue placeholder={
-                      !formData.ItemLevel || formData.ItemLevel <= 1
-                        ? "No parent required for this level"
-                        : parentTerritories.length === 0
+                      parentTerritories.length === 0
                         ? "No parent territories available"
                         : "Select parent territory"
                     } />
@@ -342,7 +362,7 @@ export function CreateTerritory() {
                   </SelectContent>
                 </Select>
                 <p className="text-xs text-muted-foreground">
-                  Required for levels greater than 1
+                  Select a parent territory if this is a sub-territory
                 </p>
               </div>
 
@@ -350,7 +370,7 @@ export function CreateTerritory() {
               <div className="space-y-2 md:col-span-2">
                 <Label className="text-sm font-medium">Territory Properties</Label>
                 <div className="grid gap-4 md:grid-cols-2">
-                  <div className="flex items-center space-x-3 p-4 border rounded-lg bg-gray-50">
+                  {/* <div className="flex items-center space-x-3 p-4 border rounded-lg bg-gray-50">
                     <Switch
                       id="hasChild"
                       checked={formData.HasChild || false}
@@ -364,9 +384,9 @@ export function CreateTerritory() {
                         Allow sub-territories
                       </p>
                     </div>
-                  </div>
+                  </div> */}
 
-                  <div className="flex items-center space-x-3 p-4 border rounded-lg bg-gray-50">
+                  {/* <div className="flex items-center space-x-3 p-4 border rounded-lg bg-gray-50">
                     <Switch
                       id="isImport"
                       checked={formData.IsImport || false}
@@ -380,9 +400,9 @@ export function CreateTerritory() {
                         Import business unit
                       </p>
                     </div>
-                  </div>
+                  </div> */}
 
-                  <div className="flex items-center space-x-3 p-4 border rounded-lg bg-gray-50">
+                  {/* <div className="flex items-center space-x-3 p-4 border rounded-lg bg-gray-50">
                     <Switch
                       id="isLocal"
                       checked={formData.IsLocal || false}
@@ -396,7 +416,7 @@ export function CreateTerritory() {
                         Local business unit
                       </p>
                     </div>
-                  </div>
+                  </div> */}
 
                   <div className="flex items-center space-x-3 p-4 border rounded-lg bg-gray-50">
                     <Switch
@@ -416,8 +436,8 @@ export function CreateTerritory() {
                 </div>
               </div>
 
-              {/* Non-License */}
-              <div className="space-y-2 md:col-span-2">
+              {/* Non-License - Hidden for now */}
+              {/* <div className="space-y-2 md:col-span-2">
                 <Label htmlFor="nonLicense" className="text-sm font-medium">
                   Non-License Type
                 </Label>
@@ -433,7 +453,7 @@ export function CreateTerritory() {
                     <SelectItem value="1">Non-Licensed</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
+              </div> */}
             </div>
 
             {/* Action Buttons */}

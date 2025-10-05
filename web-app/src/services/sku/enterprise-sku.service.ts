@@ -151,7 +151,7 @@ export interface EnterpriseSkuCreationResult {
 
 class EnterpriseSkuService {
   private baseURL =
-    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
   /**
    * Helper method to generate dynamic field names
@@ -186,8 +186,7 @@ class EnterpriseSkuService {
 
       // Organization data
       OrgUID: request.organizationUID,
-      SupplierOrgUID:
-        request.supplierOrganizationUID || request.organizationUID,
+      SupplierOrgUID: request.supplierOrganizationUID || request.organizationUID
     };
 
     // Dynamic hierarchy mapping - supports unlimited levels
@@ -240,9 +239,9 @@ class EnterpriseSkuService {
       headers: {
         ...getAuthHeaders(),
         "Content-Type": "application/json",
-        Accept: "application/json",
+        Accept: "application/json"
       },
-      body: JSON.stringify(iskuV1Payload),
+      body: JSON.stringify(iskuV1Payload)
     });
 
     const skuResponseText = await skuResult.text();
@@ -278,7 +277,7 @@ class EnterpriseSkuService {
                   request.attributes[index - 1].code
                 }`,
           CreatedBy: request.skuData.CreatedBy || "ADMIN",
-          ModifiedBy: request.skuData.ModifiedBy || "ADMIN",
+          ModifiedBy: request.skuData.ModifiedBy || "ADMIN"
         })
       );
 
@@ -290,9 +289,9 @@ class EnterpriseSkuService {
             headers: {
               ...getAuthHeaders(),
               "Content-Type": "application/json",
-              Accept: "application/json",
+              Accept: "application/json"
             },
-            body: JSON.stringify(attributeRequests),
+            body: JSON.stringify(attributeRequests)
           }
         );
 
@@ -315,7 +314,7 @@ class EnterpriseSkuService {
       const customFieldPayload: CustomSKUField = {
         UID: `${request.skuData.UID}_CUSTOM`,
         SKUUID: request.skuData.UID,
-        CustomField: request.customFields,
+        CustomField: request.customFields
       };
 
       try {
@@ -326,9 +325,9 @@ class EnterpriseSkuService {
             headers: {
               ...getAuthHeaders(),
               "Content-Type": "application/json",
-              Accept: "application/json",
+              Accept: "application/json"
             },
-            body: JSON.stringify(customFieldPayload),
+            body: JSON.stringify(customFieldPayload)
           }
         );
 
@@ -370,7 +369,7 @@ class EnterpriseSkuService {
           CreatedTime: currentTime,
           ModifiedTime: currentTime,
           ServerAddTime: currentTime,
-          ServerModifiedTime: currentTime,
+          ServerModifiedTime: currentTime
         };
 
         // Only add fields if user provided them
@@ -431,7 +430,7 @@ class EnterpriseSkuService {
           CreatedTime: currentTime,
           ModifiedTime: currentTime,
           ServerAddTime: currentTime,
-          ServerModifiedTime: currentTime,
+          ServerModifiedTime: currentTime
         };
 
         // Only add fields if user provided them
@@ -495,7 +494,7 @@ class EnterpriseSkuService {
             CreatedTime: currentTime,
             ModifiedTime: currentTime,
             ServerAddTime: currentTime,
-            ServerModifiedTime: currentTime,
+            ServerModifiedTime: currentTime
           };
 
           // Only add optional fields if user provided them
@@ -530,7 +529,7 @@ class EnterpriseSkuService {
           console.log("🏷️ Creating UOM with barcode:", {
             Code: uomPayload.Code,
             Barcodes: uomPayload.Barcodes,
-            payload: uomPayload,
+            payload: uomPayload
           });
 
           const uomResponse = await fetch(
@@ -540,9 +539,9 @@ class EnterpriseSkuService {
               headers: {
                 ...getAuthHeaders(),
                 "Content-Type": "application/json",
-                Accept: "application/json",
+                Accept: "application/json"
               },
-              body: JSON.stringify(uomPayload),
+              body: JSON.stringify(uomPayload)
             }
           );
 
@@ -550,7 +549,7 @@ class EnterpriseSkuService {
           console.log("📦 UOM API Response:", {
             status: uomResponse.status,
             ok: uomResponse.ok,
-            response: uomResponseText,
+            response: uomResponseText
           });
 
           if (uomResponse.ok) {
@@ -589,7 +588,7 @@ class EnterpriseSkuService {
         SellingUOM: request.skuData.OuterUOM,
         IsActive: request.skuData.IsActive,
         CreatedBy: request.skuData.CreatedBy || "ADMIN",
-        ModifiedBy: request.skuData.ModifiedBy || "ADMIN",
+        ModifiedBy: request.skuData.ModifiedBy || "ADMIN"
       };
 
       try {
@@ -600,9 +599,9 @@ class EnterpriseSkuService {
             headers: {
               ...getAuthHeaders(),
               "Content-Type": "application/json",
-              Accept: "application/json",
+              Accept: "application/json"
             },
-            body: JSON.stringify(skuConfig),
+            body: JSON.stringify(skuConfig)
           }
         );
 
@@ -627,8 +626,8 @@ class EnterpriseSkuService {
           method: "GET",
           headers: {
             ...getAuthHeaders(),
-            Accept: "application/json",
-          },
+            Accept: "application/json"
+          }
         }
       );
 
@@ -646,7 +645,7 @@ class EnterpriseSkuService {
       uomResult,
       configResult,
       groupMappingResults: [], // Would implement group mappings if needed
-      hierarchyResults: [], // Would implement hierarchy data if needed
+      hierarchyResults: [] // Would implement hierarchy data if needed
     };
   }
 

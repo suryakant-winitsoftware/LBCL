@@ -5,7 +5,7 @@ import {
   SessionInfo,
   DeviceInfo,
   SecurityEvent,
-  MFAVerification,
+  MFAVerification
 } from "@/types/auth.types";
 import { auditService } from "./audit-service";
 import { AuditLogLevel } from "@/types/audit.types";
@@ -16,7 +16,7 @@ class AuthService {
   private readonly REFRESH_TOKEN_KEY = "winit_refresh_token";
   private readonly USER_KEY = "user_info"; // Changed to match the working user key
   private readonly API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
   // Production Authentication Method
   async login(credentials: LoginCredentials): Promise<LoginResponse> {
@@ -36,7 +36,7 @@ class AuthService {
         UserID: credentials.loginId,
         Password: hashedPassword,
         ChallengeCode: challengeCode,
-        DeviceId: credentials.deviceFingerprint || "web-client-" + Date.now(),
+        DeviceId: credentials.deviceFingerprint || "web-client-" + Date.now()
       };
 
       if (process.env.NODE_ENV === "development") {
@@ -48,9 +48,9 @@ class AuthService {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify(requestBody),
+        body: JSON.stringify(requestBody)
       });
 
       if (process.env.NODE_ENV === "development") {
@@ -77,7 +77,7 @@ class AuthService {
           user: {} as User,
           requiresMFA: false,
           expiresIn: 0,
-          error: `Server returned non-JSON response: ${response.status} ${response.statusText}`,
+          error: `Server returned non-JSON response: ${response.status} ${response.statusText}`
         };
       }
 
@@ -100,7 +100,7 @@ class AuthService {
             user: {} as User,
             requiresMFA: false,
             expiresIn: 0,
-            error: "Authentication successful but no token received",
+            error: "Authentication successful but no token received"
           };
         }
 
@@ -132,13 +132,13 @@ class AuthService {
             notifications: {
               email: Boolean(empData.EmailNotifications),
               sms: Boolean(empData.SmsNotifications),
-              push: Boolean(empData.PushNotifications),
+              push: Boolean(empData.PushNotifications)
             },
             security: {
               mfaEnabled: Boolean(empData.MfaEnabled),
               trustedDevicesOnly: Boolean(empData.TrustedDevicesOnly),
-              sessionTimeout: Number(empData.SessionTimeout) || 120,
-            },
+              sessionTimeout: Number(empData.SessionTimeout) || 120
+            }
           },
           roles: [
             {
@@ -163,15 +163,15 @@ class AuthService {
               isDistributorRole: Boolean(roleData.IsDistributorRole),
               isWebUser: true, // This is a web login
               isAppUser: Boolean(roleData.IsAppUser),
-              isDefault: Boolean(roleData.IsDefault),
-            },
+              isDefault: Boolean(roleData.IsDefault)
+            }
           ],
           currentOrganization: {
             uid: empData.OrgUID || "",
             code: empData.OrgCode || "",
             name: empData.OrgName || "",
             type: empData.OrgType || "Principal",
-            isActive: empData.OrgIsActive !== false,
+            isActive: empData.OrgIsActive !== false
           },
           availableOrganizations: empData.Organizations
             ? empData.Organizations.map((org: Record<string, unknown>) => ({
@@ -179,7 +179,7 @@ class AuthService {
                 code: org.Code || "",
                 name: org.Name || "",
                 type: org.Type || "Principal",
-                isActive: org.IsActive !== false,
+                isActive: org.IsActive !== false
               }))
             : [
                 {
@@ -187,9 +187,9 @@ class AuthService {
                   code: empData.OrgCode || "",
                   name: empData.OrgName || "",
                   type: empData.OrgType || "Principal",
-                  isActive: empData.OrgIsActive !== false,
-                },
-              ],
+                  isActive: empData.OrgIsActive !== false
+                }
+              ]
         };
 
         // Store tokens and user
@@ -209,7 +209,7 @@ class AuthService {
           eventType: "login",
           severity: "low",
           description: "Successful login",
-          metadata: { loginId: credentials.loginId },
+          metadata: { loginId: credentials.loginId }
         });
 
         // Track login in audit trail
@@ -227,8 +227,8 @@ class AuthService {
             details: {
               loginId: credentials.loginId,
               deviceId: requestBody.DeviceId,
-              timestamp: new Date().toISOString(),
-            },
+              timestamp: new Date().toISOString()
+            }
           },
           AuditLogLevel.INFO
         );
@@ -239,7 +239,7 @@ class AuthService {
           refreshToken: token, // Using same token as refresh for now
           user,
           requiresMFA: false,
-          expiresIn: 7200, // 2 hours
+          expiresIn: 7200 // 2 hours
         };
       } else {
         // Log failed login
@@ -255,8 +255,8 @@ class AuthService {
               data.Message ||
               data.error ||
               "Invalid credentials",
-            statusCode: response.status,
-          },
+            statusCode: response.status
+          }
         });
 
         // Track failed login in audit trail
@@ -279,8 +279,8 @@ class AuthService {
                 data.error ||
                 "Invalid credentials",
               statusCode: response.status,
-              timestamp: new Date().toISOString(),
-            },
+              timestamp: new Date().toISOString()
+            }
           },
           AuditLogLevel.WARNING
         );
@@ -296,7 +296,7 @@ class AuthService {
             data.ErrorMessage ||
             data.Message ||
             data.error ||
-            "Invalid credentials",
+            "Invalid credentials"
         };
       }
     } catch (error) {
@@ -309,8 +309,8 @@ class AuthService {
         description: "Login service error",
         metadata: {
           loginId: credentials.loginId,
-          error: error instanceof Error ? error.message : "Unknown error",
-        },
+          error: error instanceof Error ? error.message : "Unknown error"
+        }
       });
 
       return {
@@ -320,7 +320,7 @@ class AuthService {
         user: {} as User,
         requiresMFA: false,
         expiresIn: 0,
-        error: "Authentication service unavailable",
+        error: "Authentication service unavailable"
       };
     }
   }
@@ -337,8 +337,8 @@ class AuthService {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
+              Authorization: `Bearer ${token}`
+            }
           });
         } catch {
           // Continue with local logout even if backend call fails
@@ -348,7 +348,7 @@ class AuthService {
           userId: user.id,
           eventType: "logout",
           severity: "low",
-          description: "User logged out",
+          description: "User logged out"
         });
 
         // Track logout in audit trail
@@ -367,8 +367,8 @@ class AuthService {
             details: {
               userId: user.uid,
               loginId: user.loginId,
-              timestamp: new Date().toISOString(),
-            },
+              timestamp: new Date().toISOString()
+            }
           },
           AuditLogLevel.INFO
         );
@@ -437,9 +437,9 @@ class AuthService {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Accept: "application/json",
+            Accept: "application/json"
           },
-          body: JSON.stringify({ LoginId: loginId }),
+          body: JSON.stringify({ LoginId: loginId })
         }
       );
 
@@ -462,9 +462,9 @@ class AuthService {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
-          Authorization: `Bearer ${this.getToken()}`,
+          Authorization: `Bearer ${this.getToken()}`
         },
-        body: JSON.stringify(verification),
+        body: JSON.stringify(verification)
       });
 
       if (response.ok) {
@@ -491,8 +491,8 @@ class AuthService {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
-            Accept: "application/json",
-          },
+            Accept: "application/json"
+          }
         }
       );
 
@@ -518,9 +518,9 @@ class AuthService {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify({ sessionId }),
+        body: JSON.stringify({ sessionId })
       });
 
       if (response.ok) {
@@ -547,8 +547,8 @@ class AuthService {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
-            Accept: "application/json",
-          },
+            Accept: "application/json"
+          }
         }
       );
 
@@ -574,7 +574,7 @@ class AuthService {
         id: `evt_${Date.now()}`,
         timestamp: new Date(),
         ipAddress: await this.getClientIP(),
-        userAgent: navigator.userAgent,
+        userAgent: navigator.userAgent
       };
 
       // Skip audit trail logging if endpoint doesn't exist
@@ -675,7 +675,7 @@ class AuthService {
     }
     return {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
+      "Content-Type": "application/json"
     };
   }
 

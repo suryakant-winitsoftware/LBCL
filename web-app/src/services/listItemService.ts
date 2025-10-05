@@ -1,7 +1,7 @@
 import { authService } from "@/lib/auth-service";
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
 export interface ListItem {
   id: number;
@@ -28,16 +28,16 @@ class ListItemService {
     try {
       const request: ListItemRequest = {
         Codes: [headerCode],
-        isCountRequired: false,
+        isCountRequired: false
       };
 
       const response = await fetch(`${this.baseUrl}/GetListItemsByCodes`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${authService.getToken()}`,
+          Authorization: `Bearer ${authService.getToken()}`
         },
-        body: JSON.stringify(request),
+        body: JSON.stringify(request)
       });
 
       if (!response.ok) {
@@ -67,7 +67,7 @@ class ListItemService {
             ? item.IsEditable
             : item.isEditable || false,
         serialNo: item.SerialNo || item.serialNo || 0,
-        listHeaderUID: item.ListHeaderUID || item.listHeaderUID || "",
+        listHeaderUID: item.ListHeaderUID || item.listHeaderUID || ""
       }));
     } catch (error) {
       console.error(`Error fetching list items for ${headerCode}:`, error);
@@ -110,16 +110,16 @@ class ListItemService {
     try {
       const request: ListItemRequest = {
         Codes: headerCodes,
-        isCountRequired: false,
+        isCountRequired: false
       };
 
       const response = await fetch(`${this.baseUrl}/GetListItemsByCodes`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${authService.getToken()}`,
+          Authorization: `Bearer ${authService.getToken()}`
         },
-        body: JSON.stringify(request),
+        body: JSON.stringify(request)
       });
 
       if (!response.ok) {
@@ -149,7 +149,7 @@ class ListItemService {
             ? item.IsEditable
             : item.isEditable || false,
         serialNo: item.SerialNo || item.serialNo || 0,
-        listHeaderUID: item.ListHeaderUID || item.listHeaderUID || "",
+        listHeaderUID: item.ListHeaderUID || item.listHeaderUID || ""
       }));
     } catch (error) {
       console.error("Error fetching list items:", error);

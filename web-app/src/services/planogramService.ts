@@ -2,7 +2,7 @@ import axios from "axios";
 import { authService } from "@/lib/auth-service";
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
 export interface PlanogramSetup {
   UID?: string; // API returns uppercase UID
@@ -70,7 +70,7 @@ class PlanogramService {
         `${API_BASE_URL}/Planogram/GetAllPlanogramSetups`,
         {
           params: { pageNumber, pageSize },
-          headers: authService.getAuthHeaders(),
+          headers: authService.getAuthHeaders()
         }
       );
       return response.data;
@@ -195,7 +195,7 @@ class PlanogramService {
         `${API_BASE_URL}/Planogram/BulkDeletePlanogramSetups`,
         {
           data: uids,
-          headers: authService.getAuthHeaders(),
+          headers: authService.getAuthHeaders()
         }
       );
       return response.data;
@@ -414,7 +414,7 @@ class PlanogramService {
         {
           method: "POST",
           headers: headers,
-          body: formData,
+          body: formData
         }
       );
 
@@ -499,7 +499,7 @@ class PlanogramService {
         IsDirectory: false,
         RelativePath: relativePath,
         FileSysFileType: 1, // 1 for Image
-        CreatedByEmpUID: empUID,
+        CreatedByEmpUID: empUID
       };
 
       console.log("Step 2: Creating file_sys record with path:", relativePath);
@@ -509,9 +509,9 @@ class PlanogramService {
         headers: {
           ...authService.getAuthHeaders(),
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify(fileSysData),
+        body: JSON.stringify(fileSysData)
       });
 
       if (!response.ok) {
@@ -560,7 +560,7 @@ class PlanogramService {
         {
           method: "POST",
           headers: headers,
-          body: formData,
+          body: formData
         }
       );
 
@@ -623,7 +623,7 @@ class PlanogramService {
         IsDirectory: false,
         RelativePath: relativePath,
         FileSysFileType: 1, // 1 for Image
-        CreatedByEmpUID: empUID,
+        CreatedByEmpUID: empUID
       };
 
       console.log("Step 2: Creating file_sys record with path:", relativePath);
@@ -633,9 +633,9 @@ class PlanogramService {
         headers: {
           ...authService.getAuthHeaders(),
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify(fileSysData),
+        body: JSON.stringify(fileSysData)
       });
 
       if (!response.ok) {
@@ -671,12 +671,12 @@ class PlanogramService {
         IsCountRequired: false,
         FilterCriterias: [
           { Name: "FileSysType", Value: "Image" },
-          { Name: "LinkedItemUID", Value: planogramSetupUid },
+          { Name: "LinkedItemUID", Value: planogramSetupUid }
         ],
         SortCriterias: [
           { SortParameter: "IsDefault", Direction: "Desc" },
-          { SortParameter: "DisplayName", Direction: "Asc" },
-        ],
+          { SortParameter: "DisplayName", Direction: "Asc" }
+        ]
       };
 
       const response = await fetch(
@@ -686,9 +686,9 @@ class PlanogramService {
           headers: {
             ...authService.getAuthHeaders(),
             "Content-Type": "application/json",
-            Accept: "application/json",
+            Accept: "application/json"
           },
-          body: JSON.stringify(requestBody),
+          body: JSON.stringify(requestBody)
         }
       );
 
@@ -708,7 +708,7 @@ class PlanogramService {
         const uniqueLinkedItemTypes = [
           ...new Set(
             result.Data.PagedData.map((img: any) => img.LinkedItemType)
-          ),
+          )
         ];
         console.log(`All LinkedItemType values found:`, uniqueLinkedItemTypes);
 
@@ -719,15 +719,13 @@ class PlanogramService {
             DisplayName: img.DisplayName,
             LinkedItemType: img.LinkedItemType,
             LinkedItemUID: img.LinkedItemUID,
-            FileSysType: img.FileSysType,
+            FileSysType: img.FileSysType
           }))
         );
 
         // Debug: Show all unique LinkedItemUIDs to see what's available
         const uniqueLinkedItemUIDs = [
-          ...new Set(
-            result.Data.PagedData.map((img: any) => img.LinkedItemUID)
-          ),
+          ...new Set(result.Data.PagedData.map((img: any) => img.LinkedItemUID))
         ];
         console.log(`All LinkedItemUID values found:`, uniqueLinkedItemUIDs);
         console.log(`Looking for LinkedItemUID:`, planogramSetupUid);
@@ -743,7 +741,7 @@ class PlanogramService {
           filteredImages.map((img) => ({
             DisplayName: img.DisplayName,
             LinkedItemType: img.LinkedItemType,
-            LinkedItemUID: img.LinkedItemUID,
+            LinkedItemUID: img.LinkedItemUID
           }))
         );
 
@@ -765,8 +763,8 @@ class PlanogramService {
           headers: {
             ...authService.getAuthHeaders(),
             "Content-Type": "application/json",
-            Accept: "application/json",
-          },
+            Accept: "application/json"
+          }
         }
       );
 
@@ -787,7 +785,7 @@ class PlanogramService {
     try {
       if (fileSys.RelativePath) {
         // If we have a relative path, construct the full URL to the image
-        const baseUrl = API_BASE_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+        const baseUrl = API_BASE_URL || "http://localhost:8000/api";
         // Remove 'api' from the URL if present since static files are served from root
         const staticUrl = baseUrl.replace("/api", "");
 
@@ -802,7 +800,7 @@ class PlanogramService {
         return `${staticUrl}${imagePath}`;
       } else if (fileSys.TempPath) {
         // Handle temp path similarly
-        const baseUrl = API_BASE_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+        const baseUrl = API_BASE_URL || "http://localhost:8000/api";
         const staticUrl = baseUrl.replace("/api", "");
 
         let imagePath = fileSys.TempPath;

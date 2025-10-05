@@ -5,7 +5,7 @@ import React, {
   useEffect,
   useMemo,
   useRef,
-  useTransition,
+  useTransition
 } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -28,12 +28,12 @@ import {
   Minus,
   AlertCircle,
   X,
-  Info,
+  Info
 } from "lucide-react";
 import {
   hierarchyService,
   SKUGroupType,
-  HierarchyOption,
+  HierarchyOption
 } from "@/services/hierarchy.service";
 import { skuService } from "@/services/sku/sku.service";
 import { directProductQueryService } from "../../services/direct-product-query.service";
@@ -100,7 +100,7 @@ export default function DynamicProductAttributes({
   onFinalProductsChange,
   onSelectionModeChange,
   orgUid,
-  disabled = false,
+  disabled = false
 }: DynamicProductAttributesProps) {
   const [hierarchyTypes, setHierarchyTypes] = useState<SKUGroupType[]>([]);
   const [hierarchyOptions, setHierarchyOptions] = useState<
@@ -156,7 +156,7 @@ export default function DynamicProductAttributes({
         PageSize: DEFAULT_PAGE_SIZE,
         IsCountRequired: false,
         FilterCriterias: [], // No filters for specific mode
-        SortCriterias: [], // Use empty array like working component
+        SortCriterias: [] // Use empty array like working component
       };
 
       const response = await skuService.getAllSKUs(request);
@@ -187,7 +187,7 @@ export default function DynamicProductAttributes({
           GroupName: sku.L2 || sku.L1 || "Uncategorized",
           GroupTypeName: sku.ParentUID,
           MRP: sku.MRP || 0,
-          IsActive: sku.IsActive !== false,
+          IsActive: sku.IsActive !== false
         })
       );
 
@@ -225,21 +225,21 @@ export default function DynamicProductAttributes({
         PageSize: 1,
         FilterCriterias: [],
         IsCountRequired: true,
-        SortCriterias: [],
+        SortCriterias: []
       };
 
       const response = await fetch(
         `${
-          process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
         }/SKU/SelectAllSKUDetailsWebView`,
         {
           method: "POST",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
             "Content-Type": "application/json",
-            Accept: "application/json",
+            Accept: "application/json"
           },
-          body: JSON.stringify(request),
+          body: JSON.stringify(request)
         }
       );
 
@@ -275,7 +275,7 @@ export default function DynamicProductAttributes({
         .filter((p) => selectedProducts.has(p.UID))
         .map((p) => ({
           ...p,
-          quantity: productQuantities[p.UID] || 1, // Include the quantity for each product
+          quantity: productQuantities[p.UID] || 1 // Include the quantity for each product
         }));
       onFinalProductsChange?.(selectedProductsList);
     }
@@ -340,7 +340,7 @@ export default function DynamicProductAttributes({
         // Cache hierarchy data
         productCache.set(hierarchyCacheKey, {
           data: { types, options: firstLevelOptions } as any,
-          timestamp: Date.now(),
+          timestamp: Date.now()
         });
 
         setHierarchyTypes(types);
@@ -378,7 +378,7 @@ export default function DynamicProductAttributes({
           type: type.Name,
           code: [] as string[], // Initialize as empty array for multi-select
           value: [] as string[], // Initialize as empty array for multi-select
-          level: index + 1,
+          level: index + 1
         }));
         setSelectedAttributes(initialAttributes);
       }
@@ -431,7 +431,7 @@ export default function DynamicProductAttributes({
       const clearedAttributes = selectedAttributes.map((attr) => ({
         ...attr,
         code: [],
-        value: [],
+        value: []
       }));
       setSelectedAttributes(clearedAttributes);
       onChange(clearedAttributes);
@@ -460,7 +460,7 @@ export default function DynamicProductAttributes({
         type: attr.type,
         code: attr.code,
         value: attr.value,
-        hasCode: Array.isArray(attr.code) ? attr.code.length : "not array",
+        hasCode: Array.isArray(attr.code) ? attr.code.length : "not array"
       }))
     );
   }, [selectedAttributes]);
@@ -485,7 +485,7 @@ export default function DynamicProductAttributes({
     selectedAttributes,
     selectionMode,
     hierarchyTrigger,
-    loadingChildOptions,
+    loadingChildOptions
   ]);
 
   // Separate function for loading products (auto-triggered like working component)
@@ -531,7 +531,7 @@ export default function DynamicProductAttributes({
           PageSize: DEFAULT_PAGE_SIZE,
           IsCountRequired: true,
           FilterCriterias: [], // No filters for specific mode - get all products
-          SortCriterias: [], // Use empty array like working component
+          SortCriterias: [] // Use empty array like working component
         };
 
         const response = await skuService.getAllSKUs(request);
@@ -562,7 +562,7 @@ export default function DynamicProductAttributes({
             GroupName: sku.L2 || sku.L1 || "Uncategorized",
             GroupTypeName: sku.ParentUID,
             MRP: sku.MRP || 0,
-            IsActive: sku.IsActive !== false,
+            IsActive: sku.IsActive !== false
           })
         );
 
@@ -604,7 +604,7 @@ export default function DynamicProductAttributes({
           type: attr.type,
           code: attr.code,
           value: attr.value,
-          hasCode: Array.isArray(attr.code) ? attr.code.length : 0,
+          hasCode: Array.isArray(attr.code) ? attr.code.length : 0
         }))
       );
 
@@ -633,7 +633,7 @@ export default function DynamicProductAttributes({
         validAttributes.map((a) => ({
           level: a.level,
           type: a.type,
-          codes: a.code,
+          codes: a.code
         }))
       );
 
@@ -693,14 +693,14 @@ export default function DynamicProductAttributes({
         if (debouncedSearchQuery) {
           filterCriterias.push({
             Name: "skucodeandname",
-            Value: debouncedSearchQuery,
+            Value: debouncedSearchQuery
           });
         }
 
         // Add active filter
         filterCriterias.push({
           Name: "IsActive",
-          Value: true,
+          Value: true
         });
 
         // Get the last (most specific) valid attribute for filtering
@@ -727,7 +727,7 @@ export default function DynamicProductAttributes({
             level: a.level,
             type: a.type,
             codes: a.code,
-            values: a.value,
+            values: a.value
           }))
         );
         console.log(
@@ -739,7 +739,7 @@ export default function DynamicProductAttributes({
           {
             type: lastAttribute?.type,
             codes: lastAttribute?.code,
-            values: lastAttribute?.value,
+            values: lastAttribute?.value
           }
         );
         console.log("===================================================");
@@ -765,7 +765,7 @@ export default function DynamicProductAttributes({
               );
               filterCriterias.push({
                 Name: "ParentUID",
-                Value: lastAttribute.code[0],
+                Value: lastAttribute.code[0]
               });
             } else {
               console.log(
@@ -774,7 +774,7 @@ export default function DynamicProductAttributes({
               );
               filterCriterias.push({
                 Name: "ParentUIDs",
-                Value: JSON.stringify(lastAttribute.code),
+                Value: JSON.stringify(lastAttribute.code)
               });
             }
           } else {
@@ -832,7 +832,7 @@ export default function DynamicProductAttributes({
               );
               filterCriterias.push({
                 Name: "ParentUIDs",
-                Value: JSON.stringify(brandUIDsArray),
+                Value: JSON.stringify(brandUIDsArray)
               });
             } else {
               console.log(
@@ -848,7 +848,7 @@ export default function DynamicProductAttributes({
           PageSize: DEFAULT_PAGE_SIZE,
           IsCountRequired: true,
           FilterCriterias: filterCriterias,
-          SortCriterias: [], // Use empty array like working component
+          SortCriterias: [] // Use empty array like working component
         };
 
         console.log("========== HIERARCHY MODE API CALL ==========");
@@ -942,7 +942,7 @@ export default function DynamicProductAttributes({
             GroupTypeName: sku.ParentUID,
             MRP: sku.MRP || 0,
             IsActive: sku.IsActive !== false,
-            ParentUID: sku.ParentUID,
+            ParentUID: sku.ParentUID
           }));
 
           console.log(
@@ -966,7 +966,7 @@ export default function DynamicProductAttributes({
         // Cache the results
         productCache.set(cacheKey, {
           data: allProducts,
-          timestamp: Date.now(),
+          timestamp: Date.now()
         });
 
         // Group products by their GroupName
@@ -1025,7 +1025,7 @@ export default function DynamicProductAttributes({
         if (childType) {
           setHierarchyOptions((prev) => ({
             ...prev,
-            [childType.Name]: [],
+            [childType.Name]: []
           }));
         }
       }
@@ -1040,7 +1040,7 @@ export default function DynamicProductAttributes({
       updated[index] = {
         ...updated[index],
         code: selectedCodes,
-        value: values,
+        value: values
       };
 
       // Clear subsequent attributes when changing a parent attribute
@@ -1070,7 +1070,7 @@ export default function DynamicProductAttributes({
                 const childOptions = childGroups.map((group) => ({
                   code: group.Code,
                   value: group.Name,
-                  type: nextLevel.Name,
+                  type: nextLevel.Name
                 }));
                 allChildOptions.push(...childOptions);
               });
@@ -1083,7 +1083,7 @@ export default function DynamicProductAttributes({
               // Update hierarchy options with filtered children
               setHierarchyOptions((prev) => ({
                 ...prev,
-                [nextLevel.Name]: uniqueChildOptions,
+                [nextLevel.Name]: uniqueChildOptions
               }));
 
               // Clear subsequent levels if any
@@ -1092,7 +1092,7 @@ export default function DynamicProductAttributes({
                 if (childType) {
                   setHierarchyOptions((prev) => ({
                     ...prev,
-                    [childType.Name]: [],
+                    [childType.Name]: []
                   }));
                 }
               }
@@ -1101,13 +1101,13 @@ export default function DynamicProductAttributes({
               // Clear child options on error
               setHierarchyOptions((prev) => ({
                 ...prev,
-                [nextLevel.Name]: [],
+                [nextLevel.Name]: []
               }));
             } finally {
               // Clear loading state
               setLoadingChildOptions((prev) => ({
                 ...prev,
-                [index + 1]: false,
+                [index + 1]: false
               }));
             }
           })();
@@ -1121,7 +1121,7 @@ export default function DynamicProductAttributes({
         type: a.type,
         level: a.level,
         codes: a.code,
-        values: a.value,
+        values: a.value
       }))
     );
 
@@ -1143,7 +1143,7 @@ export default function DynamicProductAttributes({
     try {
       const [types, options] = await Promise.all([
         hierarchyService.getHierarchyTypes(),
-        hierarchyService.getAllHierarchyOptions(),
+        hierarchyService.getAllHierarchyOptions()
       ]);
 
       setHierarchyTypes(types);
@@ -1440,7 +1440,7 @@ export default function DynamicProductAttributes({
                       ).map((opt) => ({
                         value: opt.code,
                         label: opt.value,
-                        code: opt.code,
+                        code: opt.code
                       }));
 
                       // Ensure selectedCodes is always an array
@@ -1742,7 +1742,7 @@ export default function DynamicProductAttributes({
                                                     (prev) => ({
                                                       ...prev,
                                                       [product.UID]:
-                                                        prev[product.UID] || 1,
+                                                        prev[product.UID] || 1
                                                     })
                                                   );
                                                 } else {
@@ -1752,7 +1752,7 @@ export default function DynamicProductAttributes({
                                                   setProductQuantities(
                                                     (prev) => {
                                                       const newQuantities = {
-                                                        ...prev,
+                                                        ...prev
                                                       };
                                                       delete newQuantities[
                                                         product.UID
@@ -1805,7 +1805,7 @@ export default function DynamicProductAttributes({
                                                           (prev) => ({
                                                             ...prev,
                                                             [product.UID]:
-                                                              currentQty - 1,
+                                                              currentQty - 1
                                                           })
                                                         );
                                                       }
@@ -1830,7 +1830,7 @@ export default function DynamicProductAttributes({
                                                         (prev) => ({
                                                           ...prev,
                                                           [product.UID]:
-                                                            Math.max(1, val),
+                                                            Math.max(1, val)
                                                         })
                                                       );
                                                     }}
@@ -1848,7 +1848,7 @@ export default function DynamicProductAttributes({
                                                         (prev) => ({
                                                           ...prev,
                                                           [product.UID]:
-                                                            currentQty + 1,
+                                                            currentQty + 1
                                                         })
                                                       );
                                                     }}
@@ -1884,7 +1884,7 @@ export default function DynamicProductAttributes({
                                                       setProductQuantities(
                                                         (prev) => ({
                                                           ...prev,
-                                                          [product.UID]: qty,
+                                                          [product.UID]: qty
                                                         })
                                                       );
                                                     }}
@@ -1984,7 +1984,7 @@ export default function DynamicProductAttributes({
                   .filter((p) => selected.includes(p.UID))
                   .map((p) => ({
                     ...p,
-                    quantity: quantities[p.UID] || 1,
+                    quantity: quantities[p.UID] || 1
                   }));
                 onFinalProductsChange?.(selectedProductsList);
               }}

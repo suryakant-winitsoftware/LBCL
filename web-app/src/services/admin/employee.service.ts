@@ -4,12 +4,12 @@ import {
   PagingRequest,
   PagedResponse,
   ApiResponse,
-  JobPosition,
+  JobPosition
 } from "@/types/admin.types";
 import { authService } from "@/lib/auth-service";
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
 // Helper function to extract paged data from various response formats
 function extractPagedData(response: any): { items: any[]; totalCount: number } {
@@ -21,7 +21,7 @@ function extractPagedData(response: any): { items: any[]; totalCount: number } {
   if (response.PagedData && Array.isArray(response.PagedData)) {
     return {
       items: response.PagedData,
-      totalCount: response.TotalCount || response.PagedData.length,
+      totalCount: response.TotalCount || response.PagedData.length
     };
   }
 
@@ -29,7 +29,7 @@ function extractPagedData(response: any): { items: any[]; totalCount: number } {
   if (response.Data?.PagedData && Array.isArray(response.Data.PagedData)) {
     return {
       items: response.Data.PagedData,
-      totalCount: response.Data.TotalCount || response.Data.PagedData.length,
+      totalCount: response.Data.TotalCount || response.Data.PagedData.length
     };
   }
 
@@ -37,7 +37,7 @@ function extractPagedData(response: any): { items: any[]; totalCount: number } {
   if (response.Data && Array.isArray(response.Data)) {
     return {
       items: response.Data,
-      totalCount: response.TotalCount || response.Data.length,
+      totalCount: response.TotalCount || response.Data.length
     };
   }
 
@@ -55,9 +55,9 @@ class EmployeeService {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${authService.getToken()}`,
-          ...options.headers,
+          ...options.headers
         },
-        ...options,
+        ...options
       });
 
       if (!response.ok) {
@@ -68,14 +68,14 @@ class EmployeeService {
       return {
         success: true,
         data: data.data || data,
-        message: data.message,
+        message: data.message
       };
     } catch (error) {
       console.error(`API call failed for ${endpoint}:`, error);
       return {
         success: false,
         message:
-          error instanceof Error ? error.message : "Unknown error occurred",
+          error instanceof Error ? error.message : "Unknown error occurred"
       };
     }
   }
@@ -95,15 +95,15 @@ class EmployeeService {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${authService.getToken()}`,
+            Authorization: `Bearer ${authService.getToken()}`
           },
           body: JSON.stringify({
             pageNumber: 1,
             pageSize: 10000, // Get all to count properly
             isCountRequired: true,
             sortCriterias: [],
-            filterCriterias: [],
-          }),
+            filterCriterias: []
+          })
         }
       );
 
@@ -147,10 +147,10 @@ class EmployeeService {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${authService.getToken()}`,
+            Authorization: `Bearer ${authService.getToken()}`
           },
           body: JSON.stringify(pagingRequest),
-          signal: controller.signal,
+          signal: controller.signal
         }
       );
 
@@ -168,7 +168,7 @@ class EmployeeService {
         totalRecords: extracted.totalCount,
         totalPages: Math.ceil(extracted.totalCount / pagingRequest.pageSize),
         pageNumber: pagingRequest.pageNumber,
-        pageSize: pagingRequest.pageSize,
+        pageSize: pagingRequest.pageSize
       };
     } catch (error: any) {
       console.error("Failed to fetch employees:", error);
@@ -192,8 +192,8 @@ class EmployeeService {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${authService.getToken()}`,
-          },
+            Authorization: `Bearer ${authService.getToken()}`
+          }
         }
       );
 
@@ -224,7 +224,7 @@ class EmployeeService {
   async createEmployee(empDTO: EmpDTOModel): Promise<number> {
     const response = await this.apiCall<number>("/MaintainUser/CUDEmployee", {
       method: "POST",
-      body: JSON.stringify(empDTO),
+      body: JSON.stringify(empDTO)
     });
 
     if (!response.success || !response.data) {
@@ -237,7 +237,7 @@ class EmployeeService {
   async updateEmployee(empDTO: EmpDTOModel): Promise<number> {
     const response = await this.apiCall<number>("/MaintainUser/CUDEmployee", {
       method: "POST",
-      body: JSON.stringify(empDTO),
+      body: JSON.stringify(empDTO)
     });
 
     if (!response.success || !response.data) {
@@ -265,8 +265,8 @@ class EmployeeService {
             loginId: "",
             status: "Inactive",
             authType: "",
-            actionType: "Delete",
-          },
+            actionType: "Delete"
+          }
         };
       }
 
@@ -276,8 +276,8 @@ class EmployeeService {
           ...empData,
           emp: {
             ...empData.emp,
-            actionType: "Delete",
-          },
+            actionType: "Delete"
+          }
         };
 
         try {
@@ -287,9 +287,9 @@ class EmployeeService {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${authService.getToken()}`,
+                Authorization: `Bearer ${authService.getToken()}`
               },
-              body: JSON.stringify(deleteDTO),
+              body: JSON.stringify(deleteDTO)
             }
           );
 
@@ -316,8 +316,8 @@ class EmployeeService {
               : `[DELETED] ${currentName}`,
             modifiedDate: new Date().toISOString(),
             serverModifiedTime: new Date().toISOString(),
-            actionType: "Update",
-          },
+            actionType: "Update"
+          }
         };
 
         const response = await fetch(
@@ -326,9 +326,9 @@ class EmployeeService {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${authService.getToken()}`,
+              Authorization: `Bearer ${authService.getToken()}`
             },
-            body: JSON.stringify(softDeleteDTO),
+            body: JSON.stringify(softDeleteDTO)
           }
         );
 
@@ -388,7 +388,7 @@ class EmployeeService {
             ActionType: 2, // Update action
             ModifiedBy: "ADMIN",
             ModifiedTime: new Date().toISOString(),
-            ServerModifiedTime: new Date().toISOString(),
+            ServerModifiedTime: new Date().toISOString()
           },
           EmpInfo: empInfo || {
             // Provide minimal EmpInfo if not available
@@ -404,7 +404,7 @@ class EmployeeService {
             CreatedTime: new Date().toISOString(),
             ModifiedTime: new Date().toISOString(),
             ServerAddTime: new Date().toISOString(),
-            ServerModifiedTime: new Date().toISOString(),
+            ServerModifiedTime: new Date().toISOString()
           },
           JobPosition: jobPosition || {
             // Provide minimal JobPosition if not available
@@ -422,9 +422,9 @@ class EmployeeService {
             CreatedTime: new Date().toISOString(),
             ModifiedTime: new Date().toISOString(),
             ServerAddTime: new Date().toISOString(),
-            ServerModifiedTime: new Date().toISOString(),
+            ServerModifiedTime: new Date().toISOString()
           },
-          EmpOrgMapping: empOrgMapping || [],
+          EmpOrgMapping: empOrgMapping || []
         };
 
         console.log("Attempting CUDEmployee with full DTO:", updateDTO);
@@ -435,9 +435,9 @@ class EmployeeService {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${authService.getToken()}`,
+              Authorization: `Bearer ${authService.getToken()}`
             },
-            body: JSON.stringify(updateDTO),
+            body: JSON.stringify(updateDTO)
           }
         );
 
@@ -506,7 +506,7 @@ class EmployeeService {
             ActionType: 2, // Update action
             ModifiedBy: "ADMIN",
             ModifiedTime: new Date().toISOString(),
-            ServerModifiedTime: new Date().toISOString(),
+            ServerModifiedTime: new Date().toISOString()
           },
           EmpInfo: empInfo || {
             // Provide minimal EmpInfo if not available
@@ -522,7 +522,7 @@ class EmployeeService {
             CreatedTime: new Date().toISOString(),
             ModifiedTime: new Date().toISOString(),
             ServerAddTime: new Date().toISOString(),
-            ServerModifiedTime: new Date().toISOString(),
+            ServerModifiedTime: new Date().toISOString()
           },
           JobPosition: jobPosition || {
             // Provide minimal JobPosition if not available
@@ -540,9 +540,9 @@ class EmployeeService {
             CreatedTime: new Date().toISOString(),
             ModifiedTime: new Date().toISOString(),
             ServerAddTime: new Date().toISOString(),
-            ServerModifiedTime: new Date().toISOString(),
+            ServerModifiedTime: new Date().toISOString()
           },
-          EmpOrgMapping: empOrgMapping || [],
+          EmpOrgMapping: empOrgMapping || []
         };
 
         console.log("Attempting CUDEmployee with full DTO:", updateDTO);
@@ -553,9 +553,9 @@ class EmployeeService {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${authService.getToken()}`,
+              Authorization: `Bearer ${authService.getToken()}`
             },
-            body: JSON.stringify(updateDTO),
+            body: JSON.stringify(updateDTO)
           }
         );
 
@@ -596,7 +596,7 @@ class EmployeeService {
       "/JobPosition/CreateJobPosition",
       {
         method: "POST",
-        body: JSON.stringify(jobPosition),
+        body: JSON.stringify(jobPosition)
       }
     );
 
@@ -612,7 +612,7 @@ class EmployeeService {
       "/JobPosition/UpdateJobPosition",
       {
         method: "PUT",
-        body: JSON.stringify(jobPosition),
+        body: JSON.stringify(jobPosition)
       }
     );
 
@@ -635,8 +635,8 @@ class EmployeeService {
           // These fields are part of ChangePassword model but not needed for UpdateNewPassword
           UserId: null,
           OldPassword: null,
-          ChallengeCode: null,
-        }),
+          ChallengeCode: null
+        })
       });
 
       return response.success;
@@ -650,8 +650,8 @@ class EmployeeService {
             method: "POST",
             body: JSON.stringify({
               empUID: empUID,
-              newPassword: newPassword,
-            }),
+              newPassword: newPassword
+            })
           }
         );
         return alternateResponse.success;
@@ -676,8 +676,8 @@ class EmployeeService {
           UserId: userId,
           OldPassword: oldPassword,
           NewPassword: newPassword,
-          ChallengeCode: challengeCode,
-        }),
+          ChallengeCode: challengeCode
+        })
       }
     );
 
@@ -705,8 +705,8 @@ class EmployeeService {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${authService.getToken()}`,
-          },
+            Authorization: `Bearer ${authService.getToken()}`
+          }
         }
       );
 
@@ -741,8 +741,8 @@ class EmployeeService {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${authService.getToken()}`,
-          },
+            Authorization: `Bearer ${authService.getToken()}`
+          }
         }
       );
 
@@ -784,13 +784,13 @@ class EmployeeService {
       pageSize: pageSize,
       sortCriterias: [] as any[],
       filterCriterias: [] as any[],
-      isCountRequired: true,
+      isCountRequired: true
     };
 
     if (sortField && sortDirection) {
       pagingRequest.sortCriterias.push({
         fieldName: sortField,
-        sortDirection: sortDirection,
+        sortDirection: sortDirection
       });
     }
 
@@ -798,7 +798,7 @@ class EmployeeService {
       pagingRequest.filterCriterias.push({
         fieldName: "Name",
         operator: "LIKE",
-        value: `%${searchQuery}%`,
+        value: `%${searchQuery}%`
       });
     }
 
@@ -813,7 +813,7 @@ class EmployeeService {
           pagingRequest.filterCriterias.push({
             fieldName: key,
             operator: Array.isArray(value) ? "IN" : "EQ",
-            value,
+            value
           });
         }
       });
@@ -833,7 +833,7 @@ class EmployeeService {
     for (const uid of employeeIds) {
       try {
         const empDTO: Partial<EmpDTOModel> = {
-          emp: { uid, status } as Employee,
+          emp: { uid, status } as Employee
         };
         await this.updateEmployee(empDTO as EmpDTOModel);
         success++;
@@ -858,13 +858,13 @@ class EmployeeService {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${authService.getToken()}`,
+            Authorization: `Bearer ${authService.getToken()}`
           },
           body: JSON.stringify({
             UID: jobPositionUID,
             LocationType: locationType,
-            LocationValue: locationValue,
-          }),
+            LocationValue: locationValue
+          })
         }
       );
 
@@ -904,7 +904,7 @@ class EmployeeService {
             userRoleUID: roleUID,
             orgUID,
             fromDate: new Date().toISOString().split("T")[0],
-            isActive: true,
+            isActive: true
           };
           await this.createJobPosition(jobPosition);
         }
@@ -927,8 +927,8 @@ class EmployeeService {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${authService.getToken()}`,
-          },
+            Authorization: `Bearer ${authService.getToken()}`
+          }
         }
       );
 
@@ -971,7 +971,7 @@ class EmployeeService {
         CreatedBy: "ADMIN",
         CreatedTime: new Date().toISOString(),
         ModifiedBy: "ADMIN",
-        ModifiedTime: new Date().toISOString(),
+        ModifiedTime: new Date().toISOString()
       }));
 
       // Try to create the mappings
@@ -982,9 +982,9 @@ class EmployeeService {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${authService.getToken()}`,
+              Authorization: `Bearer ${authService.getToken()}`
             },
-            body: JSON.stringify(newMappings),
+            body: JSON.stringify(newMappings)
           }
         );
 
@@ -1058,7 +1058,7 @@ class EmployeeService {
           return {
             ...emp,
             RoleName: roleName,
-            JobPosition: detailedEmp?.JobPosition,
+            JobPosition: detailedEmp?.JobPosition
           };
         } catch (error) {
           console.warn(`Failed to enhance employee ${emp.UID}:`, error);
@@ -1086,11 +1086,11 @@ class EmployeeService {
           emp.LoginId || emp.loginId || "",
           emp.RoleName || "No Role",
           emp.Status || emp.status || "",
-          emp.Email || emp.email || "",
+          emp.Email || emp.email || ""
         ]
           .map((field) => `"${field}"`)
           .join(",")
-      ),
+      )
     ].join("\n");
 
     return new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
@@ -1101,7 +1101,7 @@ class EmployeeService {
     // In the future, could use libraries like xlsx for proper Excel export
     const csvContent = this.exportToCSV(employees);
     return new Blob([csvContent], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8;",
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8;"
     });
   }
 }

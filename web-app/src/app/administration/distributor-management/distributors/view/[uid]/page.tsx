@@ -5,11 +5,6 @@ import { useRouter, useParams } from 'next/navigation';
 import {
   ArrowLeft,
   Edit,
-  Building2,
-  MapPin,
-  Phone,
-  CreditCard,
-  FileText,
   Loader2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -21,7 +16,6 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { distributorService, IDistributorMasterView } from '@/services/distributor.service';
 
@@ -112,33 +106,10 @@ export default function ViewDistributorPage() {
         </Button>
       </div>
 
-      {/* Tabs */}
-      <Tabs defaultValue="basic" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="basic">
-            <Building2 className="mr-2 h-4 w-4" />
-            Basic Info
-          </TabsTrigger>
-          <TabsTrigger value="contacts">
-            <Phone className="mr-2 h-4 w-4" />
-            Contacts ({distributorData.Contacts?.length || 0})
-          </TabsTrigger>
-          <TabsTrigger value="address">
-            <MapPin className="mr-2 h-4 w-4" />
-            Address
-          </TabsTrigger>
-          <TabsTrigger value="credit">
-            <CreditCard className="mr-2 h-4 w-4" />
-            Credit Info
-          </TabsTrigger>
-          <TabsTrigger value="documents">
-            <FileText className="mr-2 h-4 w-4" />
-            Documents ({distributorData.Documents?.length || 0})
-          </TabsTrigger>
-        </TabsList>
-
+      {/* Content - No Tabs */}
+      <div className="space-y-6">
         {/* Basic Information */}
-        <TabsContent value="basic" className="space-y-4">
+        <div className="space-y-4">
           <Card>
             <CardHeader>
               <CardTitle>Organization Details</CardTitle>
@@ -165,6 +136,18 @@ export default function ViewDistributorPage() {
                   <p className="text-lg">{distributorData.Store.LegalName || '-'}</p>
                 </div>
                 <div>
+                  <p className="text-sm font-medium text-muted-foreground">Alpha Search Code</p>
+                  <p className="text-lg">{distributorData.Store.Number || '-'}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">VAT Registration Number</p>
+                  <p className="text-lg">{distributorData.Store.TaxDocNumber || '-'}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Territory</p>
+                  <p className="text-lg">{distributorData.Org.TerritoryUid || '-'}</p>
+                </div>
+                <div>
                   <p className="text-sm font-medium text-muted-foreground">Created Date</p>
                   <p className="text-lg">
                     {distributorData.Org.CreatedTime
@@ -180,7 +163,8 @@ export default function ViewDistributorPage() {
             </CardContent>
           </Card>
 
-          <Card>
+          {/* Store Information - Hidden for now */}
+          {/* <Card>
             <CardHeader>
               <CardTitle>Store Information</CardTitle>
             </CardHeader>
@@ -208,11 +192,12 @@ export default function ViewDistributorPage() {
                 </div>
               </div>
             </CardContent>
-          </Card>
-        </TabsContent>
+          </Card> */}
+        </div>
 
         {/* Contacts */}
-        <TabsContent value="contacts" className="space-y-4">
+        <div className="space-y-4">
+          <h2 className="text-xl font-semibold">Contact Information</h2>
           {!distributorData.Contacts || distributorData.Contacts.length === 0 ? (
             <Card>
               <CardContent className="py-8 text-center text-muted-foreground">
@@ -266,10 +251,11 @@ export default function ViewDistributorPage() {
               </Card>
             ))
           )}
-        </TabsContent>
+        </div>
 
         {/* Address */}
-        <TabsContent value="address" className="space-y-4">
+        <div className="space-y-4">
+          <h2 className="text-xl font-semibold">Address Information</h2>
           <Card>
             <CardHeader>
               <CardTitle>Address Information</CardTitle>
@@ -293,10 +279,16 @@ export default function ViewDistributorPage() {
                   {distributorData.Address.CountryCode && <p>{distributorData.Address.CountryCode}</p>}
 
                   <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t">
-                    {distributorData.Address.TerritoryCode && (
+                    {distributorData.Address.Depot && (
                       <div>
-                        <p className="text-sm font-medium text-muted-foreground">Territory Code</p>
-                        <p>{distributorData.Address.TerritoryCode}</p>
+                        <p className="text-sm font-medium text-muted-foreground">Warehouse/Depot Code</p>
+                        <p>{distributorData.Address.Depot}</p>
+                      </div>
+                    )}
+                    {distributorData.Address.LocationUID && (
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">Destination Location</p>
+                        <p>{distributorData.Address.LocationUID}</p>
                       </div>
                     )}
                     {distributorData.Address.Phone && (
@@ -312,16 +304,67 @@ export default function ViewDistributorPage() {
                       </div>
                     )}
                   </div>
+
+                  {/* Secondary Location Section */}
+                  {(distributorData.Address.CustomField1 ||
+                    distributorData.Address.CustomField2 ||
+                    distributorData.Address.CustomField3 ||
+                    distributorData.Address.CustomField4 ||
+                    distributorData.Address.CustomField5 ||
+                    distributorData.Address.CustomField6) && (
+                    <div className="mt-6 pt-6 border-t">
+                      <h4 className="text-sm font-semibold mb-4">Secondary Location</h4>
+                      <div className="grid grid-cols-2 gap-4">
+                        {distributorData.Address.CustomField1 && (
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground">Location Code</p>
+                            <p>{distributorData.Address.CustomField1}</p>
+                          </div>
+                        )}
+                        {distributorData.Address.CustomField2 && (
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground">Description</p>
+                            <p>{distributorData.Address.CustomField2}</p>
+                          </div>
+                        )}
+                        {distributorData.Address.CustomField3 && (
+                          <div className="col-span-2">
+                            <p className="text-sm font-medium text-muted-foreground">Address Line 1</p>
+                            <p>{distributorData.Address.CustomField3}</p>
+                          </div>
+                        )}
+                        {distributorData.Address.CustomField4 && (
+                          <div className="col-span-2">
+                            <p className="text-sm font-medium text-muted-foreground">Address Line 2</p>
+                            <p>{distributorData.Address.CustomField4}</p>
+                          </div>
+                        )}
+                        {distributorData.Address.CustomField5 && (
+                          <div className="col-span-2">
+                            <p className="text-sm font-medium text-muted-foreground">Address Line 3</p>
+                            <p>{distributorData.Address.CustomField5}</p>
+                          </div>
+                        )}
+                        {distributorData.Address.CustomField6 && (
+                          <div className="col-span-2">
+                            <p className="text-sm font-medium text-muted-foreground">Address Line 4</p>
+                            <p>{distributorData.Address.CustomField6}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <p className="text-center text-muted-foreground">No address available</p>
               )}
             </CardContent>
           </Card>
-        </TabsContent>
+        </div>
 
-        {/* Credit Information */}
-        <TabsContent value="credit" className="space-y-4">
+        {/* Credit Information - Hidden for now */}
+        {/* <div className="space-y-4">
+          <h2 className="text-xl font-semibold">Credit Information</h2>
           <Card>
             <CardHeader>
               <CardTitle>Credit Details</CardTitle>
@@ -362,10 +405,11 @@ export default function ViewDistributorPage() {
               )}
             </CardContent>
           </Card>
-        </TabsContent>
+        </div> */}
 
-        {/* Documents */}
-        <TabsContent value="documents" className="space-y-4">
+        {/* Documents - Hidden for now */}
+        {/* <div className="space-y-4">
+          <h2 className="text-xl font-semibold">Documents</h2>
           {!distributorData.Documents || distributorData.Documents.length === 0 ? (
             <Card>
               <CardContent className="py-8 text-center text-muted-foreground">
@@ -405,8 +449,8 @@ export default function ViewDistributorPage() {
               </Card>
             ))
           )}
-        </TabsContent>
-      </Tabs>
+        </div> */}
+      </div>
     </div>
   );
 }

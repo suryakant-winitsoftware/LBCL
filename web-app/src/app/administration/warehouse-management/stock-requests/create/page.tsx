@@ -11,11 +11,14 @@ import { Textarea } from '@/components/ui/textarea'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Badge } from '@/components/ui/badge'
 import { useToast } from '@/components/ui/use-toast'
 import { api, apiService } from '@/services/api'
 import { organizationService, Organization as OrgType, OrgType as OrgTypeInterface } from '@/services/organizationService'
 import { employeeService } from '@/services/admin/employee.service'
-import { ArrowLeft, Plus, Trash2, Package, X, Check, ChevronDown, Search, Building2 } from 'lucide-react'
+import { ArrowLeft, Plus, Trash2, Package, X, Check, ChevronDown, Search, Building2, Users, Filter } from 'lucide-react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import {
   initializeOrganizationHierarchy,
@@ -24,6 +27,7 @@ import {
   resetOrganizationHierarchy,
   OrganizationLevel,
 } from '@/utils/organizationHierarchyUtils'
+import { uomTypesService, UOMType } from '@/services/sku/uom-types.service'
 
 interface Organization {
   UID: string
@@ -96,7 +100,11 @@ export default function CreateStockRequestPage() {
     employees: false,
     jobPositions: false,
     skus: false,
+    uom: false,
   })
+
+  // UOM Types from database
+  const [uomOptions, setUomOptions] = useState<UOMType[]>([])
 
   // Organization hierarchy states (like route create)
   const [organizations, setOrganizations] = useState<OrgType[]>([])
@@ -124,6 +132,11 @@ export default function CreateStockRequestPage() {
   const [rolePopoverOpen, setRolePopoverOpen] = useState(false)
   const [employeePopoverOpen, setEmployeePopoverOpen] = useState(false)
 
+  // SKU Multi-Select Dialog States
+  const [skuDialogOpen, setSkuDialogOpen] = useState(false)
+  const [skuSearchQuery, setSkuSearchQuery] = useState('')
+  const [selectedSKUs, setSelectedSKUs] = useState<Set<string>>(new Set())
+
   const [formData, setFormData] = useState({
     CompanyUID: '',
     SourceOrgUID: '',
@@ -142,34 +155,50 @@ export default function CreateStockRequestPage() {
     RouteUID: '',
     OrgUID: '',
     WareHouseUID: '',
-    YearMonth: parseInt(new Date().toISOString().slice(0, 7).replace('-', '')),
+    YearMonth: parseInt(new Date().toISOString().slice(2, 7).replace('-', '')), // YYMM format (e.g., 2510 for Oct 2025)
   })
 
   useEffect(() => {
     loadOrganizationsAndTypes()
+    loadWarehouses('') // Load all FRWH warehouses on mount
     loadRoles()
-    loadJobPositions()
     loadSKUs()
+    loadUOMTypes() // Load UOM types from database
   }, [])
 
   useEffect(() => {
+    console.log('🔵 Source Org Changed:', formData.SourceOrgUID)
+    console.log('🔵 All Warehouses:', warehouses)
+
     if (formData.SourceOrgUID) {
-      loadWarehouses(formData.SourceOrgUID)
-      setSourceWarehouses(warehouses.filter(w => w.OrgUID === formData.SourceOrgUID))
+      if (warehouses.length === 0) {
+        loadWarehouses(formData.SourceOrgUID)
+      }
+      // Filter warehouses by ParentUID matching the selected organization
+      const filtered = warehouses.filter(w => w.OrgUID === formData.SourceOrgUID)
+      console.log('🔵 Filtered Source Warehouses (by ParentUID):', filtered)
+      setSourceWarehouses(filtered)
     } else {
       setSourceWarehouses([])
     }
-  }, [formData.SourceOrgUID])
+  }, [formData.SourceOrgUID, warehouses])
 
   useEffect(() => {
+    console.log('🔵 Target Org Changed:', formData.TargetOrgUID)
+
     if (formData.TargetOrgUID) {
-      loadWarehouses(formData.TargetOrgUID)
+      if (warehouses.length === 0) {
+        loadWarehouses(formData.TargetOrgUID)
+      }
       loadEmployees(formData.TargetOrgUID)
-      setTargetWarehouses(warehouses.filter(w => w.OrgUID === formData.TargetOrgUID))
+      // Filter warehouses by ParentUID matching the selected organization
+      const filtered = warehouses.filter(w => w.OrgUID === formData.TargetOrgUID)
+      console.log('🔵 Filtered Target Warehouses (by ParentUID):', filtered)
+      setTargetWarehouses(filtered)
     } else {
       setTargetWarehouses([])
     }
-  }, [formData.TargetOrgUID])
+  }, [formData.TargetOrgUID, warehouses])
 
   // Load organizations and types (like route create)
   const loadOrganizationsAndTypes = async () => {
@@ -180,8 +209,14 @@ export default function CreateStockRequestPage() {
         organizationService.getOrganizations(1, 10000),
       ])
 
-      const filteredOrganizations = orgsResult.data.filter((org) => org.ShowInTemplate === true)
-      const filteredOrgTypes = typesResult.filter((type) => type.ShowInTemplate !== false)
+      // Exclude only warehouse organization types, keep FR (Franchisee) for distributors
+      const warehouseOrgTypes = ['FRWH', 'VWH', 'WH', 'Warehouse']
+      const filteredOrganizations = orgsResult.data.filter(
+        (org) => org.ShowInTemplate === true && !warehouseOrgTypes.includes(org.OrgTypeUID)
+      )
+      const filteredOrgTypes = typesResult.filter(
+        (type) => type.ShowInTemplate !== false && !warehouseOrgTypes.includes(type.UID)
+      )
 
       setOrgTypes(filteredOrgTypes)
       setOrganizations(filteredOrganizations)
@@ -202,21 +237,44 @@ export default function CreateStockRequestPage() {
     }
   }
 
+  const loadUOMTypes = useCallback(async () => {
+    setLoading((prev) => ({ ...prev, uom: true }))
+    try {
+      const allTypes = await uomTypesService.getAllUOMTypes()
+      setUomOptions(allTypes)
+      console.log('✅ Loaded UOM Types:', allTypes.length)
+    } catch (error) {
+      console.error('Failed to load UOM types:', error)
+      toast({
+        title: 'Warning',
+        description: 'Could not load UOM types',
+        variant: 'default',
+      })
+    } finally {
+      setLoading((prev) => ({ ...prev, uom: false }))
+    }
+  }, [toast])
+
   const loadWarehouses = useCallback(async (orgUID: string) => {
     setLoading((prev) => ({ ...prev, warehouses: true }))
     try {
-      const data = await apiService.post(`/Dropdown/GetWareHouseTypeDropDown?parentUID=${orgUID}`)
+      // Use the same API as warehouses list page - get all FRWH warehouses
+      console.log('🔵 Loading FRWH warehouses...')
+      const data = await apiService.get('/Org/GetOrgByOrgTypeUID?OrgTypeUID=FRWH')
+      console.log('🔵 Warehouse API Response:', data)
+
       if (data.IsSuccess && data.Data) {
         const warehousesData = data.Data.map((wh: any) => ({
-          UID: wh.Value || wh.UID,
-          Name: wh.Label || wh.Name,
-          Code: wh.Code || '',
-          OrgUID: orgUID
+          UID: wh.UID,
+          Name: wh.Name,
+          Code: wh.Code,
+          OrgUID: wh.ParentUID || ''
         }))
-        setWarehouses(prev => [...prev.filter(w => w.OrgUID !== orgUID), ...warehousesData])
+        console.log('🔵 Mapped Warehouses:', warehousesData)
+        setWarehouses(warehousesData)
       }
     } catch (error) {
-      console.error('Error loading warehouses:', error)
+      console.error('❌ Error loading warehouses:', error)
     } finally {
       setLoading((prev) => ({ ...prev, warehouses: false }))
     }
@@ -231,12 +289,15 @@ export default function CreateStockRequestPage() {
         sortCriterias: [],
         filterCriterias: [],
       })
+      console.log('🔵 Roles API Response:', data)
       if (data.IsSuccess && data.Data) {
         const roleData = data.Data.PagedData || data.Data || []
-        setRoles(roleData.map((role: any) => ({
+        const mappedRoles = roleData.map((role: any) => ({
           value: role.UID,
-          label: role.Name,
-        })))
+          label: role.Name || role.UID, // Fallback to UID if Name is undefined
+        }))
+        console.log('🔵 Mapped Roles:', mappedRoles)
+        setRoles(mappedRoles)
       }
     } catch (error) {
       console.error('Error loading roles:', error)
@@ -247,6 +308,7 @@ export default function CreateStockRequestPage() {
 
   const loadEmployees = useCallback(
     async (orgUID: string, roleUID?: string) => {
+      console.log('🔵 loadEmployees called with:', { orgUID, roleUID })
       setLoading((prev) => ({ ...prev, employees: true }))
       try {
         let employees = []
@@ -255,6 +317,8 @@ export default function CreateStockRequestPage() {
           console.log('🔍 Loading employees for org + role:', orgUID, roleUID)
           try {
             const orgRoleEmployees = await employeeService.getEmployeesSelectionItemByRoleUID(orgUID, roleUID)
+            console.log('🔵 orgRoleEmployees response:', orgRoleEmployees)
+
             if (orgRoleEmployees && orgRoleEmployees.length > 0) {
               employees = orgRoleEmployees.map((item: any) => ({
                 value: item.UID || item.Value || item.uid,
@@ -262,18 +326,27 @@ export default function CreateStockRequestPage() {
               }))
               console.log(`✅ Found ${employees.length} employees for org '${orgUID}' + role '${roleUID}'`)
             } else {
+              console.log('🔍 No direct org+role employees, trying role-based fallback')
               const roleBasedEmployees = await employeeService.getReportsToEmployeesByRoleUID(roleUID)
+              console.log('🔵 roleBasedEmployees response:', roleBasedEmployees)
+
               if (roleBasedEmployees && roleBasedEmployees.length > 0) {
                 const orgData = await api.dropdown.getEmployee(orgUID, false)
+                console.log('🔵 orgData response:', orgData)
+
                 const orgEmployeeUIDs = new Set()
                 if (orgData.IsSuccess && orgData.Data) {
                   orgData.Data.forEach((emp: any) => {
                     orgEmployeeUIDs.add(emp.UID)
                   })
                 }
+                console.log('🔵 orgEmployeeUIDs count:', orgEmployeeUIDs.size)
+
                 const filteredRoleEmployees = roleBasedEmployees.filter((emp: any) =>
                   orgEmployeeUIDs.has(emp.UID || emp.uid)
                 )
+                console.log('🔵 filteredRoleEmployees count:', filteredRoleEmployees.length)
+
                 employees = filteredRoleEmployees.map((emp: any) => ({
                   value: emp.UID || emp.uid,
                   label: `[${emp.Code || emp.code}] ${emp.Name || emp.name}`,
@@ -282,13 +355,15 @@ export default function CreateStockRequestPage() {
               }
             }
           } catch (roleError) {
-            console.error('Role-based employee loading failed:', roleError)
+            console.error('❌ Role-based employee loading failed:', roleError)
           }
         }
 
         if (employees.length === 0) {
           console.log('📄 Loading all employees for organization:', orgUID)
           const data = await api.dropdown.getEmployee(orgUID, false)
+          console.log('🔵 All org employees response:', data)
+
           if (data.IsSuccess && data.Data) {
             employees = data.Data.map((emp: any) => ({
               value: emp.UID,
@@ -298,9 +373,54 @@ export default function CreateStockRequestPage() {
           }
         }
 
+        console.log('🔵 Final employees array:', employees)
         setEmployees(employees)
       } catch (error) {
-        console.error('Error loading employees:', error)
+        console.error('❌ Error loading employees:', error)
+      } finally {
+        setLoading((prev) => ({ ...prev, employees: false }))
+      }
+    },
+    []
+  )
+
+  const loadEmployeesByRole = useCallback(
+    async (roleUID: string, orgUID?: string) => {
+      console.log('🔵 loadEmployeesByRole called with:', { roleUID, orgUID })
+      setLoading((prev) => ({ ...prev, employees: true }))
+      try {
+        let employees = []
+
+        // Use the Role API to get employees by role
+        console.log('🔍 Loading employees by role using Role API:', roleUID)
+        const response = await api.role.getEmployeesByRoleUID(roleUID)
+        console.log('🔵 Role employees API response:', response)
+
+        if (response.IsSuccess && response.Data) {
+          let roleEmployees = Array.isArray(response.Data) ? response.Data : []
+          console.log('🔵 Total employees with role:', roleEmployees.length)
+
+          // If org is specified, filter by org
+          if (orgUID) {
+            console.log('🔍 Filtering by organization:', orgUID)
+            roleEmployees = roleEmployees.filter((emp: any) => emp.OrgUID === orgUID || emp.orgUID === orgUID)
+            console.log('🔵 Employees after org filter:', roleEmployees.length)
+          }
+
+          employees = roleEmployees.map((emp: any) => ({
+            value: emp.UID || emp.uid || emp.Value,
+            label: emp.Label || emp.Text || `[${emp.Code || emp.code}] ${emp.Name || emp.name}`,
+          }))
+          console.log(`✅ Found ${employees.length} employees with role '${roleUID}'`)
+        } else {
+          console.log('⚠️ No employees found with this role')
+        }
+
+        console.log('🔵 Final employees array:', employees)
+        setEmployees(employees)
+      } catch (error) {
+        console.error('❌ Error loading employees by role:', error)
+        setEmployees([])
       } finally {
         setLoading((prev) => ({ ...prev, employees: false }))
       }
@@ -410,35 +530,113 @@ export default function CreateStockRequestPage() {
     setEmployees([])
   }
 
-  // Cascading dependencies (like route create)
+  // Cascading dependencies - load employees by role (use Principal org if no target org selected)
   useEffect(() => {
-    if (formData.TargetOrgUID && formData.RoleUID) {
-      console.log('🎯 Loading role-based employees for:', formData.RoleUID)
-      loadEmployees(formData.TargetOrgUID, formData.RoleUID)
-    } else if (formData.TargetOrgUID) {
-      console.log('📄 Loading all org employees (no role filter)')
-      loadEmployees(formData.TargetOrgUID)
-    }
+    console.log('🔵 useEffect triggered - TargetOrgUID:', formData.TargetOrgUID, 'RoleUID:', formData.RoleUID)
 
-    // Clear employee selection when role changes
-    if (formData.RequestByEmpUID) {
-      console.log('🔄 Clearing employee selection due to role change')
-      setFormData(prev => ({ ...prev, RequestByEmpUID: '' }))
+    if (formData.RoleUID) {
+      // Get org UID - use target org if selected, otherwise use Principal org (first level)
+      let orgUID = formData.TargetOrgUID
+
+      if (!orgUID && sourceOrgLevels.length > 0 && sourceOrgLevels[0].organizations.length > 0) {
+        // Use the first Principal organization
+        orgUID = sourceOrgLevels[0].organizations[0].UID
+        console.log('📌 Using default Principal org:', orgUID)
+      }
+
+      if (orgUID) {
+        console.log('🎯 Loading employees for org + role:', { org: orgUID, role: formData.RoleUID })
+        loadEmployees(orgUID, formData.RoleUID)
+      } else {
+        console.log('⚠️ No org available, clearing employees')
+        setEmployees([])
+      }
+    } else if (formData.TargetOrgUID) {
+      console.log('📄 Loading all org employees (no role filter) for org:', formData.TargetOrgUID)
+      loadEmployees(formData.TargetOrgUID)
+    } else {
+      console.log('⚠️ No role selected, clearing employees')
+      setEmployees([])
     }
-  }, [formData.RoleUID, formData.TargetOrgUID, loadEmployees])
+  }, [formData.RoleUID, formData.TargetOrgUID, sourceOrgLevels, loadEmployees])
 
   const addLine = () => {
+    // Use first available UOM or fallback to 'EA'
+    const defaultUOM = uomOptions.length > 0 ? uomOptions[0].UID : 'EA'
+
     const newLine: StockRequestLine = {
       UID: `LINE-${Date.now()}-${lines.length}`,
       SKUUID: '',
       SKUCode: '',
       SKUName: '',
-      UOM: 'EA',
+      UOM: defaultUOM,
       RequestedQty: 0,
       LineNumber: lines.length + 1
     }
     setLines([...lines, newLine])
   }
+
+  // Open multi-select SKU dialog
+  const openSKUDialog = () => {
+    setSkuDialogOpen(true)
+    setSkuSearchQuery('')
+  }
+
+  // Handle SKU selection toggle
+  const toggleSKUSelection = (skuUID: string) => {
+    const newSelected = new Set(selectedSKUs)
+    if (newSelected.has(skuUID)) {
+      newSelected.delete(skuUID)
+    } else {
+      newSelected.add(skuUID)
+    }
+    setSelectedSKUs(newSelected)
+  }
+
+  // Add selected SKUs as lines
+  const addSelectedSKUs = () => {
+    const defaultUOM = uomOptions.length > 0 ? uomOptions[0].UID : 'EA'
+    const newLines: StockRequestLine[] = []
+
+    selectedSKUs.forEach((skuUID) => {
+      const sku = skus.find(s => s.UID === skuUID)
+      if (sku && !lines.find(line => line.SKUUID === skuUID)) {
+        newLines.push({
+          UID: `LINE-${Date.now()}-${lines.length + newLines.length}`,
+          SKUUID: sku.UID,
+          SKUCode: sku.Code,
+          SKUName: sku.Name,
+          UOM: sku.UOM || defaultUOM,
+          UOM1: sku.UOM1,
+          UOM2: sku.UOM2,
+          UOM1CNF: sku.UOM1CNF,
+          UOM2CNF: sku.UOM2CNF,
+          RequestedQty: 0,
+          LineNumber: lines.length + newLines.length + 1
+        })
+      }
+    })
+
+    setLines([...lines, ...newLines])
+    setSelectedSKUs(new Set())
+    setSkuDialogOpen(false)
+
+    toast({
+      title: 'Success',
+      description: `Added ${newLines.length} SKU(s) to request`,
+    })
+  }
+
+  // Filter SKUs based on search query
+  const filteredSKUs = skus.filter(sku => {
+    if (!skuSearchQuery) return true
+    const query = skuSearchQuery.toLowerCase()
+    return (
+      sku.Code?.toLowerCase().includes(query) ||
+      sku.Name?.toLowerCase().includes(query) ||
+      sku.UID?.toLowerCase().includes(query)
+    )
+  })
 
   const removeLine = (index: number) => {
     setLines(lines.filter((_, i) => i !== index))
@@ -491,10 +689,6 @@ export default function CreateStockRequestPage() {
       toast({ title: 'Error', description: 'Requesting employee is required', variant: 'destructive' })
       return
     }
-    if (!formData.JobPositionUID) {
-      toast({ title: 'Error', description: 'Job position is required', variant: 'destructive' })
-      return
-    }
     if (!formData.StockType) {
       toast({ title: 'Error', description: 'Stock type is required', variant: 'destructive' })
       return
@@ -516,10 +710,24 @@ export default function CreateStockRequestPage() {
       }
     }
 
-    setLoading(true)
+    setLoading((prev) => ({ ...prev, skus: true }))
     try {
       const now = new Date().toISOString()
       const requestUID = `WH-${Date.now()}`
+
+      // Get target org and warehouse for partitioning
+      const targetOrgUID = formData.TargetOrgUID
+      const targetWarehouseUID = formData.TargetWHUID
+
+      // IMPORTANT: Use warehouse UID as-is (DO NOT combine with org_uid)
+      // Partition structure is inconsistent across orgs:
+      // - DIST1759603974795 partition expects just 'WH001', not 'DIST1759603974795_WH001'
+      // - LBCL partition expects just 'TEST12', not 'LBCL_TEST12'
+      // - DIST001 partition expects combined 'DIST001_FRWH'
+      // We use TargetWHUID as-is since it already contains the correct format
+
+      console.log('DEBUG: Target Org:', targetOrgUID)
+      console.log('DEBUG: Target Warehouse (for partition):', targetWarehouseUID)
 
       // Prepare request lines
       const requestLines = lines.map((line, index) => ({
@@ -553,8 +761,8 @@ export default function CreateStockRequestPage() {
         TemplateQty2: 0,
         SKUCode: line.SKUCode,
         LineNumber: index + 1,
-        OrgUID: formData.OrgUID || formData.TargetOrgUID,
-        WareHouseUID: formData.WareHouseUID || formData.TargetWHUID,
+        OrgUID: targetOrgUID,
+        WareHouseUID: targetWarehouseUID, // Use as-is for partition
         YearMonth: formData.YearMonth,
         ActionType: 1,
         CreatedBy: 'ADMIN',
@@ -576,14 +784,14 @@ export default function CreateStockRequestPage() {
           Code: formData.Code,
           RequestType: formData.RequestType,
           RequestByEmpUID: formData.RequestByEmpUID,
-          JobPositionUID: formData.JobPositionUID,
+          JobPositionUID: formData.RoleUID, // Send RoleUID as JobPositionUID
           RequiredByDate: formData.RequiredByDate,
           Status: formData.Status,
           Remarks: formData.Remarks,
           StockType: formData.StockType,
           RouteUID: formData.RouteUID,
-          OrgUID: formData.OrgUID || formData.TargetOrgUID,
-          WareHouseUID: formData.WareHouseUID || formData.TargetWHUID,
+          OrgUID: targetOrgUID,
+          WareHouseUID: targetWarehouseUID, // Use as-is for partition
           YearMonth: formData.YearMonth,
           ActionType: 1,
           CreatedBy: 'ADMIN',
@@ -596,6 +804,8 @@ export default function CreateStockRequestPage() {
         WHStockRequestLines: requestLines,
         WHStockLedgerList: null
       }
+
+      console.log('DEBUG: Stock Request Payload:', JSON.stringify(payload, null, 2))
 
       await apiService.post('/WHStock/CUDWHStock', payload)
 
@@ -612,7 +822,7 @@ export default function CreateStockRequestPage() {
         variant: 'destructive'
       })
     } finally {
-      setLoading(false)
+      setLoading((prev) => ({ ...prev, skus: false }))
     }
   }
 
@@ -733,90 +943,132 @@ export default function CreateStockRequestPage() {
           {/* Source Information */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Source Information</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="sourceOrg">Source Organization *</Label>
-                <Select
-                  value={formData.SourceOrgUID}
-                  onValueChange={(value) => setFormData({ ...formData, SourceOrgUID: value, SourceWHUID: '' })}
-                >
-                  <SelectTrigger id="sourceOrg">
-                    <SelectValue placeholder="Select organization" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {organizations.map((org) => (
-                      <SelectItem key={org.UID} value={org.UID}>
-                        {org.Code} - {org.Name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="sourceWH">Source Warehouse *</Label>
-                <Select
-                  value={formData.SourceWHUID}
-                  onValueChange={(value) => setFormData({ ...formData, SourceWHUID: value })}
-                  disabled={!formData.SourceOrgUID}
-                >
-                  <SelectTrigger id="sourceWH">
-                    <SelectValue placeholder="Select warehouse" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {sourceWarehouses.map((wh) => (
-                      <SelectItem key={wh.UID} value={wh.UID}>
-                        {wh.Code} - {wh.Name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+            {/* Source Organization Hierarchy */}
+            <div className="space-y-3">
+              <Label>Source Organization *</Label>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                {sourceOrgLevels.map((level, index) => (
+                  <div key={index} className="space-y-2">
+                    <Label className="text-xs text-muted-foreground">{level.typeName || 'Organization'}</Label>
+                    <Select
+                      value={sourceSelectedOrgs[index] || ''}
+                      onValueChange={(value) => handleSourceOrgSelect(index, value)}
+                      disabled={index > 0 && !sourceSelectedOrgs[index - 1]}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder={`Select ${level.typeName || 'Organization'}`} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {level.organizations.map((org) => (
+                          <SelectItem key={org.UID} value={org.UID}>
+                            {org.Code} - {org.Name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                ))}
               </div>
+              {formData.SourceOrgUID && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleSourceOrgReset}
+                  className="mt-2"
+                >
+                  <X className="h-4 w-4 mr-2" />
+                  Clear Selection
+                </Button>
+              )}
+            </div>
+
+            {/* Source Warehouse */}
+            <div className="space-y-2">
+              <Label htmlFor="sourceWH">Source Warehouse *</Label>
+              <Select
+                value={formData.SourceWHUID}
+                onValueChange={(value) => setFormData({ ...formData, SourceWHUID: value })}
+                disabled={!formData.SourceOrgUID || sourceWarehouses.length === 0}
+              >
+                <SelectTrigger id="sourceWH">
+                  <SelectValue placeholder={sourceWarehouses.length === 0 ? "No warehouses available" : "Select warehouse"} />
+                </SelectTrigger>
+                <SelectContent>
+                  {sourceWarehouses.map((wh) => (
+                    <SelectItem key={wh.UID} value={wh.UID}>
+                      {wh.Code} - {wh.Name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
           {/* Target Information */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Target Information</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="targetOrg">Target Organization *</Label>
-                <Select
-                  value={formData.TargetOrgUID}
-                  onValueChange={(value) => setFormData({ ...formData, TargetOrgUID: value, TargetWHUID: '' })}
-                >
-                  <SelectTrigger id="targetOrg">
-                    <SelectValue placeholder="Select organization" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {organizations.map((org) => (
-                      <SelectItem key={org.UID} value={org.UID}>
-                        {org.Code} - {org.Name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="targetWH">Target Warehouse *</Label>
-                <Select
-                  value={formData.TargetWHUID}
-                  onValueChange={(value) => setFormData({ ...formData, TargetWHUID: value })}
-                  disabled={!formData.TargetOrgUID}
-                >
-                  <SelectTrigger id="targetWH">
-                    <SelectValue placeholder="Select warehouse" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {targetWarehouses.map((wh) => (
-                      <SelectItem key={wh.UID} value={wh.UID}>
-                        {wh.Code} - {wh.Name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+            {/* Target Organization Hierarchy */}
+            <div className="space-y-3">
+              <Label>Target Organization *</Label>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                {targetOrgLevels.map((level, index) => (
+                  <div key={index} className="space-y-2">
+                    <Label className="text-xs text-muted-foreground">{level.typeName || 'Organization'}</Label>
+                    <Select
+                      value={targetSelectedOrgs[index] || ''}
+                      onValueChange={(value) => handleTargetOrgSelect(index, value)}
+                      disabled={index > 0 && !targetSelectedOrgs[index - 1]}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder={`Select ${level.typeName || 'Organization'}`} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {level.organizations.map((org) => (
+                          <SelectItem key={org.UID} value={org.UID}>
+                            {org.Code} - {org.Name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                ))}
               </div>
+              {formData.TargetOrgUID && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleTargetOrgReset}
+                  className="mt-2"
+                >
+                  <X className="h-4 w-4 mr-2" />
+                  Clear Selection
+                </Button>
+              )}
+            </div>
+
+            {/* Target Warehouse */}
+            <div className="space-y-2">
+              <Label htmlFor="targetWH">Target Warehouse *</Label>
+              <Select
+                value={formData.TargetWHUID}
+                onValueChange={(value) => setFormData({ ...formData, TargetWHUID: value })}
+                disabled={!formData.TargetOrgUID || targetWarehouses.length === 0}
+              >
+                <SelectTrigger id="targetWH">
+                  <SelectValue placeholder={targetWarehouses.length === 0 ? "No warehouses available" : "Select warehouse"} />
+                </SelectTrigger>
+                <SelectContent>
+                  {targetWarehouses.map((wh) => (
+                    <SelectItem key={wh.UID} value={wh.UID}>
+                      {wh.Code} - {wh.Name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
@@ -824,42 +1076,147 @@ export default function CreateStockRequestPage() {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Requester Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Role Field */}
               <div className="space-y-2">
-                <Label htmlFor="employee">Requesting Employee *</Label>
-                <Select
-                  value={formData.RequestByEmpUID}
-                  onValueChange={(value) => setFormData({ ...formData, RequestByEmpUID: value })}
-                >
-                  <SelectTrigger id="employee">
-                    <SelectValue placeholder="Select employee" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {employees.map((emp) => (
-                      <SelectItem key={emp.UID} value={emp.UID}>
-                        {emp.Code} - {emp.Name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Label className="text-sm font-medium">
+                  Role <span className="text-red-500">*</span>
+                  {roles.length > 0 && <span className="text-xs text-gray-500 ml-2">({roles.length} available)</span>}
+                </Label>
+                {loading.roles ? (
+                  <Skeleton className="h-10 w-full" />
+                ) : (
+                  <Popover open={rolePopoverOpen} onOpenChange={setRolePopoverOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={rolePopoverOpen}
+                        className="w-full h-10 justify-between text-left font-normal text-gray-900"
+                      >
+                        <span className="truncate text-gray-900">
+                          {formData.RoleUID
+                            ? roles.find((role) => role.value === formData.RoleUID)?.label || "Select role"
+                            : "Select role"}
+                        </span>
+                        <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
+                      <Command>
+                        <div className="flex items-center border-b px-4 py-2">
+                          <Search className="mr-3 h-4 w-4 shrink-0 opacity-50" />
+                          <CommandInput
+                            placeholder="Search roles..."
+                            className="flex h-9 w-full rounded-md bg-transparent py-2 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 border-0 focus:ring-0"
+                          />
+                        </div>
+                        <CommandEmpty className="py-6 text-center text-sm text-gray-500">
+                          <div className="flex flex-col items-center gap-2">
+                            <Search className="h-8 w-8 text-gray-400" />
+                            <p className="text-gray-600">No roles found</p>
+                          </div>
+                        </CommandEmpty>
+                        <CommandGroup>
+                          <CommandList className="max-h-[280px] overflow-y-auto">
+                            {roles.map((role) => (
+                              <CommandItem
+                                key={role.value}
+                                value={role.label}
+                                onSelect={() => {
+                                  setFormData({ ...formData, RoleUID: role.value, RequestByEmpUID: '' })
+                                  setRolePopoverOpen(false)
+                                }}
+                                className="flex items-center justify-between px-4 py-3 cursor-pointer hover:bg-accent rounded-none text-gray-900"
+                              >
+                                <div className="flex items-center gap-4 flex-1">
+                                  <Check
+                                    className={`h-4 w-4 shrink-0 ${
+                                      formData.RoleUID === role.value ? "opacity-100 text-primary" : "opacity-0"
+                                    }`}
+                                  />
+                                  <div className="font-medium text-sm truncate text-gray-900">{role.label}</div>
+                                </div>
+                              </CommandItem>
+                            ))}
+                          </CommandList>
+                        </CommandGroup>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                )}
               </div>
 
+              {/* Employee Field */}
               <div className="space-y-2">
-                <Label htmlFor="jobPosition">Job Position *</Label>
-                <Select
-                  value={formData.JobPositionUID}
-                  onValueChange={(value) => setFormData({ ...formData, JobPositionUID: value })}
-                >
-                  <SelectTrigger id="jobPosition">
-                    <SelectValue placeholder="Select job position" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {jobPositions.map((jp) => (
-                      <SelectItem key={jp.UID} value={jp.UID}>
-                        {jp.Name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Label className="text-sm font-medium">
+                  Requesting Employee <span className="text-red-500">*</span>
+                  {employees.length > 0 && <span className="text-xs text-gray-500 ml-2">({employees.length} available)</span>}
+                </Label>
+                {loading.employees ? (
+                  <Skeleton className="h-10 w-full" />
+                ) : (
+                  <Popover open={employeePopoverOpen} onOpenChange={setEmployeePopoverOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={employeePopoverOpen}
+                        disabled={!formData.RoleUID}
+                        className="w-full h-10 justify-between text-left font-normal text-gray-900"
+                      >
+                        <span className="truncate text-gray-900">
+                          {formData.RequestByEmpUID
+                            ? employees.find((emp) => emp.value === formData.RequestByEmpUID)?.label || "Select employee"
+                            : !formData.RoleUID
+                            ? "Select role first"
+                            : "Select employee"}
+                        </span>
+                        <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
+                      <Command>
+                        <div className="flex items-center border-b px-4 py-2">
+                          <Search className="mr-3 h-4 w-4 shrink-0 opacity-50" />
+                          <CommandInput
+                            placeholder="Search employees..."
+                            className="flex h-9 w-full rounded-md bg-transparent py-2 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 border-0 focus:ring-0"
+                          />
+                        </div>
+                        <CommandEmpty className="py-6 text-center text-sm text-gray-500">
+                          <div className="flex flex-col items-center gap-2">
+                            <Users className="h-8 w-8 text-gray-400" />
+                            <p className="text-gray-600">No employees found</p>
+                          </div>
+                        </CommandEmpty>
+                        <CommandGroup>
+                          <CommandList className="max-h-[280px] overflow-y-auto">
+                            {employees.map((emp) => (
+                              <CommandItem
+                                key={emp.value}
+                                value={emp.label}
+                                onSelect={() => {
+                                  setFormData({ ...formData, RequestByEmpUID: emp.value })
+                                  setEmployeePopoverOpen(false)
+                                }}
+                                className="flex items-center justify-between px-4 py-3 cursor-pointer hover:bg-accent rounded-none text-gray-900"
+                              >
+                                <div className="flex items-center gap-4 flex-1">
+                                  <Check
+                                    className={`h-4 w-4 shrink-0 ${
+                                      formData.RequestByEmpUID === emp.value ? "opacity-100 text-primary" : "opacity-0"
+                                    }`}
+                                  />
+                                  <div className="font-medium text-sm truncate text-gray-900">{emp.label}</div>
+                                </div>
+                              </CommandItem>
+                            ))}
+                          </CommandList>
+                        </CommandGroup>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                )}
               </div>
             </div>
           </div>
@@ -891,10 +1248,16 @@ export default function CreateStockRequestPage() {
               <CardTitle>Line Items</CardTitle>
               <CardDescription>Add SKU items to this stock request</CardDescription>
             </div>
-            <Button onClick={addLine} size="sm">
-              <Plus className="h-4 w-4 mr-2" />
-              Add Line
-            </Button>
+            <div className="flex gap-2">
+              <Button onClick={openSKUDialog} size="sm" variant="outline">
+                <Package className="h-4 w-4 mr-2" />
+                Add Multiple SKUs
+              </Button>
+              <Button onClick={addLine} size="sm">
+                <Plus className="h-4 w-4 mr-2" />
+                Add Single Line
+              </Button>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
@@ -940,7 +1303,24 @@ export default function CreateStockRequestPage() {
                         </Select>
                       </TableCell>
                       <TableCell>{line.SKUCode || '-'}</TableCell>
-                      <TableCell>{line.UOM}</TableCell>
+                      <TableCell>
+                        <Select
+                          value={line.UOM}
+                          onValueChange={(value) => updateLine(index, 'UOM', value)}
+                          disabled={loading.uom || uomOptions.length === 0}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select UOM" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {uomOptions.map((uom) => (
+                              <SelectItem key={uom.UID} value={uom.UID}>
+                                {uom.UID} - {uom.Name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
                       <TableCell>
                         <Input
                           type="number"
@@ -983,17 +1363,141 @@ export default function CreateStockRequestPage() {
         <Button
           variant="outline"
           onClick={() => router.back()}
-          disabled={loading}
+          disabled={loading.skus}
         >
           Cancel
         </Button>
         <Button
           onClick={handleSubmit}
-          disabled={loading}
+          disabled={loading.skus}
         >
-          {loading ? 'Creating...' : 'Create Stock Request'}
+          {loading.skus ? 'Creating...' : 'Create Stock Request'}
         </Button>
       </div>
+
+      {/* Multi-Select SKU Dialog */}
+      <Dialog open={skuDialogOpen} onOpenChange={setSkuDialogOpen}>
+        <DialogContent className="max-w-4xl max-h-[80vh] flex flex-col">
+          <DialogHeader>
+            <DialogTitle>Add Multiple SKUs</DialogTitle>
+            <DialogDescription>
+              Search and select multiple SKUs to add to the stock request
+            </DialogDescription>
+          </DialogHeader>
+
+          {/* Search Bar */}
+          <div className="flex items-center gap-2 pb-4 border-b">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search by SKU Code, Name, or UID..."
+                value={skuSearchQuery}
+                onChange={(e) => setSkuSearchQuery(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <Badge variant="secondary" className="px-3 py-1">
+              {selectedSKUs.size} selected
+            </Badge>
+          </div>
+
+          {/* SKU List */}
+          <div className="flex-1 overflow-y-auto border rounded-lg">
+            <Table>
+              <TableHeader className="sticky top-0 bg-background z-10">
+                <TableRow>
+                  <TableHead className="w-12">
+                    <Checkbox
+                      checked={selectedSKUs.size === filteredSKUs.length && filteredSKUs.length > 0}
+                      onCheckedChange={(checked) => {
+                        if (checked) {
+                          setSelectedSKUs(new Set(filteredSKUs.map(s => s.UID)))
+                        } else {
+                          setSelectedSKUs(new Set())
+                        }
+                      }}
+                    />
+                  </TableHead>
+                  <TableHead>Code</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>UOM</TableHead>
+                  <TableHead>UID</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredSKUs.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center py-12 text-muted-foreground">
+                      <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                      <p>No SKUs found</p>
+                      <p className="text-sm">Try adjusting your search query</p>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredSKUs.map((sku) => {
+                    const isSelected = selectedSKUs.has(sku.UID)
+                    const isAlreadyInLines = lines.some(line => line.SKUUID === sku.UID)
+
+                    return (
+                      <TableRow
+                        key={sku.UID}
+                        className={`cursor-pointer ${isSelected ? 'bg-accent' : ''} ${isAlreadyInLines ? 'opacity-50' : ''}`}
+                        onClick={() => !isAlreadyInLines && toggleSKUSelection(sku.UID)}
+                      >
+                        <TableCell>
+                          <Checkbox
+                            checked={isSelected}
+                            disabled={isAlreadyInLines}
+                            onCheckedChange={() => toggleSKUSelection(sku.UID)}
+                            onClick={(e) => e.stopPropagation()}
+                          />
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          {sku.Code}
+                          {isAlreadyInLines && (
+                            <Badge variant="outline" className="ml-2 text-xs">
+                              Added
+                            </Badge>
+                          )}
+                        </TableCell>
+                        <TableCell>{sku.Name}</TableCell>
+                        <TableCell>{sku.UOM || 'EA'}</TableCell>
+                        <TableCell className="text-xs text-muted-foreground">{sku.UID}</TableCell>
+                      </TableRow>
+                    )
+                  })
+                )}
+              </TableBody>
+            </Table>
+          </div>
+
+          <DialogFooter className="border-t pt-4">
+            <div className="flex items-center justify-between w-full">
+              <div className="text-sm text-muted-foreground">
+                {filteredSKUs.length} SKU(s) found
+                {skuSearchQuery && ` (filtered from ${skus.length} total)`}
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setSkuDialogOpen(false)
+                    setSelectedSKUs(new Set())
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={addSelectedSKUs}
+                  disabled={selectedSKUs.size === 0}
+                >
+                  Add {selectedSKUs.size > 0 && `(${selectedSKUs.size})`} SKU{selectedSKUs.size !== 1 ? 's' : ''}
+                </Button>
+              </div>
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

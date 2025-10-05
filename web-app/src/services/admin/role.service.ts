@@ -4,13 +4,13 @@ import {
   PagedResponse,
   ApiResponse,
   Module,
-  ModuleHierarchy,
+  ModuleHierarchy
 } from "@/types/admin.types";
 import { authService } from "@/lib/auth-service";
 import { apiService } from "../api";
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
 // Helper function to extract paged data from various response formats
 function extractPagedData(response: any): { items: any[]; totalCount: number } {
@@ -22,7 +22,7 @@ function extractPagedData(response: any): { items: any[]; totalCount: number } {
   if (response.PagedData && Array.isArray(response.PagedData)) {
     return {
       items: response.PagedData,
-      totalCount: response.TotalCount || response.PagedData.length,
+      totalCount: response.TotalCount || response.PagedData.length
     };
   }
 
@@ -30,7 +30,7 @@ function extractPagedData(response: any): { items: any[]; totalCount: number } {
   if (response.Data?.PagedData && Array.isArray(response.Data.PagedData)) {
     return {
       items: response.Data.PagedData,
-      totalCount: response.Data.TotalCount || response.Data.PagedData.length,
+      totalCount: response.Data.TotalCount || response.Data.PagedData.length
     };
   }
 
@@ -38,7 +38,7 @@ function extractPagedData(response: any): { items: any[]; totalCount: number } {
   if (response.Data && Array.isArray(response.Data)) {
     return {
       items: response.Data,
-      totalCount: response.TotalCount || response.Data.length,
+      totalCount: response.TotalCount || response.Data.length
     };
   }
 
@@ -56,7 +56,7 @@ class RoleService {
     // Create the structure expected by backend
     const moduleData = selectedModuleUIDs.map((uid) => ({
       Module: { UID: uid },
-      SubModuleHierarchies: [],
+      SubModuleHierarchies: []
     }));
 
     return JSON.stringify(moduleData);
@@ -70,9 +70,9 @@ class RoleService {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${authService.getToken()}`,
-          ...options.headers,
+          ...options.headers
         },
-        ...options,
+        ...options
       });
 
       if (!response.ok) {
@@ -83,14 +83,14 @@ class RoleService {
       return {
         success: true,
         data: data.data || data,
-        message: data.message,
+        message: data.message
       };
     } catch (error) {
       console.error(`API call failed for ${endpoint}:`, error);
       return {
         success: false,
         message:
-          error instanceof Error ? error.message : "Unknown error occurred",
+          error instanceof Error ? error.message : "Unknown error occurred"
       };
     }
   }
@@ -154,7 +154,7 @@ class RoleService {
         totalRecords: filteredItems.length, // Use filtered count
         totalPages: Math.ceil(filteredItems.length / pagingRequest.pageSize),
         pageNumber: pagingRequest.pageNumber,
-        pageSize: pagingRequest.pageSize,
+        pageSize: pagingRequest.pageSize
       };
     } catch (error) {
       console.error("❌ Failed to fetch roles:", error);
@@ -171,8 +171,8 @@ class RoleService {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${authService.getToken()}`,
-          },
+            Authorization: `Bearer ${authService.getToken()}`
+          }
         }
       );
 
@@ -219,16 +219,16 @@ class RoleService {
         IsForReportsTo: role.isForReportsTo || false,
         CreatedBy: "ADMIN",
         CreatedTime: new Date().toISOString(),
-        OrgUid: role.orgUid,
+        OrgUid: role.orgUid
       };
 
       const response = await fetch(`${API_BASE_URL}/Role/CreateRole`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${authService.getToken()}`,
+          Authorization: `Bearer ${authService.getToken()}`
         },
-        body: JSON.stringify(formattedRole),
+        body: JSON.stringify(formattedRole)
       });
 
       if (!response.ok) {
@@ -272,16 +272,16 @@ class RoleService {
             ? role.HaveVehicle
             : role.haveVehicle || false,
         ModifiedBy: "ADMIN",
-        ModifiedTime: new Date().toISOString(),
+        ModifiedTime: new Date().toISOString()
       };
 
       const response = await fetch(`${API_BASE_URL}/Role/UpdateRoles`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${authService.getToken()}`,
+          Authorization: `Bearer ${authService.getToken()}`
         },
-        body: JSON.stringify(formattedRole),
+        body: JSON.stringify(formattedRole)
       });
 
       if (!response.ok) {
@@ -308,7 +308,7 @@ class RoleService {
     const updatedRole = {
       ...role,
       isActive: false,
-      modifiedDate: new Date().toISOString(),
+      modifiedDate: new Date().toISOString()
     };
 
     const response = await this.updateRole(updatedRole);
@@ -353,7 +353,7 @@ class RoleService {
     // Transform flat modules into hierarchy (would need additional API calls for sub-modules)
     return modules.map((module) => ({
       ...module,
-      children: [], // This would be populated from sub-modules API
+      children: [] // This would be populated from sub-modules API
     }));
   }
 
@@ -362,7 +362,7 @@ class RoleService {
     const response = await this.apiCall<any>(
       `/Role/UpdateMenuByPlatForm?platForm=${platform}`,
       {
-        method: "PUT",
+        method: "PUT"
       }
     );
 
@@ -379,16 +379,16 @@ class RoleService {
         {
           fieldName: "code",
           operator: "EQ",
-          value: code,
-        },
-      ],
+          value: code
+        }
+      ]
     };
 
     if (excludeUID) {
       pagingRequest.filterCriterias?.push({
         fieldName: "uid",
         operator: "NE",
-        value: excludeUID,
+        value: excludeUID
       });
     }
 
@@ -418,7 +418,7 @@ class RoleService {
       // Backend expects: Name and Direction (0 = Asc, 1 = Desc)
       sortCriterias.push({
         Name: sortField,
-        Direction: sortDirection === "ASC" ? 0 : 1,
+        Direction: sortDirection === "ASC" ? 0 : 1
       });
     }
 
@@ -437,7 +437,7 @@ class RoleService {
         Name: "RoleNameEn", // Aliased column name from subquery (PascalCase)
         Value: searchQuery, // Don't add % wildcards - backend handles this for Contains type
         Type: 6, // Contains = 6 (equivalent to LIKE)
-        DataType: "System.String",
+        DataType: "System.String"
       });
     }
 
@@ -450,7 +450,7 @@ class RoleService {
         isAdmin: "IsAdmin",
         isWebUser: "IsWebUser",
         isAppUser: "IsAppUser",
-        isActive: "IsActive",
+        isActive: "IsActive"
       };
 
       Object.entries(filters).forEach(([key, value]) => {
@@ -469,7 +469,7 @@ class RoleService {
             Value: value,
             Type: 0, // Equal = 0
             DataType:
-              typeof value === "boolean" ? "System.Boolean" : "System.String",
+              typeof value === "boolean" ? "System.Boolean" : "System.String"
           });
         }
       });
@@ -484,7 +484,7 @@ class RoleService {
       pageSize: pageSize || 10,
       sortCriterias: sortCriterias, // Always pass array (even if empty)
       filterCriterias: filterCriterias, // Always pass array (even if empty)
-      isCountRequired: true,
+      isCountRequired: true
     };
 
     console.log("Building paging request:", pagingRequest);
@@ -505,7 +505,7 @@ class RoleService {
         await this.updateRole({
           ...role,
           isActive,
-          modifiedDate: new Date().toISOString(),
+          modifiedDate: new Date().toISOString()
         });
         success++;
       } catch (error) {
@@ -529,7 +529,7 @@ class RoleService {
       try {
         const role = await this.getRoleById(uid);
         const updates: Partial<Role> = {
-          modifiedDate: new Date().toISOString(),
+          modifiedDate: new Date().toISOString()
         };
 
         if (isWebUser !== undefined) updates.isWebUser = isWebUser;
@@ -563,7 +563,7 @@ class RoleService {
       isWebUser: sourceRole.isWebUser,
       isAppUser: sourceRole.isAppUser,
       webMenuData: sourceRole.webMenuData,
-      mobileMenuData: sourceRole.mobileMenuData,
+      mobileMenuData: sourceRole.mobileMenuData
     };
 
     return await this.createRole(newRole);
@@ -583,7 +583,7 @@ class RoleService {
       const allRoles = await this.getRoles({
         pageNumber: 0,
         pageSize: 10000,
-        isCountRequired: true,
+        isCountRequired: true
       });
 
       const roles = allRoles?.pagedData || [];
@@ -595,7 +595,7 @@ class RoleService {
         distributorRoles: roles.filter((r) => r.isDistributorRole).length,
         adminRoles: roles.filter((r) => r.isAdmin).length,
         webRoles: roles.filter((r) => r.isWebUser).length,
-        appRoles: roles.filter((r) => r.isAppUser).length,
+        appRoles: roles.filter((r) => r.isAppUser).length
       };
     } catch (error) {
       console.error("Failed to get role stats:", error);
@@ -606,7 +606,7 @@ class RoleService {
         distributorRoles: 0,
         adminRoles: 0,
         webRoles: 0,
-        appRoles: 0,
+        appRoles: 0
       };
     }
   }
@@ -644,7 +644,7 @@ class RoleService {
       "Created Date",
       "Created By",
       "Modified Date",
-      "Modified By",
+      "Modified By"
     ];
 
     const csvContent = [
@@ -666,11 +666,11 @@ class RoleService {
           role.ModifiedTime
             ? new Date(role.ModifiedTime).toLocaleDateString()
             : "",
-          role.ModifiedBy || "",
+          role.ModifiedBy || ""
         ]
           .map((field) => `"${field}"`)
           .join(",")
-      ),
+      )
     ].join("\n");
 
     return new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
@@ -681,7 +681,7 @@ class RoleService {
     // In the future, could use libraries like xlsx for proper Excel export
     const csvContent = this.exportToCSV(roles);
     return new Blob([csvContent], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8;",
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8;"
     });
   }
 }

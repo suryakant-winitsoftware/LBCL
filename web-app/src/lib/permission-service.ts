@@ -2,7 +2,7 @@ import {
   Module,
   SubModule,
   SubSubModule,
-  ModulePermission,
+  ModulePermission
 } from "@/types/permission.types";
 import { authService } from "./auth-service";
 
@@ -28,7 +28,7 @@ interface ModulesApiResponse {
 
 class PermissionService {
   private readonly API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
   private permissionsCache: Map<string, ModulePermission[]> = new Map();
   private modulesCache: Map<string, ModulesMasterView> = new Map();
 
@@ -55,8 +55,8 @@ class PermissionService {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
-            Accept: "application/json",
-          },
+            Accept: "application/json"
+          }
         }
       );
 
@@ -89,7 +89,7 @@ class PermissionService {
       modulesMaster = {
         modules: modulesMaster.modules || [],
         subModules: modulesMaster.subModules || [],
-        subSubModules: modulesMaster.subSubModules || [],
+        subSubModules: modulesMaster.subSubModules || []
       };
 
       // Cache the result
@@ -128,8 +128,8 @@ class PermissionService {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
-            Accept: "application/json",
-          },
+            Accept: "application/json"
+          }
         }
       );
 
@@ -169,8 +169,8 @@ class PermissionService {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
-            Accept: "application/json",
-          },
+            Accept: "application/json"
+          }
         }
       );
 
@@ -201,9 +201,9 @@ class PermissionService {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
-            Accept: "application/json",
+            Accept: "application/json"
           },
-          body: JSON.stringify(permissions),
+          body: JSON.stringify(permissions)
         }
       );
 
@@ -265,7 +265,7 @@ class PermissionService {
     const {
       modules = [],
       subModules = [],
-      subSubModules = [],
+      subSubModules = []
     } = modulesMaster || {};
 
     // Return empty array if no modules
@@ -308,7 +308,7 @@ class PermissionService {
             return subModulePages.length > 0
               ? {
                   ...subModule,
-                  children: subModulePages,
+                  children: subModulePages
                 }
               : null;
           })
@@ -318,7 +318,7 @@ class PermissionService {
         return moduleSubModules.length > 0
           ? {
               ...module,
-              children: moduleSubModules,
+              children: moduleSubModules
             }
           : null;
       })

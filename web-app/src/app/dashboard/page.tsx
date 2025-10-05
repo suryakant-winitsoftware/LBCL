@@ -1,100 +1,60 @@
-'use client';
+"use client";
 
 import React from "react";
-import Link from 'next/link';
-import { Building2, Store, Warehouse, Package, Users, ArrowRight, Truck } from 'lucide-react';
+import Link from "next/link";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Truck, Package } from "lucide-react";
 
-const modules = [
-  {
-    title: 'Distributor Management',
-    description: 'Manage your distributor network',
-    icon: Building2,
-    href: '/administration/distributor-management/distributors',
-    color: 'bg-blue-500',
-  },
-  {
-    title: 'Store Management',
-    description: 'Manage stores and outlets',
-    icon: Store,
-    href: '/administration/store-management/stores',
-    color: 'bg-green-500',
-  },
-  {
-    title: 'Warehouse Management',
-    description: 'Manage warehouse operations',
-    icon: Warehouse,
-    href: '/administration/warehouse-management/warehouses',
-    color: 'bg-purple-500',
-  },
-  {
-    title: 'Product Management',
-    description: 'Manage products and inventory',
-    icon: Package,
-    href: '/productssales/products',
-    color: 'bg-orange-500',
-  },
-  {
-    title: 'Team Management',
-    description: 'Manage employees and teams',
-    icon: Users,
-    href: '/administration/team-management',
-    color: 'bg-indigo-500',
-  },
-  {
-    title: 'Delivery Operations',
-    description: 'Access delivery dashboard and manage delivery operations',
-    icon: Truck,
-    href: '/delivery/delivery-dashboard',
-    color: 'bg-cyan-500',
-  },
-  {
-    title: 'Stock Receiving',
-    description: 'Access manager dashboard and stock receiving operations',
-    icon: Package,
-    href: '/manager/stock-receiving-dashboard',
-    color: 'bg-teal-500',
-  },
-];
+const DashboardPage = () => {
+  const navigationCards = [
+    {
+      title: "Delivery",
+      description: "Access delivery dashboard and manage delivery operations",
+      icon: <Truck className="h-12 w-12" />,
+      href: "/delivery/delivery-dashboard",
+      color: "text-blue-600",
+    },
+    {
+      title: "Manager",
+      description: "Access manager dashboard and stock receiving operations",
+      icon: <Package className="h-12 w-12" />,
+      href: "/manager/stock-receiving-dashboard",
+      color: "text-green-600",
+    },
+  ];
 
-const page = () => {
   return (
-    <div className="container mx-auto p-6">
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-2">Dashboard</h1>
-        <p className="text-lg text-muted-foreground">
-          Welcome back! Quick access to key modules
-        </p>
+    <div className="flex flex-col gap-6 p-6">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-gray-500 mt-1">
+            Welcome back! Select a module to get started.
+          </p>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {modules.map((module) => {
-          const Icon = module.icon;
-          return (
-            <Link
-              key={module.href}
-              href={module.href}
-              className="group relative overflow-hidden rounded-lg border bg-card p-6 hover:shadow-lg transition-all duration-200"
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className={`inline-flex p-3 rounded-lg ${module.color} bg-opacity-10 mb-4`}>
-                    <Icon className={`h-6 w-6 ${module.color.replace('bg-', 'text-')}`} />
-                  </div>
-                  <h3 className="font-semibold text-lg mb-2 group-hover:text-primary transition-colors">
-                    {module.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    {module.description}
-                  </p>
-                </div>
-                <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-all group-hover:translate-x-1" />
-              </div>
-            </Link>
-          );
-        })}
+      {/* Navigation Cards */}
+      <div className="grid gap-6 md:grid-cols-2 lg:gap-8">
+        {navigationCards.map((card, index) => (
+          <Link key={index} href={card.href}>
+            <Card className="transition-all hover:shadow-lg hover:scale-[1.02] cursor-pointer h-full">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-2xl font-bold">
+                  {card.title}
+                </CardTitle>
+                <div className={card.color}>{card.icon}</div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-500 text-sm">{card.description}</p>
+              </CardContent>
+            </Card>
+          </Link>
+        ))}
       </div>
     </div>
   );
 };
 
-export default page;
+export default DashboardPage;

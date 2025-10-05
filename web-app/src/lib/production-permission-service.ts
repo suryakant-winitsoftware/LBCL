@@ -2,7 +2,7 @@ import {
   Module,
   SubModule,
   SubSubModule,
-  ModulePermission,
+  ModulePermission
 } from "@/types/permission.types";
 import { authService } from "./auth-service";
 
@@ -30,7 +30,7 @@ interface ModulesApiResponse {
 
 class ProductionPermissionService {
   private readonly API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
   private permissionsCache: Map<string, ModulePermission[]> = new Map();
   private modulesCache: Map<string, ModulesMasterView> = new Map();
 
@@ -60,7 +60,7 @@ class ProductionPermissionService {
         `/Role/GetModulesMasterByPlatForm?Platform=${platform}`, // Best - has proper relationship fields
         `/Role/GetAllModulesMaster?Platform=${platform}`,
         `/Module/GetModulesByPlatform?platform=${platform}`,
-        `/Auth/GetModules?platform=${platform}`,
+        `/Auth/GetModules?platform=${platform}`
       ];
 
       for (const endpoint of endpoints) {
@@ -69,8 +69,8 @@ class ProductionPermissionService {
             method: "GET",
             headers: {
               Authorization: `Bearer ${token}`,
-              Accept: "application/json",
-            },
+              Accept: "application/json"
+            }
           });
 
           if (response.ok) {
@@ -154,7 +154,7 @@ class ProductionPermissionService {
         `/Role/SelectAllPermissionsByRoleUID?roleUID=${roleUID}&platform=${platform}&isPrincipalTypePermission=${isPrincipalRole}`,
         `/Permission/GetByRole?roleId=${roleUID}&platform=${platform}&isPrincipal=${isPrincipalRole}`,
         `/Auth/GetPermissions?roleUID=${roleUID}&platform=${platform}`,
-        `/User/GetUserPermissions?roleUID=${roleUID}&platform=${platform}`,
+        `/User/GetUserPermissions?roleUID=${roleUID}&platform=${platform}`
       ];
 
       for (const endpoint of endpoints) {
@@ -163,8 +163,8 @@ class ProductionPermissionService {
             method: "GET",
             headers: {
               Authorization: `Bearer ${token}`,
-              Accept: "application/json",
-            },
+              Accept: "application/json"
+            }
           });
 
           if (response.ok) {
@@ -242,7 +242,7 @@ class ProductionPermissionService {
     return {
       modules: modules.map(this.normalizeModule),
       subModules: subModules.map(this.normalizeSubModule),
-      subSubModules: subSubModules.map(this.normalizeSubSubModule),
+      subSubModules: subSubModules.map(this.normalizeSubSubModule)
     };
   }
 
@@ -294,7 +294,7 @@ class ProductionPermissionService {
           : mod.IsForPrincipal !== undefined
           ? mod.IsForPrincipal
           : true
-      ),
+      )
     };
   };
 
@@ -363,7 +363,7 @@ class ProductionPermissionService {
           : sm.IsForPrincipal !== undefined
           ? sm.IsForPrincipal
           : true
-      ),
+      )
     };
   };
 
@@ -433,7 +433,7 @@ class ProductionPermissionService {
           : true
       ),
       checkInPermission:
-        Number(ssm.checkInPermission || ssm.CheckInPermission) || 0,
+        Number(ssm.checkInPermission || ssm.CheckInPermission) || 0
     };
   };
 
@@ -467,7 +467,7 @@ class ProductionPermissionService {
           p.approvalAccess || p.ApprovalAccess || p.approval_access
         ),
         // showInMenu doesn't exist in the permissions table, it's only on modules/submodules/pages
-        platform: String(p.platform || p.Platform || "Web"),
+        platform: String(p.platform || p.Platform || "Web")
       } as ModulePermission;
     });
   }
@@ -517,7 +517,7 @@ class ProductionPermissionService {
       const {
         modules = [],
         subModules = [],
-        subSubModules = [],
+        subSubModules = []
       } = modulesMaster || {};
 
       if (!modules || modules.length === 0) {
@@ -620,7 +620,7 @@ class ProductionPermissionService {
                   return subModulePages.length > 0
                     ? {
                         ...subModule,
-                        children: subModulePages,
+                        children: subModulePages
                       }
                     : null;
                 } catch {
@@ -652,7 +652,7 @@ class ProductionPermissionService {
             if (moduleSubModules.length > 0) {
               return {
                 ...module,
-                children: moduleSubModules,
+                children: moduleSubModules
               };
             } else if (modulePermissions.length > 0 && module.relativePath) {
               // Module with direct permissions but no sub-modules (like Dashboard)
@@ -661,7 +661,7 @@ class ProductionPermissionService {
                 ...module,
                 children: [],
                 hasDirectAccess: true,
-                relativePath: module.relativePath,
+                relativePath: module.relativePath
               };
             } else {
               // Module with no accessible content - hide it completely
@@ -720,8 +720,8 @@ class ProductionPermissionService {
           method: "PUT",
           headers: {
             Authorization: `Bearer ${token}`,
-            Accept: "application/json",
-          },
+            Accept: "application/json"
+          }
         }
       );
 

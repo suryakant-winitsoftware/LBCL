@@ -4,16 +4,16 @@ import {
   ApiResponse,
   ModuleHierarchy,
   PermissionMatrix,
-  Role,
+  Role
 } from "@/types/admin.types";
 import { authService } from "@/lib/auth-service";
 import {
   fixPermissionConsistency,
-  fixAllPermissions,
+  fixAllPermissions
 } from "@/utils/fix-permissions";
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
 class PermissionService {
   private generateGUID(): string {
@@ -38,9 +38,9 @@ class PermissionService {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
-          ...options.headers,
+          ...options.headers
         },
-        ...options,
+        ...options
       });
 
       if (!response.ok) {
@@ -75,13 +75,13 @@ class PermissionService {
       return {
         success,
         data: responseData,
-        message: data.message || data.Message || data.ErrorMessage,
+        message: data.message || data.Message || data.ErrorMessage
       };
     } catch (error) {
       return {
         success: false,
         message:
-          error instanceof Error ? error.message : "Unknown error occurred",
+          error instanceof Error ? error.message : "Unknown error occurred"
       };
     }
   }
@@ -156,7 +156,7 @@ class PermissionService {
       modifiedTime:
         permission.ModifiedTime ||
         permission.modifiedTime ||
-        new Date().toISOString(),
+        new Date().toISOString()
     }));
 
     // Fix permission consistency - if fullAccess is true, all other flags should be true
@@ -170,7 +170,7 @@ class PermissionService {
           deleteAccess: true,
           downloadAccess: true,
           approvalAccess: true,
-          showInMenu: true,
+          showInMenu: true
         };
       }
       // If any access is granted, view access should be true
@@ -183,7 +183,7 @@ class PermissionService {
       ) {
         return {
           ...permission,
-          viewAccess: true,
+          viewAccess: true
         };
       }
       return permission;
@@ -219,7 +219,7 @@ class PermissionService {
       // Fix permissions without roleUID
       permissionMaster.permissions = permissionMaster.permissions.map((p) => ({
         ...p,
-        roleUID: p.roleUID || permissionMaster.roleUID,
+        roleUID: p.roleUID || permissionMaster.roleUID
       }));
     }
 
@@ -298,7 +298,7 @@ class PermissionService {
           CreatedBy: permission.createdBy || "ADMIN",
           CreatedTime: permission.createdTime || new Date().toISOString(),
           ModifiedBy: permission.modifiedBy || "ADMIN",
-          ModifiedTime: new Date().toISOString(),
+          ModifiedTime: new Date().toISOString()
         };
       })
       .filter((p) => p !== null); // Filter out any null permissions
@@ -307,7 +307,7 @@ class PermissionService {
       RoleUID: permissionMaster.roleUID,
       Platform: permissionMaster.platform,
       IsPrincipalPermission: permissionMaster.isPrincipalRole, // Backend expects IsPrincipalPermission, not IsPrincipalRole
-      Permissions: backendPermissions,
+      Permissions: backendPermissions
     };
 
     // Validate all permissions have correct RoleUid and SubSubModuleUid
@@ -326,7 +326,7 @@ class PermissionService {
 
     const response = await this.apiCall<any>("/Role/CUDPermissionMaster", {
       method: "POST",
-      body: JSON.stringify(backendPayload),
+      body: JSON.stringify(backendPayload)
     });
 
     if (response.success) {
@@ -410,7 +410,7 @@ class PermissionService {
                     createdBy: permission.createdBy,
                     createdTime: permission.createdTime,
                     modifiedBy: permission.modifiedBy,
-                    modifiedTime: permission.modifiedTime,
+                    modifiedTime: permission.modifiedTime
                   }
                 : {
                     roleUID,
@@ -431,12 +431,12 @@ class PermissionService {
                     createdBy: "ADMIN",
                     createdTime: new Date().toISOString(),
                     modifiedBy: "ADMIN",
-                    modifiedTime: new Date().toISOString(),
-                  },
+                    modifiedTime: new Date().toISOString()
+                  }
             };
-          }),
-        })),
-      })),
+          })
+        }))
+      }))
     };
 
     return matrix;
@@ -474,7 +474,7 @@ class PermissionService {
       roleUID: matrix.roleUID,
       platform: matrix.platform,
       isPrincipalRole: role.IsPrincipalRole, // Use actual value from role
-      permissions,
+      permissions
     };
 
     return await this.updatePermissions(permissionMaster);
@@ -516,7 +516,7 @@ class PermissionService {
             createdBy: permission.createdBy || "ADMIN",
             createdTime: permission.createdTime || new Date().toISOString(),
             modifiedBy: permission.modifiedBy || "ADMIN",
-            modifiedTime: new Date().toISOString(),
+            modifiedTime: new Date().toISOString()
           };
 
           permissions.push(mobilePermission);
@@ -528,7 +528,7 @@ class PermissionService {
       roleUID: matrix.roleUID,
       platform: "Mobile",
       isPrincipalRole: isPrincipalRole,
-      permissions,
+      permissions
     };
 
     const result = await this.updatePermissions(permissionMaster);
@@ -554,7 +554,7 @@ class PermissionService {
     const response = await this.apiCall(
       "/Role/UpdateMenuByPlatForm?platForm=Mobile",
       {
-        method: "PUT",
+        method: "PUT"
       }
     );
 
@@ -605,7 +605,7 @@ class PermissionService {
         downloadAccess: false,
         approvalAccess: false,
         ...existing,
-        ...permissionUpdates,
+        ...permissionUpdates
       } as Permission;
     });
 
@@ -613,7 +613,7 @@ class PermissionService {
       roleUID,
       platform,
       isPrincipalRole: role.IsPrincipalRole,
-      permissions: updatedPermissions,
+      permissions: updatedPermissions
     };
 
     return await this.updatePermissions(permissionMaster);
@@ -654,14 +654,14 @@ class PermissionService {
     // Create new permissions for target role
     const targetPermissions = sourcePermissions.map((permission) => ({
       ...permission,
-      roleUID: targetRoleUID,
+      roleUID: targetRoleUID
     }));
 
     const permissionMaster: PermissionMaster = {
       roleUID: targetRoleUID,
       platform,
       isPrincipalRole: targetRole.IsPrincipalRole,
-      permissions: targetPermissions,
+      permissions: targetPermissions
     };
 
     return await this.updatePermissions(permissionMaster);
@@ -684,7 +684,7 @@ class PermissionService {
       roleUID,
       platform,
       isPrincipalRole: roleResponse.data.IsPrincipalRole,
-      permissions: [],
+      permissions: []
     };
 
     return await this.updatePermissions(permissionMaster);
@@ -723,8 +723,8 @@ class PermissionService {
         editAccess: p.editAccess,
         deleteAccess: p.deleteAccess,
         downloadAccess: p.downloadAccess,
-        approvalAccess: p.approvalAccess,
-      })),
+        approvalAccess: p.approvalAccess
+      }))
     };
 
     localStorage.setItem(
@@ -759,14 +759,14 @@ class PermissionService {
     const permissions = template.permissions.map((p: any) => ({
       ...p,
       roleUID,
-      platform,
+      platform
     }));
 
     const permissionMaster: PermissionMaster = {
       roleUID,
       platform,
       isPrincipalRole: roleResponse.data.IsPrincipalRole,
-      permissions,
+      permissions
     };
 
     return await this.updatePermissions(permissionMaster);
@@ -794,7 +794,7 @@ class PermissionService {
 
     const [webPermissions, mobilePermissions] = await Promise.all([
       this.getPermissionsByRole(roleUID, "Web", isPrincipalRole),
-      this.getPermissionsByRole(roleUID, "Mobile", isPrincipalRole),
+      this.getPermissionsByRole(roleUID, "Mobile", isPrincipalRole)
     ]);
 
     const webModules = await this.getModuleHierarchy("Web");
@@ -817,7 +817,7 @@ class PermissionService {
       totalPages,
       fullAccessPages,
       viewOnlyPages,
-      noAccessPages,
+      noAccessPages
     };
   }
 
@@ -857,7 +857,7 @@ class PermissionService {
     const {
       modules = [],
       subModules = [],
-      subSubModules = [],
+      subSubModules = []
     } = normalizedData;
 
     if (modules.length === 0) {
@@ -896,8 +896,8 @@ class PermissionService {
                   SubModuleUid: subSubModule.subModuleUID,
                   RelativePath: subSubModule.relativePath,
                   SerialNo: subSubModule.serialNo,
-                  ShowInMenu: subSubModule.showInMenu,
-                })),
+                  ShowInMenu: subSubModule.showInMenu
+                }))
             };
           });
 
@@ -909,7 +909,7 @@ class PermissionService {
           ShowInMenu: module.showInMenu,
           IsForDistributor: module.isForDistributor,
           IsForPrincipal: module.isForPrincipal,
-          children: processedSubModules,
+          children: processedSubModules
         };
       });
 
@@ -947,7 +947,7 @@ class PermissionService {
     return {
       modules: modules.map(this.normalizeModule),
       subModules: subModules.map(this.normalizeSubModule),
-      subSubModules: subSubModules.map(this.normalizeSubSubModule),
+      subSubModules: subSubModules.map(this.normalizeSubSubModule)
     };
   }
 
@@ -990,7 +990,7 @@ class PermissionService {
           : mod.IsForPrincipal !== undefined
           ? mod.IsForPrincipal
           : true
-      ),
+      )
     };
   };
 
@@ -1044,7 +1044,7 @@ class PermissionService {
           : sm.IsForPrincipal !== undefined
           ? sm.IsForPrincipal
           : true
-      ),
+      )
     };
   };
 
@@ -1102,7 +1102,7 @@ class PermissionService {
           : ssm.IsForPrincipal !== undefined
           ? ssm.IsForPrincipal
           : true
-      ),
+      )
     };
   };
 
@@ -1141,7 +1141,7 @@ class PermissionService {
 
     return {
       valid: errors.length === 0,
-      errors,
+      errors
     };
   }
 
@@ -1172,7 +1172,7 @@ class PermissionService {
       "Edit",
       "Delete",
       "Download",
-      "Approval",
+      "Approval"
     ];
 
     const rows: string[] = [headers.join(",")];
@@ -1192,7 +1192,7 @@ class PermissionService {
             permissions.editAccess ? "Yes" : "No",
             permissions.deleteAccess ? "Yes" : "No",
             permissions.downloadAccess ? "Yes" : "No",
-            permissions.approvalAccess ? "Yes" : "No",
+            permissions.approvalAccess ? "Yes" : "No"
           ]
             .map((field) => `"${field}"`)
             .join(",");

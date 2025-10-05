@@ -5,11 +5,6 @@ import { useRouter } from 'next/navigation';
 import {
   ArrowLeft,
   Save,
-  Building2,
-  MapPin,
-  Phone,
-  CreditCard,
-  FileText,
   User,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -23,7 +18,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Select,
   SelectContent,
@@ -45,12 +39,29 @@ import {
   IStoreDocument,
 } from '@/services/distributor.service';
 import { territoryService, Territory } from '@/services/territoryService';
+import { orgService, IOrganization } from '@/services/orgService';
+import { organizationService } from '@/services/organizationService';
+
+// Import organization hierarchy utilities
+import {
+  initializeOrganizationHierarchy,
+  handleOrganizationSelection,
+  getFinalSelectedOrganization,
+  resetOrganizationHierarchy,
+  OrganizationLevel,
+} from '@/utils/organizationHierarchyUtils';
 
 export default function CreateDistributorPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState('basic');
   const [territories, setTerritories] = useState<Territory[]>([]);
+  const [parentOrgs, setParentOrgs] = useState<IOrganization[]>([]);
+
+  // Organization hierarchy state
+  const [organizations, setOrganizations] = useState<any[]>([]);
+  const [orgTypes, setOrgTypes] = useState<any[]>([]);
+  const [orgLevels, setOrgLevels] = useState<OrganizationLevel[]>([]);
+  const [selectedOrgs, setSelectedOrgs] = useState<{ [key: number]: string }>({});
 
   // Generate UID
   const generateUID = () => `DIST${Date.now()}`;
@@ -72,11 +83,15 @@ export default function CreateDistributorPage() {
     UID: orgData.UID,
     Code: '',
     Name: '',
+    LegalName: '',
+    Number: '',
     Type: 'Distributor',
     Status: 'Active',
     IsActive: true,
     IsBlocked: false,
     FranchiseeOrgUid: orgData.UID,
+    TaxDocNumber: '',
+    GSTNo: '',
     CreatedBy: 'ADMIN',
     ModifiedBy: 'ADMIN',
   });
@@ -132,6 +147,15 @@ export default function CreateDistributorPage() {
     StateCode: '',
     ZipCode: '',
     CountryCode: '',
+    TerritoryCode: '',
+    Depot: '',
+    LocationUID: '',
+    CustomField1: '',
+    CustomField2: '',
+    CustomField3: '',
+    CustomField4: '',
+    CustomField5: '',
+    CustomField6: '',
     LinkedItemUID: orgData.UID,
     LinkedItemType: 'Store',
     IsDefault: true,
@@ -158,19 +182,50 @@ export default function CreateDistributorPage() {
     }
   }, [orgData.Name]);
 
-  // Load territories on mount
+  // Load territories and organizations on mount
   useEffect(() => {
-    const loadTerritories = async () => {
+    const loadInitialData = async () => {
       try {
-        const result = await territoryService.getTerritories(1, 1000);
-        if (result.data) {
-          setTerritories(result.data);
+        // Load territories
+        const territoriesResult = await territoryService.getTerritories(1, 1000);
+        if (territoriesResult.data) {
+          setTerritories(territoriesResult.data);
         }
+
+        // Load organization types and organizations
+        const [typesResult, orgsResult] = await Promise.all([
+          organizationService.getOrganizationTypes(),
+          organizationService.getOrganizations(1, 1000),
+        ]);
+
+        // Filter to only show active organizations with ShowInTemplate
+        const activeOrgs = orgsResult.data.filter(
+          (org: any) => org.ShowInTemplate === true
+        );
+
+        setOrganizations(activeOrgs);
+        setOrgTypes(typesResult);
+
+        // Initialize organization hierarchy
+        const initialLevels = initializeOrganizationHierarchy(
+          activeOrgs,
+          typesResult
+        );
+        setOrgLevels(initialLevels);
+
+        console.log('Loaded organizations:', activeOrgs.length);
+        console.log('Organization hierarchy levels:', initialLevels.length);
       } catch (error) {
-        console.error('Error loading territories:', error);
+        console.error('Error loading initial data:', error);
+        toast({
+          title: 'Error',
+          description: 'Failed to load organization data',
+          variant: 'destructive',
+        });
       }
     };
-    loadTerritories();
+
+    loadInitialData();
   }, []);
 
   // Add contact
@@ -199,6 +254,42 @@ export default function CreateDistributorPage() {
     if (contacts.length > 1) {
       setContacts(contacts.filter((_, i) => i !== index));
     }
+  };
+
+  // Handle organization hierarchy selection
+  const handleOrganizationSelect = (levelIndex: number, value: string) => {
+    if (!value) return;
+
+    const { updatedLevels, updatedSelectedOrgs } = handleOrganizationSelection(
+      levelIndex,
+      value,
+      orgLevels,
+      selectedOrgs,
+      organizations,
+      orgTypes
+    );
+
+    setOrgLevels(updatedLevels);
+    setSelectedOrgs(updatedSelectedOrgs);
+
+    // Get the final selected organization UID
+    const finalOrgUID = getFinalSelectedOrganization(updatedSelectedOrgs);
+    if (finalOrgUID) {
+      // Set parent organization
+      setOrgData({ ...orgData, ParentUid: finalOrgUID });
+      console.log('Selected parent org:', finalOrgUID);
+    }
+  };
+
+  // Reset organization selection
+  const resetOrganizationSelection = () => {
+    const { resetLevels, resetSelectedOrgs } = resetOrganizationHierarchy(
+      organizations,
+      orgTypes
+    );
+    setOrgLevels(resetLevels);
+    setSelectedOrgs(resetSelectedOrgs);
+    setOrgData({ ...orgData, ParentUid: undefined });
   };
 
   // Handle form submission
@@ -298,33 +389,9 @@ export default function CreateDistributorPage() {
       </div>
 
       {/* Form */}
-      <form onSubmit={handleSubmit}>
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="basic">
-              <Building2 className="mr-2 h-4 w-4" />
-              Basic Info
-            </TabsTrigger>
-            <TabsTrigger value="contacts">
-              <Phone className="mr-2 h-4 w-4" />
-              Contacts
-            </TabsTrigger>
-            <TabsTrigger value="address">
-              <MapPin className="mr-2 h-4 w-4" />
-              Address
-            </TabsTrigger>
-            <TabsTrigger value="credit">
-              <CreditCard className="mr-2 h-4 w-4" />
-              Credit Info
-            </TabsTrigger>
-            <TabsTrigger value="additional">
-              <FileText className="mr-2 h-4 w-4" />
-              Additional
-            </TabsTrigger>
-          </TabsList>
-
+      <form onSubmit={handleSubmit} className="space-y-6">
           {/* Basic Information */}
-          <TabsContent value="basic" className="space-y-4">
+          <div className="space-y-4">
             <Card>
               <CardHeader>
                 <CardTitle>Organization Details</CardTitle>
@@ -384,6 +451,101 @@ export default function CreateDistributorPage() {
                       placeholder="Legal business name"
                     />
                   </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="alphaSearchCode">Alpha Search Code</Label>
+                    <Input
+                      id="alphaSearchCode"
+                      value={storeData.Number}
+                      onChange={(e) => setStoreData({ ...storeData, Number: e.target.value })}
+                      placeholder="Search/alias code"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="vatRegNo">VAT Registration Number</Label>
+                    <Input
+                      id="vatRegNo"
+                      value={storeData.TaxDocNumber}
+                      onChange={(e) => setStoreData({ ...storeData, TaxDocNumber: e.target.value })}
+                      placeholder="VAT/Tax registration number"
+                    />
+                  </div>
+
+                  {/* <div className="space-y-2">
+                    <Label htmlFor="gstNo">GST Number</Label>
+                    <Input
+                      id="gstNo"
+                      value={storeData.GSTNo}
+                      onChange={(e) => setStoreData({ ...storeData, GSTNo: e.target.value })}
+                      placeholder="GST number"
+                    />
+                  </div> */}
+
+                  {/* Organization Hierarchy - Dynamic Cascading Fields */}
+                  {orgLevels.length > 0 ? (
+                    <>
+                      {orgLevels.map((level, index) => (
+                        <div key={`${level.orgTypeUID}_${index}`} className="space-y-2">
+                          <Label>
+                            {level.orgTypeName || `Level ${index + 1}`}
+                            {index === 0 && <span className="text-red-500"> *</span>}
+                          </Label>
+                          <Select
+                            value={level.selectedOrgUID || ''}
+                            onValueChange={(value) => handleOrganizationSelect(index, value)}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder={`Select ${level.orgTypeName || 'organization'}`} />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {level.organizations.map((org) => (
+                                <SelectItem key={org.UID} value={org.UID}>
+                                  {org.Name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      ))}
+                      {Object.keys(selectedOrgs).length > 0 && (
+                        <div className="col-span-2">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={resetOrganizationSelection}
+                          >
+                            Reset Organization Selection
+                          </Button>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="col-span-2 text-center py-4 text-muted-foreground">
+                      <p className="text-sm">Loading organization hierarchy...</p>
+                    </div>
+                  )}
+
+                  {/* Territory Selection */}
+                  <div className="col-span-2 space-y-2">
+                    <Label htmlFor="territory">Territory</Label>
+                    <Select
+                      value={orgData.TerritoryUid || ''}
+                      onValueChange={(value) => setOrgData({ ...orgData, TerritoryUid: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select territory" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {territories.map((territory) => (
+                          <SelectItem key={territory.UID} value={territory.UID}>
+                            {territory.TerritoryName} ({territory.TerritoryCode})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
 
                 <div className="flex items-center space-x-2">
@@ -396,10 +558,10 @@ export default function CreateDistributorPage() {
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
+          </div>
 
           {/* Contacts */}
-          <TabsContent value="contacts" className="space-y-4">
+          <div className="space-y-4">
             <Card>
               <CardHeader>
                 <CardTitle>Contact Information</CardTitle>
@@ -484,10 +646,10 @@ export default function CreateDistributorPage() {
                 </Button>
               </CardContent>
             </Card>
-          </TabsContent>
+          </div>
 
           {/* Address */}
-          <TabsContent value="address" className="space-y-4">
+          <div className="space-y-4">
             <Card>
               <CardHeader>
                 <CardTitle>Address Information</CardTitle>
@@ -568,14 +730,92 @@ export default function CreateDistributorPage() {
                         </SelectContent>
                       </Select>
                     </div>
+
+                    <div className="space-y-2">
+                      <Label>Destination Warehouse Code</Label>
+                      <Input
+                        value={address.Depot}
+                        onChange={(e) => setAddress({ ...address, Depot: e.target.value })}
+                        placeholder="Warehouse/Depot code"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Destination Location Code</Label>
+                      <Input
+                        value={address.LocationUID}
+                        onChange={(e) => setAddress({ ...address, LocationUID: e.target.value })}
+                        placeholder="Location code"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Secondary Location Section */}
+                  <div className="border-t pt-4 mt-4">
+                    <h4 className="text-sm font-medium mb-4">Secondary Location (Optional)</h4>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Secondary Location Code</Label>
+                        <Input
+                          value={address.CustomField1}
+                          onChange={(e) => setAddress({ ...address, CustomField1: e.target.value })}
+                          placeholder="Secondary location code"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Secondary Location Description</Label>
+                        <Input
+                          value={address.CustomField2}
+                          onChange={(e) => setAddress({ ...address, CustomField2: e.target.value })}
+                          placeholder="Description"
+                        />
+                      </div>
+
+                      <div className="space-y-2 col-span-2">
+                        <Label>Secondary Address Line 1</Label>
+                        <Input
+                          value={address.CustomField3}
+                          onChange={(e) => setAddress({ ...address, CustomField3: e.target.value })}
+                          placeholder="Address line 1"
+                        />
+                      </div>
+
+                      <div className="space-y-2 col-span-2">
+                        <Label>Secondary Address Line 2</Label>
+                        <Input
+                          value={address.CustomField4}
+                          onChange={(e) => setAddress({ ...address, CustomField4: e.target.value })}
+                          placeholder="Address line 2"
+                        />
+                      </div>
+
+                      <div className="space-y-2 col-span-2">
+                        <Label>Secondary Address Line 3</Label>
+                        <Input
+                          value={address.CustomField5}
+                          onChange={(e) => setAddress({ ...address, CustomField5: e.target.value })}
+                          placeholder="Address line 3"
+                        />
+                      </div>
+
+                      <div className="space-y-2 col-span-2">
+                        <Label>Secondary Address Line 4</Label>
+                        <Input
+                          value={address.CustomField6}
+                          onChange={(e) => setAddress({ ...address, CustomField6: e.target.value })}
+                          placeholder="Address line 4"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
+          </div>
 
-          {/* Credit Information */}
-          <TabsContent value="credit" className="space-y-4">
+          {/* Credit Information - Hidden for now */}
+          {/* <TabsContent value="credit" className="space-y-4">
             <Card>
               <CardHeader>
                 <CardTitle>Credit Information</CardTitle>
@@ -641,10 +881,10 @@ export default function CreateDistributorPage() {
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
+          </TabsContent> */}
 
-          {/* Additional Information */}
-          <TabsContent value="additional" className="space-y-4">
+          {/* Additional Information - Hidden for now */}
+          {/* <TabsContent value="additional" className="space-y-4">
             <Card>
               <CardHeader>
                 <CardTitle>Additional Information</CardTitle>
@@ -726,8 +966,7 @@ export default function CreateDistributorPage() {
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
-        </Tabs>
+          </div> */}
       </form>
     </div>
   );

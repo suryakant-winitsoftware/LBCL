@@ -7,7 +7,7 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,7 +18,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
 import {
@@ -33,7 +33,7 @@ import {
   ChevronDown,
   X,
   MoreHorizontal,
-  Eye,
+  Eye
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -42,7 +42,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  DropdownMenuItem,
+  DropdownMenuItem
 } from "@/components/ui/dropdown-menu";
 import { DataTable } from "@/components/ui/data-table";
 import { PaginationControls } from "@/components/ui/pagination-controls";
@@ -56,7 +56,7 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle,
+  AlertDialogTitle
 } from "@/components/ui/alert-dialog";
 
 interface SKUClass {
@@ -94,7 +94,7 @@ export default function ClassManagementPage() {
     Description: "",
     ClassLabel: "",
     CreatedBy: "ADMIN",
-    ModifiedBy: "ADMIN",
+    ModifiedBy: "ADMIN"
   });
 
   // Pagination states
@@ -131,20 +131,20 @@ export default function ClassManagementPage() {
       // Use the SelectAllSKUClassDetails endpoint
       const response = await fetch(
         `${
-          process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
         }/SKUClass/SelectAllSKUClassDetails`,
         {
           method: "POST",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
           body: JSON.stringify({
             pageNumber: 1,
             pageSize: 1000,
             filterCriterias: [],
-            isCountRequired: true,
-          }),
+            isCountRequired: true
+          })
         }
       );
 
@@ -166,20 +166,20 @@ export default function ClassManagementPage() {
       // Fallback: Try to get classes from SKUClassGroups
       const groupsResponse = await fetch(
         `${
-          process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
         }/SKUClassGroup/SelectAllSKUClassGroupDetails`,
         {
           method: "POST",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
           body: JSON.stringify({
             pageNumber: 1,
             pageSize: 1000,
             filterCriterias: [],
-            isCountRequired: true,
-          }),
+            isCountRequired: true
+          })
         }
       );
 
@@ -191,7 +191,7 @@ export default function ClassManagementPage() {
               groupsResult.Data.PagedData.map((g: any) => g.SKUClassUID).filter(
                 Boolean
               )
-            ),
+            )
           ];
 
           const fetchedClasses: SKUClass[] = [];
@@ -199,7 +199,7 @@ export default function ClassManagementPage() {
             try {
               const classResponse = await fetch(
                 `${
-                  process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
+                  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
                 }/SKUClass/GetSKUClassByUID?UID=${uid}`,
                 {
                   method: "GET",
@@ -207,8 +207,8 @@ export default function ClassManagementPage() {
                     Authorization: `Bearer ${localStorage.getItem(
                       "auth_token"
                     )}`,
-                    "Content-Type": "application/json",
-                  },
+                    "Content-Type": "application/json"
+                  }
                 }
               );
 
@@ -232,7 +232,7 @@ export default function ClassManagementPage() {
                 const classResponse = await fetch(
                   `${
                     process.env.NEXT_PUBLIC_API_URL ||
-                    "https://multiplex-promotions-api.winitsoftware.com/api"
+                    "http://localhost:8000/api"
                   }/SKUClass/GetSKUClassByUID?UID=${uid}`,
                   {
                     method: "GET",
@@ -240,8 +240,8 @@ export default function ClassManagementPage() {
                       Authorization: `Bearer ${localStorage.getItem(
                         "auth_token"
                       )}`,
-                      "Content-Type": "application/json",
-                    },
+                      "Content-Type": "application/json"
+                    }
                   }
                 );
 
@@ -264,7 +264,7 @@ export default function ClassManagementPage() {
       toast({
         title: "Error",
         description: "Failed to fetch SKU Classes",
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setLoadingClasses(false);
@@ -287,20 +287,20 @@ export default function ClassManagementPage() {
         ModifiedBy:
           classFormData.ModifiedBy ||
           localStorage.getItem("username") ||
-          "ADMIN",
+          "ADMIN"
       };
 
       const response = await fetch(
         `${
-          process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
         }/SKUClass/CreateSKUClass`,
         {
           method: "POST",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
-          body: JSON.stringify(payload),
+          body: JSON.stringify(payload)
         }
       );
 
@@ -309,20 +309,20 @@ export default function ClassManagementPage() {
         if (result.IsSuccess) {
           toast({
             title: "Success",
-            description: "SKU Class created successfully",
+            description: "SKU Class created successfully"
           });
           setClassDialogOpen(false);
           resetClassForm();
 
           const newClassResponse = await fetch(
             `${
-              process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
+              process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
             }/SKUClass/GetSKUClassByUID?UID=${uid}`,
             {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-                "Content-Type": "application/json",
-              },
+                "Content-Type": "application/json"
+              }
             }
           );
           if (newClassResponse.ok) {
@@ -348,7 +348,7 @@ export default function ClassManagementPage() {
       toast({
         title: "Error",
         description: "Failed to create SKU Class",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
@@ -364,20 +364,20 @@ export default function ClassManagementPage() {
         ModifiedTime: new Date().toISOString(),
         ModifiedBy: localStorage.getItem("username") || "ADMIN",
         CreatedTime: selectedClass.CreatedTime,
-        CreatedBy: selectedClass.CreatedBy,
+        CreatedBy: selectedClass.CreatedBy
       };
 
       const response = await fetch(
         `${
-          process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
         }/SKUClass/UpdateSKUClass`,
         {
           method: "PUT",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
-          body: JSON.stringify(payload),
+          body: JSON.stringify(payload)
         }
       );
 
@@ -386,7 +386,7 @@ export default function ClassManagementPage() {
         if (result.IsSuccess) {
           toast({
             title: "Success",
-            description: "SKU Class updated successfully",
+            description: "SKU Class updated successfully"
           });
           setClassDialogOpen(false);
           resetClassForm();
@@ -399,7 +399,7 @@ export default function ClassManagementPage() {
       toast({
         title: "Error",
         description: "Failed to update SKU Class",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
@@ -410,14 +410,14 @@ export default function ClassManagementPage() {
     try {
       const response = await fetch(
         `${
-          process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
         }/SKUClass/DeleteSKUClass?UID=${selectedClass.UID}`,
         {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-            "Content-Type": "application/json",
-          },
+            "Content-Type": "application/json"
+          }
         }
       );
 
@@ -426,7 +426,7 @@ export default function ClassManagementPage() {
         if (result.IsSuccess) {
           toast({
             title: "Success",
-            description: "SKU Class deleted successfully",
+            description: "SKU Class deleted successfully"
           });
           setSKUClasses(skuClasses.filter((c) => c.UID !== selectedClass.UID));
           setDeleteClassDialogOpen(false);
@@ -437,7 +437,7 @@ export default function ClassManagementPage() {
       toast({
         title: "Error",
         description: "Failed to delete SKU Class",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
@@ -449,7 +449,7 @@ export default function ClassManagementPage() {
       Description: "",
       ClassLabel: "",
       CreatedBy: "ADMIN",
-      ModifiedBy: "ADMIN",
+      ModifiedBy: "ADMIN"
     });
     setSelectedClass(null);
     setIsEditClassMode(false);
@@ -468,7 +468,7 @@ export default function ClassManagementPage() {
       ClassName: skuClass.ClassName,
       Description: skuClass.Description,
       ClassLabel: skuClass.ClassLabel,
-      ModifiedBy: "ADMIN",
+      ModifiedBy: "ADMIN"
     });
     setIsEditClassMode(true);
     setClassDialogOpen(true);
@@ -514,7 +514,7 @@ export default function ClassManagementPage() {
         <div className="pl-6">
           <span className="font-medium text-sm">{row.original.ClassName}</span>
         </div>
-      ),
+      )
     },
     {
       accessorKey: "ClassLabel",
@@ -526,14 +526,14 @@ export default function ClassManagementPage() {
         >
           {row.original.ClassLabel}
         </Badge>
-      ),
+      )
     },
     {
       accessorKey: "Description",
       header: "Description",
       cell: ({ row }: any) => (
         <span className="text-sm">{row.original.Description}</span>
-      ),
+      )
     },
     {
       accessorKey: "CompanyUID",
@@ -542,7 +542,7 @@ export default function ClassManagementPage() {
         <Badge variant="outline" className="text-xs">
           {row.original.CompanyUID}
         </Badge>
-      ),
+      )
     },
     {
       accessorKey: "CreatedTime",
@@ -551,7 +551,7 @@ export default function ClassManagementPage() {
         <span className="text-xs text-gray-500">
           {formatDateToDayMonthYear(row.original.CreatedTime)}
         </span>
-      ),
+      )
     },
     {
       id: "actions",
@@ -571,7 +571,7 @@ export default function ClassManagementPage() {
                 onClick={() => {
                   toast({
                     title: "Class Details",
-                    description: `${row.original.ClassName} (${row.original.ClassLabel}) - ${row.original.CompanyUID}`,
+                    description: `${row.original.ClassName} (${row.original.ClassLabel}) - ${row.original.CompanyUID}`
                   });
                 }}
                 className="cursor-pointer"
@@ -597,8 +597,8 @@ export default function ClassManagementPage() {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-      ),
-    },
+      )
+    }
   ];
 
   return (
@@ -742,7 +742,7 @@ export default function ClassManagementPage() {
                 onChange={(e) =>
                   setClassFormData({
                     ...classFormData,
-                    ClassName: e.target.value,
+                    ClassName: e.target.value
                   })
                 }
                 placeholder="e.g., FOCUS, Premium, Standard"
@@ -756,7 +756,7 @@ export default function ClassManagementPage() {
                 onChange={(e) =>
                   setClassFormData({
                     ...classFormData,
-                    ClassLabel: e.target.value,
+                    ClassLabel: e.target.value
                   })
                 }
                 placeholder="Display label for the class"
@@ -770,7 +770,7 @@ export default function ClassManagementPage() {
                 onChange={(e) =>
                   setClassFormData({
                     ...classFormData,
-                    Description: e.target.value,
+                    Description: e.target.value
                   })
                 }
                 placeholder="Detailed description of the class"
@@ -785,7 +785,7 @@ export default function ClassManagementPage() {
                 onChange={(e) =>
                   setClassFormData({
                     ...classFormData,
-                    CompanyUID: e.target.value,
+                    CompanyUID: e.target.value
                   })
                 }
                 placeholder="Company identifier"

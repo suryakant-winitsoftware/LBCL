@@ -90,7 +90,7 @@ namespace Winit.Modules.Territory.DL.Classes
                 }
                 else
                 {
-                    sql.Append(" ORDER BY created_time DESC");
+                    sql.Append(" ORDER BY CreatedTime DESC");
                 }
 
                 sql.Append($" LIMIT {pageSize} OFFSET {(pageNumber - 1) * pageSize}");

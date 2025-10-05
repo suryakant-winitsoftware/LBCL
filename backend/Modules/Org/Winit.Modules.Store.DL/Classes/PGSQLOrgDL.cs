@@ -141,7 +141,7 @@ namespace Winit.Modules.Org.DL.Classes
                                         server_add_time AS ServerAddTime,
                                         server_modified_time AS ServerModifiedTime,
                                         code AS Code,
-                                        '[' || code::text || ']' || name AS Name,
+                                        name AS Name,
                                         is_active AS IsActive,
                                         org_type_uid AS OrgTypeUID,
                                         parent_uid AS ParentUID,

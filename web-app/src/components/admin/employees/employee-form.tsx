@@ -16,7 +16,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from "@/components/ui/select";
 import {
   Form,
@@ -25,14 +25,14 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  FormMessage
 } from "@/components/ui/form";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
@@ -40,7 +40,7 @@ import { Role } from "@/types/admin.types";
 import { roleService } from "@/services/admin/role.service";
 import {
   organizationService,
-  Organization,
+  Organization
 } from "@/services/organizationService";
 import { mobileAppActionService } from "@/services/mobileAppActionService";
 
@@ -60,7 +60,7 @@ const employeeFormSchema = z.object({
     phone: z.string().optional(),
     status: z.enum(["Active", "Inactive", "Pending"]),
     authType: z.string().default("Local"),
-    aliasName: z.string().optional(),
+    aliasName: z.string().optional()
   }),
 
   empInfo: z
@@ -71,7 +71,7 @@ const employeeFormSchema = z.object({
       endDate: z.string().optional(),
       canHandleStock: z.boolean().default(false),
       adGroup: z.string().optional(),
-      adUsername: z.string().optional(),
+      adUsername: z.string().optional()
     })
     .optional(),
 
@@ -96,7 +96,7 @@ const employeeFormSchema = z.object({
       locationType: z.string().optional(),
       locationValue: z.string().optional(),
       seqCode: z.string().optional(),
-      empCode: z.string().optional(),
+      empCode: z.string().optional()
     })
     .optional(),
 
@@ -104,7 +104,7 @@ const employeeFormSchema = z.object({
     .array(
       z.object({
         orgUID: z.string(),
-        isActive: z.boolean().default(true),
+        isActive: z.boolean().default(true)
       })
     )
     .optional(),
@@ -112,7 +112,7 @@ const employeeFormSchema = z.object({
   password: z.string().optional(),
 
   // Mobile App Access field
-  mobileAppAccess: z.boolean().default(false),
+  mobileAppAccess: z.boolean().default(false)
 });
 
 type EmployeeFormData = z.infer<typeof employeeFormSchema>;
@@ -126,7 +126,7 @@ interface EmployeeFormProps {
 export function EmployeeForm({
   employeeId,
   onSuccess,
-  onCancel,
+  onCancel
 }: EmployeeFormProps) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -148,7 +148,7 @@ export function EmployeeForm({
         phone: "",
         status: "Active",
         authType: "Local",
-        aliasName: "",
+        aliasName: ""
       },
       empInfo: {
         email: "",
@@ -157,7 +157,7 @@ export function EmployeeForm({
         endDate: "",
         canHandleStock: false,
         adGroup: "",
-        adUsername: "",
+        adUsername: ""
       },
       jobPosition: {
         userRoleUID: "",
@@ -177,12 +177,12 @@ export function EmployeeForm({
         locationType: "",
         locationValue: "",
         seqCode: "",
-        empCode: "",
+        empCode: ""
       },
       empOrgMapping: [],
       password: "",
-      mobileAppAccess: false,
-    },
+      mobileAppAccess: false
+    }
   });
 
   // Load roles and organizations
@@ -205,7 +205,7 @@ export function EmployeeForm({
           title: "Warning",
           description:
             "Failed to load roles and organizations. Some features may not work properly.",
-          variant: "destructive",
+          variant: "destructive"
         });
       }
     };
@@ -242,14 +242,14 @@ export function EmployeeForm({
           CreatedBy: "ADMIN",
           CreatedTime: isEdit ? undefined : new Date().toISOString(),
           ModifiedBy: isEdit ? "ADMIN" : undefined,
-          ModifiedTime: isEdit ? new Date().toISOString() : undefined,
+          ModifiedTime: isEdit ? new Date().toISOString() : undefined
         },
         EmpInfo: data.empInfo
           ? {
               ...data.empInfo,
               uid: employeeUID,
               empUID: employeeUID,
-              actionType: isEdit ? 1 : 0,
+              actionType: isEdit ? 1 : 0
             }
           : null,
         JobPosition: data.jobPosition
@@ -265,20 +265,20 @@ export function EmployeeForm({
               BranchUID: data.jobPosition.branchUID || null,
               SalesOfficeUID: data.jobPosition.salesOfficeUID || null,
               LocationType: data.jobPosition.locationType || null,
-              LocationValue: data.jobPosition.locationValue || null,
+              LocationValue: data.jobPosition.locationValue || null
             }
           : null,
         EmpOrgMapping: data.empOrgMapping?.map((mapping) => ({
           ...mapping,
-          empUID: employeeUID,
+          empUID: employeeUID
         })) || [
           {
             empUID: employeeUID,
             orgUID: data.jobPosition?.orgUID || "",
-            isActive: true,
-          },
+            isActive: true
+          }
         ],
-        FileSys: null,
+        FileSys: null
       };
 
       // Log location data being saved
@@ -286,22 +286,22 @@ export function EmployeeForm({
         LocationType: data.jobPosition?.locationType,
         LocationValue: data.jobPosition?.locationValue,
         BranchUID: data.jobPosition?.branchUID,
-        SalesOfficeUID: data.jobPosition?.salesOfficeUID,
+        SalesOfficeUID: data.jobPosition?.salesOfficeUID
       });
       console.log("📝 Full JobPosition data:", empDTOModel.JobPosition);
 
       // Call the API using the same endpoint as web portal
       const response = await fetch(
         `${
-          process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
         }/MaintainUser/CUDEmployee`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("authToken") || ""}`,
+            Authorization: `Bearer ${localStorage.getItem("authToken") || ""}`
           },
-          body: JSON.stringify(empDTOModel),
+          body: JSON.stringify(empDTOModel)
         }
       );
 
@@ -342,7 +342,7 @@ export function EmployeeForm({
               title: "Warning",
               description:
                 "Employee created but mobile app access could not be enabled. Please try again from the employee details page.",
-              variant: "default",
+              variant: "default"
             });
           } else {
             console.log("✅ Mobile app access created successfully");
@@ -375,7 +375,7 @@ export function EmployeeForm({
         title: "Success",
         description: `Employee ${isEdit ? "updated" : "created"} successfully${
           !isEdit && data.mobileAppAccess ? " with mobile app access" : ""
-        }!`,
+        }!`
       });
 
       onSuccess();
@@ -386,7 +386,7 @@ export function EmployeeForm({
         description: `Failed to ${
           isEdit ? "update" : "create"
         } employee. Please try again.`,
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setLoading(false);

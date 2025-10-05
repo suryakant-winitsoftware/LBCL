@@ -2,7 +2,7 @@ import { getAuthHeaders } from "@/lib/auth-service";
 import { PagingRequest, PagedResponse } from "@/types/common.types";
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
 // SKU Price interfaces
 export interface ISKUPrice {
@@ -84,8 +84,8 @@ class SKUPriceService {
       headers: {
         "Content-Type": "application/json",
         ...headers,
-        ...options.headers,
-      },
+        ...options.headers
+      }
     });
 
     if (!response.ok) {
@@ -109,7 +109,7 @@ class SKUPriceService {
       } catch {
         // Not JSON, use the text as message
         error = {
-          message: text || `Request failed with status ${response.status}`,
+          message: text || `Request failed with status ${response.status}`
         };
       }
       throw new Error(error.ErrorMessage || error.message || "Request failed");
@@ -137,7 +137,7 @@ class SKUPriceService {
       pageSize: request.PageSize || 10,
       filterCriterias: request.FilterCriterias || [],
       sortCriterias: request.SortCriterias || [],
-      isCountRequired: request.IsCountRequired ?? true,
+      isCountRequired: request.IsCountRequired ?? true
     };
 
     console.log(
@@ -149,7 +149,7 @@ class SKUPriceService {
       "/SKUPrice/SelectAllSKUPriceDetails",
       {
         method: "POST",
-        body: JSON.stringify(apiRequest),
+        body: JSON.stringify(apiRequest)
       }
     );
   }
@@ -161,7 +161,7 @@ class SKUPriceService {
   async createSKUPrice(price: ISKUPrice): Promise<number> {
     return this.fetchAPI<number>("/SKUPrice/CreateSKUPrice", {
       method: "POST",
-      body: JSON.stringify(price),
+      body: JSON.stringify(price)
     });
   }
 
@@ -170,26 +170,26 @@ class SKUPriceService {
     // which is called before update. We'll use UpdateSKUPriceList instead which bypasses the check
     const priceWithActionType = {
       ...price,
-      ActionType: 1, // 1 = Update in the ActionType enum
+      ActionType: 1 // 1 = Update in the ActionType enum
     };
 
     // Use UpdateSKUPriceList endpoint which doesn't call SelectSKUPriceByUID first
     return this.fetchAPI<number>("/SKUPrice/UpdateSKUPriceList", {
       method: "PUT",
-      body: JSON.stringify([priceWithActionType]), // Send as array
+      body: JSON.stringify([priceWithActionType]) // Send as array
     });
   }
 
   async deleteSKUPrice(uid: string): Promise<number> {
     return this.fetchAPI<number>(`/SKUPrice/DeleteSKUPrice?UID=${uid}`, {
-      method: "DELETE",
+      method: "DELETE"
     });
   }
 
   async updateSKUPriceList(prices: ISKUPrice[]): Promise<number> {
     return this.fetchAPI<number>("/SKUPrice/UpdateSKUPriceList", {
       method: "PUT",
-      body: JSON.stringify(prices),
+      body: JSON.stringify(prices)
     });
   }
 
@@ -201,7 +201,7 @@ class SKUPriceService {
       "/SKUPriceList/SelectAllSKUPriceListDetails",
       {
         method: "POST",
-        body: JSON.stringify(request),
+        body: JSON.stringify(request)
       }
     );
   }
@@ -215,14 +215,14 @@ class SKUPriceService {
   async createPriceList(priceList: ISKUPriceList): Promise<number> {
     return this.fetchAPI<number>("/SKUPriceList/CreateSKUPriceList", {
       method: "POST",
-      body: JSON.stringify(priceList),
+      body: JSON.stringify(priceList)
     });
   }
 
   async updatePriceList(priceList: ISKUPriceList): Promise<number> {
     return this.fetchAPI<number>("/SKUPriceList/UpdateSKUPriceList", {
       method: "PUT",
-      body: JSON.stringify(priceList),
+      body: JSON.stringify(priceList)
     });
   }
 
@@ -230,7 +230,7 @@ class SKUPriceService {
     return this.fetchAPI<number>(
       `/SKUPriceList/DeleteSKUPriceList?UID=${uid}`,
       {
-        method: "DELETE",
+        method: "DELETE"
       }
     );
   }
@@ -244,7 +244,7 @@ class SKUPriceService {
       `/SKUPrice/SelectSKUPriceViewByUID?UID=${uid}`,
       {
         method: "POST",
-        body: JSON.stringify(request),
+        body: JSON.stringify(request)
       }
     );
   }
@@ -252,21 +252,21 @@ class SKUPriceService {
   async createSKUPriceView(priceView: SKUPriceViewDTO): Promise<number> {
     return this.fetchAPI<number>("/SKUPrice/CreateSKUPriceView", {
       method: "POST",
-      body: JSON.stringify(priceView),
+      body: JSON.stringify(priceView)
     });
   }
 
   async updateSKUPriceView(priceView: SKUPriceViewDTO): Promise<number> {
     return this.fetchAPI<number>("/SKUPrice/UpdateSKUPriceView", {
       method: "PUT",
-      body: JSON.stringify(priceView),
+      body: JSON.stringify(priceView)
     });
   }
 
   async createStandardPriceForSKU(skuUID: string): Promise<number> {
     return this.fetchAPI<number>("/SKUPrice/CreateStandardPriceForSKU", {
       method: "POST",
-      body: JSON.stringify(skuUID),
+      body: JSON.stringify(skuUID)
     });
   }
 
@@ -282,7 +282,7 @@ class SKUPriceService {
         PageSize: 10000, // Get up to 10,000 prices
         FilterCriterias: [],
         SortCriterias: [],
-        IsCountRequired: true,
+        IsCountRequired: true
       };
 
       const response = await this.getAllSKUPrices(request);
@@ -322,11 +322,11 @@ class SKUPriceService {
         FilterCriterias: searchTerm
           ? [
               { Name: "Name", Value: searchTerm, Type: 1 },
-              { Name: "Code", Value: searchTerm, Type: 1 },
+              { Name: "Code", Value: searchTerm, Type: 1 }
             ]
           : [],
         SortCriterias: [],
-        IsCountRequired: true,
+        IsCountRequired: true
       };
 
       const response = await this.getAllPriceLists(request);
@@ -365,7 +365,7 @@ class SKUPriceService {
       "Created By",
       "Created Date",
       "Modified By",
-      "Modified Date",
+      "Modified Date"
     ];
 
     const csvContent = [
@@ -408,9 +408,9 @@ class SKUPriceService {
             price.ModifiedTime
               ? new Date(price.ModifiedTime).toLocaleDateString()
               : ""
-          }"`,
+          }"`
         ].join(",")
-      ),
+      )
     ].join("\n");
 
     return new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
@@ -435,7 +435,7 @@ class SKUPriceService {
       "Created By",
       "Created Date",
       "Modified By",
-      "Modified Date",
+      "Modified Date"
     ];
 
     const csvContent = [
@@ -475,9 +475,9 @@ class SKUPriceService {
             priceList.ModifiedTime
               ? new Date(priceList.ModifiedTime).toLocaleDateString()
               : ""
-          }"`,
+          }"`
         ].join(",")
-      ),
+      )
     ].join("\n");
 
     return new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
@@ -487,7 +487,7 @@ class SKUPriceService {
     // For now, return CSV format with Excel MIME type
     const csvContent = this.exportPricesToCSV(prices);
     return new Blob([csvContent], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8;",
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8;"
     });
   }
 
@@ -495,7 +495,7 @@ class SKUPriceService {
     // For now, return CSV format with Excel MIME type
     const csvContent = this.exportPriceListsToCSV(priceLists);
     return new Blob([csvContent], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8;",
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8;"
     });
   }
 
@@ -511,7 +511,7 @@ class SKUPriceService {
         PageSize: 10000, // Get up to 10,000 prices
         FilterCriterias: [],
         SortCriterias: [],
-        IsCountRequired: true,
+        IsCountRequired: true
       };
 
       const response = await this.getAllSKUPrices(request);
@@ -557,7 +557,7 @@ class SKUPriceService {
               ...price,
               HierarchyLevel: index === 0 ? "Parent" : "Child",
               HierarchyIndex: index,
-              SKUGroup: skuCode,
+              SKUGroup: skuCode
             });
           });
         }
@@ -599,7 +599,7 @@ class SKUPriceService {
       "Created By",
       "Created Date",
       "Modified By",
-      "Modified Date",
+      "Modified Date"
     ];
 
     const csvContent = [
@@ -645,9 +645,9 @@ class SKUPriceService {
             price.ModifiedTime
               ? new Date(price.ModifiedTime).toLocaleDateString()
               : ""
-          }"`,
+          }"`
         ].join(",")
-      ),
+      )
     ].join("\n");
 
     return new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
@@ -657,7 +657,7 @@ class SKUPriceService {
     // For now, return CSV format with Excel MIME type
     const csvContent = this.exportTPPPricesToCSV(tppPrices);
     return new Blob([csvContent], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8;",
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8;"
     });
   }
 }

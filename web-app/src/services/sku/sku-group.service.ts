@@ -57,7 +57,7 @@ export interface PagedResponse<T> {
 
 class SKUGroupService {
   private baseURL =
-    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
   // SKU Groups
   async getAllSKUGroups(
@@ -70,9 +70,9 @@ class SKUGroupService {
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify(request),
+        body: JSON.stringify(request)
       }
     );
 
@@ -95,8 +95,8 @@ class SKUGroupService {
         method: "GET",
         headers: {
           ...getAuthHeaders(),
-          Accept: "application/json",
-        },
+          Accept: "application/json"
+        }
       }
     );
 
@@ -119,8 +119,8 @@ class SKUGroupService {
         method: "GET",
         headers: {
           ...getAuthHeaders(),
-          Accept: "application/json",
-        },
+          Accept: "application/json"
+        }
       }
     );
 
@@ -142,9 +142,9 @@ class SKUGroupService {
       headers: {
         ...getAuthHeaders(),
         "Content-Type": "application/json",
-        Accept: "application/json",
+        Accept: "application/json"
       },
-      body: JSON.stringify(skuGroup),
+      body: JSON.stringify(skuGroup)
     });
 
     if (!response.ok) {
@@ -165,9 +165,9 @@ class SKUGroupService {
       headers: {
         ...getAuthHeaders(),
         "Content-Type": "application/json",
-        Accept: "application/json",
+        Accept: "application/json"
       },
-      body: JSON.stringify(skuGroup),
+      body: JSON.stringify(skuGroup)
     });
 
     if (!response.ok) {
@@ -189,8 +189,8 @@ class SKUGroupService {
         method: "DELETE",
         headers: {
           ...getAuthHeaders(),
-          Accept: "application/json",
-        },
+          Accept: "application/json"
+        }
       }
     );
 
@@ -217,9 +217,9 @@ class SKUGroupService {
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify(request),
+        body: JSON.stringify(request)
       }
     );
 
@@ -245,8 +245,8 @@ class SKUGroupService {
         method: "GET",
         headers: {
           ...getAuthHeaders(),
-          Accept: "application/json",
-        },
+          Accept: "application/json"
+        }
       }
     );
 
@@ -269,8 +269,8 @@ class SKUGroupService {
         method: "GET",
         headers: {
           ...getAuthHeaders(),
-          Accept: "application/json",
-        },
+          Accept: "application/json"
+        }
       }
     );
 
@@ -298,9 +298,9 @@ class SKUGroupService {
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify(groupType),
+        body: JSON.stringify(groupType)
       }
     );
 
@@ -326,9 +326,9 @@ class SKUGroupService {
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify(groupType),
+        body: JSON.stringify(groupType)
       }
     );
 
@@ -353,8 +353,8 @@ class SKUGroupService {
         method: "DELETE",
         headers: {
           ...getAuthHeaders(),
-          Accept: "application/json",
-        },
+          Accept: "application/json"
+        }
       }
     );
 

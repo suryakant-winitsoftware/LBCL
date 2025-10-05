@@ -59,7 +59,7 @@ export interface ProductMasterData {
 
 class ProductSharedService {
   private baseURL =
-    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
   // Get all products
   async getAllProducts(): Promise<SharedProduct[]> {
@@ -67,8 +67,8 @@ class ProductSharedService {
       method: "GET",
       headers: {
         ...getAuthHeaders(),
-        Accept: "application/json",
-      },
+        Accept: "application/json"
+      }
     });
 
     if (!response.ok) {
@@ -90,8 +90,8 @@ class ProductSharedService {
         method: "GET",
         headers: {
           ...getAuthHeaders(),
-          Accept: "application/json",
-        },
+          Accept: "application/json"
+        }
       }
     );
 
@@ -113,7 +113,7 @@ class ProductSharedService {
       CreatedTime: now,
       ModifiedTime: now,
       ServerAddTime: now,
-      ServerModifiedTime: now,
+      ServerModifiedTime: now
     };
 
     const response = await fetch(`${this.baseURL}/Products/CreateProduct`, {
@@ -121,9 +121,9 @@ class ProductSharedService {
       headers: {
         ...getAuthHeaders(),
         "Content-Type": "application/json",
-        Accept: "application/json",
+        Accept: "application/json"
       },
-      body: JSON.stringify(productData),
+      body: JSON.stringify(productData)
     });
 
     if (!response.ok) {
@@ -143,7 +143,7 @@ class ProductSharedService {
     const updateData = {
       ...product,
       ModifiedTime: now,
-      ServerModifiedTime: now,
+      ServerModifiedTime: now
     };
 
     const response = await fetch(`${this.baseURL}/Products/UpdateProduct`, {
@@ -151,9 +151,9 @@ class ProductSharedService {
       headers: {
         ...getAuthHeaders(),
         "Content-Type": "application/json",
-        Accept: "application/json",
+        Accept: "application/json"
       },
-      body: JSON.stringify(updateData),
+      body: JSON.stringify(updateData)
     });
 
     if (!response.ok) {
@@ -174,8 +174,8 @@ class ProductSharedService {
         method: "DELETE",
         headers: {
           ...getAuthHeaders(),
-          Accept: "application/json",
-        },
+          Accept: "application/json"
+        }
       }
     );
 
@@ -206,8 +206,8 @@ class ProductSharedService {
         method: "GET",
         headers: {
           ...getAuthHeaders(),
-          Accept: "application/json",
-        },
+          Accept: "application/json"
+        }
       }
     );
 
@@ -231,8 +231,8 @@ class ProductSharedService {
         method: "GET",
         headers: {
           ...getAuthHeaders(),
-          Accept: "application/json",
-        },
+          Accept: "application/json"
+        }
       }
     );
 
@@ -261,8 +261,8 @@ class ProductSharedService {
         method: "GET",
         headers: {
           ...getAuthHeaders(),
-          Accept: "application/json",
-        },
+          Accept: "application/json"
+        }
       }
     );
 
@@ -286,7 +286,7 @@ class ProductSharedService {
       CreatedTime: now,
       ModifiedTime: now,
       ServerAddTime: now,
-      ServerModifiedTime: now,
+      ServerModifiedTime: now
     };
 
     const response = await fetch(
@@ -296,9 +296,9 @@ class ProductSharedService {
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify(configData),
+        body: JSON.stringify(configData)
       }
     );
 
@@ -322,7 +322,7 @@ class ProductSharedService {
       CreatedTime: now,
       ModifiedTime: now,
       ServerAddTime: now,
-      ServerModifiedTime: now,
+      ServerModifiedTime: now
     };
 
     const response = await fetch(`${this.baseURL}/Products/CreateProductUOM`, {
@@ -330,9 +330,9 @@ class ProductSharedService {
       headers: {
         ...getAuthHeaders(),
         "Content-Type": "application/json",
-        Accept: "application/json",
+        Accept: "application/json"
       },
-      body: JSON.stringify(uomData),
+      body: JSON.stringify(uomData)
     });
 
     if (!response.ok) {

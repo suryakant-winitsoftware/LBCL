@@ -28,12 +28,12 @@ import {
   Image as ImageIcon,
   ChevronDown,
   List,
-  Grid3X3,
+  Grid3X3
 } from "lucide-react";
 import {
   skuService,
   SKUListView,
-  PagedResponse,
+  PagedResponse
 } from "@/services/sku/sku.service";
 import { PagingRequest } from "@/types/common.types";
 import {
@@ -42,7 +42,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/use-toast";
@@ -53,7 +53,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  DropdownMenuCheckboxItem,
+  DropdownMenuCheckboxItem
 } from "@/components/ui/dropdown-menu";
 import {
   AlertDialog,
@@ -63,7 +63,7 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle,
+  AlertDialogTitle
 } from "@/components/ui/alert-dialog";
 import { PaginationControls } from "@/components/ui/pagination-controls";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -74,13 +74,13 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogTrigger
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import {
   skuImagesService,
   FileSys,
-  ImageUploadRequest,
+  ImageUploadRequest
 } from "@/services/sku/sku-images.service";
 
 export default function ManageSKUsPage() {
@@ -255,7 +255,7 @@ export default function ManageSKUsPage() {
         if (searchTerm && searchTerm.trim()) {
           filterCriterias.push({
             Name: "skucodeandname",
-            Value: searchTerm.trim(),
+            Value: searchTerm.trim()
           });
         }
 
@@ -265,7 +265,7 @@ export default function ManageSKUsPage() {
           if (statusFilter.length === 1) {
             filterCriterias.push({
               Name: "IsActive",
-              Value: statusFilter[0] === "Active" ? "true" : "false",
+              Value: statusFilter[0] === "Active" ? "true" : "false"
             });
           }
           // If both are selected, no need to filter (show all)
@@ -276,7 +276,7 @@ export default function ManageSKUsPage() {
           PageSize: size,
           IsCountRequired: true, // Essential for getting total count
           FilterCriterias: filterCriterias,
-          SortCriterias: [{ SortParameter: "SKUCode", Direction: "Asc" }],
+          SortCriterias: [{ SortParameter: "SKUCode", Direction: "Asc" }]
         };
 
         console.log(
@@ -286,16 +286,16 @@ export default function ManageSKUsPage() {
 
         const response = await fetch(
           `${
-            process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
+            process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
           }/SKU/SelectAllSKUDetailsWebView`,
           {
             method: "POST",
             headers: {
               Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
               "Content-Type": "application/json",
-              Accept: "application/json",
+              Accept: "application/json"
             },
-            body: JSON.stringify(requestBody),
+            body: JSON.stringify(requestBody)
           }
         );
 
@@ -313,7 +313,7 @@ export default function ManageSKUsPage() {
                 SKUCode: sku.SKUCode || sku.Code,
                 SKULongName: sku.SKULongName || sku.LongName || sku.Name,
                 IsActive: sku.IsActive !== false,
-                ...sku,
+                ...sku
               }));
             }
             setSKUs(skuData);
@@ -333,7 +333,7 @@ export default function ManageSKUsPage() {
             toast({
               title: "No Data",
               description: "No products found matching your criteria",
-              variant: "default",
+              variant: "default"
             });
           }
         } else {
@@ -342,7 +342,7 @@ export default function ManageSKUsPage() {
           toast({
             title: "Error",
             description: errorData?.Message || "Failed to fetch products",
-            variant: "destructive",
+            variant: "destructive"
           });
           setSKUs([]);
           setTotalCount(0);
@@ -354,7 +354,7 @@ export default function ManageSKUsPage() {
           description: `Failed to fetch products: ${
             error instanceof Error ? error.message : "Unknown error"
           }`,
-          variant: "destructive",
+          variant: "destructive"
         });
         setSKUs([]);
         setTotalCount(0);
@@ -449,7 +449,7 @@ export default function ManageSKUsPage() {
       toast({
         title: "Error",
         description: "Failed to fetch SKU images",
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setLoading(false);
@@ -481,7 +481,7 @@ export default function ManageSKUsPage() {
       toast({
         title: "Invalid File",
         description: "Please select an image file",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
@@ -491,7 +491,7 @@ export default function ManageSKUsPage() {
       toast({
         title: "File Too Large",
         description: "Please select an image smaller than 5MB",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
@@ -548,7 +548,7 @@ export default function ManageSKUsPage() {
           selectedSKUForImage.SKUCode || selectedSKUForImage.Code
         } - ${uploadFile.name}`,
         fileSize: uploadFile.size,
-        isDefault: true, // Always set as default since we're replacing
+        isDefault: true // Always set as default since we're replacing
       };
 
       console.log("=== UPLOAD DEBUG ===");
@@ -563,7 +563,7 @@ export default function ManageSKUsPage() {
         description:
           existingImages.length > 0
             ? "Product image has been replaced"
-            : "Product image has been added",
+            : "Product image has been added"
       });
 
       // Mark this SKU as recently uploaded (reuse skuUID from above)
@@ -593,7 +593,7 @@ export default function ManageSKUsPage() {
       toast({
         title: "Error",
         description: "Failed to upload image",
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setUploading(false);
@@ -622,22 +622,22 @@ export default function ManageSKUsPage() {
         PageSize: 1000,
         IsCountRequired: true,
         FilterCriterias: [], // Empty like working version
-        SortCriterias: [],
+        SortCriterias: []
       };
 
       console.log("Fetching ALL SKU images from database...");
       const response = await fetch(
         `${
-          process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
         }/FileSys/SelectAllFileSysDetails`,
         {
           method: "POST",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
             "Content-Type": "application/json",
-            Accept: "application/json",
+            Accept: "application/json"
           },
-          body: JSON.stringify(fileSysRequest),
+          body: JSON.stringify(fileSysRequest)
         }
       );
 
@@ -650,7 +650,7 @@ export default function ManageSKUsPage() {
         IsSuccess: fileSysResult?.IsSuccess,
         DataExists: !!fileSysResult?.Data,
         PagedDataExists: !!fileSysResult?.Data?.PagedData,
-        PagedDataLength: fileSysResult?.Data?.PagedData?.length || 0,
+        PagedDataLength: fileSysResult?.Data?.PagedData?.length || 0
       });
 
       const allFileSysRecords = fileSysResult?.Data?.PagedData || [];
@@ -693,7 +693,7 @@ export default function ManageSKUsPage() {
         return {
           sku: sku,
           images,
-          defaultImage,
+          defaultImage
         };
       });
 
@@ -749,7 +749,7 @@ export default function ManageSKUsPage() {
         title: "Success",
         description: `Product "${
           selectedSKU.SKULongName || selectedSKU.LongName || selectedSKU.Name
-        }" has been deleted successfully.`,
+        }" has been deleted successfully.`
       });
       // Refresh the list
       fetchSKUs();
@@ -757,7 +757,7 @@ export default function ManageSKUsPage() {
       toast({
         title: "Error",
         description: "Failed to delete product. Please try again.",
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setDeleting(false);
@@ -790,7 +790,7 @@ export default function ManageSKUsPage() {
                 if (searchTerm && searchTerm.trim()) {
                   filterCriterias.push({
                     Name: "skucodeandname",
-                    Value: searchTerm.trim(),
+                    Value: searchTerm.trim()
                   });
                 }
 
@@ -798,7 +798,7 @@ export default function ManageSKUsPage() {
                 if (statusFilter.length === 1) {
                   filterCriterias.push({
                     Name: "IsActive",
-                    Value: statusFilter[0] === "Active" ? "true" : "false",
+                    Value: statusFilter[0] === "Active" ? "true" : "false"
                   });
                 }
 
@@ -808,14 +808,14 @@ export default function ManageSKUsPage() {
                   IsCountRequired: true,
                   FilterCriterias: filterCriterias,
                   SortCriterias: [
-                    { SortParameter: "SKUCode", Direction: "Asc" },
-                  ],
+                    { SortParameter: "SKUCode", Direction: "Asc" }
+                  ]
                 };
 
                 const countResponse = await fetch(
                   `${
                     process.env.NEXT_PUBLIC_API_URL ||
-                    "https://multiplex-promotions-api.winitsoftware.com/api"
+                    "http://localhost:8000/api"
                   }/SKU/SelectAllSKUDetailsWebView`,
                   {
                     method: "POST",
@@ -824,9 +824,9 @@ export default function ManageSKUsPage() {
                         "auth_token"
                       )}`,
                       "Content-Type": "application/json",
-                      Accept: "application/json",
+                      Accept: "application/json"
                     },
-                    body: JSON.stringify(countRequestBody),
+                    body: JSON.stringify(countRequestBody)
                   }
                 );
 
@@ -844,7 +844,7 @@ export default function ManageSKUsPage() {
                   toast({
                     title: "No Data",
                     description: "No products found to export.",
-                    variant: "default",
+                    variant: "default"
                   });
                   return;
                 }
@@ -867,14 +867,14 @@ export default function ManageSKUsPage() {
                     IsCountRequired: false, // No need for count in batch requests
                     FilterCriterias: filterCriterias, // Use same filters as count request
                     SortCriterias: [
-                      { SortParameter: "SKUCode", Direction: "Asc" },
-                    ],
+                      { SortParameter: "SKUCode", Direction: "Asc" }
+                    ]
                   };
 
                   const batchResponse = await fetch(
                     `${
                       process.env.NEXT_PUBLIC_API_URL ||
-                      "https://multiplex-promotions-api.winitsoftware.com/api"
+                      "http://localhost:8000/api"
                     }/SKU/SelectAllSKUDetailsWebView`,
                     {
                       method: "POST",
@@ -883,9 +883,9 @@ export default function ManageSKUsPage() {
                           "auth_token"
                         )}`,
                         "Content-Type": "application/json",
-                        Accept: "application/json",
+                        Accept: "application/json"
                       },
-                      body: JSON.stringify(batchRequestBody),
+                      body: JSON.stringify(batchRequestBody)
                     }
                   );
 
@@ -909,7 +909,7 @@ export default function ManageSKUsPage() {
                         SKULongName:
                           sku.SKULongName || sku.LongName || sku.Name,
                         IsActive: sku.IsActive !== false,
-                        ...sku,
+                        ...sku
                       })
                     );
 
@@ -934,7 +934,7 @@ export default function ManageSKUsPage() {
                 const exportData = allSKUData.map((sku) => [
                   sku.SKUCode || sku.Code || "",
                   sku.SKULongName || sku.LongName || sku.Name || "",
-                  sku.IsActive ? "Active" : "Inactive",
+                  sku.IsActive ? "Active" : "Inactive"
                 ]);
 
                 // Create CSV content with headers
@@ -948,12 +948,12 @@ export default function ManageSKUsPage() {
                           : field
                       )
                       .join(",")
-                  ),
+                  )
                 ].join("\n");
 
                 // Create and download the file
                 const blob = new Blob([csvContent], {
-                  type: "text/csv;charset=utf-8;",
+                  type: "text/csv;charset=utf-8;"
                 });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement("a");
@@ -968,14 +968,14 @@ export default function ManageSKUsPage() {
 
                 toast({
                   title: "Export Complete",
-                  description: `${exportData.length} products exported successfully to CSV file.`,
+                  description: `${exportData.length} products exported successfully to CSV file.`
                 });
               } catch (error) {
                 console.error("Export error:", error);
                 toast({
                   title: "Export Failed",
                   description: "Failed to export products. Please try again.",
-                  variant: "destructive",
+                  variant: "destructive"
                 });
               } finally {
                 setExporting(false);
@@ -1258,7 +1258,7 @@ export default function ManageSKUsPage() {
                                           onError={(e) => {
                                             setImageErrorStates((prev) => ({
                                               ...prev,
-                                              [defaultImage.UID]: true,
+                                              [defaultImage.UID]: true
                                             }));
                                           }}
                                         />
@@ -1451,7 +1451,7 @@ export default function ManageSKUsPage() {
                                       onError={(e) => {
                                         setImageErrorStates((prev) => ({
                                           ...prev,
-                                          [defaultImage.UID]: true,
+                                          [defaultImage.UID]: true
                                         }));
                                       }}
                                     />
@@ -1731,7 +1731,7 @@ export default function ManageSKUsPage() {
                     const file = e.dataTransfer.files[0];
                     if (file && file.type.startsWith("image/")) {
                       const event = {
-                        target: { files: [file] },
+                        target: { files: [file] }
                       } as unknown as React.ChangeEvent<HTMLInputElement>;
                       handleFileSelect(event);
                     }

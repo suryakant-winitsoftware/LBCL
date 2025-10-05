@@ -35,7 +35,7 @@ export interface PagedResponseData<T> {
 
 class InitiativeFileService {
   private baseURL =
-    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
   // Helper to generate UUID
   private generateUID(): string {
@@ -130,7 +130,7 @@ class InitiativeFileService {
         {
           method: "POST",
           headers: headers,
-          body: formData,
+          body: formData
         }
       );
 
@@ -215,7 +215,7 @@ class InitiativeFileService {
         FileSysFileType: this.getFileSysFileType(file.type),
 
         // Required for API
-        CreatedByEmpUID: empUID,
+        CreatedByEmpUID: empUID
       };
 
       if (fileType === "EmailAttachment")
@@ -225,7 +225,7 @@ class InitiativeFileService {
         fileType: fileType,
         fileName: truncatedFileName,
         fileSysType: fileSysData.FileSysType,
-        mimeType: fileSysData.FileType,
+        mimeType: fileSysData.FileType
       });
 
       // Add timeout for FileSys creation
@@ -243,10 +243,10 @@ class InitiativeFileService {
           headers: {
             ...getAuthHeaders(),
             "Content-Type": "application/json",
-            Accept: "application/json",
+            Accept: "application/json"
           },
           body: JSON.stringify(fileSysData),
-          signal: controller.signal,
+          signal: controller.signal
         });
         clearTimeout(timeoutId);
       } catch (fetchError: any) {
@@ -265,7 +265,7 @@ class InitiativeFileService {
           status: fileSysResponse.status,
           statusText: fileSysResponse.statusText,
           ok: fileSysResponse.ok,
-          headers: Object.fromEntries(fileSysResponse.headers.entries()),
+          headers: Object.fromEntries(fileSysResponse.headers.entries())
         });
 
       if (!fileSysResponse.ok) {
@@ -307,7 +307,7 @@ class InitiativeFileService {
           isSuccess: fileSysResult.IsSuccess,
           statusCode: fileSysResult.StatusCode,
           data: fileSysResult.Data,
-          errorMessage: fileSysResult.ErrorMessage,
+          errorMessage: fileSysResult.ErrorMessage
         });
       }
 
@@ -324,7 +324,7 @@ class InitiativeFileService {
         console.log(`✅ ${fileType} file saved successfully:`, {
           fileUID: uniqueUID,
           fileName: truncatedFileName,
-          path: relativePath,
+          path: relativePath
         });
       }
 
@@ -332,7 +332,7 @@ class InitiativeFileService {
         success: true,
         fileUID: uniqueUID,
         relativePath: relativePath,
-        message: `${fileType} uploaded successfully`,
+        message: `${fileType} uploaded successfully`
       };
     } catch (error) {
       if (fileType === "EmailAttachment")
@@ -365,12 +365,12 @@ class InitiativeFileService {
         IsCountRequired: true,
         FilterCriterias: [
           { Name: "LinkedItemType", Value: "Initiative" },
-          { Name: "LinkedItemUID", Value: initiativeUID },
+          { Name: "LinkedItemUID", Value: initiativeUID }
         ],
         SortCriterias: [
           { SortParameter: "FileSysType", Direction: "Asc" },
-          { SortParameter: "CreatedTime", Direction: "Desc" },
-        ],
+          { SortParameter: "CreatedTime", Direction: "Desc" }
+        ]
       };
 
       console.log(`🔍 Fetching files for initiative ${initiativeUID}...`);
@@ -382,9 +382,9 @@ class InitiativeFileService {
           method: "POST",
           headers: {
             ...getAuthHeaders(),
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
-          body: JSON.stringify(requestBody),
+          body: JSON.stringify(requestBody)
         }
       );
 
@@ -429,12 +429,12 @@ class InitiativeFileService {
         FilterCriterias: [
           { Name: "LinkedItemType", Value: "Initiative" },
           { Name: "LinkedItemUID", Value: initiativeUID },
-          { Name: "FileType", Value: "image/jpeg" }, // Only get JPEG images
+          { Name: "FileType", Value: "image/jpeg" } // Only get JPEG images
         ],
         SortCriterias: [
           { SortParameter: "FileSysType", Direction: "Asc" },
-          { SortParameter: "CreatedTime", Direction: "Desc" },
-        ],
+          { SortParameter: "CreatedTime", Direction: "Desc" }
+        ]
       };
 
       console.log(`🖼️ Fetching images for initiative ${initiativeUID}...`);
@@ -445,9 +445,9 @@ class InitiativeFileService {
           method: "POST",
           headers: {
             ...getAuthHeaders(),
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
-          body: JSON.stringify(requestBody),
+          body: JSON.stringify(requestBody)
         }
       );
 
@@ -492,9 +492,9 @@ class InitiativeFileService {
         method: "DELETE",
         headers: {
           ...getAuthHeaders(),
-          "Content-Type": "application/json",
+          "Content-Type": "application/json"
         },
-        body: JSON.stringify({ UID: fileUID }),
+        body: JSON.stringify({ UID: fileUID })
       });
 
       if (!response.ok) {
@@ -541,7 +541,7 @@ class InitiativeFileService {
           file.size /
           1024 /
           1024
-        ).toFixed(2)}MB`,
+        ).toFixed(2)}MB`
       };
     }
 
@@ -556,8 +556,8 @@ class InitiativeFileService {
         "application/vnd.ms-excel",
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         "application/zip",
-        "application/x-zip-compressed",
-      ],
+        "application/x-zip-compressed"
+      ]
     };
 
     const allowed = allowedTypes[fileType] || [];
@@ -566,7 +566,7 @@ class InitiativeFileService {
         valid: false,
         error: `Invalid file type. Allowed types for ${fileType}: ${allowed.join(
           ", "
-        )}`,
+        )}`
       };
     }
 

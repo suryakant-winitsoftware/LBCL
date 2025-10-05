@@ -38,6 +38,7 @@ export interface IOrg {
   CountryUid?: string;
   CompanyUid?: string;
   TaxGroupUid?: string;
+  TerritoryUid?: string;
   Status?: string;
   HasEarlyAccess?: boolean;
   IsActive?: boolean;
@@ -54,6 +55,7 @@ export interface IStore {
   Name: string;
   AliasName?: string;
   LegalName?: string;
+  Number?: string;  // Alpha search code
   Type?: string;
   Status?: string;
   IsActive?: boolean;
@@ -67,6 +69,10 @@ export interface IStore {
   CityUid?: string;
   StateUid?: string;
   FranchiseeOrgUid?: string;
+  TaxDocNumber?: string;  // VAT Registration Number
+  IsTaxApplicable?: boolean;
+  TaxType?: string;
+  GSTNo?: string;
   CreatedBy?: string;
   CreatedTime?: Date | string;
   ModifiedBy?: string;
@@ -155,7 +161,7 @@ export interface IAddress {
   CountryCode?: string;
   RegionCode?: string;
   StateCode?: string;
-  TerritoryCode?: string;
+  TerritoryCode?: string;  // Territory assignment
   Phone?: string;
   PhoneExtension?: string;
   Mobile1?: string;
@@ -171,7 +177,14 @@ export interface IAddress {
   IsEditable?: boolean;
   IsDefault?: boolean;
   Info?: string;
-  Depot?: string;
+  Depot?: string;  // Warehouse/Depot code
+  LocationUID?: string;  // Destination location code
+  CustomField1?: string;  // Secondary location code
+  CustomField2?: string;  // Secondary location description
+  CustomField3?: string;  // Secondary address line 1
+  CustomField4?: string;  // Secondary address line 2
+  CustomField5?: string;  // Secondary address line 3
+  CustomField6?: string;  // Secondary address line 4
   CreatedBy?: string;
   CreatedTime?: Date | string;
   ModifiedBy?: string;

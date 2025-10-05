@@ -6,7 +6,7 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -17,12 +17,12 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Popover,
   PopoverContent,
-  PopoverTrigger,
+  PopoverTrigger
 } from "@/components/ui/popover";
 import {
   hierarchyService,
   SKUGroupType,
-  HierarchyOption,
+  HierarchyOption
 } from "@/services/hierarchy.service";
 import { useToast } from "@/components/ui/use-toast";
 import {
@@ -31,7 +31,7 @@ import {
   X,
   CheckSquare,
   Square,
-  Package,
+  Package
 } from "lucide-react";
 import { getAuthHeaders } from "@/lib/auth-service";
 import { cn } from "@/lib/utils";
@@ -145,11 +145,11 @@ export default function ProductHierarchyCascading({
   enableSearch = true,
   enableSKULoading = true,
   showSKUSection = true,
-  gridColumns = { default: 1, md: 2, lg: 3 },
+  gridColumns = { default: 1, md: 2, lg: 3 }
 }: ProductHierarchyCascadingProps) {
   const { toast } = useToast();
   const baseURL =
-    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
   // Core state - Similar to ProductAttributesMultiDropdown
   const [hierarchyTypes, setHierarchyTypes] = useState<SKUGroupType[]>([]);
@@ -227,7 +227,7 @@ export default function ProductHierarchyCascading({
           sortedTypes.map((t) => ({
             name: t.Name,
             level: t.ItemLevel,
-            uid: t.UID,
+            uid: t.UID
           }))
         );
         setHierarchyTypes(sortedTypes);
@@ -245,7 +245,7 @@ export default function ProductHierarchyCascading({
             {
               type: firstLevelType.Name,
               count: firstLevelOptions.length,
-              sample: firstLevelOptions.slice(0, 3),
+              sample: firstLevelOptions.slice(0, 3)
             }
           );
 
@@ -257,7 +257,7 @@ export default function ProductHierarchyCascading({
         toast({
           title: "Initialization Error",
           description: "Failed to load hierarchy configuration",
-          variant: "destructive",
+          variant: "destructive"
         });
       } finally {
         setLoadingInitial(false);
@@ -305,9 +305,9 @@ export default function ProductHierarchyCascading({
         sortCriterias: [
           {
             sortParameter: "Code",
-            direction: "Asc",
-          },
-        ],
+            direction: "Asc"
+          }
+        ]
       };
 
       console.log("Loading SKUs, will filter for:", filterKeys);
@@ -320,9 +320,9 @@ export default function ProductHierarchyCascading({
           headers: {
             ...getAuthHeaders(),
             "Content-Type": "application/json",
-            Accept: "application/json",
+            Accept: "application/json"
           },
-          body: JSON.stringify(requestBody),
+          body: JSON.stringify(requestBody)
         }
       );
 
@@ -410,7 +410,7 @@ export default function ProductHierarchyCascading({
               sku.IsThirdParty !== undefined
                 ? sku.IsThirdParty
                 : sku.isThirdParty,
-            SupplierOrgUID: sku.SupplierOrgUID || sku.supplierOrgUID,
+            SupplierOrgUID: sku.SupplierOrgUID || sku.supplierOrgUID
           }));
 
           // Additional filter by ParentUID if needed
@@ -439,7 +439,7 @@ export default function ProductHierarchyCascading({
       toast({
         title: "Error",
         description: "Failed to load products. Please check your selection.",
-        variant: "destructive",
+        variant: "destructive"
       });
       setSKUProducts([]);
     } finally {
@@ -473,7 +473,7 @@ export default function ProductHierarchyCascading({
     console.log("[ProductHierarchyCascading] loadChildOptions called:", {
       parentCodes: Array.from(parentCodes),
       childLevel,
-      hierarchyTypesLength: hierarchyTypes.length,
+      hierarchyTypesLength: hierarchyTypes.length
     });
 
     if (childLevel >= hierarchyTypes.length) {
@@ -530,12 +530,12 @@ export default function ProductHierarchyCascading({
             code: group.Code,
             value: group.Name,
             type: childType.Name,
-            parentCode: parentCode,
+            parentCode: parentCode
           }));
 
           setOptionsCache((prev) => ({
             ...prev,
-            [cacheKey]: childOptions,
+            [cacheKey]: childOptions
           }));
 
           allChildOptions.push(...childOptions);
@@ -549,13 +549,13 @@ export default function ProductHierarchyCascading({
       console.log("[ProductHierarchyCascading] Setting options:", {
         key: `${childType.Name}_combined`,
         count: uniqueOptions.length,
-        options: uniqueOptions.slice(0, 3),
+        options: uniqueOptions.slice(0, 3)
       });
 
       setHierarchyOptions((prev) => {
         const newOptions = {
           ...prev,
-          [`${childType.Name}_combined`]: uniqueOptions,
+          [`${childType.Name}_combined`]: uniqueOptions
         };
         console.log(
           "[ProductHierarchyCascading] HierarchyOptions after update:",
@@ -570,7 +570,7 @@ export default function ProductHierarchyCascading({
       if (childType) {
         setHierarchyOptions((prev) => ({
           ...prev,
-          [`${childType.Name}_combined`]: [],
+          [`${childType.Name}_combined`]: []
         }));
       }
     } finally {
@@ -595,7 +595,7 @@ export default function ProductHierarchyCascading({
       levelIndex,
       level,
       checked,
-      levelType: levelType?.Name,
+      levelType: levelType?.Name
     });
 
     const newSelections = new Map(selectedItems);
@@ -609,7 +609,7 @@ export default function ProductHierarchyCascading({
         value: item.value,
         uid: item.code,
         parentCode: item.parentCode,
-        fieldName: generateFieldName(level),
+        fieldName: generateFieldName(level)
       };
       newSelections.set(itemKey, selectedItem);
 
@@ -624,7 +624,7 @@ export default function ProductHierarchyCascading({
           {
             currentLevel: level,
             nextLevelIndex: levelIndex + 1,
-            parentCodes: Array.from(newLevelSelections[level] || []),
+            parentCodes: Array.from(newLevelSelections[level] || [])
           }
         );
         await loadChildOptions(newLevelSelections[level], levelIndex + 1);
@@ -754,7 +754,7 @@ export default function ProductHierarchyCascading({
           code: item.code,
           value: item.value,
           type: item.levelName,
-          parentCode: item.parentCode,
+          parentCode: item.parentCode
         },
         levelIndex,
         false
@@ -784,7 +784,7 @@ export default function ProductHierarchyCascading({
         {
           levelIndex,
           key: levelType.Name,
-          count: options.length,
+          count: options.length
         }
       );
       return options;
@@ -798,7 +798,7 @@ export default function ProductHierarchyCascading({
         levelIndex,
         key,
         count: options.length,
-        availableKeys: Object.keys(hierarchyOptions),
+        availableKeys: Object.keys(hierarchyOptions)
       }
     );
     return options;
@@ -820,8 +820,8 @@ export default function ProductHierarchyCascading({
       shouldShow,
       levelSelections: Object.keys(levelSelections).map((k) => ({
         level: k,
-        count: levelSelections[k]?.size || 0,
-      })),
+        count: levelSelections[k]?.size || 0
+      }))
     });
 
     return shouldShow;
@@ -892,7 +892,7 @@ export default function ProductHierarchyCascading({
       optionsCount: options.length,
       filteredCount: filteredOptions.length,
       selectedCount,
-      shouldShow: shouldShowLevel(levelIndex),
+      shouldShow: shouldShowLevel(levelIndex)
     });
 
     if (!shouldShowLevel(levelIndex)) {
@@ -929,7 +929,7 @@ export default function ProductHierarchyCascading({
                     disabled,
                     shouldShowPrevLevel:
                       levelIndex > 0 ? shouldShowLevel(levelIndex - 1) : "N/A",
-                    isDisabled,
+                    isDisabled
                   }
                 );
                 return isDisabled;
@@ -959,7 +959,7 @@ export default function ProductHierarchyCascading({
                   onClick={() =>
                     setOpenDropdowns((prev) => ({
                       ...prev,
-                      [levelIndex]: false,
+                      [levelIndex]: false
                     }))
                   }
                   className="h-6 w-6 p-0"
@@ -978,7 +978,7 @@ export default function ProductHierarchyCascading({
                     onChange={(e) =>
                       setSearchTerms((prev) => ({
                         ...prev,
-                        [levelIndex]: e.target.value,
+                        [levelIndex]: e.target.value
                       }))
                     }
                     className="pl-7 h-7 text-sm"

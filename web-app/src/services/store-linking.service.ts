@@ -5,7 +5,7 @@ import { PagingRequest } from "@/types/common.types";
 // Service for Store-SKU Linking functionality
 // Handles API calls for linking SKUs to stores through various methods
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
 export interface SKUConfig {
   UID: string;
@@ -163,16 +163,16 @@ class StoreLinkingService {
         FilterCriterias: searchTerm
           ? [{ Name: "Name", Value: searchTerm }]
           : [],
-        SortCriterias: [{ SortParameter: "Name", Direction: "Asc" }],
+        SortCriterias: [{ SortParameter: "Name", Direction: "Asc" }]
       };
 
       const response = await fetch(`${BASE_URL}/SKU/GetAllSKUMasterData`, {
         method: "POST",
         headers: {
           ...getAuthHeaders(),
-          "Content-Type": "application/json",
+          "Content-Type": "application/json"
         },
-        body: JSON.stringify(request),
+        body: JSON.stringify(request)
       });
 
       if (!response.ok) {
@@ -210,14 +210,14 @@ class StoreLinkingService {
             IsActive: skuObject.IsActive !== false,
             L1: skuObject.L1,
             L2: skuObject.L2,
-            L3: skuObject.L3,
+            L3: skuObject.L3
           };
         });
 
         return {
           data: mappedSKUs,
           totalCount,
-          hasMore: page * pageSize < totalCount,
+          hasMore: page * pageSize < totalCount
         };
       }
 
@@ -250,7 +250,7 @@ class StoreLinkingService {
         FilterCriterias: searchTerm
           ? [{ Name: "skucodeandname", Value: searchTerm }]
           : [],
-        SortCriterias: [{ SortParameter: "SKUCode", Direction: "Asc" }],
+        SortCriterias: [{ SortParameter: "SKUCode", Direction: "Asc" }]
       };
 
       const response = await skuService.getAllSKUs(request);
@@ -289,13 +289,13 @@ class StoreLinkingService {
           IsActive: sku.IsActive,
           L1: sku.L1,
           L2: sku.L2,
-          L3: sku.L3,
+          L3: sku.L3
         }));
 
         return {
           data: mappedSKUs,
           totalCount,
-          hasMore: page * pageSize < totalCount,
+          hasMore: page * pageSize < totalCount
         };
       }
 
@@ -351,15 +351,15 @@ class StoreLinkingService {
           method: "POST",
           headers: {
             ...headers,
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
           body: JSON.stringify({
             PageNumber: 1,
             PageSize: 1000,
             IsCountRequired: true,
             FilterCriterias: [],
-            SortCriterias: [{ SortParameter: "Name", Direction: "Asc" }],
-          }),
+            SortCriterias: [{ SortParameter: "Name", Direction: "Asc" }]
+          })
         }
       );
 
@@ -393,7 +393,7 @@ class StoreLinkingService {
           IsActive: priceList.IsActive,
           Status: priceList.Status,
           ValidFrom: priceList.ValidFrom,
-          ValidUpto: priceList.ValidUpto,
+          ValidUpto: priceList.ValidUpto
         }));
         console.log(
           `[PRICE_LIST] Successfully loaded ${priceLists.length} price lists`
@@ -424,15 +424,15 @@ class StoreLinkingService {
           method: "POST",
           headers: {
             ...headers,
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
           body: JSON.stringify({
             PageNumber: 1,
             PageSize: 1000,
             IsCountRequired: true,
             FilterCriterias: [],
-            SortCriterias: [],
-          }),
+            SortCriterias: []
+          })
         }
       );
 
@@ -459,7 +459,7 @@ class StoreLinkingService {
           OrgUID: group.OrgUID,
           IsActive: group.IsActive,
           SKUClassUID: group.SKUClassUID,
-          DistributionChannelUID: group.DistributionChannelUID,
+          DistributionChannelUID: group.DistributionChannelUID
         }));
         console.log(
           `[SKU_CLASS] Successfully loaded ${groups.length} SKU Class Groups`
@@ -489,15 +489,15 @@ class StoreLinkingService {
           method: "POST",
           headers: {
             ...getAuthHeaders(),
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
           body: JSON.stringify({
             PageNumber: page,
             PageSize: pageSize,
             IsCountRequired: true,
             FilterCriterias: [],
-            SortCriterias: [],
-          }),
+            SortCriterias: []
+          })
         }
       );
 
@@ -506,7 +506,7 @@ class StoreLinkingService {
       if (result.IsSuccess && result.Data?.PagedData) {
         return {
           data: result.Data.PagedData,
-          totalCount: result.Data.TotalCount || 0,
+          totalCount: result.Data.TotalCount || 0
         };
       }
 
@@ -527,9 +527,9 @@ class StoreLinkingService {
         method: "POST",
         headers: {
           ...getAuthHeaders(),
-          "Content-Type": "application/json",
+          "Content-Type": "application/json"
         },
-        body: JSON.stringify(config),
+        body: JSON.stringify(config)
       });
 
       const result = await response.json();
@@ -564,21 +564,21 @@ class StoreLinkingService {
               {
                 Name: "Name",
                 Value: searchTerm,
-                FilterType: "Contains",
-              },
+                FilterType: "Contains"
+              }
             ]
           : [],
         SortCriterias: [{ SortParameter: "Name", Direction: "Asc" }],
-        IsCountRequired: true,
+        IsCountRequired: true
       };
 
       const response = await fetch(`${BASE_URL}/Store/SelectAllStore`, {
         method: "POST",
         headers: {
           ...getAuthHeaders(),
-          "Content-Type": "application/json",
+          "Content-Type": "application/json"
         },
-        body: JSON.stringify(request),
+        body: JSON.stringify(request)
       });
 
       if (!response.ok) {
@@ -587,7 +587,7 @@ class StoreLinkingService {
         return {
           data: fallbackStores,
           totalCount: fallbackStores.length,
-          hasMore: false,
+          hasMore: false
         };
       }
 
@@ -611,13 +611,13 @@ class StoreLinkingService {
           name: store.Name || store.name,
           code: store.Code || store.code,
           type: store.Type || store.type,
-          is_active: store.IsActive !== false,
+          is_active: store.IsActive !== false
         }));
 
         return {
           data: mappedStores,
           totalCount,
-          hasMore: page * pageSize < totalCount,
+          hasMore: page * pageSize < totalCount
         };
       }
 
@@ -629,7 +629,7 @@ class StoreLinkingService {
       return {
         data: fallbackStores,
         totalCount: fallbackStores.length,
-        hasMore: false,
+        hasMore: false
       };
     }
   }
@@ -679,7 +679,7 @@ class StoreLinkingService {
         "S2274",
         "STR_480517_65O7VK1",
         "DUMMYS537",
-        "DUMMYS1653",
+        "DUMMYS1653"
       ];
 
       const stores: StoreMapping[] = [];
@@ -692,8 +692,8 @@ class StoreLinkingService {
             {
               method: "GET",
               headers: {
-                ...getAuthHeaders(),
-              },
+                ...getAuthHeaders()
+              }
             }
           );
 
@@ -705,7 +705,7 @@ class StoreLinkingService {
               name: result.Data.Name,
               code: result.Data.Code,
               type: result.Data.Type,
-              is_active: result.Data.IsActive,
+              is_active: result.Data.IsActive
             });
           }
         } catch (error) {
@@ -747,7 +747,7 @@ class StoreLinkingService {
           uid: mappingUID,
           franchiseeOrgUID: mapping.franchiseeOrgUID,
           soldToStoreUID: storeUID,
-          skuClassGroupUID: mapping.classGroupUID,
+          skuClassGroupUID: mapping.classGroupUID
         };
 
         // Placeholder for API call - this endpoint needs to be created
@@ -786,15 +786,15 @@ class StoreLinkingService {
             method: "POST",
             headers: {
               ...getAuthHeaders(),
-              "Content-Type": "application/json",
+              "Content-Type": "application/json"
             },
             body: JSON.stringify({
               PageNumber: 1,
               PageSize: 1000,
               IsCountRequired: true,
               FilterCriterias: [],
-              SortCriterias: [],
-            }),
+              SortCriterias: []
+            })
           }
         );
 
@@ -820,8 +820,7 @@ class StoreLinkingService {
                     link_type: "direct",
                     is_active: config.IsActive,
                     created_by: config.CreatedBy,
-                    created_time:
-                      config.CreatedTime || new Date().toISOString(),
+                    created_time: config.CreatedTime || new Date().toISOString()
                   });
                 }
               } catch (error) {
@@ -849,8 +848,8 @@ class StoreLinkingService {
             link_type: "group",
             is_active: true,
             created_by: "ADMIN",
-            created_time: "2025-08-26T12:00:00Z",
-          },
+            created_time: "2025-08-26T12:00:00Z"
+          }
         ];
       }
 
@@ -873,8 +872,8 @@ class StoreLinkingService {
         {
           method: "GET",
           headers: {
-            ...getAuthHeaders(),
-          },
+            ...getAuthHeaders()
+          }
         }
       );
 
@@ -886,7 +885,7 @@ class StoreLinkingService {
           name: result.Data.Name,
           code: result.Data.Code,
           type: result.Data.Type,
-          is_active: result.Data.IsActive,
+          is_active: result.Data.IsActive
         };
       }
     } catch (error) {
@@ -924,12 +923,12 @@ class StoreLinkingService {
           method: "POST",
           headers: {
             ...getAuthHeaders(),
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
           body: JSON.stringify({
             LinkedItemType: itemType,
-            StoreUIDs: storeUIDs,
-          }),
+            StoreUIDs: storeUIDs
+          })
         }
       );
 
@@ -961,8 +960,8 @@ class StoreLinkingService {
         {
           method: "DELETE",
           headers: {
-            ...getAuthHeaders(),
-          },
+            ...getAuthHeaders()
+          }
         }
       );
 
@@ -989,9 +988,9 @@ class StoreLinkingService {
         method: "PUT",
         headers: {
           ...getAuthHeaders(),
-          "Content-Type": "application/json",
+          "Content-Type": "application/json"
         },
-        body: JSON.stringify(config),
+        body: JSON.stringify(config)
       });
 
       const result = await response.json();
@@ -1020,9 +1019,9 @@ class StoreLinkingService {
           method: "POST",
           headers: {
             ...getAuthHeaders(),
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
-          body: JSON.stringify(data),
+          body: JSON.stringify(data)
         }
       );
 
@@ -1048,17 +1047,15 @@ class StoreLinkingService {
    * Get Selection Map Master by Linked Item UID
    * Retrieves the complete mapping configuration for a specific item
    */
-  async getSelectionMapMaster(
-    uid: string
-  ): Promise<SelectionMapMaster | null> {
+  async getSelectionMapMaster(uid: string): Promise<SelectionMapMaster | null> {
     try {
       const response = await fetch(
         `${BASE_URL}/Mapping/GetSelectionMapMaster?uid=${uid}`,
         {
           method: "GET",
           headers: {
-            ...getAuthHeaders(),
-          },
+            ...getAuthHeaders()
+          }
         }
       );
 
@@ -1092,7 +1089,7 @@ class StoreLinkingService {
           selectionMapCriteria:
             data.SelectionMapCriteria || data.selectionMapCriteria,
           selectionMapDetails:
-            data.SelectionMapDetails || data.selectionMapDetails,
+            data.SelectionMapDetails || data.selectionMapDetails
         };
       }
 
@@ -1112,8 +1109,8 @@ class StoreLinkingService {
         {
           method: "GET",
           headers: {
-            ...getAuthHeaders(),
-          },
+            ...getAuthHeaders()
+          }
         }
       );
 
@@ -1147,7 +1144,7 @@ class StoreLinkingService {
           selectionMapCriteria:
             data.SelectionMapCriteria || data.selectionMapCriteria,
           selectionMapDetails:
-            data.SelectionMapDetails || data.selectionMapDetails,
+            data.SelectionMapDetails || data.selectionMapDetails
         };
       }
 
@@ -1171,8 +1168,8 @@ class StoreLinkingService {
         {
           method: "GET",
           headers: {
-            ...getAuthHeaders(),
-          },
+            ...getAuthHeaders()
+          }
         }
       );
 
@@ -1193,7 +1190,8 @@ class StoreLinkingService {
 
       if (result.IsSuccess && result.Data) {
         const data = result.Data;
-        const details = data.SelectionMapDetails || data.selectionMapDetails || [];
+        const details =
+          data.SelectionMapDetails || data.selectionMapDetails || [];
         return details;
       }
 
@@ -1219,15 +1217,15 @@ class StoreLinkingService {
           method: "POST",
           headers: {
             ...getAuthHeaders(),
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
           body: JSON.stringify({
             PageNumber: 0,
             PageSize: 0,
             IsCountRequired: true,
             FilterCriterias: [],
-            SortCriterias: [],
-          }),
+            SortCriterias: []
+          })
         }
       );
 
@@ -1268,7 +1266,7 @@ class StoreLinkingService {
             modifiedTime: item.ModifiedTime || item.modifiedTime,
             serverAddTime: item.ServerAddTime || item.serverAddTime,
             serverModifiedTime:
-              item.ServerModifiedTime || item.serverModifiedTime,
+              item.ServerModifiedTime || item.serverModifiedTime
           };
 
           return mappedItem;
@@ -1276,7 +1274,7 @@ class StoreLinkingService {
 
         return {
           pagedData,
-          totalCount: result.Data.TotalCount || 0,
+          totalCount: result.Data.TotalCount || 0
         };
       }
 
@@ -1298,15 +1296,15 @@ class StoreLinkingService {
           method: "POST",
           headers: {
             ...getAuthHeaders(),
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
           body: JSON.stringify({
             PageNumber: 1,
             PageSize: 1000,
             IsCountRequired: false,
             FilterCriterias: [],
-            SortCriterias: [],
-          }),
+            SortCriterias: []
+          })
         }
       );
 
@@ -1352,8 +1350,8 @@ class StoreLinkingService {
       const response = await fetch(`${BASE_URL}/Org/GetAllOrg`, {
         method: "GET",
         headers: {
-          ...getAuthHeaders(),
-        },
+          ...getAuthHeaders()
+        }
       });
 
       const result = await response.json();
@@ -1393,12 +1391,12 @@ class StoreLinkingService {
           method: "POST",
           headers: {
             ...getAuthHeaders(),
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
           body: JSON.stringify({
             LinkedItemType: linkedItemType,
-            StoreUIDs: storeUIDs,
-          }),
+            StoreUIDs: storeUIDs
+          })
         }
       );
 

@@ -2,13 +2,26 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Package, ClipboardList, ArrowLeftRight, BarChart3, ArrowRight } from 'lucide-react'
+import { Package, ClipboardList, ArrowLeftRight, BarChart3, ArrowRight, Warehouse } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 export default function WarehouseManagementPage() {
   const router = useRouter()
 
   const modules = [
+    {
+      title: 'Warehouses',
+      description: 'Manage warehouse locations, details, and configurations',
+      icon: Warehouse,
+      color: 'indigo',
+      path: '/administration/warehouse-management/warehouses',
+      features: [
+        'Create and manage warehouses',
+        'Update warehouse details',
+        'View warehouse locations',
+        'Export warehouse data'
+      ]
+    },
     {
       title: 'Stock Requests',
       description: 'Manage warehouse stock requests, load/unload operations, and transfers',
@@ -66,6 +79,7 @@ export default function WarehouseManagementPage() {
   ]
 
   const colorClasses: Record<string, { bg: string; text: string; border: string }> = {
+    indigo: { bg: 'bg-indigo-100', text: 'text-indigo-600', border: 'border-indigo-200' },
     blue: { bg: 'bg-blue-100', text: 'text-blue-600', border: 'border-blue-200' },
     green: { bg: 'bg-green-100', text: 'text-green-600', border: 'border-green-200' },
     purple: { bg: 'bg-purple-100', text: 'text-purple-600', border: 'border-purple-200' },

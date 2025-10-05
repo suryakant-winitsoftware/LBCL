@@ -39,7 +39,7 @@ export enum FileType {
   Image = 1,
   Pdf = 2,
   Doc = 3,
-  Video = 4,
+  Video = 4
 }
 
 export interface SKUWithImages {
@@ -82,7 +82,7 @@ export interface PagedResponseData<T> {
 
 class SKUImagesService {
   private baseURL =
-    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
   // Get all images for specific SKUs
   async getSKUImages(skuUIDs: string[]): Promise<FileSys[]> {
@@ -94,12 +94,12 @@ class SKUImagesService {
         FilterCriterias: [
           { Name: "LinkedItemType", Value: "SKU" },
           { Name: "FileSysType", Value: "Image" },
-          { Name: "LinkedItemUID", Value: skuUIDs.join(",") },
+          { Name: "LinkedItemUID", Value: skuUIDs.join(",") }
         ],
         SortCriterias: [
           { SortParameter: "IsDefault", Direction: "Desc" },
-          { SortParameter: "DisplayName", Direction: "Asc" },
-        ],
+          { SortParameter: "DisplayName", Direction: "Asc" }
+        ]
       };
 
       const response = await fetch(
@@ -109,9 +109,9 @@ class SKUImagesService {
           headers: {
             ...getAuthHeaders(),
             "Content-Type": "application/json",
-            Accept: "application/json",
+            Accept: "application/json"
           },
-          body: JSON.stringify(requestBody),
+          body: JSON.stringify(requestBody)
         }
       );
 
@@ -160,7 +160,7 @@ class SKUImagesService {
           FilterCriterias: searchTerm
             ? [{ Name: "skucodeandname", Value: searchTerm }]
             : [],
-          SortCriterias: [], // Remove problematic sort
+          SortCriterias: [] // Remove problematic sort
         };
 
         const skuResponse = await fetch(
@@ -170,9 +170,9 @@ class SKUImagesService {
             headers: {
               ...getAuthHeaders(),
               "Content-Type": "application/json",
-              Accept: "application/json",
+              Accept: "application/json"
             },
-            body: JSON.stringify(skuRequest),
+            body: JSON.stringify(skuRequest)
           }
         );
 
@@ -212,10 +212,10 @@ class SKUImagesService {
           ? [
               { Name: "LinkedItemType", Value: "SKU" },
               { Name: "FileSysType", Value: "Image" },
-              { Name: "LinkedItemUID", Value: skuUIDsFilter },
+              { Name: "LinkedItemUID", Value: skuUIDsFilter }
             ]
           : [],
-        SortCriterias: [],
+        SortCriterias: []
       };
 
       const fileSysResponse = await fetch(
@@ -225,9 +225,9 @@ class SKUImagesService {
           headers: {
             ...getAuthHeaders(),
             "Content-Type": "application/json",
-            Accept: "application/json",
+            Accept: "application/json"
           },
-          body: JSON.stringify(fileSysRequest),
+          body: JSON.stringify(fileSysRequest)
         }
       );
 
@@ -279,7 +279,7 @@ class SKUImagesService {
           SKUCode: skuUID,
           Code: skuUID,
           SKULongName: `Product ${skuUID}`,
-          Name: `Product ${skuUID}`,
+          Name: `Product ${skuUID}`
         }));
       }
 
@@ -293,7 +293,7 @@ class SKUImagesService {
         return {
           sku: sku,
           images,
-          defaultImage,
+          defaultImage
         };
       });
 
@@ -332,7 +332,7 @@ class SKUImagesService {
 
       return {
         skusWithImages: finalSKUsWithImages,
-        totalCount: finalTotalCount || finalSKUsWithImages.length,
+        totalCount: finalTotalCount || finalSKUsWithImages.length
       };
     } catch (error) {
       console.error("Error fetching SKUs with images:", error);
@@ -383,7 +383,7 @@ class SKUImagesService {
           method: "POST",
           headers: headers,
           // Don't set Content-Type - let browser set it with boundary for multipart/form-data
-          body: formData,
+          body: formData
         }
       );
 
@@ -447,7 +447,7 @@ class SKUImagesService {
         IsDirectory: false,
         RelativePath: relativePath, // Set the path to the uploaded file
         FileSysFileType: 1, // 1 for Image
-        CreatedByEmpUID: empUID,
+        CreatedByEmpUID: empUID
       };
 
       console.log("Step 2: Creating file_sys record with path:", relativePath);
@@ -457,9 +457,9 @@ class SKUImagesService {
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify(fileSysData),
+        body: JSON.stringify(fileSysData)
       });
 
       if (!response.ok) {
@@ -513,9 +513,9 @@ class SKUImagesService {
           headers: {
             ...getAuthHeaders(),
             "Content-Type": "application/json",
-            Accept: "application/json",
+            Accept: "application/json"
           },
-          body: JSON.stringify(skuImages),
+          body: JSON.stringify(skuImages)
         }
       );
 
@@ -541,8 +541,8 @@ class SKUImagesService {
           headers: {
             ...getAuthHeaders(),
             "Content-Type": "application/json",
-            Accept: "application/json",
-          },
+            Accept: "application/json"
+          }
         }
       );
 
@@ -649,9 +649,9 @@ class SKUImagesService {
           headers: {
             ...getAuthHeaders(),
             "Content-Type": "application/json",
-            Accept: "application/json",
+            Accept: "application/json"
           },
-          body: JSON.stringify(assignments),
+          body: JSON.stringify(assignments)
         }
       );
 
@@ -676,9 +676,9 @@ class SKUImagesService {
         IsCountRequired: false,
         FilterCriterias: [
           { Name: "AssignedToUserUID", Value: userUID },
-          { Name: "FileSysType", Value: "Image" },
+          { Name: "FileSysType", Value: "Image" }
         ],
-        SortCriterias: [{ SortParameter: "DisplayName", Direction: "Asc" }],
+        SortCriterias: [{ SortParameter: "DisplayName", Direction: "Asc" }]
       };
 
       const response = await fetch(
@@ -688,9 +688,9 @@ class SKUImagesService {
           headers: {
             ...getAuthHeaders(),
             "Content-Type": "application/json",
-            Accept: "application/json",
+            Accept: "application/json"
           },
-          body: JSON.stringify(requestBody),
+          body: JSON.stringify(requestBody)
         }
       );
 

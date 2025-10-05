@@ -32,7 +32,7 @@ const mockAllocations: AllocationMaster[] = [
     startDate: "2024-01-01",
     endDate: "2024-03-31",
     daysLeft: 45,
-    isActive: true,
+    isActive: true
   },
   {
     allocationNo: "ALLOC-2024-002",
@@ -47,8 +47,8 @@ const mockAllocations: AllocationMaster[] = [
     startDate: "2024-02-01",
     endDate: "2024-06-30",
     daysLeft: 120,
-    isActive: true,
-  },
+    isActive: true
+  }
 ];
 
 export interface Initiative {
@@ -133,7 +133,7 @@ export interface ValidationResult {
 }
 
 class InitiativeService {
-  private baseUrl = "https://multiplex-promotions-api.winitsoftware.com/api/Initiative";
+  private baseUrl = "http://localhost:8000/api/Initiative";
 
   // Initiative CRUD operations
   async getInitiativeById(id: number): Promise<Initiative> {
@@ -155,37 +155,37 @@ class InitiativeService {
         // Direct PagedData format from backend
         return {
           pagedData: response.PagedData,
-          totalCount: response.TotalCount || 0,
+          totalCount: response.TotalCount || 0
         };
       } else if (response?.Data?.PagedData) {
         // Standard API response format
         return {
           pagedData: response.Data.PagedData,
-          totalCount: response.Data.TotalCount || 0,
+          totalCount: response.Data.TotalCount || 0
         };
       } else if (response?.data?.PagedData) {
         // Lowercase data property
         return {
           pagedData: response.data.PagedData,
-          totalCount: response.data.TotalCount || 0,
+          totalCount: response.data.TotalCount || 0
         };
       } else if (response?.pagedData) {
         // Direct pagedData format
         return {
           pagedData: response.pagedData,
-          totalCount: response.totalCount || 0,
+          totalCount: response.totalCount || 0
         };
       } else if (Array.isArray(response)) {
         // Direct array response
         return {
           pagedData: response,
-          totalCount: response.length,
+          totalCount: response.length
         };
       } else {
         console.warn("Unexpected initiative search response format:", response);
         return {
           pagedData: [],
-          totalCount: 0,
+          totalCount: 0
         };
       }
     } catch (error: any) {
@@ -309,7 +309,7 @@ class InitiativeService {
         startDate: item.StartDate || item.startDate,
         endDate: item.EndDate || item.endDate,
         daysLeft: item.DaysLeft || item.daysLeft,
-        isActive: item.IsActive !== undefined ? item.IsActive : item.isActive,
+        isActive: item.IsActive !== undefined ? item.IsActive : item.isActive
       }));
     } catch (error: any) {
       if (error?.response?.status === 404 || error?.status === 404) {
@@ -350,7 +350,7 @@ class InitiativeService {
       message: string;
     }>(`${this.baseUrl}/allocations/${allocationNo}/validate`, {
       contractAmount,
-      initiativeId,
+      initiativeId
     });
   }
 
@@ -374,7 +374,7 @@ class InitiativeService {
       fileName: string;
       fileSize: number;
     }>(`${this.baseUrl}/${id}/files/${fileType}`, formData, {
-      "Content-Type": "multipart/form-data",
+      "Content-Type": "multipart/form-data"
     });
   }
 
@@ -395,8 +395,8 @@ class InitiativeService {
     // Note: apiService doesn't support responseType blob, may need custom implementation
     const response = await fetch(`${this.baseUrl}/${id}/files/${fileType}`, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+      }
     });
     return await response.blob();
   }
@@ -408,7 +408,7 @@ class InitiativeService {
   ): Promise<ValidationResult> {
     return await apiService.post<ValidationResult>(`${this.baseUrl}/validate`, {
       ...request,
-      initiativeId,
+      initiativeId
     });
   }
 
@@ -418,7 +418,7 @@ class InitiativeService {
       style: "currency",
       currency: "USD",
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
+      maximumFractionDigits: 0
     }).format(amount);
   }
 

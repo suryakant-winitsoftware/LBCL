@@ -8,7 +8,7 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,7 +21,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from "@/components/ui/select";
 import ProductAttributesMultiDropdown from "@/components/sku/ProductAttributesMultiDropdown";
 import { employeeService } from "@/services/admin/employee.service";
@@ -37,7 +37,7 @@ import {
   X,
   Save,
   RefreshCw,
-  CheckCircle2,
+  CheckCircle2
 } from "lucide-react";
 
 interface SelectionCriteria {
@@ -71,7 +71,7 @@ export function EmployeeProductAttributes() {
       hasEmployee: false,
       hasSalesTeam: true, // Default to sales team
       hasLocation: false,
-      hasOrganization: false,
+      hasOrganization: false
     }
   );
 
@@ -106,7 +106,7 @@ export function EmployeeProductAttributes() {
         pageSize: 1000,
         isCountRequired: true,
         filterCriterias: [],
-        sortCriterias: [],
+        sortCriterias: []
       });
 
       console.log("Employee response:", response);
@@ -119,7 +119,7 @@ export function EmployeeProductAttributes() {
           email: emp.Email || emp.email,
           role: emp.Role || emp.role || emp.UserRole,
           designation: emp.Designation || emp.designation,
-          isActive: emp.IsActive !== false,
+          isActive: emp.IsActive !== false
         }));
 
         console.log(`Loaded ${employeeData.length} employees`);
@@ -129,7 +129,7 @@ export function EmployeeProductAttributes() {
         toast({
           title: "Warning",
           description: "No employees found in the system",
-          variant: "default",
+          variant: "default"
         });
       }
     } catch (error) {
@@ -137,7 +137,7 @@ export function EmployeeProductAttributes() {
       toast({
         title: "Error",
         description: "Failed to load employees. Please try again.",
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setLoading(false);
@@ -157,13 +157,13 @@ export function EmployeeProductAttributes() {
         pageSize: 100,
         isCountRequired: false,
         sortCriterias: [],
-        filterCriterias: [],
+        filterCriterias: []
       });
 
       if (roleData.IsSuccess && roleData.Data?.PagedData) {
         const roles = roleData.Data.PagedData.map((role: any) => ({
           value: role.UID,
-          label: role.RoleNameEn || role.Code || role.Name,
+          label: role.RoleNameEn || role.Code || role.Name
         }));
         setAvailableRoles(roles);
         console.log(
@@ -178,7 +178,7 @@ export function EmployeeProductAttributes() {
       toast({
         title: "Error",
         description: "Failed to load roles. Please try again.",
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setLoadingRoles(false);
@@ -239,7 +239,7 @@ export function EmployeeProductAttributes() {
               email: item.Email || item.email,
               role: roleUID,
               designation: item.Designation || item.designation,
-              isActive: true,
+              isActive: true
             }));
             console.log(
               `✅ Found ${employees.length} employees for org '${effectiveOrgUID}' + role '${roleUID}'`
@@ -258,7 +258,7 @@ export function EmployeeProductAttributes() {
                 email: emp.Email || emp.email,
                 role: roleUID,
                 designation: emp.Designation || emp.designation,
-                isActive: true,
+                isActive: true
               }));
               console.log(`✅ Found ${employees.length} role-based employees`);
             }
@@ -277,10 +277,10 @@ export function EmployeeProductAttributes() {
             filterCriterias: [
               {
                 Name: "RoleUID",
-                Value: roleUID,
-              },
+                Value: roleUID
+              }
             ],
-            sortCriterias: [],
+            sortCriterias: []
           });
 
           if (response && response.pagedData) {
@@ -291,7 +291,7 @@ export function EmployeeProductAttributes() {
               email: emp.Email || emp.email,
               role: emp.Role || emp.role || emp.UserRole,
               designation: emp.Designation || emp.designation,
-              isActive: emp.IsActive !== false,
+              isActive: emp.IsActive !== false
             }));
             console.log(
               `✅ Found ${employees.length} employees using fallback`
@@ -308,7 +308,7 @@ export function EmployeeProductAttributes() {
       toast({
         title: "Error",
         description: "Failed to load team members. Please try again.",
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setLoading(false);
@@ -361,7 +361,7 @@ export function EmployeeProductAttributes() {
       } else {
         // Check if all items at this level have the same parent
         const parentCodes = [
-          ...new Set(currentItems.map((item) => item.parentCode)),
+          ...new Set(currentItems.map((item) => item.parentCode))
         ];
 
         if (parentCodes.length === 1 && parentCodes[0]) {
@@ -432,7 +432,7 @@ export function EmployeeProductAttributes() {
         title: "Missing Product Attributes",
         description:
           "Please select at least one product attribute level from the hierarchy above",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
@@ -442,7 +442,7 @@ export function EmployeeProductAttributes() {
       toast({
         title: "No Role Selected",
         description: "Please select a sales team role from the dropdown",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
@@ -453,7 +453,7 @@ export function EmployeeProductAttributes() {
         title: "No Team Members Selected",
         description:
           "Please select at least one team member from the selected role",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
@@ -500,7 +500,7 @@ export function EmployeeProductAttributes() {
         isActive: true,
         createdTime: currentDateTime,
         modifiedTime: currentDateTime,
-        SS: 0,
+        SS: 0
       };
 
       // Build SelectionMapDetails for each optimized product attribute (items)
@@ -517,14 +517,14 @@ export function EmployeeProductAttributes() {
           isActive: true,
           createdTime: currentDateTime,
           modifiedTime: currentDateTime,
-          SS: 0,
+          SS: 0
         })
       );
 
       // Complete request payload
       const requestPayload = {
         selectionMapCriteria,
-        selectionMapDetails,
+        selectionMapDetails
       };
 
       console.log("Saving user-SKUGroup mapping:", requestPayload);
@@ -537,15 +537,15 @@ export function EmployeeProductAttributes() {
       // Call the SelectionMap API using the correct endpoint from store-linking service
       const response = await fetch(
         `${
-          process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
         }/Mapping/CUDSelectiomMapMaster`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+            Authorization: `Bearer ${localStorage.getItem("auth_token")}`
           },
-          body: JSON.stringify(requestPayload),
+          body: JSON.stringify(requestPayload)
         }
       );
 
@@ -565,7 +565,7 @@ export function EmployeeProductAttributes() {
           // If status is OK but no JSON response, assume success
           toast({
             title: "Success",
-            description: "SKU Groups assigned to sales team successfully",
+            description: "SKU Groups assigned to sales team successfully"
           });
           console.log("Save successful (no JSON response)");
           handleReset();
@@ -593,7 +593,7 @@ export function EmployeeProductAttributes() {
             // If parsing fails but status is OK, assume success
             toast({
               title: "Success",
-              description: "SKU Groups assigned to sales team successfully",
+              description: "SKU Groups assigned to sales team successfully"
             });
             handleReset();
             return;
@@ -605,7 +605,7 @@ export function EmployeeProductAttributes() {
         // Empty response but OK status
         toast({
           title: "Success",
-          description: "SKU Groups assigned to users successfully",
+          description: "SKU Groups assigned to users successfully"
         });
         handleReset();
         return;
@@ -621,7 +621,7 @@ export function EmployeeProductAttributes() {
       if (result && result.IsSuccess) {
         toast({
           title: "Success",
-          description: "SKU Groups assigned to users successfully",
+          description: "SKU Groups assigned to users successfully"
         });
 
         // Log for debugging
@@ -640,7 +640,7 @@ export function EmployeeProductAttributes() {
           error instanceof Error
             ? error.message
             : "Failed to save product attribute assignment",
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setSaving(false);
@@ -654,7 +654,7 @@ export function EmployeeProductAttributes() {
       hasEmployee: false,
       hasSalesTeam: false,
       hasLocation: false,
-      hasOrganization: false,
+      hasOrganization: false
     });
     setSelectedEmployees([]);
     setSelectedRole("");
@@ -802,7 +802,7 @@ export function EmployeeProductAttributes() {
                                 if (checked) {
                                   setSelectedSalesTeams([
                                     ...selectedSalesTeams,
-                                    employee.uid,
+                                    employee.uid
                                   ]);
                                 } else {
                                   setSelectedSalesTeams(

@@ -546,7 +546,7 @@ namespace Winit.Modules.Store.DL.Classes
             try
             {
                 var sql = @"INSERT INTO public.store_additional_info (
-                                    uid, created_by, created_time, modified_by, modified_time, server_add_time, server_modified_time, store_uid, order_type, is_promotions_block, 
+                                    id, uid, created_by, created_time, modified_by, modified_time, server_add_time, server_modified_time, store_uid, order_type, is_promotions_block, 
                                     customer_start_date, customer_end_date, purchase_order_number, delivery_docket_is_purchase_order_required, is_with_printed_invoices, 
                                     is_capture_signature_required, is_always_printed, building_delivery_code, delivery_information, is_stop_delivery, is_forecast_top_up_qty, 
                                     is_temperature_check, invoice_start_date, invoice_end_date, invoice_format, invoice_delivery_method, display_delivery_docket, display_price, 
@@ -563,7 +563,7 @@ namespace Winit.Modules.Store.DL.Classes
                                     week_off_fri, week_off_sat, aging_cycle, depot,default_route_uid,firm_reg_no,company_reg_no,is_mcme,firm_type,
                             acc_soft_name,acc_soft_license_no,acc_soft_version_no,website
                                 )
-                        VALUES (@UID, @CreatedBy, @CreatedTime, @ModifiedBy, @ModifiedTime, @ServerAddTime, 
+                        VALUES (@Id, @UID, @CreatedBy, @CreatedTime, @ModifiedBy, @ModifiedTime, @ServerAddTime, 
                         @ServerModifiedTime, @StoreUID, @OrderType, @IsPromotionsBlock, @CustomerStartDate, @CustomerEndDate, @PurchaseOrderNumber, 
                         @DeliveryDocketIsPurchaseOrderRequired, @IsWithPrintedInvoices, @IsCaptureSignatureRequired, @IsAlwaysPrinted, @BuildingDeliveryCode,
                         @DeliveryInformation, @IsStopDelivery, @IsForeCastTopUpQty, @IsTemperatureCheck, @InvoiceStartDate, @InvoiceEndDate, @InvoiceFormat,
@@ -583,6 +583,7 @@ namespace Winit.Modules.Store.DL.Classes
                         @IsMSME,@FirmType,@AccSoftName,@AccSoftLicenseNo,@AccSoftVersionNo,@WebSite)";
                 Dictionary<string, object> parameters = new Dictionary<string, object>
                 {
+                    {"Id",storeAdditionalInfo.Id},
                     {"UID",storeAdditionalInfo.UID},
                     {"CreatedBy",storeAdditionalInfo.CreatedBy},
                     {"CreatedTime",storeAdditionalInfo.CreatedTime},

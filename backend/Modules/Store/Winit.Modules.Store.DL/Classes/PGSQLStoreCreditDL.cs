@@ -27,14 +27,14 @@ namespace Winit.Modules.Store.DL.Classes
         {
             try
             {
-                var sql = @"INSERT INTO store_credit (uid, created_by, created_time, modified_by, modified_time, 
-                          server_add_time, server_modified_time, store_uid, payment_term_uid, credit_type, credit_limit, 
-                          temporary_credit, org_uid, distribution_channel_uid, preferred_payment_mode, is_active, is_blocked, 
-                          blocking_reason_code, blocking_reason_description, price_list, authorized_item_grp_key, message_key, 
+                var sql = @"INSERT INTO store_credit (id, uid, created_by, created_time, modified_by, modified_time,
+                          server_add_time, server_modified_time, store_uid, payment_term_uid, credit_type, credit_limit,
+                          temporary_credit, org_uid, distribution_channel_uid, preferred_payment_mode, is_active, is_blocked,
+                          blocking_reason_code, blocking_reason_description, price_list, authorized_item_grp_key, message_key,
                           tax_key_field, promotion_key, disabled, bill_to_address_uid, ship_to_address_uid, outstanding_invoices,
                           preferred_payment_method, payment_type, invoice_admin_fee_per_billing_cycle, invoice_admin_fee_per_delivery,
                           invoice_late_payment_fee, is_cancellation_of_invoice_allowed, is_allow_cash_on_credit_exceed, is_outstanding_bill_control,
-                          is_negative_invoice_allowed) VALUES (@UID, @CreatedBy, @CreatedTime, @ModifiedBy, @ModifiedTime, @ServerAddTime, 
+                          is_negative_invoice_allowed) VALUES (@Id, @UID, @CreatedBy, @CreatedTime, @ModifiedBy, @ModifiedTime, @ServerAddTime, 
                             @ServerModifiedTime, @StoreUID, @PaymentTermUID, @CreditType, @CreditLimit, @TemporaryCredit, @OrgUID, @DistributionChannelUID, 
                             @PreferredPaymentMode, @IsActive, @IsBlocked, @BlockingReasonCode, @BlockingReasonDescription, @PriceList, @AuthorizedItemGRPKey,
                             @MessageKey, @TaxKeyField, @PromotionKey, @Disabled, @BillToAddressUID, @ShipToAddressUID, @OutstandingInvoices, 
@@ -42,6 +42,7 @@ namespace Winit.Modules.Store.DL.Classes
                             @IsCancellationOfInvoiceAllowed, @IsAllowCashOnCreditExceed, @IsOutstandingBillControl, @IsNegativeInvoiceAllowed)";
                 Dictionary<string, object> parameters = new Dictionary<string, object>
                                             {
+                            { "@Id", storeCredit.Id },
                             { "@UID", storeCredit.UID },
                             { "@CreatedBy", storeCredit.CreatedBy },
                             { "@CreatedTime", storeCredit.CreatedTime },

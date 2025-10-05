@@ -227,20 +227,20 @@ namespace Winit.Modules.Store.DL.Classes
             try
             {
                 var sql =
-                    @"INSERT INTO store (UID, created_by, created_time, modified_by, modified_time, server_add_time, 
-                   server_modified_time, company_UID, code, number, name, alias_name, legal_name, type, 
-                   bill_to_store_UID, ship_to_store_UID, sold_to_store_UID, status, is_active, store_class, store_rating, 
-                   is_blocked, blocked_reason_code, blocked_reason_description, created_by_emp_UID, created_by_job_position_UID, 
-                   country_UID, region_UID, city_UID, source, outlet_name, blocked_by_emp_UID, arabic_name, is_tax_applicable, 
+                    @"INSERT INTO store (id, UID, created_by, created_time, modified_by, modified_time, server_add_time,
+                   server_modified_time, company_UID, code, number, name, alias_name, legal_name, type,
+                   bill_to_store_UID, ship_to_store_UID, sold_to_store_UID, status, is_active, store_class, store_rating,
+                   is_blocked, blocked_reason_code, blocked_reason_description, created_by_emp_UID, created_by_job_position_UID,
+                   country_UID, region_UID, city_UID, source, outlet_name, blocked_by_emp_UID, arabic_name, is_tax_applicable,
                    tax_doc_number, school_warehouse, day_type, special_day, is_tax_doc_verified, store_size, prospect_emp_UID,
-                   tax_key_field, store_image, is_vat_qr_capture_mandatory, tax_type, franchisee_org_UID, state_UID, route_type, price_type,location_uid, 
-                    broad_classification,classfication_type, reporting_emp_uid, is_asm_mapped_by_customer,is_available_to_use) 
-                   VALUES 
-                   (@UID, @CreatedBy, @CreatedTime, @ModifiedBy, @ModifiedTime, @ServerAddTime,@ServerModifiedTime, @CompanyUID, @Code, 
-                   @Code, @Name, @AliasName, @LegalName, @Type, @BillToStoreUID, @ShipToStoreUID, @SoldToStoreUID, @Status, @IsActive, 
+                   tax_key_field, store_image, is_vat_qr_capture_mandatory, tax_type, franchisee_org_UID, state_UID, route_type, price_type,location_uid,
+                    broad_classification,classfication_type, reporting_emp_uid, is_asm_mapped_by_customer,is_available_to_use)
+                   VALUES
+                   (@Id, @UID, @CreatedBy, @CreatedTime, @ModifiedBy, @ModifiedTime, @ServerAddTime,@ServerModifiedTime, @CompanyUID, @Code,
+                   @Code, @Name, @AliasName, @LegalName, @Type, @BillToStoreUID, @ShipToStoreUID, @SoldToStoreUID, @Status, @IsActive,
                    @StoreClass, @StoreRating, @IsBlocked, @BlockedReasonCode, @BlockedReasonDescription, @CreatedByEmpUID, @CreatedByJobPositionUID,
-                   @CountryUID, @RegionUID, @CityUID, @Source, @OutletName, @BlockedByEmpUID, @ArabicName, @IsTaxApplicable, @TaxDocNumber, 
-                   @SchoolWarehouse, @DayType, @SpecialDay, @IsTaxDocVerified, @StoreSize, @ProspectEmpUID,@TaxKeyField, @StoreImage, 
+                   @CountryUID, @RegionUID, @CityUID, @Source, @OutletName, @BlockedByEmpUID, @ArabicName, @IsTaxApplicable, @TaxDocNumber,
+                   @SchoolWarehouse, @DayType, @SpecialDay, @IsTaxDocVerified, @StoreSize, @ProspectEmpUID,@TaxKeyField, @StoreImage,
                    @IsVATQRCaptureMandatory, @TaxType,@FranchiseeOrgUID,@StateUID,@RouteType,@PriceType,@LocationUID,@BroadClassification,@ClassficationType,
                     @ReportingEmpUID, @IsAsmMappedByCustomer,@IsAvailableToUse)";
 

@@ -110,6 +110,8 @@
     <ProjectReference Include="..\Modules\ListHeader\Winit.Modules.ListHeader.Model\Winit.Modules.ListHeader.Model.csproj" />
     <ProjectReference Include="..\Modules\Location\Winit.Modules.Location.BL\Winit.Modules.Location.BL.csproj" />
     <ProjectReference Include="..\Modules\Location\Winit.Modules.Location.Model\Winit.Modules.Location.Model.csproj" />
+    <ProjectReference Include="..\Modules\Territory\Winit.Modules.Territory.BL\Winit.Modules.Territory.BL.csproj" />
+    <ProjectReference Include="..\Modules\Territory\Winit.Modules.Territory.Model\Winit.Modules.Territory.Model.csproj" />
     <ProjectReference Include="..\Modules\Mapping\Winit.Modules.Mapping.BL\Winit.Modules.Mapping.BL.csproj" />
     <ProjectReference Include="..\Modules\MobileApp\Winit.Modules.MobileApp.BL\Winit.Modules.MobileApp.BL.csproj" />
     <ProjectReference Include="..\Modules\MobileApp\Winit.Modules.MobileApp.Model\Winit.Modules.MobileApp.Model.csproj" />

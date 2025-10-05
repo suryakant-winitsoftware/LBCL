@@ -92,7 +92,7 @@ class ListService {
 
   constructor() {
     this.baseUrl =
-      process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+      process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
   }
 
   private async makeRequest<T>(
@@ -111,8 +111,8 @@ class ListService {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
         Accept: "application/json",
-        ...options.headers,
-      },
+        ...options.headers
+      }
     });
 
     if (!response.ok) {
@@ -137,14 +137,14 @@ class ListService {
       PageSize: request.pageSize,
       SortCriterias: request.sortCriterias.map((sc) => ({
         SortParameter: sc.sortParameter,
-        Direction: sc.direction,
+        Direction: sc.direction
       })),
       FilterCriterias: request.filterCriterias.map((fc) => ({
         Name: fc.name,
         Value: fc.value,
-        Type: fc.type,
+        Type: fc.type
       })),
-      IsCountRequired: request.isCountRequired,
+      IsCountRequired: request.isCountRequired
     };
 
     const apiResponse = await this.makeRequest<{
@@ -152,7 +152,7 @@ class ListService {
       TotalCount: number;
     }>("GetListHeaders", {
       method: "POST",
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify(requestBody)
     });
 
     const transformedData = (apiResponse.PagedData || []).map((item) => ({
@@ -169,12 +169,12 @@ class ListService {
       createdTime: item.CreatedTime,
       modifiedTime: item.ModifiedTime,
       serverAddTime: item.ServerAddTime,
-      serverModifiedTime: item.ServerModifiedTime,
+      serverModifiedTime: item.ServerModifiedTime
     }));
 
     return {
       pagedData: transformedData,
-      totalCount: apiResponse.TotalCount || 0,
+      totalCount: apiResponse.TotalCount || 0
     };
   }
 
@@ -185,7 +185,7 @@ class ListService {
   ): Promise<PagedResponse<ListItem>> {
     const requestBody = {
       Codes: codes,
-      isCountRequired,
+      isCountRequired
     };
 
     const apiResponse = await this.makeRequest<{
@@ -193,7 +193,7 @@ class ListService {
       TotalCount: number;
     }>("GetListItemsByCodes", {
       method: "POST",
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify(requestBody)
     });
 
     const transformedData = (apiResponse.PagedData || []).map((item) => ({
@@ -209,12 +209,12 @@ class ListService {
       createdTime: item.CreatedTime,
       modifiedTime: item.ModifiedTime,
       serverAddTime: item.ServerAddTime,
-      serverModifiedTime: item.ServerModifiedTime,
+      serverModifiedTime: item.ServerModifiedTime
     }));
 
     return {
       pagedData: transformedData,
-      totalCount: apiResponse.TotalCount || 0,
+      totalCount: apiResponse.TotalCount || 0
     };
   }
 
@@ -224,7 +224,7 @@ class ListService {
         "GetListItemsByHeaderUID",
         {
           method: "POST",
-          body: JSON.stringify(headerUID),
+          body: JSON.stringify(headerUID)
         }
       );
 
@@ -241,7 +241,7 @@ class ListService {
         createdTime: item.CreatedTime,
         modifiedTime: item.ModifiedTime,
         serverAddTime: item.ServerAddTime,
-        serverModifiedTime: item.ServerModifiedTime,
+        serverModifiedTime: item.ServerModifiedTime
       }));
     } catch (error) {
       // Fallback: Get all items and filter by header UID
@@ -266,7 +266,7 @@ class ListService {
     const apiResponse = await this.makeRequest<any>(
       `GetListItemsByUID?UID=${encodeURIComponent(uid)}`,
       {
-        method: "GET",
+        method: "GET"
       }
     );
 
@@ -283,7 +283,7 @@ class ListService {
       createdTime: apiResponse.CreatedTime,
       modifiedTime: apiResponse.ModifiedTime,
       serverAddTime: apiResponse.ServerAddTime,
-      serverModifiedTime: apiResponse.ServerModifiedTime,
+      serverModifiedTime: apiResponse.ServerModifiedTime
     };
   }
 
@@ -301,12 +301,12 @@ class ListService {
       CreatedTime: now,
       ModifiedTime: now,
       ServerAddTime: now,
-      ServerModifiedTime: now,
+      ServerModifiedTime: now
     };
 
     return this.makeRequest<number>("CreateListItem", {
       method: "POST",
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify(requestBody)
     });
   }
 
@@ -322,12 +322,12 @@ class ListService {
       UID: listItem.uid,
       ModifiedBy: "ADMIN",
       ModifiedTime: now,
-      ServerModifiedTime: now,
+      ServerModifiedTime: now
     };
 
     return this.makeRequest<number>("UpdateListItem", {
       method: "PUT",
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify(requestBody)
     });
   }
 
@@ -335,7 +335,7 @@ class ListService {
     return this.makeRequest<number>(
       `DeleteListItemByUID?UID=${encodeURIComponent(uid)}`,
       {
-        method: "DELETE",
+        method: "DELETE"
       }
     );
   }
@@ -346,22 +346,22 @@ class ListService {
     const requestBody = {
       ListItemRequest: {
         Codes: listItems.listItemRequest.codes,
-        isCountRequired: listItems.listItemRequest.isCountRequired,
+        isCountRequired: listItems.listItemRequest.isCountRequired
       },
       PagingRequest: {
         PageNumber: listItems.pagingRequest.pageNumber,
         PageSize: listItems.pagingRequest.pageSize,
         SortCriterias: listItems.pagingRequest.sortCriterias.map((sc) => ({
           SortParameter: sc.sortParameter,
-          Direction: sc.direction,
+          Direction: sc.direction
         })),
         FilterCriterias: listItems.pagingRequest.filterCriterias.map((fc) => ({
           Name: fc.name,
           Value: fc.value,
-          Type: fc.type,
+          Type: fc.type
         })),
-        IsCountRequired: listItems.pagingRequest.isCountRequired,
-      },
+        IsCountRequired: listItems.pagingRequest.isCountRequired
+      }
     };
 
     const apiResponse = await this.makeRequest<{
@@ -369,7 +369,7 @@ class ListService {
       TotalCount: number;
     }>("GetListItemsByListHeaderCodes", {
       method: "POST",
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify(requestBody)
     });
 
     const transformedData = (apiResponse.PagedData || []).map((item) => ({
@@ -385,12 +385,12 @@ class ListService {
       createdTime: item.CreatedTime,
       modifiedTime: item.ModifiedTime,
       serverAddTime: item.ServerAddTime,
-      serverModifiedTime: item.ServerModifiedTime,
+      serverModifiedTime: item.ServerModifiedTime
     }));
 
     return {
       pagedData: transformedData,
-      totalCount: apiResponse.TotalCount || 0,
+      totalCount: apiResponse.TotalCount || 0
     };
   }
 

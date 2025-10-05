@@ -48,7 +48,7 @@ export interface PagedResponse<T> {
 
 class HierarchyService {
   private baseURL =
-    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
   /**
    * Get ALL hierarchy types dynamically from database
@@ -61,10 +61,10 @@ class HierarchyService {
       SortCriterias: [
         {
           SortParameter: "ItemLevel",
-          Direction: "Asc",
-        },
+          Direction: "Asc"
+        }
       ],
-      IsCountRequired: false,
+      IsCountRequired: false
     };
 
     const response = await fetch(
@@ -74,9 +74,9 @@ class HierarchyService {
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify(request),
+        body: JSON.stringify(request)
       }
     );
 
@@ -119,8 +119,8 @@ class HierarchyService {
       method: "GET",
       headers: {
         ...getAuthHeaders(),
-        Accept: "application/json",
-      },
+        Accept: "application/json"
+      }
     });
 
     if (!response.ok) {
@@ -152,7 +152,7 @@ class HierarchyService {
       code: group.Code,
       value: group.Name,
       type: typeName,
-      uid: group.UID,
+      uid: group.UID
     }));
   }
 
@@ -221,7 +221,7 @@ class HierarchyService {
           Code: g.Code,
           UID: g.UID,
           ParentUID: g.ParentUID,
-          Name: g.Name,
+          Name: g.Name
         }))
       );
 
@@ -239,7 +239,7 @@ class HierarchyService {
               Code: group.Code,
               Name: group.Name,
               ParentUID: group.ParentUID,
-              SKUGroupTypeUID: group.SKUGroupTypeUID,
+              SKUGroupTypeUID: group.SKUGroupTypeUID
             });
           }
 
@@ -253,7 +253,7 @@ class HierarchyService {
           SKUGroupTypeUID: group.SKUGroupTypeUID,
           ParentUID: group.ParentUID || "",
           ItemLevel: group.ItemLevel,
-          SupplierOrgUID: group.SupplierOrgUID || "",
+          SupplierOrgUID: group.SupplierOrgUID || ""
         }));
 
       // Sort by name
@@ -350,7 +350,7 @@ class HierarchyService {
         hasGroups,
         typeCount: types.length,
         groupCount: groups.length,
-        message,
+        message
       };
     } catch (error) {
       return {
@@ -358,7 +358,7 @@ class HierarchyService {
         hasGroups: false,
         typeCount: 0,
         groupCount: 0,
-        message: "Error checking hierarchy status",
+        message: "Error checking hierarchy status"
       };
     }
   }

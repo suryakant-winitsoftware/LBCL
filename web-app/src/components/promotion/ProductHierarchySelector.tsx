@@ -6,7 +6,7 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -17,12 +17,12 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Popover,
   PopoverContent,
-  PopoverTrigger,
+  PopoverTrigger
 } from "@/components/ui/popover";
 import {
   hierarchyService,
   SKUGroupType,
-  HierarchyOption,
+  HierarchyOption
 } from "@/services/hierarchy.service";
 import { useToast } from "@/components/ui/use-toast";
 import {
@@ -31,7 +31,7 @@ import {
   X,
   CheckSquare,
   Square,
-  Package,
+  Package
 } from "lucide-react";
 import { getAuthHeaders } from "@/lib/auth-service";
 
@@ -144,11 +144,11 @@ export default function ProductHierarchySelector({
   enableSearch = true,
   enableSKULoading = true,
   showSKUSection = true,
-  gridColumns = { default: 1, md: 2, lg: 3 },
+  gridColumns = { default: 1, md: 2, lg: 3 }
 }: ProductHierarchySelectorProps) {
   const { toast } = useToast();
   const baseURL =
-    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
   // Core state - Similar to ProductAttributesMultiDropdown
   const [hierarchyTypes, setHierarchyTypes] = useState<SKUGroupType[]>([]);
@@ -235,7 +235,7 @@ export default function ProductHierarchySelector({
         toast({
           title: "Initialization Error",
           description: "Failed to load hierarchy configuration",
-          variant: "destructive",
+          variant: "destructive"
         });
       } finally {
         setLoadingInitial(false);
@@ -283,9 +283,9 @@ export default function ProductHierarchySelector({
         SortCriterias: [
           {
             SortParameter: "Code",
-            Direction: "Asc",
-          },
-        ],
+            Direction: "Asc"
+          }
+        ]
       };
 
       console.log("Loading SKUs, will filter for:", filterKeys);
@@ -296,9 +296,9 @@ export default function ProductHierarchySelector({
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify(requestBody),
+        body: JSON.stringify(requestBody)
       });
 
       if (!response.ok) {
@@ -374,7 +374,7 @@ export default function ProductHierarchySelector({
             L2: sku.L2,
             L3: sku.L3,
             IsThirdParty: sku.IsThirdParty,
-            SupplierOrgUID: sku.SupplierOrgUID,
+            SupplierOrgUID: sku.SupplierOrgUID
           }));
 
           // Additional filter by ParentUID if needed
@@ -403,7 +403,7 @@ export default function ProductHierarchySelector({
       toast({
         title: "Error",
         description: "Failed to load products. Please check your selection.",
-        variant: "destructive",
+        variant: "destructive"
       });
       setSKUProducts([]);
     } finally {
@@ -467,12 +467,12 @@ export default function ProductHierarchySelector({
             code: group.Code,
             value: group.Name,
             type: childType.Name,
-            parentCode: parentCode,
+            parentCode: parentCode
           }));
 
           setOptionsCache((prev) => ({
             ...prev,
-            [cacheKey]: childOptions,
+            [cacheKey]: childOptions
           }));
 
           allChildOptions.push(...childOptions);
@@ -489,7 +489,7 @@ export default function ProductHierarchySelector({
 
       setHierarchyOptions((prev) => ({
         ...prev,
-        [`${childType.Name}_combined`]: uniqueOptions,
+        [`${childType.Name}_combined`]: uniqueOptions
       }));
     } catch (error) {
       console.error(`Failed to load options for level ${childLevel}:`, error);
@@ -498,7 +498,7 @@ export default function ProductHierarchySelector({
       if (childType) {
         setHierarchyOptions((prev) => ({
           ...prev,
-          [`${childType.Name}_combined`]: [],
+          [`${childType.Name}_combined`]: []
         }));
       }
     } finally {
@@ -529,7 +529,7 @@ export default function ProductHierarchySelector({
         value: item.value,
         uid: item.code,
         parentCode: item.parentCode,
-        fieldName: generateFieldName(level),
+        fieldName: generateFieldName(level)
       };
       newSelections.set(itemKey, selectedItem);
 
@@ -581,7 +581,7 @@ export default function ProductHierarchySelector({
           if (childType) {
             setHierarchyOptions((prev) => ({
               ...prev,
-              [`${childType.Name}_combined`]: [],
+              [`${childType.Name}_combined`]: []
             }));
           }
         }
@@ -677,7 +677,7 @@ export default function ProductHierarchySelector({
           code: item.code,
           value: item.value,
           type: item.levelName,
-          parentCode: item.parentCode,
+          parentCode: item.parentCode
         },
         levelIndex,
         false
@@ -819,7 +819,7 @@ export default function ProductHierarchySelector({
                   onClick={() =>
                     setOpenDropdowns((prev) => ({
                       ...prev,
-                      [levelIndex]: false,
+                      [levelIndex]: false
                     }))
                   }
                   className="h-6 w-6 p-0"
@@ -838,7 +838,7 @@ export default function ProductHierarchySelector({
                     onChange={(e) =>
                       setSearchTerms((prev) => ({
                         ...prev,
-                        [levelIndex]: e.target.value,
+                        [levelIndex]: e.target.value
                       }))
                     }
                     className="pl-7 h-7 text-sm"

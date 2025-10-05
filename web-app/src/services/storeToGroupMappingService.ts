@@ -42,7 +42,7 @@ interface PagedResponse<T> {
 
 class StoreToGroupMappingService {
   private getBaseUrl(): string {
-    return process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+    return process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
   }
 
   /**
@@ -62,9 +62,9 @@ class StoreToGroupMappingService {
             PropertyName: filter.PropertyName, // Keep PropertyName as is
             Name: filter.Name || filter.PropertyName,
             Value: filter.Value,
-            Operator: filter.Operator || "equals",
+            Operator: filter.Operator || "equals"
           })) || [],
-        isCountRequired: request.IsCountRequired || false,
+        isCountRequired: request.IsCountRequired || false
       };
 
       // Use POST method as the backend now properly accepts it
@@ -84,21 +84,21 @@ class StoreToGroupMappingService {
         if (data.Data && data.Data.PagedData !== undefined) {
           return {
             PagedData: data.Data.PagedData,
-            TotalCount: data.Data.TotalCount || 0,
+            TotalCount: data.Data.TotalCount || 0
           };
         }
         // Check for direct PagedData
         if (data.PagedData !== undefined) {
           return {
             PagedData: data.PagedData,
-            TotalCount: data.TotalCount || 0,
+            TotalCount: data.TotalCount || 0
           };
         }
       }
 
       return {
         PagedData: [],
-        TotalCount: 0,
+        TotalCount: 0
       };
     } catch (error) {
       console.error("Error fetching store-to-group mappings:", error);
@@ -123,11 +123,11 @@ class StoreToGroupMappingService {
             PropertyName: "store_group_uid", // snake_case for PostgreSQL column
             Name: "store_group_uid",
             Value: storeGroupUID,
-            Operator: "equals",
-          },
+            Operator: "equals"
+          }
         ],
         SortCriterias: [],
-        IsCountRequired: true,
+        IsCountRequired: true
       };
 
       console.log("📋 Fetching mappings for store group...");
@@ -138,7 +138,7 @@ class StoreToGroupMappingService {
         hasPagedData: !!mappingResponse.PagedData,
         pagedDataLength: mappingResponse.PagedData?.length,
         totalCount: mappingResponse.TotalCount,
-        firstItem: mappingResponse.PagedData?.[0],
+        firstItem: mappingResponse.PagedData?.[0]
       });
 
       if (
@@ -189,7 +189,7 @@ class StoreToGroupMappingService {
         pageSize: 2000, // Get a large set to ensure we have all stores
         filterCriterias: [],
         sortCriterias: [{ sortParameter: "Name", direction: 0 }],
-        isCountRequired: false,
+        isCountRequired: false
       };
 
       console.log("🔍 Fetching store details...");
@@ -215,7 +215,7 @@ class StoreToGroupMappingService {
           storeResponse.pagedData.slice(0, 5).map((s) => ({
             UID: s.UID,
             uid: s.uid,
-            Code: s.Code || s.code,
+            Code: s.Code || s.code
           }))
         );
       }
@@ -280,7 +280,7 @@ class StoreToGroupMappingService {
         CreatedTime: now,
         ModifiedTime: now,
         ServerAddTime: now,
-        ServerModifiedTime: now,
+        ServerModifiedTime: now
       };
 
       const response = await apiService.post(
@@ -303,7 +303,7 @@ class StoreToGroupMappingService {
       const mappingData = {
         ...mapping,
         ModifiedTime: now,
-        ServerModifiedTime: now,
+        ServerModifiedTime: now
       };
 
       const response = await apiService.put(

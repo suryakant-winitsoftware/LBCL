@@ -15,7 +15,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from "@/components/ui/table";
 import {
   Search,
@@ -24,7 +24,7 @@ import {
   X,
   Plus,
   Minus,
-  Loader2,
+  Loader2
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -33,7 +33,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  DropdownMenuItem,
+  DropdownMenuItem
 } from "@/components/ui/dropdown-menu";
 
 export interface SKUListView {
@@ -62,7 +62,7 @@ const DEFAULT_PAGE_SIZE = 50;
 export function ProductsTable({
   onProductSelectionChange,
   initialSelected = [],
-  initialQuantities = {},
+  initialQuantities = {}
 }: ProductsTableProps) {
   const { toast } = useToast();
   const [products, setProducts] = useState<SKUListView[]>([]);
@@ -125,7 +125,7 @@ export function ProductsTable({
         if (debouncedSearchTerm && debouncedSearchTerm.trim()) {
           filterCriterias.push({
             Name: "skucodeandname",
-            Value: debouncedSearchTerm.trim(),
+            Value: debouncedSearchTerm.trim()
           });
         }
 
@@ -135,7 +135,7 @@ export function ProductsTable({
           if (statusFilter.length === 1) {
             filterCriterias.push({
               Name: "IsActive",
-              Value: statusFilter[0] === "Active" ? "true" : "false",
+              Value: statusFilter[0] === "Active" ? "true" : "false"
             });
           }
           // If both are selected, no need to filter (show all)
@@ -146,7 +146,7 @@ export function ProductsTable({
           PageSize: pageSize,
           IsCountRequired: page === 1, // Only get count on first request
           FilterCriterias: filterCriterias,
-          SortCriterias: [{ SortParameter: "SKUCode", Direction: "Asc" }],
+          SortCriterias: [{ SortParameter: "SKUCode", Direction: "Asc" }]
         };
 
         console.log(
@@ -158,16 +158,16 @@ export function ProductsTable({
 
         const response = await fetch(
           `${
-            process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
+            process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
           }/SKU/SelectAllSKUDetailsWebView`,
           {
             method: "POST",
             headers: {
               Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
               "Content-Type": "application/json",
-              Accept: "application/json",
+              Accept: "application/json"
             },
-            body: JSON.stringify(requestBody),
+            body: JSON.stringify(requestBody)
           }
         );
 
@@ -186,7 +186,7 @@ export function ProductsTable({
                 SKULongName:
                   product.SKULongName || product.LongName || product.Name,
                 IsActive: product.IsActive !== false,
-                ...product,
+                ...product
               }));
             }
 
@@ -262,7 +262,7 @@ export function ProductsTable({
           toast({
             title: "Error",
             description: errorData?.Message || "Failed to fetch products",
-            variant: "destructive",
+            variant: "destructive"
           });
           if (!isLoadingMore) {
             setProducts([]);
@@ -277,7 +277,7 @@ export function ProductsTable({
           description: `Failed to fetch products: ${
             error instanceof Error ? error.message : "Unknown error"
           }`,
-          variant: "destructive",
+          variant: "destructive"
         });
         if (!isLoadingMore) {
           setProducts([]);
@@ -317,7 +317,7 @@ export function ProductsTable({
     loading,
     currentPage,
     fetchProductsPage,
-    products.length,
+    products.length
   ]);
 
   // Auto-load more when scrolling near bottom

@@ -19,12 +19,12 @@ import type {
   CommissionDashboard,
   CommissionApiResponse,
   CommissionPagingRequest,
-  CommissionPagingResponse,
+  CommissionPagingResponse
 } from "@/types/commission.types";
 
 class CommissionService {
   private readonly API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
   private async makeRequest<T>(
     endpoint: string,
@@ -41,8 +41,8 @@ class CommissionService {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
-        ...options.headers,
-      },
+        ...options.headers
+      }
     });
 
     if (!response.ok) {
@@ -64,7 +64,7 @@ class CommissionService {
   ): Promise<Commission[]> {
     const result = await this.makeRequest<Commission[]>("/Commission", {
       method: "POST",
-      body: JSON.stringify(filters || {}),
+      body: JSON.stringify(filters || {})
     });
     return result.data;
   }
@@ -87,7 +87,7 @@ class CommissionService {
   ): Promise<Commission> {
     const result = await this.makeRequest<Commission>("/Commission", {
       method: "POST",
-      body: JSON.stringify(commission),
+      body: JSON.stringify(commission)
     });
 
     // Track audit
@@ -95,7 +95,7 @@ class CommissionService {
       linkedItemType: "Commission",
       linkedItemUID: result.data.commission_id,
       commandType: "Insert",
-      newData: result.data,
+      newData: result.data
     });
 
     return result.data;
@@ -109,7 +109,7 @@ class CommissionService {
       `/Commission/${commission.commission_id}`,
       {
         method: "PUT",
-        body: JSON.stringify(commission),
+        body: JSON.stringify(commission)
       }
     );
 
@@ -118,7 +118,7 @@ class CommissionService {
       linkedItemType: "Commission",
       linkedItemUID: commission.commission_id,
       commandType: "Update",
-      newData: result.data,
+      newData: result.data
     });
 
     return result.data;
@@ -129,7 +129,7 @@ class CommissionService {
    */
   async deleteCommission(commissionId: string): Promise<boolean> {
     await this.makeRequest(`/Commission/${commissionId}`, {
-      method: "DELETE",
+      method: "DELETE"
     });
 
     // Track audit
@@ -137,7 +137,7 @@ class CommissionService {
       linkedItemType: "Commission",
       linkedItemUID: commissionId,
       commandType: "Delete",
-      newData: { commission_id: commissionId, deleted: true },
+      newData: { commission_id: commissionId, deleted: true }
     });
 
     return true;
@@ -163,14 +163,14 @@ class CommissionService {
   ): Promise<CommissionKPI> {
     const result = await this.makeRequest<CommissionKPI>("/Commission/KPI", {
       method: "POST",
-      body: JSON.stringify(kpi),
+      body: JSON.stringify(kpi)
     });
 
     await auditService.createAudit({
       linkedItemType: "CommissionKPI",
       linkedItemUID: result.data.commission_kpi_id,
       commandType: "Insert",
-      newData: result.data,
+      newData: result.data
     });
 
     return result.data;
@@ -184,7 +184,7 @@ class CommissionService {
       `/Commission/KPI/${kpi.commission_kpi_id}`,
       {
         method: "PUT",
-        body: JSON.stringify(kpi),
+        body: JSON.stringify(kpi)
       }
     );
 
@@ -192,7 +192,7 @@ class CommissionService {
       linkedItemType: "CommissionKPI",
       linkedItemUID: kpi.commission_kpi_id,
       commandType: "Update",
-      newData: result.data,
+      newData: result.data
     });
 
     return result.data;
@@ -210,7 +210,7 @@ class CommissionService {
       "/Commission/ProcessCommission",
       {
         method: "POST",
-        body: JSON.stringify(request),
+        body: JSON.stringify(request)
       }
     );
 
@@ -221,8 +221,8 @@ class CommissionService {
       commandType: "Update",
       newData: {
         request,
-        result: result.data,
-      },
+        result: result.data
+      }
     });
 
     return result.data;
@@ -254,7 +254,7 @@ class CommissionService {
       CommissionPagingResponse<CommissionUserPayout>
     >("/Commission/UserPayouts", {
       method: "POST",
-      body: JSON.stringify(request),
+      body: JSON.stringify(request)
     });
     return result.data;
   }
@@ -270,7 +270,7 @@ class CommissionService {
       `/Commission/Payout/${payoutId}/Approve`,
       {
         method: "PUT",
-        body: JSON.stringify({ approval_notes: approvalNotes }),
+        body: JSON.stringify({ approval_notes: approvalNotes })
       }
     );
 
@@ -278,7 +278,7 @@ class CommissionService {
       linkedItemType: "CommissionPayout",
       linkedItemUID: payoutId,
       commandType: "Update",
-      newData: { status: "Approved", approval_notes: approvalNotes },
+      newData: { status: "Approved", approval_notes: approvalNotes }
     });
 
     return result.data;
@@ -295,7 +295,7 @@ class CommissionService {
       `/Commission/Payout/${payoutId}/Pay`,
       {
         method: "PUT",
-        body: JSON.stringify(paymentDetails || {}),
+        body: JSON.stringify(paymentDetails || {})
       }
     );
 
@@ -303,7 +303,7 @@ class CommissionService {
       linkedItemType: "CommissionPayout",
       linkedItemUID: payoutId,
       commandType: "Update",
-      newData: { status: "Paid", payment_details: paymentDetails },
+      newData: { status: "Paid", payment_details: paymentDetails }
     });
 
     return result.data;
@@ -331,7 +331,7 @@ class CommissionService {
       "/Commission/Analytics",
       {
         method: "POST",
-        body: JSON.stringify(filters),
+        body: JSON.stringify(filters)
       }
     );
     return result.data;
@@ -355,9 +355,9 @@ class CommissionService {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify(filters),
+        body: JSON.stringify(filters)
       }
     );
 
@@ -372,7 +372,7 @@ class CommissionService {
       linkedItemType: "CommissionReport",
       linkedItemUID: `Export_${Date.now()}`,
       commandType: "Export",
-      newData: { filters, format, exported_at: new Date() },
+      newData: { filters, format, exported_at: new Date() }
     });
 
     return response.blob();
@@ -428,7 +428,7 @@ class CommissionService {
       "/Commission/KPI/Slab",
       {
         method: "POST",
-        body: JSON.stringify(slab),
+        body: JSON.stringify(slab)
       }
     );
 
@@ -436,7 +436,7 @@ class CommissionService {
       linkedItemType: "CommissionKPISlab",
       linkedItemUID: result.data.commission_kpi_slab_id,
       commandType: "Insert",
-      newData: result.data,
+      newData: result.data
     });
 
     return result.data;
@@ -454,7 +454,7 @@ class CommissionService {
       "/Commission/Validate",
       {
         method: "POST",
-        body: JSON.stringify(commission),
+        body: JSON.stringify(commission)
       }
     );
     return result.data;
@@ -474,7 +474,7 @@ class CommissionService {
       preview_data: CommissionUserPayout[];
     }>("/Commission/CalculationPreview", {
       method: "POST",
-      body: JSON.stringify(request),
+      body: JSON.stringify(request)
     });
     return result.data;
   }

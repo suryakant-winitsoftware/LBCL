@@ -65,7 +65,7 @@ class SettingsService {
 
   constructor() {
     this.baseUrl =
-      process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+      process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
   }
 
   private async makeRequest<T>(
@@ -84,8 +84,8 @@ class SettingsService {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
         Accept: "application/json",
-        ...options.headers,
-      },
+        ...options.headers
+      }
     });
 
     if (!response.ok) {
@@ -109,14 +109,14 @@ class SettingsService {
       PageSize: request.pageSize,
       SortCriterias: request.sortCriterias.map((sc) => ({
         SortParameter: sc.sortParameter,
-        Direction: sc.direction,
+        Direction: sc.direction
       })),
       FilterCriterias: request.filterCriterias.map((fc) => ({
         Name: fc.name,
         Value: fc.value,
-        Type: fc.type,
+        Type: fc.type
       })),
-      IsCountRequired: request.isCountRequired,
+      IsCountRequired: request.isCountRequired
     };
 
     const apiResponse = await this.makeRequest<{
@@ -124,7 +124,7 @@ class SettingsService {
       TotalCount: number;
     }>("SelectAllSettingDetails", {
       method: "POST",
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify(requestBody)
     });
 
     // Transform the PascalCase API response to camelCase for our interface
@@ -141,12 +141,12 @@ class SettingsService {
       modifiedTime: item.ModifiedTime,
       serverAddTime: item.ServerAddTime,
       serverModifiedTime: item.ServerModifiedTime,
-      isSelected: item.IsSelected,
+      isSelected: item.IsSelected
     }));
 
     const response: PagedResponse<Setting> = {
       pagedData: transformedData,
-      totalCount: apiResponse.TotalCount || 0,
+      totalCount: apiResponse.TotalCount || 0
     };
 
     return response;
@@ -171,7 +171,7 @@ class SettingsService {
       modifiedTime: response.ModifiedTime,
       serverAddTime: response.ServerAddTime,
       serverModifiedTime: response.ServerModifiedTime,
-      isSelected: response.IsSelected,
+      isSelected: response.IsSelected
     };
   }
 
@@ -183,12 +183,12 @@ class SettingsService {
       Value: setting.value,
       DataType: setting.dataType,
       IsEditable: setting.isEditable,
-      UID: setting.uid,
+      UID: setting.uid
     };
 
     return this.makeRequest<number>("CreateSetting", {
       method: "POST",
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify(requestBody)
     });
   }
 
@@ -201,12 +201,12 @@ class SettingsService {
       Value: setting.value,
       DataType: setting.dataType,
       IsEditable: setting.isEditable,
-      UID: setting.uid,
+      UID: setting.uid
     };
 
     return this.makeRequest<number>("UpdateSetting", {
       method: "PUT",
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify(requestBody)
     });
   }
 
@@ -214,7 +214,7 @@ class SettingsService {
     return this.makeRequest<number>(
       `DeleteSetting?UID=${encodeURIComponent(uid)}`,
       {
-        method: "DELETE",
+        method: "DELETE"
       }
     );
   }

@@ -8,7 +8,7 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,14 +16,14 @@ import { ArrowLeft, Save, Building } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import {
   skuPriceService,
-  ISKUPriceList,
+  ISKUPriceList
 } from "@/services/sku/sku-price.service";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
@@ -43,7 +43,7 @@ export default function CreatePriceListPage() {
     selectOrganization,
     resetHierarchy,
     finalSelectedOrganization,
-    hasSelection,
+    hasSelection
   } = useOrganizationHierarchy();
 
   // State for stores (distribution channels)
@@ -66,7 +66,7 @@ export default function CreatePriceListPage() {
     ValidFrom: new Date().toISOString(),
     ValidUpto: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
     CreatedBy: "ADMIN",
-    ModifiedBy: "ADMIN",
+    ModifiedBy: "ADMIN"
   });
 
   // Load organization hierarchy on mount
@@ -75,7 +75,7 @@ export default function CreatePriceListPage() {
       try {
         const [orgTypesResult, orgsResult] = await Promise.all([
           organizationService.getOrganizationTypes(),
-          organizationService.getOrganizations(1, 1000),
+          organizationService.getOrganizations(1, 1000)
         ]);
 
         if (orgsResult.data.length > 0 && orgTypesResult.length > 0) {
@@ -86,7 +86,7 @@ export default function CreatePriceListPage() {
         toast({
           title: "Warning",
           description: "Failed to load organization data",
-          variant: "default",
+          variant: "default"
         });
       }
     };
@@ -99,7 +99,7 @@ export default function CreatePriceListPage() {
     if (finalSelectedOrganization) {
       setFormData((prev) => ({
         ...prev,
-        OrgUID: finalSelectedOrganization,
+        OrgUID: finalSelectedOrganization
       }));
     }
   }, [finalSelectedOrganization]);
@@ -119,18 +119,18 @@ export default function CreatePriceListPage() {
         // Clear previous distribution channel selection when org changes
         setFormData((prev) => ({
           ...prev,
-          DistributionChannelUID: "",
+          DistributionChannelUID: ""
         }));
 
         const response = await fetch(
           `${
-            process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
+            process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
           }/Store/SelectAllStore`,
           {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+              Authorization: `Bearer ${localStorage.getItem("auth_token")}`
             },
             body: JSON.stringify({
               PageNumber: 1,
@@ -138,12 +138,12 @@ export default function CreatePriceListPage() {
               FilterCriterias: [
                 {
                   Name: "FranchiseeOrgUID",
-                  Value: finalSelectedOrganization,
-                },
+                  Value: finalSelectedOrganization
+                }
               ],
               SortCriterias: [{ SortParameter: "Name", Direction: "Asc" }],
-              IsCountRequired: true,
-            }),
+              IsCountRequired: true
+            })
           }
         );
 
@@ -176,21 +176,21 @@ export default function CreatePriceListPage() {
 
             const fallbackResponse = await fetch(
               `${
-                process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
+                process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
               }/Store/SelectAllStore`,
               {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
-                  Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+                  Authorization: `Bearer ${localStorage.getItem("auth_token")}`
                 },
                 body: JSON.stringify({
                   PageNumber: 1,
                   PageSize: 100,
                   FilterCriterias: [],
                   SortCriterias: [{ SortParameter: "Name", Direction: "Asc" }],
-                  IsCountRequired: false,
-                }),
+                  IsCountRequired: false
+                })
               }
             );
 
@@ -242,7 +242,7 @@ export default function CreatePriceListPage() {
     if (value) {
       setFormData((prev) => ({
         ...prev,
-        OrgUID: finalSelectedOrganization || value,
+        OrgUID: finalSelectedOrganization || value
       }));
     }
   };
@@ -254,7 +254,7 @@ export default function CreatePriceListPage() {
       toast({
         title: "Error",
         description: "Code and Name are required",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
@@ -263,7 +263,7 @@ export default function CreatePriceListPage() {
       toast({
         title: "Validation Error",
         description: "Please select an organization",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
@@ -276,12 +276,12 @@ export default function CreatePriceListPage() {
         CreatedTime: new Date().toISOString(),
         ModifiedTime: new Date().toISOString(),
         ServerAddTime: new Date().toISOString(),
-        ServerModifiedTime: new Date().toISOString(),
+        ServerModifiedTime: new Date().toISOString()
       });
 
       toast({
         title: "Success",
-        description: "Price list created successfully",
+        description: "Price list created successfully"
       });
 
       router.push("/productssales/price-management/lists");
@@ -290,7 +290,7 @@ export default function CreatePriceListPage() {
         title: "Error",
         description:
           error.response?.data?.ErrorMessage || "Failed to create price list",
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setLoading(false);
@@ -436,7 +436,7 @@ export default function CreatePriceListPage() {
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      Priority: parseInt(e.target.value) || 1,
+                      Priority: parseInt(e.target.value) || 1
                     })
                   }
                   placeholder="1"
@@ -468,7 +468,7 @@ export default function CreatePriceListPage() {
                     onValueChange={(value) =>
                       setFormData({
                         ...formData,
-                        DistributionChannelUID: value,
+                        DistributionChannelUID: value
                       })
                     }
                     disabled={loadingStores || !hasSelection}
@@ -528,8 +528,7 @@ export default function CreatePriceListPage() {
                       SelectionGroup: value,
                       SelectionType:
                         value === "All" ? "All" : formData.SelectionType,
-                      SelectionUID:
-                        value === "All" ? "" : formData.SelectionUID,
+                      SelectionUID: value === "All" ? "" : formData.SelectionUID
                     });
                   }}
                 >
@@ -661,7 +660,7 @@ export default function CreatePriceListPage() {
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      ValidFrom: new Date(e.target.value).toISOString(),
+                      ValidFrom: new Date(e.target.value).toISOString()
                     })
                   }
                   required
@@ -677,7 +676,7 @@ export default function CreatePriceListPage() {
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      ValidUpto: new Date(e.target.value).toISOString(),
+                      ValidUpto: new Date(e.target.value).toISOString()
                     })
                   }
                   required

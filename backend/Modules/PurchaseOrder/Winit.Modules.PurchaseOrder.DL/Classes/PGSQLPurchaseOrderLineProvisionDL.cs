@@ -95,7 +95,7 @@ public class PGSQLPurchaseOrderLineProvisionDL : SqlServerDBManager, IPurchaseOr
                 };
             return pagedResponse;
         }
-        catch (Exception e)
+        catch (Exception)
         {
             throw;
         }
@@ -116,7 +116,7 @@ public class PGSQLPurchaseOrderLineProvisionDL : SqlServerDBManager, IPurchaseOr
                          """;
             return await ExecuteNonQueryAsync(sql, dbConnection, dbTransaction, purchaseOrderLineProvisions);
         }
-        catch (Exception e)
+        catch (Exception)
         {
             throw;
         }
@@ -173,7 +173,7 @@ public class PGSQLPurchaseOrderLineProvisionDL : SqlServerDBManager, IPurchaseOr
             };
             return ExecuteNonQueryAsync(sql, dbConnection, dbTransaction, parameters);
         }
-        catch (Exception e)
+        catch (Exception)
         {
             throw;
         }

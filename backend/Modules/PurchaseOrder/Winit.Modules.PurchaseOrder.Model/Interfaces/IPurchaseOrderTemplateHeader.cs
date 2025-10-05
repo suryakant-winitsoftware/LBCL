@@ -6,7 +6,7 @@ public interface IPurchaseOrderTemplateHeader : IBaseModel
 {
     string OrgUID { get; set; }
     string TemplateName { get; set; }
-    string StoreUid { get; set; }
+    string? StoreUid { get; set; }
     bool IsCreatedByStore { get; set; }
     bool IsActive { get; set; }
 }

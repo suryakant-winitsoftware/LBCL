@@ -24,58 +24,54 @@ namespace Winit.Modules.Vehicle.DL.Classes
         {
             try
             {
-                var sql = new StringBuilder(@" select * from (select 
-                                            id as Id, 
-                                            uid as UID, 
-                                            created_by as CreatedBy, 
-                                            created_time as CreatedTime, 
-                                            modified_by as ModifiedBy, 
-                                            modified_time as ModifiedTime, 
-                                            server_add_time as ServerAddTime, 
-                                            server_modified_time as ServerModifiedTime, 
-                                            company_uid as CompanyUid, 
-                                            org_uid as OrgUid, 
-                                            vehicle_no as VehicleNo, 
-                                            registration_no as RegistrationNo, 
-                                            model as Model, 
-                                            type as Type, 
-                                            is_active as IsActive, 
-                                            truck_si_date as TruckSiDate, 
-                                            road_tax_expiry_date as RoadTaxExpiryDate, 
-                                            inspection_date as InspectionDate
-                                        from 
-                                            vehicle 
-                                        where 
+                var sql = new StringBuilder(@" select * from (select
+                                            id as Id,
+                                            uid as UID,
+                                            created_by as CreatedBy,
+                                            created_time as CreatedTime,
+                                            modified_by as ModifiedBy,
+                                            modified_time as ModifiedTime,
+                                            server_add_time as ServerAddTime,
+                                            server_modified_time as ServerModifiedTime,
+                                            company_uid as CompanyUid,
+                                            org_uid as OrgUid,
+                                            vehicle_no as VehicleNo,
+                                            registration_no as RegistrationNo,
+                                            model as Model,
+                                            type as Type,
+                                            is_active as IsActive,
+                                            truck_si_date as TruckSiDate,
+                                            road_tax_expiry_date as RoadTaxExpiryDate,
+                                            inspection_date as InspectionDate,
+                                            weight_limit as WeightLimit,
+                                            capacity as Capacity,
+                                            loading_capacity as LoadingCapacity,
+                                            warehouse_code as WarehouseCode,
+                                            location_code as LocationCode,
+                                            territory_uid as TerritoryUID
+                                        from
+                                            vehicle
+                                        where
                                             org_uid = @orguid)as subquery
                                         ");
                 var sqlCount = new StringBuilder();
                 if (isCountRequired)
                 {
-                    sqlCount = new StringBuilder(@"select 
+                    sqlCount = new StringBuilder(@"select
                                                     count(1) as Cnt
                                                 from (
-                                                 select 
-                                            id as Id, 
-                                            uid as UID, 
-                                            created_by as CreatedBy, 
-                                            created_time as CreatedTime, 
-                                            modified_by as ModifiedBy, 
-                                            modified_time as ModifiedTime, 
-                                            server_add_time as ServerAddTime, 
-                                            server_modified_time as ServerModifiedTime, 
-                                            company_uid as CompanyUid, 
-                                            org_uid as OrgUid, 
-                                            vehicle_no as VehicleNo, 
-                                            registration_no as RegistrationNo, 
-                                            model as Model, 
-                                            type as Type, 
-                                            is_active as IsActive, 
-                                            truck_si_date as TruckSiDate, 
-                                            road_tax_expiry_date as RoadTaxExpiryDate, 
-                                            inspection_date as InspectionDate
-                                        from 
-                                            vehicle 
-                                        where 
+                                                 select
+                                            id as Id,
+                                            uid as UID,
+                                            weight_limit as WeightLimit,
+                                            capacity as Capacity,
+                                            loading_capacity as LoadingCapacity,
+                                            warehouse_code as WarehouseCode,
+                                            location_code as LocationCode,
+                                            territory_uid as TerritoryUID
+                                        from
+                                            vehicle
+                                        where
                                             org_uid = @orguid )as subquery
                                                 ");
                 }
@@ -137,28 +133,34 @@ namespace Winit.Modules.Vehicle.DL.Classes
             {
                 {"UID",  UID}
             };
-            var sql = @"select 
-                        id as Id, 
-                        uid as UID, 
-                        created_by as CreatedBy, 
-                        created_time as CreatedTime, 
-                        modified_by as ModifiedBy, 
-                        modified_time as ModifiedTime, 
-                        server_add_time as ServerAddTime, 
-                        server_modified_time as ServerModifiedTime, 
-                        company_uid as CompanyUid, 
-                        org_uid as OrgUid, 
-                        vehicle_no as VehicleNo, 
-                        registration_no as RegistrationNo, 
-                        model as Model, 
-                        type as Type, 
-                        is_active as IsActive, 
-                        truck_si_date as TruckSiDate, 
-                        road_tax_expiry_date as RoadTaxExpiryDate, 
-                        inspection_date as InspectionDate
-                    from 
-                        vehicle 
-                    where 
+            var sql = @"select
+                        id as Id,
+                        uid as UID,
+                        created_by as CreatedBy,
+                        created_time as CreatedTime,
+                        modified_by as ModifiedBy,
+                        modified_time as ModifiedTime,
+                        server_add_time as ServerAddTime,
+                        server_modified_time as ServerModifiedTime,
+                        company_uid as CompanyUid,
+                        org_uid as OrgUid,
+                        vehicle_no as VehicleNo,
+                        registration_no as RegistrationNo,
+                        model as Model,
+                        type as Type,
+                        is_active as IsActive,
+                        truck_si_date as TruckSiDate,
+                        road_tax_expiry_date as RoadTaxExpiryDate,
+                        inspection_date as InspectionDate,
+                        weight_limit as WeightLimit,
+                        capacity as Capacity,
+                        loading_capacity as LoadingCapacity,
+                        warehouse_code as WarehouseCode,
+                        location_code as LocationCode,
+                        territory_uid as TerritoryUID
+                    from
+                        vehicle
+                    where
                         uid = @uid
                     ";
             Winit.Modules.Vehicle.Model.Interfaces.IVehicle VehicleDetails = await ExecuteSingleAsync<Winit.Modules.Vehicle.Model.Interfaces.IVehicle>(sql, parameters);
@@ -169,12 +171,14 @@ namespace Winit.Modules.Vehicle.DL.Classes
             int retVal = -1;
             try
             {
-                var sql = @"insert into vehicle (uid, created_by, created_time, modified_by, modified_time, server_add_time, 
+                var sql = @"insert into vehicle (uid, created_by, created_time, modified_by, modified_time, server_add_time,
                               server_modified_time, company_uid, org_uid, vehicle_no, registration_no, model, type, is_active,
-                              truck_si_date, road_tax_expiry_date, inspection_date)
-                              values (@UID, @CreatedBy, @CreatedTime, @ModifiedBy, @ModifiedTime, @ServerAddTime, 
+                              truck_si_date, road_tax_expiry_date, inspection_date,
+                              weight_limit, capacity, loading_capacity, warehouse_code, location_code, territory_uid)
+                              values (@UID, @CreatedBy, @CreatedTime, @ModifiedBy, @ModifiedTime, @ServerAddTime,
                                @ServerModifiedTime, @CompanyUID, @OrgUID, @VehicleNo, @RegistrationNo, @Model, @Type, @IsActive,
-                               @TruckSIDate, @RoadTaxExpiryDate, @InspectionDate)";
+                               @TruckSIDate, @RoadTaxExpiryDate, @InspectionDate,
+                               @WeightLimit, @Capacity, @LoadingCapacity, @WarehouseCode, @LocationCode, @TerritoryUID)";
                 
                 retVal = await ExecuteNonQueryAsync(sql, createVehicle);
                 if (retVal == 1)
@@ -242,7 +246,13 @@ namespace Winit.Modules.Vehicle.DL.Classes
                                 is_active = @IsActive,
                                 truck_si_date = @TruckSIDate,
                                 road_tax_expiry_date = @RoadTaxExpiryDate,
-                                inspection_date = @InspectionDate
+                                inspection_date = @InspectionDate,
+                                weight_limit = @WeightLimit,
+                                capacity = @Capacity,
+                                loading_capacity = @LoadingCapacity,
+                                warehouse_code = @WarehouseCode,
+                                location_code = @LocationCode,
+                                territory_uid = @TerritoryUID
                             where uid = @UID";
 
                 

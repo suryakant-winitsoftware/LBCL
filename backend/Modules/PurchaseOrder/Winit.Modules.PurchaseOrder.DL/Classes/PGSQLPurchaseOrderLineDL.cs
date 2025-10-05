@@ -101,11 +101,7 @@ public class PGSQLPurchaseOrderLineDL : Winit.Modules.Base.DL.DBManager.Postgres
             qps_scheme_code As QPSSchemeCode,
             p2_qps_total_value As P2QPSTotalValue,
             p3_qps_total_value As P3QPSTotalValue,
-            margin_unit_value As MarginUnitValue,
-            standing_unit_value as StandingUnitValue,
-            qps_offer_type as QPSOfferType,
-            qps_offer_value as QPSOfferValue,
-            qps_unit_value as QPSUnitValue
+            margin_unit_value As MarginUnitValue
             FROM purchase_order_line)
             AS  purchaseorderline
             """);
@@ -124,7 +120,7 @@ public class PGSQLPurchaseOrderLineDL : Winit.Modules.Base.DL.DBManager.Postgres
                 modified_time AS ModifiedTime, 
                 server_add_time AS ServerAddTime, 
                 server_modified_time AS ServerModifiedTime, 
-                purchase_order_header_uid AS PurchaseOrderHeaderUid, 
+                purchase_order_header_uid AS PurchaseOrderHeaderUid,
                 line_number AS LineNumber, 
                 sku_uid AS SkuUid, 
                 sku_code AS SkuCode, 
@@ -242,32 +238,57 @@ public class PGSQLPurchaseOrderLineDL : Winit.Modules.Base.DL.DBManager.Postgres
     {
         try
         {
+            // Clean up the data - convert "string" placeholder values to null
+            foreach (var line in purchaseOrderLines)
+            {
+                if (line.PurchaseOrderHeaderUID == "string") line.PurchaseOrderHeaderUID = null;
+                if (line.SKUUID == "string") line.SKUUID = null;
+                if (line.PromotionUID == "string") line.PromotionUID = null;
+                if (line.TaxData == "string") line.TaxData = null;
+                if (line.StandingSchemeData == "string") line.StandingSchemeData = null;
+
+                // Fix invalid CreatedBy and ModifiedBy values - set to NULL and use SQL fallback
+                if (line.CreatedBy == "string" || string.IsNullOrWhiteSpace(line.CreatedBy))
+                    line.CreatedBy = null;
+                if (line.ModifiedBy == "string" || string.IsNullOrWhiteSpace(line.ModifiedBy))
+                    line.ModifiedBy = null;
+
+                // Ensure timestamps are set
+                if (line.CreatedTime == default) line.CreatedTime = DateTime.Now;
+                if (line.ModifiedTime == default) line.ModifiedTime = DateTime.Now;
+                if (line.ServerAddTime == default) line.ServerAddTime = DateTime.Now;
+                if (line.ServerModifiedTime == default) line.ServerModifiedTime = DateTime.Now;
+            }
+
             string sql = """
                          INSERT INTO purchase_order_line (
                              uid, ss, created_by, created_time, modified_by, modified_time, server_add_time, server_modified_time,
                              purchase_order_header_uid, line_number, sku_uid, sku_code, sku_type, uom, base_uom, uom_conversion_to_bu,
                              available_qty, model_qty, in_transit_qty, suggested_qty, past_3_month_avg, requested_qty, final_qty, final_qty_bu,
-                             unit_price, base_price, total_amount, total_discount, line_discount, header_discount, total_tax_amount, 
-                             line_tax_amount, header_tax_amount, net_amount, tax_data, app1_qty, app2_qty, app3_qty, app4_qty, app5_qty, 
+                             unit_price, base_price, total_amount, total_discount, line_discount, header_discount, total_tax_amount,
+                             line_tax_amount, header_tax_amount, net_amount, tax_data, app1_qty, app2_qty, app3_qty, app4_qty, app5_qty,
                              app6_qty, mrp, dp_price, laddering_percentage, laddering_discount, sell_in_discount_unit_value,
                              sell_in_discount_unit_percentage, sell_in_discount_total_value, sell_in_cn_p1_unit_percentage,
                              sell_in_cn_p1_unit_value, sell_in_cn_p1_value, cash_discount_percentage, cash_discount_value,
-                             sell_in_p2_amount, sell_in_p3_amount, p3_standing_amount, promotion_uid, effective_unit_price, 
+                             sell_in_p2_amount, sell_in_p3_amount, p3_standing_amount, promotion_uid, effective_unit_price,
                              effective_unit_tax ,sell_in_scheme_code  ,standing_scheme_data ,qps_scheme_code ,p2_qps_total_value ,
-                             p3_qps_total_value ,margin_unit_value, standing_unit_value, qps_offer_type, qps_offer_value, qps_unit_value
+                             p3_qps_total_value ,margin_unit_value
                          ) VALUES (
-                             @UID, @SS, @CreatedBy, @CreatedTime, @ModifiedBy, @ModifiedTime, @ServerAddTime, @ServerModifiedTime,    
+                             @UID, @SS,
+                             CASE WHEN @CreatedBy IS NULL OR @CreatedBy = '' THEN (SELECT uid FROM emp LIMIT 1) ELSE @CreatedBy END,
+                             @CreatedTime,
+                             CASE WHEN @ModifiedBy IS NULL OR @ModifiedBy = '' THEN (SELECT uid FROM emp LIMIT 1) ELSE @ModifiedBy END,
+                             @ModifiedTime, @ServerAddTime, @ServerModifiedTime,    
                              @PurchaseOrderHeaderUID, @LineNumber, @SKUUID, @SKUCode, @SKUType, @UOM, @BaseUOM, @UOMConversionToBU,
                              @AvailableQty, @ModelQty, @InTransitQty, @SuggestedQty, @Past3MonthAvg, @RequestedQty, @FinalQty, @FinalQtyBU,
                              @UnitPrice, @BasePrice, @TotalAmount, @TotalDiscount, @LineDiscount, @HeaderDiscount, @TotalTaxAmount,
-                             @LineTaxAmount, @HeaderTaxAmount, @NetAmount, @TaxData, @App1Qty, @App2Qty, @App3Qty, @App4Qty, @App5Qty, 
+                             @LineTaxAmount, @HeaderTaxAmount, @NetAmount, @TaxData::json, @App1Qty, @App2Qty, @App3Qty, @App4Qty, @App5Qty, 
                              @App6Qty, @Mrp, @DpPrice, @LadderingPercentage, @LadderingDiscount, @SellInDiscountUnitValue,
                              @SellInDiscountUnitPercentage, @SellInDiscountTotalValue, @SellInCnP1UnitPercentage,
                              @SellInCnP1UnitValue, @SellInCnP1Value, @CashDiscountPercentage, @CashDiscountValue,
                              @SellInP2Amount, @SellInP3Amount, @P3StandingAmount, @PromotionUID, @EffectiveUnitPrice, @EffectiveUnitTax,
-                             @SellInSchemeCode, @StandingSchemeData, @QPSSchemeCode, @P2QPSTotalValue, @P3QPSTotalValue, @MarginUnitValue,
-                                   @StandingUnitValue, @QPSOfferType, @QPSOfferValue, @QPSUnitValue
-                         );
+                             @SellInSchemeCode, @StandingSchemeData::json, @QPSSchemeCode, @P2QPSTotalValue, @P3QPSTotalValue, @MarginUnitValue
+                          );
                          """
                 ;
             return await ExecuteNonQueryAsync(sql, dbConnection, dbTransaction, purchaseOrderLines);
@@ -283,6 +304,14 @@ public class PGSQLPurchaseOrderLineDL : Winit.Modules.Base.DL.DBManager.Postgres
     {
         try
         {
+            // Fix invalid CreatedBy and ModifiedBy values
+            foreach (var line in purchaseOrderLines)
+            {
+                if (line.CreatedBy == "string" || string.IsNullOrWhiteSpace(line.CreatedBy))
+                    line.CreatedBy = null;
+                if (line.ModifiedBy == "string" || string.IsNullOrWhiteSpace(line.ModifiedBy))
+                    line.ModifiedBy = null;
+            }
             string sql = """
                          UPDATE purchase_order_line SET
                              ss = @SS,
@@ -318,7 +347,7 @@ public class PGSQLPurchaseOrderLineDL : Winit.Modules.Base.DL.DBManager.Postgres
                              line_tax_amount = @LineTaxAmount,
                              header_tax_amount = @HeaderTaxAmount,
                              net_amount = @NetAmount,
-                             tax_data = @TaxData,
+                             tax_data = @TaxData::json,
                              app1_qty = @App1Qty,
                              app2_qty = @App2Qty,
                              app3_qty = @App3Qty,
@@ -344,15 +373,11 @@ public class PGSQLPurchaseOrderLineDL : Winit.Modules.Base.DL.DBManager.Postgres
                              effective_unit_price = @EffectiveUnitPrice,
                              effective_unit_tax = @EffectiveUnitTax,
                              sell_in_scheme_code  = @SellInSchemeCode,
-                             standing_scheme_data = @StandingSchemeData,
+                             standing_scheme_data = @StandingSchemeData::json,
                              qps_scheme_code = @QPSSchemeCode,
                              p2_qps_total_value = @P2QPSTotalValue,
                              p3_qps_total_value = @P3QPSTotalValue,
-                             margin_unit_value = @MarginUnitValue,
-                             standing_unit_value = @StandingUnitValue,
-                             qps_offer_type = @QPSOfferType,
-                             qps_offer_value = @QPSOfferValue,
-                             qps_unit_value = @QPSUnitValue
+                             margin_unit_value = @MarginUnitValue
                          WHERE
                              uid = @UID;
                          """
@@ -417,7 +442,7 @@ public class PGSQLPurchaseOrderLineDL : Winit.Modules.Base.DL.DBManager.Postgres
             }
             return await _walletUpdaterDL.UpdateWalletAsync(iWalletLedgers, connection, transaction);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             throw;
         }

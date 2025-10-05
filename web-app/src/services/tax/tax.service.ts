@@ -112,7 +112,7 @@ export interface ApiResponse<T> {
 
 class TaxService {
   private baseUrl =
-    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
   // Tax APIs (Working)
   async getTaxDetails(request: PagingRequest): Promise<PagedResponse<ITax>> {
@@ -120,7 +120,7 @@ class TaxService {
       const response = await fetch(`${this.baseUrl}/Tax/GetTaxDetails`, {
         method: "POST",
         headers: getAuthHeaders(),
-        body: JSON.stringify(request),
+        body: JSON.stringify(request)
       });
 
       if (!response.ok) {
@@ -141,7 +141,7 @@ class TaxService {
         `${this.baseUrl}/Tax/GetTaxByUID?UID=${uid}`,
         {
           method: "GET",
-          headers: getAuthHeaders(),
+          headers: getAuthHeaders()
         }
       );
 
@@ -167,7 +167,7 @@ class TaxService {
         `${this.baseUrl}/Tax/GetTaxSelectionItems?UID=${uid}`,
         {
           method: "GET",
-          headers: getAuthHeaders(),
+          headers: getAuthHeaders()
         }
       );
 
@@ -191,7 +191,7 @@ class TaxService {
         `${this.baseUrl}/Tax/SelectTaxMasterViewByUID?UID=${uid}`,
         {
           method: "GET",
-          headers: getAuthHeaders(),
+          headers: getAuthHeaders()
         }
       );
 
@@ -221,7 +221,7 @@ class TaxService {
       const response = await fetch(`${this.baseUrl}/Tax/GetTaxGroupDetails`, {
         method: "POST",
         headers: getAuthHeaders(),
-        body: JSON.stringify(request),
+        body: JSON.stringify(request)
       });
 
       if (!response.ok) {
@@ -245,7 +245,7 @@ class TaxService {
         `${this.baseUrl}/Tax/GetTaxGroupByUID?UID=${uid}`,
         {
           method: "GET",
-          headers: getAuthHeaders(),
+          headers: getAuthHeaders()
         }
       );
 
@@ -273,7 +273,7 @@ class TaxService {
       const response = await fetch(`${this.baseUrl}/Tax/CreateTax`, {
         method: "POST",
         headers: getAuthHeaders(),
-        body: JSON.stringify(tax),
+        body: JSON.stringify(tax)
       });
 
       if (!response.ok) {
@@ -294,7 +294,7 @@ class TaxService {
       const response = await fetch(`${this.baseUrl}/Tax/UpdateTax`, {
         method: "PUT",
         headers: getAuthHeaders(),
-        body: JSON.stringify(tax),
+        body: JSON.stringify(tax)
       });
 
       if (!response.ok) {
@@ -314,7 +314,7 @@ class TaxService {
     try {
       const response = await fetch(`${this.baseUrl}/Tax/DeleteTax?UID=${uid}`, {
         method: "DELETE",
-        headers: getAuthHeaders(),
+        headers: getAuthHeaders()
       });
 
       if (!response.ok) {
@@ -360,7 +360,7 @@ class TaxService {
       const response = await fetch(`${this.baseUrl}/Tax/CreateTaxMaster`, {
         method: "POST",
         headers: getAuthHeaders(),
-        body: JSON.stringify(taxMaster),
+        body: JSON.stringify(taxMaster)
       });
 
       if (!response.ok) {
@@ -382,7 +382,7 @@ class TaxService {
       const response = await fetch(`${this.baseUrl}/Tax/CreateTaxGroupMaster`, {
         method: "POST",
         headers: getAuthHeaders(),
-        body: JSON.stringify(taxGroupMaster),
+        body: JSON.stringify(taxGroupMaster)
       });
 
       if (!response.ok) {
@@ -405,7 +405,7 @@ class TaxService {
       const response = await fetch(`${this.baseUrl}/Tax/UpdateTaxGroupMaster`, {
         method: "PUT",
         headers: getAuthHeaders(),
-        body: JSON.stringify(taxGroupMaster),
+        body: JSON.stringify(taxGroupMaster)
       });
 
       if (!response.ok) {

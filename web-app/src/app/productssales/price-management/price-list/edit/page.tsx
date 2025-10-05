@@ -8,7 +8,7 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,14 +16,14 @@ import { ArrowLeft, Save, Building } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import {
   skuPriceService,
-  ISKUPriceList,
+  ISKUPriceList
 } from "@/services/sku/sku-price.service";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -47,7 +47,7 @@ export default function EditPriceListPage() {
     selectOrganization,
     resetHierarchy,
     finalSelectedOrganization,
-    hasSelection,
+    hasSelection
   } = useOrganizationHierarchy();
 
   // State for stores (distribution channels)
@@ -70,7 +70,7 @@ export default function EditPriceListPage() {
     ValidFrom: new Date().toISOString(),
     ValidUpto: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
     CreatedBy: "ADMIN",
-    ModifiedBy: "ADMIN",
+    ModifiedBy: "ADMIN"
   });
 
   // Load price list data
@@ -80,7 +80,7 @@ export default function EditPriceListPage() {
         toast({
           title: "Error",
           description: "No price list ID provided",
-          variant: "destructive",
+          variant: "destructive"
         });
         router.push("/productssales/price-management/lists");
         return;
@@ -96,7 +96,7 @@ export default function EditPriceListPage() {
             ValidFrom: priceList.ValidFrom || new Date().toISOString(),
             ValidUpto:
               priceList.ValidUpto ||
-              new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+              new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
           });
         } else {
           throw new Error("Price list not found");
@@ -106,7 +106,7 @@ export default function EditPriceListPage() {
         toast({
           title: "Error",
           description: "Failed to load price list details",
-          variant: "destructive",
+          variant: "destructive"
         });
         router.push("/productssales/price-management/lists");
       } finally {
@@ -123,7 +123,7 @@ export default function EditPriceListPage() {
       try {
         const [orgTypesResult, orgsResult] = await Promise.all([
           organizationService.getOrganizationTypes(),
-          organizationService.getOrganizations(1, 1000),
+          organizationService.getOrganizations(1, 1000)
         ]);
 
         if (orgsResult.data.length > 0 && orgTypesResult.length > 0) {
@@ -134,7 +134,7 @@ export default function EditPriceListPage() {
         toast({
           title: "Warning",
           description: "Failed to load organization data",
-          variant: "default",
+          variant: "default"
         });
       }
     };
@@ -147,7 +147,7 @@ export default function EditPriceListPage() {
     if (finalSelectedOrganization) {
       setFormData((prev) => ({
         ...prev,
-        OrgUID: finalSelectedOrganization,
+        OrgUID: finalSelectedOrganization
       }));
     }
   }, [finalSelectedOrganization]);
@@ -167,13 +167,13 @@ export default function EditPriceListPage() {
 
         const response = await fetch(
           `${
-            process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
+            process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
           }/Store/SelectAllStore`,
           {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+              Authorization: `Bearer ${localStorage.getItem("auth_token")}`
             },
             body: JSON.stringify({
               PageNumber: 1,
@@ -181,12 +181,12 @@ export default function EditPriceListPage() {
               FilterCriterias: [
                 {
                   Name: "FranchiseeOrgUID",
-                  Value: orgToUse,
-                },
+                  Value: orgToUse
+                }
               ],
               SortCriterias: [{ SortParameter: "Name", Direction: "Asc" }],
-              IsCountRequired: true,
-            }),
+              IsCountRequired: true
+            })
           }
         );
 
@@ -208,21 +208,21 @@ export default function EditPriceListPage() {
           if (storeData.length === 0) {
             const fallbackResponse = await fetch(
               `${
-                process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
+                process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
               }/Store/SelectAllStore`,
               {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
-                  Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+                  Authorization: `Bearer ${localStorage.getItem("auth_token")}`
                 },
                 body: JSON.stringify({
                   PageNumber: 1,
                   PageSize: 100,
                   FilterCriterias: [],
                   SortCriterias: [{ SortParameter: "Name", Direction: "Asc" }],
-                  IsCountRequired: false,
-                }),
+                  IsCountRequired: false
+                })
               }
             );
 
@@ -268,7 +268,7 @@ export default function EditPriceListPage() {
     if (value) {
       setFormData((prev) => ({
         ...prev,
-        OrgUID: finalSelectedOrganization || value,
+        OrgUID: finalSelectedOrganization || value
       }));
     }
   };
@@ -280,7 +280,7 @@ export default function EditPriceListPage() {
       toast({
         title: "Error",
         description: "Code and Name are required",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
@@ -289,7 +289,7 @@ export default function EditPriceListPage() {
       toast({
         title: "Validation Error",
         description: "Please select an organization",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
@@ -300,12 +300,12 @@ export default function EditPriceListPage() {
         ...formData,
         OrgUID: finalSelectedOrganization || formData.OrgUID,
         ModifiedTime: new Date().toISOString(),
-        ServerModifiedTime: new Date().toISOString(),
+        ServerModifiedTime: new Date().toISOString()
       });
 
       toast({
         title: "Success",
-        description: "Price list updated successfully",
+        description: "Price list updated successfully"
       });
 
       router.push("/productssales/price-management/lists");
@@ -314,7 +314,7 @@ export default function EditPriceListPage() {
         title: "Error",
         description:
           error.response?.data?.ErrorMessage || "Failed to update price list",
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setLoading(false);
@@ -449,7 +449,7 @@ export default function EditPriceListPage() {
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      Priority: parseInt(e.target.value) || 1,
+                      Priority: parseInt(e.target.value) || 1
                     })
                   }
                   placeholder="1"
@@ -472,7 +472,7 @@ export default function EditPriceListPage() {
                 onValueChange={(value) =>
                   setFormData({
                     ...formData,
-                    DistributionChannelUID: value,
+                    DistributionChannelUID: value
                   })
                 }
                 disabled={loadingStores}
@@ -528,8 +528,7 @@ export default function EditPriceListPage() {
                       SelectionGroup: value,
                       SelectionType:
                         value === "All" ? "All" : formData.SelectionType,
-                      SelectionUID:
-                        value === "All" ? "" : formData.SelectionUID,
+                      SelectionUID: value === "All" ? "" : formData.SelectionUID
                     });
                   }}
                 >
@@ -619,7 +618,7 @@ export default function EditPriceListPage() {
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      ValidFrom: new Date(e.target.value).toISOString(),
+                      ValidFrom: new Date(e.target.value).toISOString()
                     })
                   }
                   required
@@ -635,7 +634,7 @@ export default function EditPriceListPage() {
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      ValidUpto: new Date(e.target.value).toISOString(),
+                      ValidUpto: new Date(e.target.value).toISOString()
                     })
                   }
                   required

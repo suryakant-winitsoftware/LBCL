@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import React from "react"
-import Link from "next/link"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Truck, Package } from "lucide-react"
+import React from "react";
+import Link from "next/link";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Truck, Package } from "lucide-react";
 
 const DashboardPage = () => {
   const navigationCards = [
@@ -12,16 +12,16 @@ const DashboardPage = () => {
       description: "Access delivery dashboard and manage delivery operations",
       icon: <Truck className="h-12 w-12" />,
       href: "/delivery/delivery-dashboard",
-      color: "text-blue-600"
+      color: "text-blue-600",
     },
     {
       title: "Manager",
       description: "Access manager dashboard and stock receiving operations",
       icon: <Package className="h-12 w-12" />,
       href: "/manager/stock-receiving-dashboard",
-      color: "text-green-600"
-    }
-  ]
+      color: "text-green-600",
+    },
+  ];
 
   return (
     <div className="flex flex-col gap-6 p-6">
@@ -44,21 +44,17 @@ const DashboardPage = () => {
                 <CardTitle className="text-2xl font-bold">
                   {card.title}
                 </CardTitle>
-                <div className={card.color}>
-                  {card.icon}
-                </div>
+                <div className={card.color}>{card.icon}</div>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-500 text-sm">
-                  {card.description}
-                </p>
+                <p className="text-gray-500 text-sm">{card.description}</p>
               </CardContent>
             </Card>
           </Link>
         ))}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default DashboardPage
+export default DashboardPage;

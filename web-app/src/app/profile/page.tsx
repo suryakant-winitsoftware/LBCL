@@ -7,7 +7,7 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,7 +24,7 @@ import {
   Calendar,
   MapPin,
   Settings,
-  Save,
+  Save
 } from "lucide-react";
 import { authService } from "@/lib/auth-service";
 import { SkeletonLoader } from "@/components/ui/loader";
@@ -86,7 +86,7 @@ export default function ProfilePage() {
   const [passwords, setPasswords] = useState({
     current: "",
     new: "",
-    confirm: "",
+    confirm: ""
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -115,7 +115,7 @@ export default function ProfilePage() {
 
       // Use correct production endpoint: /api/Emp/GetEmpByUID
       const API_BASE_URL =
-        process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
       const response = await fetch(
         `${API_BASE_URL}/Emp/GetEmpByUID?UID=${encodeURIComponent(
           currentUser.uid
@@ -124,8 +124,8 @@ export default function ProfilePage() {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
-            Accept: "application/json",
-          },
+            Accept: "application/json"
+          }
         }
       );
 
@@ -195,7 +195,7 @@ export default function ProfilePage() {
               "",
             lastLoginTime: new Date(),
             roles: [], // We'll get this from current user context
-            currentOrganization: undefined, // We'll get this from current user context
+            currentOrganization: undefined // We'll get this from current user context
           };
 
           // Add roles and organization from current user if available
@@ -232,20 +232,20 @@ export default function ProfilePage() {
 
       // Use correct production endpoint: /api/Emp/UpdateEmp
       const API_BASE_URL =
-        process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
       const response = await fetch(`${API_BASE_URL}/Emp/UpdateEmp`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
         body: JSON.stringify({
           UID: profileData.uid,
           Name: profileData.name,
           Email: profileData.email,
-          Mobile: profileData.mobile,
-        }),
+          Mobile: profileData.mobile
+        })
       });
 
       if (response.ok) {
@@ -256,7 +256,7 @@ export default function ProfilePage() {
             ...user,
             name: profileData.name,
             email: profileData.email,
-            mobile: profileData.mobile,
+            mobile: profileData.mobile
           });
         }
       } else {
@@ -297,7 +297,7 @@ export default function ProfilePage() {
 
       // Use correct production endpoint: /api/Auth/UpdateExistingPasswordWithNewPassword
       const API_BASE_URL =
-        process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
       const response = await fetch(
         `${API_BASE_URL}/Auth/UpdateExistingPasswordWithNewPassword`,
         {
@@ -305,15 +305,15 @@ export default function ProfilePage() {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
-            Accept: "application/json",
+            Accept: "application/json"
           },
           body: JSON.stringify({
             UserId: currentUser.loginId,
             EmpUID: currentUser.uid,
             OldPassword: hashedOldPassword,
             NewPassword: passwords.new,
-            ChallengeCode: challengeCode,
-          }),
+            ChallengeCode: challengeCode
+          })
         }
       );
 
@@ -501,7 +501,7 @@ export default function ProfilePage() {
                           onChange={(e) =>
                             setProfileData({
                               ...profileData,
-                              name: e.target.value,
+                              name: e.target.value
                             })
                           }
                         />
@@ -533,7 +533,7 @@ export default function ProfilePage() {
                           onChange={(e) =>
                             setProfileData({
                               ...profileData,
-                              email: e.target.value,
+                              email: e.target.value
                             })
                           }
                         />
@@ -556,7 +556,7 @@ export default function ProfilePage() {
                           onChange={(e) =>
                             setProfileData({
                               ...profileData,
-                              mobile: e.target.value,
+                              mobile: e.target.value
                             })
                           }
                         />
@@ -774,7 +774,7 @@ export default function ProfilePage() {
                               onChange={(e) =>
                                 setPasswords({
                                   ...passwords,
-                                  current: e.target.value,
+                                  current: e.target.value
                                 })
                               }
                             />
@@ -790,7 +790,7 @@ export default function ProfilePage() {
                             onChange={(e) =>
                               setPasswords({
                                 ...passwords,
-                                new: e.target.value,
+                                new: e.target.value
                               })
                             }
                           />
@@ -807,7 +807,7 @@ export default function ProfilePage() {
                             onChange={(e) =>
                               setPasswords({
                                 ...passwords,
-                                confirm: e.target.value,
+                                confirm: e.target.value
                               })
                             }
                           />

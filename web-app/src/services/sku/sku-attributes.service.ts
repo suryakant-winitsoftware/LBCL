@@ -57,12 +57,14 @@ export interface PagingRequest {
 
 class SKUAttributesService {
   private baseURL =
-    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
   /**
    * Get all SKU attributes with pagination, sorting, and filtering
    */
-  async getAllSKUAttributes(request: PagingRequest): Promise<ApiResponse<SKUAttributeResponse>> {
+  async getAllSKUAttributes(
+    request: PagingRequest
+  ): Promise<ApiResponse<SKUAttributeResponse>> {
     const response = await fetch(
       `${this.baseURL}/SKUAttributes/SelectAllSKUAttributesDetails`,
       {
@@ -70,9 +72,9 @@ class SKUAttributesService {
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify(request),
+        body: JSON.stringify(request)
       }
     );
 
@@ -98,8 +100,8 @@ class SKUAttributesService {
         method: "GET",
         headers: {
           ...getAuthHeaders(),
-          Accept: "application/json",
-        },
+          Accept: "application/json"
+        }
       }
     );
 
@@ -125,16 +127,19 @@ class SKUAttributesService {
         method: "GET",
         headers: {
           ...getAuthHeaders(),
-          Accept: "application/json",
-        },
+          Accept: "application/json"
+        }
       }
     );
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch SKU group types: ${response.statusText}`);
+      throw new Error(
+        `Failed to fetch SKU group types: ${response.statusText}`
+      );
     }
 
-    const result: ApiResponse<SKUAttributeDropdownModel[]> = await response.json();
+    const result: ApiResponse<SKUAttributeDropdownModel[]> =
+      await response.json();
     if (!result.IsSuccess) {
       throw new Error(result.ErrorMessage || "Failed to fetch SKU group types");
     }
@@ -155,9 +160,9 @@ class SKUAttributesService {
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify(attribute),
+        body: JSON.stringify(attribute)
       }
     );
 
@@ -184,9 +189,9 @@ class SKUAttributesService {
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify(attribute),
+        body: JSON.stringify(attribute)
       }
     );
 
@@ -212,8 +217,8 @@ class SKUAttributesService {
         method: "DELETE",
         headers: {
           ...getAuthHeaders(),
-          Accept: "application/json",
-        },
+          Accept: "application/json"
+        }
       }
     );
 
@@ -242,9 +247,9 @@ class SKUAttributesService {
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify(attributes),
+        body: JSON.stringify(attributes)
       }
     );
 
@@ -277,9 +282,9 @@ class SKUAttributesService {
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify(attributes),
+        body: JSON.stringify(attributes)
       }
     );
 
@@ -309,8 +314,8 @@ class SKUAttributesService {
         method: "GET",
         headers: {
           ...getAuthHeaders(),
-          Accept: "application/json",
-        },
+          Accept: "application/json"
+        }
       }
     );
 
@@ -381,7 +386,7 @@ class SKUAttributesService {
       ItemSeries: "",
       HSNCode: skuData.HSNCode || "",
       IsAvailableInApMaster: false,
-      FilterKeys: [],
+      FilterKeys: []
     };
 
     console.log("Creating SKU with payload:", skuPayload);
@@ -392,9 +397,9 @@ class SKUAttributesService {
       headers: {
         ...getAuthHeaders(),
         "Content-Type": "application/json",
-        Accept: "application/json",
+        Accept: "application/json"
       },
-      body: JSON.stringify(skuPayload),
+      body: JSON.stringify(skuPayload)
     });
 
     const responseText = await skuResult.text();
@@ -433,7 +438,7 @@ class SKUAttributesService {
               }`
             : undefined,
         CreatedBy: skuData.CreatedBy || "ADMIN",
-        ModifiedBy: skuData.ModifiedBy || "ADMIN",
+        ModifiedBy: skuData.ModifiedBy || "ADMIN"
       })
     );
 
@@ -475,7 +480,7 @@ class SKUAttributesService {
           CreatedTime: currentTime,
           ModifiedTime: currentTime,
           ServerAddTime: currentTime,
-          ServerModifiedTime: currentTime,
+          ServerModifiedTime: currentTime
         });
       }
 
@@ -508,7 +513,7 @@ class SKUAttributesService {
           CreatedTime: currentTime,
           ModifiedTime: currentTime,
           ServerAddTime: currentTime,
-          ServerModifiedTime: currentTime,
+          ServerModifiedTime: currentTime
         });
       }
 
@@ -523,9 +528,9 @@ class SKUAttributesService {
               headers: {
                 ...getAuthHeaders(),
                 "Content-Type": "application/json",
-                Accept: "application/json",
+                Accept: "application/json"
               },
-              body: JSON.stringify(uomConfig),
+              body: JSON.stringify(uomConfig)
             }
           );
 
@@ -570,7 +575,7 @@ class SKUAttributesService {
         SellingUOM: skuData.SellingUOM || skuData.OuterUOM,
         IsActive: skuData.IsActive ?? true,
         CreatedBy: skuData.CreatedBy || "ADMIN",
-        ModifiedBy: skuData.ModifiedBy || "ADMIN",
+        ModifiedBy: skuData.ModifiedBy || "ADMIN"
       };
 
       try {
@@ -582,9 +587,9 @@ class SKUAttributesService {
             headers: {
               ...getAuthHeaders(),
               "Content-Type": "application/json",
-              Accept: "application/json",
+              Accept: "application/json"
             },
-            body: JSON.stringify(skuConfig),
+            body: JSON.stringify(skuConfig)
           }
         );
 
@@ -630,7 +635,7 @@ class SKUAttributesService {
             CreatedTime: currentTime,
             ModifiedTime: currentTime,
             ServerAddTime: currentTime,
-            ServerModifiedTime: currentTime,
+            ServerModifiedTime: currentTime
           };
 
           console.log("Creating SKU to Group mapping:", mappingPayload);
@@ -641,9 +646,9 @@ class SKUAttributesService {
               headers: {
                 ...getAuthHeaders(),
                 "Content-Type": "application/json",
-                Accept: "application/json",
+                Accept: "application/json"
               },
-              body: JSON.stringify(mappingPayload),
+              body: JSON.stringify(mappingPayload)
             }
           );
 
@@ -678,8 +683,8 @@ class SKUAttributesService {
                     method: "POST",
                     headers: {
                       ...getAuthHeaders(),
-                      Accept: "application/json",
-                    },
+                      Accept: "application/json"
+                    }
                   }
                 );
 
@@ -740,7 +745,7 @@ class SKUAttributesService {
       uomResult,
       configResult,
       groupMappingResults,
-      hierarchyResults,
+      hierarchyResults
     };
   }
 }

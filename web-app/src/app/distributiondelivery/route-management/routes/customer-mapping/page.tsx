@@ -16,19 +16,19 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from "@/components/ui/select";
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
-  CommandItem,
+  CommandItem
 } from "@/components/ui/command";
 import {
   Popover,
   PopoverContent,
-  PopoverTrigger,
+  PopoverTrigger
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { ChevronDown } from "lucide-react";
@@ -44,7 +44,7 @@ import {
   Loader2,
   RefreshCw,
   Filter,
-  Info,
+  Info
 } from "lucide-react";
 import { authService } from "@/lib/auth-service";
 import { routeService } from "@/services/routeService";
@@ -128,7 +128,7 @@ export default function CustomerMappingPage() {
     currentPage: 1,
     pageSize: 50,
     totalCount: 0,
-    hasMore: false,
+    hasMore: false
   });
   const [loadingMoreStores, setLoadingMoreStores] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -162,7 +162,7 @@ export default function CustomerMappingPage() {
           pageSize: pageSize,
           isCountRequired: currentPage === 1, // Only get count on first request
           sortCriterias: [],
-          filterCriterias: [],
+          filterCriterias: []
         };
 
         const response = await routeService.getRoutes(request, organizationUID);
@@ -196,7 +196,7 @@ export default function CustomerMappingPage() {
             isActive: r.IsActive,
             status: r.Status,
             totalCustomers: r.TotalCustomers || 0,
-            roleUID: r.RoleUID,
+            roleUID: r.RoleUID
           }))
         );
       } else {
@@ -207,7 +207,7 @@ export default function CustomerMappingPage() {
       toast({
         title: "Error",
         description: "Failed to load routes. Please try again.",
-        variant: "destructive",
+        variant: "destructive"
       });
       setRoutes([]);
     } finally {
@@ -224,13 +224,13 @@ export default function CustomerMappingPage() {
       const token = authService.getToken();
       const response = await fetch(
         `${
-          process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
         }/Route/SelectRouteMasterViewByUID?UID=${routeUID}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
+            "Content-Type": "application/json"
+          }
         }
       );
 
@@ -307,7 +307,7 @@ export default function CustomerMappingPage() {
       toast({
         title: "Error",
         description: "Failed to load route details. Please try again.",
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setLoadingStores(false);
@@ -333,7 +333,7 @@ export default function CustomerMappingPage() {
           filterCriterias.push({
             name: "Code",
             value: search.trim(),
-            operator: "contains",
+            operator: "contains"
           });
         }
 
@@ -342,7 +342,7 @@ export default function CustomerMappingPage() {
           pageSize: storesPagination.pageSize,
           filterCriterias,
           sortCriterias: [{ sortParameter: "Code", direction: 0 as 0 }], // Changed to Code since Name might not exist
-          isCountRequired: page === 1, // Only get count on first request
+          isCountRequired: page === 1 // Only get count on first request
         };
 
         console.log("Store search request:", JSON.stringify(request, null, 2));
@@ -359,7 +359,7 @@ export default function CustomerMappingPage() {
             address: s.Address || s.address || "",
             contactNo: s.ContactNo || s.contactNo || "",
             isActive: s.IsActive !== false,
-            type: s.Type || s.type || "Store",
+            type: s.Type || s.type || "Store"
           }));
 
           if (append) {
@@ -405,7 +405,7 @@ export default function CustomerMappingPage() {
             totalCount: newTotalCount,
             hasMore:
               fetchedStores.length === prev.pageSize &&
-              (newTotalCount === 0 || currentDisplayedCount < newTotalCount),
+              (newTotalCount === 0 || currentDisplayedCount < newTotalCount)
           }));
 
           console.log(
@@ -424,7 +424,7 @@ export default function CustomerMappingPage() {
         toast({
           title: "Error",
           description: "Failed to load stores. Please try again.",
-          variant: "destructive",
+          variant: "destructive"
         });
       } finally {
         setLoadingStores(false);
@@ -455,7 +455,7 @@ export default function CustomerMappingPage() {
     loadingMoreStores,
     loadingStores,
     searchTerm,
-    fetchStoresPage,
+    fetchStoresPage
   ]);
 
   // Handle route selection
@@ -575,7 +575,7 @@ export default function CustomerMappingPage() {
       toast({
         title: "Error",
         description: "Please select a route first.",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
@@ -621,7 +621,7 @@ export default function CustomerMappingPage() {
             CreatedBy: existing.CreatedBy || "ADMIN",
             CreatedTime: existing.CreatedTime || new Date().toISOString(),
             ModifiedBy: currentUser?.name || "ADMIN",
-            ModifiedTime: new Date().toISOString(),
+            ModifiedTime: new Date().toISOString()
           } as any);
         }
       });
@@ -649,7 +649,7 @@ export default function CustomerMappingPage() {
             CreatedBy: existing?.CreatedBy || currentUser?.name || "ADMIN",
             CreatedTime: existing?.CreatedTime || new Date().toISOString(),
             ModifiedBy: currentUser?.name || "ADMIN",
-            ModifiedTime: new Date().toISOString(),
+            ModifiedTime: new Date().toISOString()
           } as any);
         }
       });
@@ -678,13 +678,13 @@ export default function CustomerMappingPage() {
           ...currentRouteData.Route,
           TotalCustomers: activeCustomersCount, // Update total customer count
           ModifiedBy: currentUser?.name || "ADMIN",
-          ModifiedTime: new Date().toISOString(),
+          ModifiedTime: new Date().toISOString()
         },
         RouteSchedule: currentRouteData.RouteSchedule, // Keep schedule unchanged (can be null to avoid backend updates)
         RouteScheduleDaywise: currentRouteData.RouteScheduleDaywise, // Keep daywise unchanged (can be null to avoid backend updates)
         RouteScheduleFortnight: currentRouteData.RouteScheduleFortnight, // Keep fortnight unchanged (can be null)
         RouteCustomersList: routeCustomersList, // ONLY update this
-        RouteUserList: currentRouteData.RouteUserList || [], // Keep users unchanged
+        RouteUserList: currentRouteData.RouteUserList || [] // Keep users unchanged
       };
 
       console.log("=== SENDING UPDATE TO BACKEND ===");
@@ -703,15 +703,15 @@ export default function CustomerMappingPage() {
       // Update route
       const response = await fetch(
         `${
-          process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
         }/Route/UpdateRouteMaster`,
         {
           method: "PUT",
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
-          body: JSON.stringify(updatedRouteMaster),
+          body: JSON.stringify(updatedRouteMaster)
         }
       );
 
@@ -730,7 +730,7 @@ export default function CustomerMappingPage() {
             title: "Transaction Error",
             description:
               "Database transaction failed. This may be due to concurrent updates or constraint violations. Please try again.",
-            variant: "destructive",
+            variant: "destructive"
           });
         } else if (
           errorText.includes("DELETE") ||
@@ -740,13 +740,13 @@ export default function CustomerMappingPage() {
             title: "Store Removal Error",
             description:
               "Failed to remove stores from route. Please check if stores are used in active journey plans.",
-            variant: "destructive",
+            variant: "destructive"
           });
         } else {
           toast({
             title: "Update Failed",
             description: `Failed to update route: ${errorText}`,
-            variant: "destructive",
+            variant: "destructive"
           });
         }
 
@@ -766,7 +766,7 @@ export default function CustomerMappingPage() {
           title: "Warning",
           description:
             "Server response was not in expected format. Please check if the update succeeded.",
-          variant: "default",
+          variant: "default"
         });
         // Still try to refresh to see current state
         setTimeout(() => {
@@ -784,7 +784,7 @@ export default function CustomerMappingPage() {
 
         toast({
           title: "Success",
-          description: `Successfully updated store assignments. ${activeStoresCount} stores assigned to route.`,
+          description: `Successfully updated store assignments. ${activeStoresCount} stores assigned to route.`
         });
 
         // Update assigned stores to match selected
@@ -817,7 +817,7 @@ export default function CustomerMappingPage() {
         title: "Error",
         description:
           error.message || "Failed to save changes. Please try again.",
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setSaving(false);

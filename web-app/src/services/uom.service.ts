@@ -41,7 +41,7 @@ export interface PagedResponse<T> {
 
 class UOMService {
   private baseURL =
-    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
   /**
    * Get all UOM types from database
@@ -52,7 +52,7 @@ class UOMService {
       PageSize: 0, // Try 0 to get all records
       FilterCriterias: [],
       SortCriterias: [],
-      IsCountRequired: false,
+      IsCountRequired: false
     };
 
     const response = await fetch(
@@ -62,9 +62,9 @@ class UOMService {
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify(request),
+        body: JSON.stringify(request)
       }
     );
 
@@ -99,7 +99,7 @@ class UOMService {
       PageSize: 0, // Set to 0 to get all records
       FilterCriterias: [],
       SortCriterias: [],
-      IsCountRequired: false,
+      IsCountRequired: false
     };
 
     const response = await fetch(
@@ -109,9 +109,9 @@ class UOMService {
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify(request),
+        body: JSON.stringify(request)
       }
     );
 
@@ -196,7 +196,7 @@ class UOMService {
           return uniqueBaseUOMs.map((uom) => ({
             code: uom.Code,
             name: uom.Name || uom.Code,
-            label: uom.Label || uom.Name || uom.Code,
+            label: uom.Label || uom.Name || uom.Code
           }));
         }
       }
@@ -223,7 +223,7 @@ class UOMService {
           return baseUOMTypes.map((uom) => ({
             code: uom.UID,
             name: uom.Name,
-            label: uom.Label,
+            label: uom.Label
           }));
         }
 
@@ -232,8 +232,8 @@ class UOMService {
           {
             code: uomTypes[0].UID,
             name: uomTypes[0].Name,
-            label: uomTypes[0].Label,
-          },
+            label: uomTypes[0].Label
+          }
         ];
       }
     } catch (error) {
@@ -272,7 +272,7 @@ class UOMService {
           return uniqueOuterUOMs.map((uom) => ({
             code: uom.Code,
             name: uom.Name || uom.Code,
-            label: uom.Label || uom.Name || uom.Code,
+            label: uom.Label || uom.Name || uom.Code
           }));
         }
       }
@@ -304,7 +304,7 @@ class UOMService {
           return outerUOMTypes.map((uom) => ({
             code: uom.UID,
             name: uom.Name,
-            label: uom.Label,
+            label: uom.Label
           }));
         }
 
@@ -318,7 +318,7 @@ class UOMService {
           return nonEATypes.map((uom) => ({
             code: uom.UID,
             name: uom.Name,
-            label: uom.Label,
+            label: uom.Label
           }));
         }
 
@@ -326,7 +326,7 @@ class UOMService {
         return uomTypes.map((uom) => ({
           code: uom.UID,
           name: uom.Name,
-          label: uom.Label,
+          label: uom.Label
         }));
       }
     } catch (error) {
@@ -350,7 +350,7 @@ class UOMService {
         return uomTypes.map((uom) => ({
           code: uom.Name,
           name: uom.Name,
-          label: uom.Label || uom.Name,
+          label: uom.Label || uom.Name
         }));
       }
     } catch (error) {
@@ -367,7 +367,7 @@ class UOMService {
         if (uom.Code && !uniqueUOMs.has(uom.Code)) {
           uniqueUOMs.set(uom.Code, {
             name: uom.Name || uom.Code,
-            label: uom.Label || uom.Name || uom.Code,
+            label: uom.Label || uom.Name || uom.Code
           });
         }
       });
@@ -375,7 +375,7 @@ class UOMService {
       return Array.from(uniqueUOMs.entries()).map(([code, data]) => ({
         code,
         name: data.name,
-        label: data.label,
+        label: data.label
       }));
     } catch (error) {
       // Silent fail

@@ -154,9 +154,53 @@ namespace Winit.Modules.Store.DL.Classes
                 throw;
             }
         }
-        public Task<IStoreAdditionalInfo> SelectStoreAdditionalInfoByStoreUID(string storeUID)
+        public async Task<IStoreAdditionalInfo> SelectStoreAdditionalInfoByStoreUID(string storeUID)
         {
-            throw new NotImplementedException();
+            Dictionary<string, object> parameters = new Dictionary<string, object>
+            {
+                {"StoreUID",  storeUID}
+            };
+
+            var sql = @"SELECT sai.id AS Id, sai.uid AS UID, sai.created_by AS CreatedBy, sai.created_time AS CreatedTime, sai.modified_by AS ModifiedBy,
+                                            sai.modified_time AS ModifiedTime, sai.server_add_time AS ServerAddTime, sai.server_modified_time AS ServerModifiedTime, sai.store_uid AS StoreUID,
+                                            sai.order_type AS OrderType, sai.is_promotions_block AS IsPromotionsBlock, sai.customer_start_date AS CustomerStartDate,
+                                            sai.customer_end_date AS CustomerEndDate, sai.purchase_order_number AS PurchaseOrderNumber,
+                                            sai.delivery_docket_is_purchase_order_required AS DeliveryDocketIsPurchaseOrderRequired,
+                                            sai.is_with_printed_invoices AS IsWithPrintedInvoices, sai.is_capture_signature_required AS IsCaptureSignatureRequired,
+                                            sai.is_always_printed AS IsAlwaysPrinted, sai.building_delivery_code AS BuildingDeliveryCode,
+                                            sai.delivery_information AS DeliveryInformation, sai.is_stop_delivery AS IsStopDelivery,
+                                            sai.is_forecast_top_up_qty AS IsForeCastTopUpQty, sai.is_temperature_check AS IsTemperatureCheck,
+                                            sai.invoice_start_date AS InvoiceStartDate, sai.invoice_end_date AS InvoiceEndDate,
+                                            sai.invoice_format AS InvoiceFormat, sai.invoice_delivery_method AS InvoiceDeliveryMethod,
+                                            sai.display_delivery_docket AS DisplayDeliveryDocket, sai.display_price AS DisplayPrice,
+                                            sai.show_cust_po AS ShowCustPO, sai.invoice_text AS InvoiceText, sai.invoice_frequency AS InvoiceFrequency,
+                                            sai.stock_credit_is_purchase_order_required AS StockCreditIsPurchaseOrderRequired, sai.admin_fee_per_billing_cycle AS AdminFeePerBillingCycle,
+                                            sai.admin_fee_per_delivery AS AdminFeePerDelivery, sai.late_payment_fee AS LatePaymentFee, sai.drawer AS Drawer,
+                                            sai.bank_uid AS BankUID, sai.bank_account AS BankAccount, sai.mandatory_po_number AS MandatoryPONumber,
+                                            sai.is_store_credit_capture_signature_required AS IsStoreCreditCaptureSignatureRequired, sai.store_credit_always_printed AS StoreCreditAlwaysPrinted,
+                                            sai.is_dummy_customer AS IsDummyCustomer, sai.default_run AS DefaultRun, sai.is_foc_customer AS IsFOCCustomer,
+                                            sai.rss_show_price AS RSSShowPrice, sai.rss_show_payment AS RSSShowPayment, sai.rss_show_credit AS RSSShowCredit,
+                                            sai.rss_show_invoice AS RSSShowInvoice, sai.rss_is_active AS RSSIsActive, sai.rss_delivery_instruction_status AS RSSDeliveryInstructionStatus,
+                                            sai.rss_time_spent_on_rss_portal AS RSSTimeSpentOnRSSPortal, sai.rss_order_placed_in_rss AS RSSOrderPlacedInRSS,
+                                            sai.rss_avg_orders_per_week AS RSSAvgOrdersPerWeek, sai.rss_total_order_value AS RSSTotalOrderValue, sai.allow_force_check_in AS AllowForceCheckIn,
+                                            sai.is_manual_edit_allowed AS IsManualEditAllowed, sai.can_update_lat_long AS CanUpdateLatLong, sai.allow_good_return AS AllowGoodReturn,
+                                            sai.allow_bad_return AS AllowBadReturn,sai.allow_replacement AS AllowReplacement, sai.is_invoice_cancellation_allowed AS IsInvoiceCancellationAllowed,
+                                            sai.is_delivery_note_required AS IsDeliveryNoteRequired, sai.e_invoicing_enabled AS EInvoicingEnabled, sai.image_recognition_enabled AS ImageRecognizationEnabled,
+                                            sai.max_outstanding_invoices AS MaxOutstandingInvoices, sai.negative_invoice_allowed AS NegativeInvoiceAllowed, sai.delivery_mode AS DeliveryMode,
+                                            sai.visit_frequency AS VisitFrequency, sai.shipping_contact_same_as_store AS ShippingContactSameAsStore,
+                                            sai.billing_address_same_as_shipping AS BillingAddressSameAsShipping, sai.payment_mode AS PaymentMode, sai.price_type AS PriceType,
+                                            sai.average_monthly_income AS AverageMonthlyIncome, sai.default_bank_uid AS DefaultBankUID, sai.account_number AS AccountNumber,
+                                            sai.no_of_cash_counters AS NoOfCashCounters, sai.custom_field1 AS CustomField1, sai.custom_field2 AS CustomField2, sai.custom_field3 AS CustomField3,
+                                            sai.custom_field4 AS CustomField4, sai.custom_field5 AS CustomField5, sai.custom_field6 AS CustomField6, sai.custom_field7 AS CustomField7,
+                                            sai.custom_field8 AS CustomField8, sai.custom_field9 AS CustomField9, sai.custom_field10 AS CustomField10,sai.is_asset_enabled AS IsAssetEnabled,
+                                            sai.is_survey_enabled AS IsSurveyEnabled,sai.allow_return_against_invoice AS AllowReturnAgainstInvoice, sai.allow_return_with_sales_order AS AllowReturnWithSalesOrder,
+                                            sai.aging_cycle AS AgingCycle
+                                        FROM
+                                            store_additional_info sai
+                                        WHERE
+                                            sai.store_uid = @StoreUID";
+
+            return await ExecuteSingleAsync<Model.Interfaces.IStoreAdditionalInfo>(sql, parameters);
         }
         public async Task<Model.Interfaces.IStoreAdditionalInfo> SelectStoreAdditionalInfoByUID(string UID)
         {
@@ -214,7 +258,7 @@ namespace Winit.Modules.Store.DL.Classes
             {
 
                 var sql = @"INSERT INTO store_additional_info (
-                             uid, created_by, created_time, modified_by, modified_time, server_add_time, server_modified_time,
+                            id, uid, created_by, created_time, modified_by, modified_time, server_add_time, server_modified_time,
                             store_uid, order_type, is_promotions_block, customer_start_date, customer_end_date, purchase_order_number,
                             delivery_docket_is_purchase_order_required, is_with_printed_invoices, is_capture_signature_required,
                             is_always_printed, building_delivery_code, delivery_information, is_stop_delivery, is_forecast_top_up_qty,
@@ -234,8 +278,8 @@ namespace Winit.Modules.Store.DL.Classes
                             allow_return_with_sales_order, week_off_sun, week_off_mon, week_off_tue, week_off_wed, week_off_thu,
                             week_off_fri, week_off_sat, aging_cycle, depot, default_route_uid,firm_reg_no,company_reg_no,is_mcme,firm_type,
                             acc_soft_name,acc_soft_license_no,acc_soft_version_no,website,gst_owner_name,gst_gstin_status,gst_nature_of_business,gst_pan,
-                            gst_pin_code,gst_registration_date,gst_registration_type,gst_tax_payment_type,gst_hsn_description,gst_gst_address,is_vendor,gst_state,gst_address1,gst_address2,district) 
-                            VALUES (@UID, @CreatedBy, @CreatedTime, @ModifiedBy, @ModifiedTime, @ServerAddTime, @ServerModifiedTime,
+                            gst_pin_code,gst_registration_date,gst_registration_type,gst_tax_payment_type,gst_hsn_description,gst_gst_address,is_vendor,gst_state)
+                            VALUES (@Id, @UID, @CreatedBy, @CreatedTime, @ModifiedBy, @ModifiedTime, @ServerAddTime, @ServerModifiedTime,
                             @StoreUID, @OrderType, @IsPromotionsBlock, @CustomerStartDate, @CustomerEndDate, @PurchaseOrderNumber,
                             @DeliveryDocketIsPurchaseOrderRequired, @IsWithPrintedInvoices, @IsCaptureSignatureRequired, @IsAlwaysPrinted,
                             @BuildingDeliveryCode, @DeliveryInformation, @IsStopDelivery, @IsForeCastTopUpQty, @IsTemperatureCheck,
@@ -254,7 +298,7 @@ namespace Winit.Modules.Store.DL.Classes
                             @IsSurveyEnabled, @AllowReturnAgainstInvoice, @AllowReturnWithSalesOrder, @WeekOffSun, @WeekOffMon,
                             @WeekOffTue, @WeekOffWed, @WeekOffThu, @WeekOffFri, @WeekOffSat, @AgingCycle, @Depot, @DefaultRouteUID,@FirmRegNo,@CompanyRegNo,
                             @IsMSME,@FirmType,@AccSoftName,@AccSoftLicenseNo,@AccSoftVersionNo,@WebSite,@OwnerName,@GSTINStatus,@NatureOfBusiness,@PAN,
-                            @PinCode,@DateOfRegistration,@RegistrationType,@TaxPaymentType,@HSNDescription,@GSTAddress,@IsVendor, @GSTState,@GSTAddress1,@GSTAddress2,@GSTDistrict)";
+                            @PinCode,@DateOfRegistration,@RegistrationType,@TaxPaymentType,@HSNDescription,@GSTAddress,@IsVendor, @GSTState)";
 
 
                 return await ExecuteNonQueryAsync(sql, storeAdditionalInfo);

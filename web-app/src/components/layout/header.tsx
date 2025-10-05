@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar"
 import { useAutoCollapse } from "./main-layout"
-import Image from "next/image"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -207,15 +206,7 @@ export function Header() {
           {/* Logo Section when collapsed */}
           {isCollapsed && (
             <div className="flex items-center mr-2">
-              <Image
-                src="/winitlogo.png"
-                alt="WINIT"
-                width={140}
-                height={40}
-                className="object-contain h-8 w-auto"
-                priority
-                unoptimized
-              />
+              <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">LBCL</span>
             </div>
           )}
           

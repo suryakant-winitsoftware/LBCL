@@ -1,26 +1,70 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
-import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Separator } from '@/components/ui/separator';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Skeleton } from '@/components/ui/skeleton';
-import { GripVertical, Save, RotateCcw, Search, AlertCircle, CheckCircle2, Plus, X, RefreshCw, Eye, EyeOff, ChevronDown, ChevronUp, Loader2, Download, Upload, FileSpreadsheet, Zap } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import skuSequenceService, { SkuSequenceUI } from '@/services/sku/sku-sequence.service';
-import { skuService, SKUListView } from '@/services/sku/sku.service';
-import { toast } from 'sonner';
-import * as XLSX from 'xlsx';
+import React, { useState, useEffect } from "react";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy
+} from "@dnd-kit/sortable";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Separator } from "@/components/ui/separator";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from "@/components/ui/popover";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  GripVertical,
+  Save,
+  RotateCcw,
+  Search,
+  AlertCircle,
+  CheckCircle2,
+  Plus,
+  X,
+  RefreshCw,
+  Eye,
+  EyeOff,
+  ChevronDown,
+  ChevronUp,
+  Loader2,
+  Download,
+  Upload,
+  FileSpreadsheet,
+  Zap
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import skuSequenceService, {
+  SkuSequenceUI
+} from "@/services/sku/sku-sequence.service";
+import { skuService, SKUListView } from "@/services/sku/sku.service";
+import { toast } from "sonner";
+import * as XLSX from "xlsx";
 
 // Sortable Item Component
 interface SortableItemProps {
@@ -35,14 +79,24 @@ interface SortableItemProps {
   itemRef?: (el: HTMLDivElement | null, uid: string) => void;
 }
 
-function SortableItem({ sku, index, isSelected, onSelect, onCheckboxToggle, onRemove, totalSelected, isDraggingAny, itemRef }: SortableItemProps) {
+function SortableItem({
+  sku,
+  index,
+  isSelected,
+  onSelect,
+  onCheckboxToggle,
+  onRemove,
+  totalSelected,
+  isDraggingAny,
+  itemRef
+}: SortableItemProps) {
   const {
     attributes,
     listeners,
     setNodeRef,
     transform,
     transition,
-    isDragging,
+    isDragging
   } = useSortable({ id: sku.uid });
 
   const combinedRef = React.useCallback(
@@ -61,7 +115,11 @@ function SortableItem({ sku, index, isSelected, onSelect, onCheckboxToggle, onRe
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.9 : (isDraggingAny && isSelected && !isDragging) ? 0.5 : 1,
+    opacity: isDragging
+      ? 0.9
+      : isDraggingAny && isSelected && !isDragging
+      ? 0.5
+      : 1
   };
 
   return (
@@ -70,11 +128,20 @@ function SortableItem({ sku, index, isSelected, onSelect, onCheckboxToggle, onRe
       style={style}
       className={cn(
         "group relative flex items-center gap-3 p-4 bg-white border rounded-lg transition-all",
-        isDragging && isMultiDrag ? 'shadow-2xl ring-4 ring-blue-500 z-50 scale-105 bg-gradient-to-r from-blue-100 to-blue-50' : '',
-        isDragging && !isMultiDrag ? 'shadow-xl ring-2 ring-primary z-50 scale-105' : '',
-        !isDragging && isSelected && 'ring-2 ring-blue-500 bg-blue-50 border-blue-300',
-        !isDragging && !isSelected && 'hover:shadow-md hover:border-gray-300',
-        isDraggingAny && isSelected && !isDragging && 'ring-2 ring-blue-400 border-blue-400'
+        isDragging && isMultiDrag
+          ? "shadow-2xl ring-4 ring-blue-500 z-50 scale-105 bg-gradient-to-r from-blue-100 to-blue-50"
+          : "",
+        isDragging && !isMultiDrag
+          ? "shadow-xl ring-2 ring-primary z-50 scale-105"
+          : "",
+        !isDragging &&
+          isSelected &&
+          "ring-2 ring-blue-500 bg-blue-50 border-blue-300",
+        !isDragging && !isSelected && "hover:shadow-md hover:border-gray-300",
+        isDraggingAny &&
+          isSelected &&
+          !isDragging &&
+          "ring-2 ring-blue-400 border-blue-400"
       )}
     >
       {showGroupBadge && (
@@ -109,18 +176,25 @@ function SortableItem({ sku, index, isSelected, onSelect, onCheckboxToggle, onRe
       </div>
 
       <div className="flex-shrink-0 w-14 text-center">
-        <Badge variant={isSelected ? "default" : "secondary"} className="font-mono font-semibold">
+        <Badge
+          variant={isSelected ? "default" : "secondary"}
+          className="font-mono font-semibold"
+        >
           #{index + 1}
         </Badge>
       </div>
 
       <div className="flex-1 grid grid-cols-2 gap-6">
         <div>
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">SKU Code</p>
+          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
+            SKU Code
+          </p>
           <p className="font-semibold text-gray-900">{sku.skuCode}</p>
         </div>
         <div>
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Product Name</p>
+          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
+            Product Name
+          </p>
           <p className="font-medium text-gray-900">{sku.skuName}</p>
         </div>
       </div>
@@ -143,22 +217,28 @@ function SortableItem({ sku, index, isSelected, onSelect, onCheckboxToggle, onRe
 }
 
 export default function SkuSequencingPage() {
-  const [sequenceType, setSequenceType] = useState<string>('SalesOrder');
+  const [sequenceType, setSequenceType] = useState<string>("SalesOrder");
   const [skuSequences, setSkuSequences] = useState<SkuSequenceUI[]>([]);
-  const [filteredSequences, setFilteredSequences] = useState<SkuSequenceUI[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredSequences, setFilteredSequences] = useState<SkuSequenceUI[]>(
+    []
+  );
+  const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
-  const [originalSequences, setOriginalSequences] = useState<SkuSequenceUI[]>([]);
+  const [originalSequences, setOriginalSequences] = useState<SkuSequenceUI[]>(
+    []
+  );
   const [deletedItemUIDs, setDeletedItemUIDs] = useState<string[]>([]); // Track deleted items
 
   // Add Products Popover
   const [addPopoverOpen, setAddPopoverOpen] = useState(false);
   const [availableProducts, setAvailableProducts] = useState<SKUListView[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(false);
-  const [productSearchQuery, setProductSearchQuery] = useState('');
-  const [selectedProductsForAdd, setSelectedProductsForAdd] = useState<SKUListView[]>([]);
+  const [productSearchQuery, setProductSearchQuery] = useState("");
+  const [selectedProductsForAdd, setSelectedProductsForAdd] = useState<
+    SKUListView[]
+  >([]);
   const [productPage, setProductPage] = useState(1);
   const [hasMoreProducts, setHasMoreProducts] = useState(true);
   const [hideSelectedItems, setHideSelectedItems] = useState(false);
@@ -166,19 +246,21 @@ export default function SkuSequencingPage() {
 
   // Multi-select state
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
-  const [lastSelectedIndex, setLastSelectedIndex] = useState<number | null>(null);
+  const [lastSelectedIndex, setLastSelectedIndex] = useState<number | null>(
+    null
+  );
   const [isDragging, setIsDragging] = useState(false);
 
   // Quick Jump state
-  const [jumpToSKU, setJumpToSKU] = useState('');
-  const [moveToPosition, setMoveToPosition] = useState('');
+  const [jumpToSKU, setJumpToSKU] = useState("");
+  const [moveToPosition, setMoveToPosition] = useState("");
   const [showQuickActions, setShowQuickActions] = useState(false);
   const itemRefs = React.useRef<{ [key: string]: HTMLDivElement | null }>({});
 
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
+      coordinateGetter: sortableKeyboardCoordinates
     })
   );
 
@@ -189,7 +271,7 @@ export default function SkuSequencingPage() {
 
   // Filter sequences based on search query
   useEffect(() => {
-    if (searchQuery.trim() === '') {
+    if (searchQuery.trim() === "") {
       setFilteredSequences(skuSequences);
     } else {
       const query = searchQuery.toLowerCase();
@@ -205,7 +287,7 @@ export default function SkuSequencingPage() {
   const loadSequences = async () => {
     setLoading(true);
     try {
-      console.log('🔍 Loading sequences for type:', sequenceType);
+      console.log("🔍 Loading sequences for type:", sequenceType);
 
       const response = await skuSequenceService.getSkuSequences(sequenceType, {
         pageNumber: 1,
@@ -213,19 +295,19 @@ export default function SkuSequencingPage() {
         isCountRequired: false,
         sortCriterias: [
           {
-            sortParameter: 'serial_no',
-            direction: 'Asc',
-          },
-        ],
+            sortParameter: "serial_no",
+            direction: "Asc"
+          }
+        ]
       });
 
-      console.log('📦 Raw API Response:', response);
-      console.log('📊 Paged Data:', response.pagedData);
+      console.log("📦 Raw API Response:", response);
+      console.log("📊 Paged Data:", response.pagedData);
 
       const sequences = response.pagedData || [];
 
-      console.log('✅ Loaded sequences:', sequences);
-      console.log('📝 First sequence sample:', sequences[0]);
+      console.log("✅ Loaded sequences:", sequences);
+      console.log("📝 First sequence sample:", sequences[0]);
 
       setSkuSequences(sequences);
       setFilteredSequences(sequences);
@@ -233,13 +315,17 @@ export default function SkuSequencingPage() {
       setHasChanges(false);
 
       if (sequences.length > 0) {
-        toast.success(`Loaded ${sequences.length} product${sequences.length !== 1 ? 's' : ''}`);
+        toast.success(
+          `Loaded ${sequences.length} product${
+            sequences.length !== 1 ? "s" : ""
+          }`
+        );
       }
     } catch (error: any) {
-      console.error('❌ Error loading sequences:', error);
+      console.error("❌ Error loading sequences:", error);
       // Don't show error toast for empty sequences (common scenario)
       if (error.status !== 404) {
-        toast.error(error.message || 'Failed to load SKU sequences');
+        toast.error(error.message || "Failed to load SKU sequences");
       }
       // Set empty arrays on error
       setSkuSequences([]);
@@ -252,9 +338,9 @@ export default function SkuSequencingPage() {
 
   const handleDragStart = (event: any) => {
     const draggedItemId = event.active.id as string;
-    console.log('🎯 Drag started:', draggedItemId);
-    console.log('📦 Selected items:', Array.from(selectedItems));
-    console.log('🔢 Total selected:', selectedItems.size);
+    console.log("🎯 Drag started:", draggedItemId);
+    console.log("📦 Selected items:", Array.from(selectedItems));
+    console.log("🔢 Total selected:", selectedItems.size);
     setIsDragging(true);
   };
 
@@ -262,10 +348,10 @@ export default function SkuSequencingPage() {
     setIsDragging(false);
     const { active, over } = event;
 
-    console.log('🏁 Drag ended - Active:', active?.id, 'Over:', over?.id);
+    console.log("🏁 Drag ended - Active:", active?.id, "Over:", over?.id);
 
     if (!over || active.id === over.id) {
-      console.log('⚠️ Invalid drop - same position or no target');
+      console.log("⚠️ Invalid drop - same position or no target");
       return;
     }
 
@@ -276,117 +362,184 @@ export default function SkuSequencingPage() {
     const isDraggingSelected = selectedItems.has(draggedItemId);
     const isMultiDrag = isDraggingSelected && selectedItems.size > 1;
 
-    console.log('🔍 Is multi-drag?', isMultiDrag, '| Selected count:', selectedItems.size);
+    console.log(
+      "🔍 Is multi-drag?",
+      isMultiDrag,
+      "| Selected count:",
+      selectedItems.size
+    );
 
     if (isMultiDrag) {
       // Multi-item drag: Move all selected items together
-      console.log('🔄 Starting multi-item drag with', selectedItems.size, 'items');
+      console.log(
+        "🔄 Starting multi-item drag with",
+        selectedItems.size,
+        "items"
+      );
 
       setSkuSequences((currentItems) => {
-        console.log('📋 Current items count:', currentItems.length);
+        console.log("📋 Current items count:", currentItems.length);
 
         // Preserve the order of selected items based on current position
         const selectedItemsArray = currentItems
-          .filter(item => selectedItems.has(item.uid))
+          .filter((item) => selectedItems.has(item.uid))
           .sort((a, b) => {
-            const aIndex = currentItems.findIndex(x => x.uid === a.uid);
-            const bIndex = currentItems.findIndex(x => x.uid === b.uid);
+            const aIndex = currentItems.findIndex((x) => x.uid === a.uid);
+            const bIndex = currentItems.findIndex((x) => x.uid === b.uid);
             return aIndex - bIndex;
           });
 
-        console.log('✅ Selected items for move:', selectedItemsArray.map(i => i.skuCode));
+        console.log(
+          "✅ Selected items for move:",
+          selectedItemsArray.map((i) => i.skuCode)
+        );
 
-        const nonSelectedItems = currentItems.filter(item => !selectedItems.has(item.uid));
-        console.log('📦 Non-selected items:', nonSelectedItems.length);
+        const nonSelectedItems = currentItems.filter(
+          (item) => !selectedItems.has(item.uid)
+        );
+        console.log("📦 Non-selected items:", nonSelectedItems.length);
 
         // Find the target position in the CURRENT items array
-        const targetIndex = currentItems.findIndex((item) => item.uid === targetItemId);
+        const targetIndex = currentItems.findIndex(
+          (item) => item.uid === targetItemId
+        );
         const targetIsSelected = selectedItems.has(targetItemId);
 
-        console.log('🎯 Target index:', targetIndex, '| Target is selected?', targetIsSelected);
+        console.log(
+          "🎯 Target index:",
+          targetIndex,
+          "| Target is selected?",
+          targetIsSelected
+        );
 
         // If dropping on a selected item, don't move
         if (targetIsSelected) {
-          console.log('⚠️ Cannot drop on selected item - aborting');
-          toast.warning('Cannot drop on selected item');
+          console.log("⚠️ Cannot drop on selected item - aborting");
+          toast.warning("Cannot drop on selected item");
           return currentItems;
         }
 
         // Better approach: Find position of target in the final array
         // Step 1: Get the first selected item's current position
-        const firstSelectedIndex = currentItems.findIndex(item => item.uid === selectedItemsArray[0].uid);
+        const firstSelectedIndex = currentItems.findIndex(
+          (item) => item.uid === selectedItemsArray[0].uid
+        );
         const isDraggingDown = targetIndex > firstSelectedIndex;
 
-        console.log('🔽 Dragging down?', isDraggingDown, '| First selected at:', firstSelectedIndex, '| Target at:', targetIndex);
+        console.log(
+          "🔽 Dragging down?",
+          isDraggingDown,
+          "| First selected at:",
+          firstSelectedIndex,
+          "| Target at:",
+          targetIndex
+        );
 
         // Step 2: Find where the target item will be in the non-selected array
-        const targetItemInNonSelected = nonSelectedItems.findIndex(item => item.uid === targetItemId);
+        const targetItemInNonSelected = nonSelectedItems.findIndex(
+          (item) => item.uid === targetItemId
+        );
 
-        console.log('🎯 Target position in non-selected array:', targetItemInNonSelected);
+        console.log(
+          "🎯 Target position in non-selected array:",
+          targetItemInNonSelected
+        );
 
         let insertPosition: number;
 
         if (targetItemInNonSelected === -1) {
           // Target is selected (shouldn't happen, but handle it)
-          console.log('⚠️ Target not found in non-selected items');
+          console.log("⚠️ Target not found in non-selected items");
           insertPosition = 0;
         } else {
           if (isDraggingDown) {
             // When dragging down, insert AFTER the target
             insertPosition = targetItemInNonSelected + 1;
-            console.log('⬇️ Inserting AFTER position', targetItemInNonSelected, '=> position', insertPosition);
+            console.log(
+              "⬇️ Inserting AFTER position",
+              targetItemInNonSelected,
+              "=> position",
+              insertPosition
+            );
           } else {
             // When dragging up, insert BEFORE the target
             insertPosition = targetItemInNonSelected;
-            console.log('⬆️ Inserting BEFORE position', targetItemInNonSelected, '=> position', insertPosition);
+            console.log(
+              "⬆️ Inserting BEFORE position",
+              targetItemInNonSelected,
+              "=> position",
+              insertPosition
+            );
           }
         }
 
-        console.log('📍 Final insert position:', insertPosition, '(in non-selected array of', nonSelectedItems.length, 'items)');
+        console.log(
+          "📍 Final insert position:",
+          insertPosition,
+          "(in non-selected array of",
+          nonSelectedItems.length,
+          "items)"
+        );
 
         // Insert selected items at the calculated position
         const newItems = [...nonSelectedItems];
         newItems.splice(insertPosition, 0, ...selectedItemsArray);
 
-        console.log('📊 Final order with positions:');
+        console.log("📊 Final order with positions:");
         newItems.forEach((item, idx) => {
           const wasSelected = selectedItems.has(item.uid);
-          console.log(`  #${idx + 1}: ${item.skuCode}${wasSelected ? ' ✓ (moved)' : ''}`);
+          console.log(
+            `  #${idx + 1}: ${item.skuCode}${wasSelected ? " ✓ (moved)" : ""}`
+          );
         });
 
         // Update serial numbers
         const reordered = newItems.map((item, index) => ({
           ...item,
-          serialNo: index + 1,
+          serialNo: index + 1
         }));
 
         setHasChanges(true);
-        console.log('✅ Successfully moved', selectedItems.size, 'items to position', insertPosition);
-        toast.success(`Moved ${selectedItems.size} item${selectedItems.size !== 1 ? 's' : ''} together`, {
-          description: `Items repositioned to #${insertPosition}`
-        });
+        console.log(
+          "✅ Successfully moved",
+          selectedItems.size,
+          "items to position",
+          insertPosition
+        );
+        toast.success(
+          `Moved ${selectedItems.size} item${
+            selectedItems.size !== 1 ? "s" : ""
+          } together`,
+          {
+            description: `Items repositioned to #${insertPosition}`
+          }
+        );
         return reordered;
       });
     } else {
       // Single item drag: Original behavior
-      console.log('🔄 Single item drag');
+      console.log("🔄 Single item drag");
 
       setSkuSequences((currentItems) => {
-        const oldIndex = currentItems.findIndex((item) => item.uid === draggedItemId);
-        const newIndex = currentItems.findIndex((item) => item.uid === targetItemId);
+        const oldIndex = currentItems.findIndex(
+          (item) => item.uid === draggedItemId
+        );
+        const newIndex = currentItems.findIndex(
+          (item) => item.uid === targetItemId
+        );
 
-        console.log('📍 Moving from', oldIndex, 'to', newIndex);
+        console.log("📍 Moving from", oldIndex, "to", newIndex);
 
         const reordered = arrayMove(currentItems, oldIndex, newIndex);
 
         // Update serial numbers
         const updated = reordered.map((item, index) => ({
           ...item,
-          serialNo: index + 1,
+          serialNo: index + 1
         }));
 
         setHasChanges(true);
-        console.log('✅ Single item moved');
+        console.log("✅ Single item moved");
         return updated;
       });
     }
@@ -394,37 +547,41 @@ export default function SkuSequencingPage() {
 
   const handleSave = async () => {
     if (!hasChanges) {
-      toast.info('No changes to save');
+      toast.info("No changes to save");
       return;
     }
 
     setSaving(true);
     try {
-      console.log('💾 Saving sequences...');
-      console.log('📦 Current sequences:', skuSequences.length);
-      console.log('🗑️ Deleted items:', deletedItemUIDs.length);
-      console.log('🔄 Has changes:', hasChanges);
+      console.log("💾 Saving sequences...");
+      console.log("📦 Current sequences:", skuSequences.length);
+      console.log("🗑️ Deleted items:", deletedItemUIDs.length);
+      console.log("🔄 Has changes:", hasChanges);
 
       // Step 1: Delete removed items if any
       if (deletedItemUIDs.length > 0) {
-        console.log('🗑️ Deleting', deletedItemUIDs.length, 'items from backend');
+        console.log(
+          "🗑️ Deleting",
+          deletedItemUIDs.length,
+          "items from backend"
+        );
         await skuSequenceService.deleteSkuSequences(deletedItemUIDs);
-        console.log('✅ Deletion complete');
+        console.log("✅ Deletion complete");
       }
 
       // Step 2: Save/Update remaining sequences
       if (skuSequences.length > 0) {
-        console.log('💾 Saving', skuSequences.length, 'sequences');
+        console.log("💾 Saving", skuSequences.length, "sequences");
         const updates = await skuSequenceService.reorderSequences(
           skuSequences,
           sequenceType
         );
-        console.log('📤 Sending updates to backend:', updates);
+        console.log("📤 Sending updates to backend:", updates);
         await skuSequenceService.saveSkuSequences(updates);
-        console.log('✅ Save complete');
+        console.log("✅ Save complete");
       }
 
-      toast.success('SKU sequence saved successfully!');
+      toast.success("SKU sequence saved successfully!");
       setHasChanges(false);
       setOriginalSequences(JSON.parse(JSON.stringify(skuSequences)));
       setDeletedItemUIDs([]); // Clear deleted items tracker
@@ -433,9 +590,9 @@ export default function SkuSequencingPage() {
       setSelectedItems(new Set());
       setLastSelectedIndex(null);
     } catch (error: any) {
-      console.error('❌ Save error:', error);
-      console.error('❌ Error details:', error.response?.data || error);
-      toast.error(error.message || 'Failed to save SKU sequence');
+      console.error("❌ Save error:", error);
+      console.error("❌ Error details:", error.response?.data || error);
+      toast.error(error.message || "Failed to save SKU sequence");
     } finally {
       setSaving(false);
     }
@@ -449,11 +606,14 @@ export default function SkuSequencingPage() {
     setSelectedItems(new Set());
     setLastSelectedIndex(null);
 
-    toast.info('Changes reset to last saved state');
+    toast.info("Changes reset to last saved state");
   };
 
   // Load available products with pagination
-  const loadAvailableProducts = async (page: number = 1, append: boolean = false) => {
+  const loadAvailableProducts = async (
+    page: number = 1,
+    append: boolean = false
+  ) => {
     if (loadingProducts) return;
 
     try {
@@ -465,21 +625,23 @@ export default function SkuSequencingPage() {
         PageSize: pageSize,
         IsCountRequired: page === 1,
         FilterCriterias: productSearchQuery
-          ? [{ Name: 'skucodeandname', Value: productSearchQuery }]
+          ? [{ Name: "skucodeandname", Value: productSearchQuery }]
           : [],
-        SortCriterias: [{ SortParameter: 'SKUCode', Direction: 'Asc' }],
+        SortCriterias: [{ SortParameter: "SKUCode", Direction: "Asc" }]
       };
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'https://multiplex-promotions-api.winitsoftware.com/api'}/SKU/SelectAllSKUDetailsWebView`,
+        `${
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+        }/SKU/SelectAllSKUDetailsWebView`,
         {
-          method: 'POST',
+          method: "POST",
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
+            Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+            "Content-Type": "application/json",
+            Accept: "application/json"
           },
-          body: JSON.stringify(requestBody),
+          body: JSON.stringify(requestBody)
         }
       );
 
@@ -507,7 +669,7 @@ export default function SkuSequencingPage() {
               Name: sku.SKULongName || sku.Name || sku.LongName,
               LongName: sku.LongName || sku.Name || sku.AliasName,
               SKULongName: sku.SKULongName || sku.Name || sku.LongName,
-              IsActive: sku.IsActive !== false,
+              IsActive: sku.IsActive !== false
             }))
             .filter((sku: SKUListView) => sku.Code && sku.Name);
 
@@ -520,23 +682,23 @@ export default function SkuSequencingPage() {
           // Check if there are more products to load
           setHasMoreProducts(products.length === pageSize);
         } else {
-          console.error('API returned success=false or no data');
+          console.error("API returned success=false or no data");
           if (!append) {
-            toast.error('Failed to load products');
+            toast.error("Failed to load products");
             setAvailableProducts([]);
           }
         }
       } else {
-        console.error('Failed to load products:', response.status);
+        console.error("Failed to load products:", response.status);
         if (!append) {
-          toast.error('Failed to load products from server');
+          toast.error("Failed to load products from server");
           setAvailableProducts([]);
         }
       }
     } catch (error: any) {
-      console.error('Error loading products:', error);
+      console.error("Error loading products:", error);
       if (!append) {
-        toast.error(error.message || 'Failed to load products');
+        toast.error(error.message || "Failed to load products");
         setAvailableProducts([]);
       }
     } finally {
@@ -555,11 +717,18 @@ export default function SkuSequencingPage() {
 
   // Auto-load more when hiding selected items
   React.useEffect(() => {
-    if (hideSelectedItems && !loadingProducts && hasMoreProducts && addPopoverOpen) {
-      const existingSkuUIDs = new Set(skuSequences.map(s => s.skuUID));
-      const selectedUIDs = new Set(selectedProductsForAdd.map(p => p.UID || p.SKUUID || ''));
+    if (
+      hideSelectedItems &&
+      !loadingProducts &&
+      hasMoreProducts &&
+      addPopoverOpen
+    ) {
+      const existingSkuUIDs = new Set(skuSequences.map((s) => s.skuUID));
+      const selectedUIDs = new Set(
+        selectedProductsForAdd.map((p) => p.UID || p.SKUUID || "")
+      );
       const visibleItems = availableProducts.filter((p) => {
-        const skuUID = p.UID || p.SKUUID || '';
+        const skuUID = p.UID || p.SKUUID || "";
         const isExisting = existingSkuUIDs.has(skuUID);
         const isSelected = selectedUIDs.has(skuUID);
         return !isExisting && !isSelected;
@@ -571,30 +740,39 @@ export default function SkuSequencingPage() {
         }, 100);
       }
     }
-  }, [hideSelectedItems, availableProducts, selectedProductsForAdd, skuSequences, loadingProducts, hasMoreProducts, addPopoverOpen]);
+  }, [
+    hideSelectedItems,
+    availableProducts,
+    selectedProductsForAdd,
+    skuSequences,
+    loadingProducts,
+    hasMoreProducts,
+    addPopoverOpen
+  ]);
 
   const handleAddProducts = () => {
     if (selectedProductsForAdd.length === 0) {
-      toast.warning('Please select at least one product');
+      toast.warning("Please select at least one product");
       return;
     }
 
     const newSequences: SkuSequenceUI[] = [];
-    let currentMaxSerial = skuSequences.length > 0
-      ? Math.max(...skuSequences.map(s => s.serialNo))
-      : 0;
+    let currentMaxSerial =
+      skuSequences.length > 0
+        ? Math.max(...skuSequences.map((s) => s.serialNo))
+        : 0;
 
     selectedProductsForAdd.forEach((product) => {
       currentMaxSerial++;
       newSequences.push({
         uid: crypto.randomUUID(),
-        skuUID: product.UID || product.SKUUID || '',
-        skuCode: product.Code || product.SKUCode || '',
-        skuName: product.LongName || product.Name || product.SKULongName || '',
+        skuUID: product.UID || product.SKUUID || "",
+        skuCode: product.Code || product.SKUCode || "",
+        skuName: product.LongName || product.Name || product.SKULongName || "",
         seqType: sequenceType,
         serialNo: currentMaxSerial,
-        buOrgUID: '2d893d92-dc1b-5904-934c-621103a900e3', // Default BU Org
-        franchiseeOrgUID: 'WINIT',
+        buOrgUID: "2d893d92-dc1b-5904-934c-621103a900e3", // Default BU Org
+        franchiseeOrgUID: "WINIT"
       });
     });
 
@@ -606,11 +784,15 @@ export default function SkuSequencingPage() {
   };
 
   const toggleProductSelection = (product: SKUListView) => {
-    const skuUID = product.UID || product.SKUUID || '';
-    const isSelected = selectedProductsForAdd.some(p => (p.UID || p.SKUUID) === skuUID);
+    const skuUID = product.UID || product.SKUUID || "";
+    const isSelected = selectedProductsForAdd.some(
+      (p) => (p.UID || p.SKUUID) === skuUID
+    );
 
     if (isSelected) {
-      setSelectedProductsForAdd(selectedProductsForAdd.filter(p => (p.UID || p.SKUUID) !== skuUID));
+      setSelectedProductsForAdd(
+        selectedProductsForAdd.filter((p) => (p.UID || p.SKUUID) !== skuUID)
+      );
     } else {
       setSelectedProductsForAdd([...selectedProductsForAdd, product]);
     }
@@ -618,23 +800,23 @@ export default function SkuSequencingPage() {
 
   const handleRemoveProduct = (uid: string) => {
     // Track deleted item UID for backend deletion
-    setDeletedItemUIDs(prev => [...prev, uid]);
+    setDeletedItemUIDs((prev) => [...prev, uid]);
 
-    const updatedSequences = skuSequences.filter(s => s.uid !== uid);
+    const updatedSequences = skuSequences.filter((s) => s.uid !== uid);
     // Reorder serial numbers
     const reordered = updatedSequences.map((item, index) => ({
       ...item,
-      serialNo: index + 1,
+      serialNo: index + 1
     }));
     setSkuSequences(reordered);
     setSelectedItems(new Set()); // Clear selection
     setHasChanges(true);
-    toast.success('Product removed from sequence');
+    toast.success("Product removed from sequence");
   };
 
   // Handle item selection - simplified for easier multi-select
   const handleItemSelect = (uid: string, event: React.MouseEvent) => {
-    const currentIndex = filteredSequences.findIndex(s => s.uid === uid);
+    const currentIndex = filteredSequences.findIndex((s) => s.uid === uid);
 
     if (event.shiftKey && lastSelectedIndex !== null) {
       // Shift + Click: Select range
@@ -667,7 +849,7 @@ export default function SkuSequencingPage() {
       newSelection.add(uid);
     }
     setSelectedItems(newSelection);
-    const currentIndex = filteredSequences.findIndex(s => s.uid === uid);
+    const currentIndex = filteredSequences.findIndex((s) => s.uid === uid);
     setLastSelectedIndex(currentIndex);
   };
 
@@ -675,30 +857,32 @@ export default function SkuSequencingPage() {
   const handleExport = () => {
     try {
       const exportData = skuSequences.map((seq, index) => ({
-        'Serial No': index + 1,
-        'SKU Code': seq.skuCode,
-        'Product Name': seq.skuName,
+        "Serial No": index + 1,
+        "SKU Code": seq.skuCode,
+        "Product Name": seq.skuName
       }));
 
       const worksheet = XLSX.utils.json_to_sheet(exportData);
       const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, 'SKU Sequence');
+      XLSX.utils.book_append_sheet(workbook, worksheet, "SKU Sequence");
 
       // Auto-size columns
       const maxWidth = 50;
       const colWidths = [
         { wch: 10 }, // Serial No
         { wch: 20 }, // SKU Code
-        { wch: maxWidth }, // Product Name
+        { wch: maxWidth } // Product Name
       ];
-      worksheet['!cols'] = colWidths;
+      worksheet["!cols"] = colWidths;
 
-      const fileName = `SKU_Sequence_${sequenceType}_${new Date().toISOString().split('T')[0]}.xlsx`;
+      const fileName = `SKU_Sequence_${sequenceType}_${
+        new Date().toISOString().split("T")[0]
+      }.xlsx`;
       XLSX.writeFile(workbook, fileName);
-      toast.success('Sequence exported successfully!');
+      toast.success("Sequence exported successfully!");
     } catch (error: any) {
-      console.error('Export error:', error);
-      toast.error('Failed to export sequence');
+      console.error("Export error:", error);
+      toast.error("Failed to export sequence");
     }
   };
 
@@ -707,41 +891,49 @@ export default function SkuSequencingPage() {
     try {
       const templateData = [
         {
-          'Serial No': 1,
-          'SKU Code': 'EXAMPLE001',
+          "Serial No": 1,
+          "SKU Code": "EXAMPLE001"
         },
         {
-          'Serial No': 2,
-          'SKU Code': 'EXAMPLE002',
-        },
+          "Serial No": 2,
+          "SKU Code": "EXAMPLE002"
+        }
       ];
 
       const worksheet = XLSX.utils.json_to_sheet(templateData);
       const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, 'SKU Sequence');
+      XLSX.utils.book_append_sheet(workbook, worksheet, "SKU Sequence");
 
       // Add instructions in a separate sheet
       const instructions = [
-        { Instructions: 'How to use this template:' },
-        { Instructions: '1. Fill in the Serial No (sequence order)' },
-        { Instructions: '2. Enter the SKU Code (must match existing products)' },
-        { Instructions: '3. Save the file and import it back' },
-        { Instructions: '' },
-        { Instructions: 'Note: Serial No determines the display order (1 = first, 2 = second, etc.)' },
-        { Instructions: 'The system will validate SKU Codes against your product database' },
+        { Instructions: "How to use this template:" },
+        { Instructions: "1. Fill in the Serial No (sequence order)" },
+        {
+          Instructions: "2. Enter the SKU Code (must match existing products)"
+        },
+        { Instructions: "3. Save the file and import it back" },
+        { Instructions: "" },
+        {
+          Instructions:
+            "Note: Serial No determines the display order (1 = first, 2 = second, etc.)"
+        },
+        {
+          Instructions:
+            "The system will validate SKU Codes against your product database"
+        }
       ];
       const instructionSheet = XLSX.utils.json_to_sheet(instructions);
-      XLSX.utils.book_append_sheet(workbook, instructionSheet, 'Instructions');
+      XLSX.utils.book_append_sheet(workbook, instructionSheet, "Instructions");
 
       // Auto-size columns
-      worksheet['!cols'] = [{ wch: 10 }, { wch: 20 }];
-      instructionSheet['!cols'] = [{ wch: 80 }];
+      worksheet["!cols"] = [{ wch: 10 }, { wch: 20 }];
+      instructionSheet["!cols"] = [{ wch: 80 }];
 
-      XLSX.writeFile(workbook, 'SKU_Sequence_Template.xlsx');
-      toast.success('Template downloaded successfully!');
+      XLSX.writeFile(workbook, "SKU_Sequence_Template.xlsx");
+      toast.success("Template downloaded successfully!");
     } catch (error: any) {
-      console.error('Template download error:', error);
-      toast.error('Failed to download template');
+      console.error("Template download error:", error);
+      toast.error("Failed to download template");
     }
   };
 
@@ -754,14 +946,14 @@ export default function SkuSequencingPage() {
     reader.onload = async (e) => {
       try {
         const data = new Uint8Array(e.target?.result as ArrayBuffer);
-        const workbook = XLSX.read(data, { type: 'array' });
+        const workbook = XLSX.read(data, { type: "array" });
         const worksheet = workbook.Sheets[workbook.SheetNames[0]];
         const jsonData = XLSX.utils.sheet_to_json(worksheet) as any[];
 
-        console.log('📥 Imported data:', jsonData);
+        console.log("📥 Imported data:", jsonData);
 
         if (jsonData.length === 0) {
-          toast.error('The Excel file is empty');
+          toast.error("The Excel file is empty");
           return;
         }
 
@@ -770,8 +962,8 @@ export default function SkuSequencingPage() {
         const errors: string[] = [];
 
         jsonData.forEach((row, index) => {
-          const skuCode = row['SKU Code']?.toString().trim();
-          const serialNo = parseInt(row['Serial No']?.toString() || '0');
+          const skuCode = row["SKU Code"]?.toString().trim();
+          const serialNo = parseInt(row["Serial No"]?.toString() || "0");
 
           if (!skuCode) {
             errors.push(`Row ${index + 2}: Missing SKU Code`);
@@ -787,13 +979,15 @@ export default function SkuSequencingPage() {
         });
 
         if (errors.length > 0) {
-          toast.error(`Import validation failed:\n${errors.slice(0, 5).join('\n')}`);
+          toast.error(
+            `Import validation failed:\n${errors.slice(0, 5).join("\n")}`
+          );
           return;
         }
 
         // Fetch full SKU details for the imported codes
-        toast.info('Validating SKU codes...');
-        const skuCodes = importedItems.map(item => item.skuCode);
+        toast.info("Validating SKU codes...");
+        const skuCodes = importedItems.map((item) => item.skuCode);
 
         // Fetch all SKUs to validate
         const requestBody = {
@@ -801,24 +995,26 @@ export default function SkuSequencingPage() {
           PageSize: 10000,
           IsCountRequired: false,
           FilterCriterias: [],
-          SortCriterias: [{ SortParameter: 'SKUCode', Direction: 'Asc' }],
+          SortCriterias: [{ SortParameter: "SKUCode", Direction: "Asc" }]
         };
 
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL || 'https://multiplex-promotions-api.winitsoftware.com/api'}/SKU/SelectAllSKUDetailsWebView`,
+          `${
+            process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
+          }/SKU/SelectAllSKUDetailsWebView`,
           {
-            method: 'POST',
+            method: "POST",
             headers: {
-              Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
-              'Content-Type': 'application/json',
-              Accept: 'application/json',
+              Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+              "Content-Type": "application/json",
+              Accept: "application/json"
             },
-            body: JSON.stringify(requestBody),
+            body: JSON.stringify(requestBody)
           }
         );
 
         if (!response.ok) {
-          throw new Error('Failed to fetch SKU details');
+          throw new Error("Failed to fetch SKU details");
         }
 
         const result = await response.json();
@@ -828,9 +1024,11 @@ export default function SkuSequencingPage() {
         const newSequences: SkuSequenceUI[] = [];
         const notFoundSkus: string[] = [];
 
-        importedItems.forEach(item => {
-          const sku = allSkus.find((s: any) =>
-            (s.SKUCode || s.Code)?.toString().trim().toLowerCase() === item.skuCode.toLowerCase()
+        importedItems.forEach((item) => {
+          const sku = allSkus.find(
+            (s: any) =>
+              (s.SKUCode || s.Code)?.toString().trim().toLowerCase() ===
+              item.skuCode.toLowerCase()
           );
 
           if (sku) {
@@ -841,8 +1039,8 @@ export default function SkuSequencingPage() {
               skuName: sku.SKULongName || sku.Name || sku.LongName,
               seqType: sequenceType,
               serialNo: item.serialNo,
-              buOrgUID: '',
-              franchiseeOrgUID: '',
+              buOrgUID: "",
+              franchiseeOrgUID: ""
             });
           } else {
             notFoundSkus.push(item.skuCode);
@@ -850,7 +1048,11 @@ export default function SkuSequencingPage() {
         });
 
         if (notFoundSkus.length > 0) {
-          toast.error(`SKU codes not found: ${notFoundSkus.slice(0, 5).join(', ')}${notFoundSkus.length > 5 ? '...' : ''}`);
+          toast.error(
+            `SKU codes not found: ${notFoundSkus.slice(0, 5).join(", ")}${
+              notFoundSkus.length > 5 ? "..." : ""
+            }`
+          );
           return;
         }
 
@@ -858,39 +1060,41 @@ export default function SkuSequencingPage() {
         newSequences.sort((a, b) => a.serialNo - b.serialNo);
         const reorderedSequences = newSequences.map((seq, index) => ({
           ...seq,
-          serialNo: index + 1,
+          serialNo: index + 1
         }));
 
         setSkuSequences(reorderedSequences);
         setHasChanges(true);
-        toast.success(`Successfully imported ${reorderedSequences.length} products`);
+        toast.success(
+          `Successfully imported ${reorderedSequences.length} products`
+        );
       } catch (error: any) {
-        console.error('Import error:', error);
-        toast.error(error.message || 'Failed to import sequence');
+        console.error("Import error:", error);
+        toast.error(error.message || "Failed to import sequence");
       }
     };
 
     reader.readAsArrayBuffer(file);
     // Reset input value to allow re-importing the same file
-    event.target.value = '';
+    event.target.value = "";
   };
 
   // Select all items
   const handleSelectAll = () => {
-    const allUIDs = new Set(filteredSequences.map(s => s.uid));
+    const allUIDs = new Set(filteredSequences.map((s) => s.uid));
     setSelectedItems(allUIDs);
   };
 
   // Quick Jump to SKU Code
   const handleJumpToSKU = () => {
     if (!jumpToSKU.trim()) {
-      toast.error('Please enter a SKU code');
+      toast.error("Please enter a SKU code");
       return;
     }
 
     const query = jumpToSKU.trim().toLowerCase();
-    const targetIndex = filteredSequences.findIndex(
-      (seq) => seq.skuCode.toLowerCase().includes(query)
+    const targetIndex = filteredSequences.findIndex((seq) =>
+      seq.skuCode.toLowerCase().includes(query)
     );
 
     if (targetIndex === -1) {
@@ -901,35 +1105,45 @@ export default function SkuSequencingPage() {
     const targetItem = filteredSequences[targetIndex];
     if (targetItem && itemRefs.current[targetItem.uid]) {
       itemRefs.current[targetItem.uid]?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
+        behavior: "smooth",
+        block: "center"
       });
       // Highlight the item (navigation only - doesn't change sequence)
       setSelectedItems(new Set([targetItem.uid]));
       setLastSelectedIndex(targetIndex);
       toast.success(`Found SKU: ${targetItem.skuCode}`);
-      setJumpToSKU('');
-      console.log('🎯 Quick Jump - Navigation only, hasChanges:', hasChanges);
+      setJumpToSKU("");
+      console.log("🎯 Quick Jump - Navigation only, hasChanges:", hasChanges);
     }
   };
 
   // Move Selected Items to Specific Position
   const handleMoveToPosition = () => {
     if (selectedItems.size === 0) {
-      toast.error('Please select at least one item to move');
+      toast.error("Please select at least one item to move");
       return;
     }
 
     const targetPosition = parseInt(moveToPosition);
-    if (isNaN(targetPosition) || targetPosition < 1 || targetPosition > skuSequences.length) {
-      toast.error(`Please enter a valid position between 1 and ${skuSequences.length}`);
+    if (
+      isNaN(targetPosition) ||
+      targetPosition < 1 ||
+      targetPosition > skuSequences.length
+    ) {
+      toast.error(
+        `Please enter a valid position between 1 and ${skuSequences.length}`
+      );
       return;
     }
 
     try {
       // Get selected and non-selected items
-      const selectedSeqs = skuSequences.filter(seq => selectedItems.has(seq.uid));
-      const nonSelectedSeqs = skuSequences.filter(seq => !selectedItems.has(seq.uid));
+      const selectedSeqs = skuSequences.filter((seq) =>
+        selectedItems.has(seq.uid)
+      );
+      const nonSelectedSeqs = skuSequences.filter(
+        (seq) => !selectedItems.has(seq.uid)
+      );
 
       // Insert selected items at target position (convert to 0-based index)
       const insertIndex = targetPosition - 1;
@@ -942,7 +1156,7 @@ export default function SkuSequencingPage() {
       // Update serial numbers
       const updated = reordered.map((item, index) => ({
         ...item,
-        serialNo: index + 1,
+        serialNo: index + 1
       }));
 
       setSkuSequences(updated);
@@ -952,18 +1166,22 @@ export default function SkuSequencingPage() {
       setTimeout(() => {
         if (selectedSeqs[0] && itemRefs.current[selectedSeqs[0].uid]) {
           itemRefs.current[selectedSeqs[0].uid]?.scrollIntoView({
-            behavior: 'smooth',
-            block: 'center',
+            behavior: "smooth",
+            block: "center"
           });
         }
       }, 100);
 
-      toast.success(`Moved ${selectedItems.size} item${selectedItems.size !== 1 ? 's' : ''} to position ${targetPosition}`);
-      setMoveToPosition('');
-      console.log('✅ Moved items to position:', targetPosition);
+      toast.success(
+        `Moved ${selectedItems.size} item${
+          selectedItems.size !== 1 ? "s" : ""
+        } to position ${targetPosition}`
+      );
+      setMoveToPosition("");
+      console.log("✅ Moved items to position:", targetPosition);
     } catch (error: any) {
-      console.error('❌ Error moving items:', error);
-      toast.error('Failed to move items');
+      console.error("❌ Error moving items:", error);
+      toast.error("Failed to move items");
     }
   };
 
@@ -979,25 +1197,31 @@ export default function SkuSequencingPage() {
 
     // Track all deleted item UIDs for backend deletion
     const deletedUIDs = Array.from(selectedItems);
-    setDeletedItemUIDs(prev => [...prev, ...deletedUIDs]);
+    setDeletedItemUIDs((prev) => [...prev, ...deletedUIDs]);
 
-    const updatedSequences = skuSequences.filter(s => !selectedItems.has(s.uid));
+    const updatedSequences = skuSequences.filter(
+      (s) => !selectedItems.has(s.uid)
+    );
     // Reorder serial numbers
     const reordered = updatedSequences.map((item, index) => ({
       ...item,
-      serialNo: index + 1,
+      serialNo: index + 1
     }));
     setSkuSequences(reordered);
     setSelectedItems(new Set());
     setLastSelectedIndex(null);
     setHasChanges(true);
-    toast.success(`Removed ${deletedUIDs.length} product${deletedUIDs.length !== 1 ? 's' : ''} from sequence`);
+    toast.success(
+      `Removed ${deletedUIDs.length} product${
+        deletedUIDs.length !== 1 ? "s" : ""
+      } from sequence`
+    );
   };
 
   const sequenceTypes = [
-    { label: 'Sales Order', value: 'SalesOrder' },
-    { label: 'Return Order', value: 'ReturnOrder' },
-    { label: 'Store Check', value: 'StoreCheck' },
+    { label: "Sales Order", value: "SalesOrder" },
+    { label: "Return Order", value: "ReturnOrder" },
+    { label: "Store Check", value: "StoreCheck" }
   ];
 
   return (
@@ -1067,7 +1291,7 @@ export default function SkuSequencingPage() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => document.getElementById('excel-import')?.click()}
+                onClick={() => document.getElementById("excel-import")?.click()}
                 className="whitespace-nowrap"
               >
                 <Upload className="h-4 w-4 mr-2" />
@@ -1081,7 +1305,6 @@ export default function SkuSequencingPage() {
                 className="hidden"
               />
             </div>
-
           </div>
 
           {/* Info Alerts */}
@@ -1089,10 +1312,14 @@ export default function SkuSequencingPage() {
             <Alert className="border-green-200 bg-green-50">
               <CheckCircle2 className="h-4 w-4 text-green-600" />
               <AlertDescription className="text-green-800">
-                <strong>{selectedItems.size} item{selectedItems.size !== 1 ? 's' : ''} selected.</strong>
+                <strong>
+                  {selectedItems.size} item{selectedItems.size !== 1 ? "s" : ""}{" "}
+                  selected.
+                </strong>
                 {selectedItems.size > 1 && (
                   <span className="ml-1">
-                    Drag any selected item to move all {selectedItems.size} items together as a group!
+                    Drag any selected item to move all {selectedItems.size}{" "}
+                    items together as a group!
                   </span>
                 )}
               </AlertDescription>
@@ -1117,7 +1344,7 @@ export default function SkuSequencingPage() {
                     variant="ghost"
                     size="icon"
                     className="absolute right-1 top-1/2 transform -translate-y-1/2 h-7 w-7"
-                    onClick={() => setSearchQuery('')}
+                    onClick={() => setSearchQuery("")}
                   >
                     <X className="h-3 w-3" />
                   </Button>
@@ -1133,7 +1360,7 @@ export default function SkuSequencingPage() {
                 if (open) {
                   setProductPage(1);
                   setHasMoreProducts(true);
-                  setProductSearchQuery('');
+                  setProductSearchQuery("");
                   loadAvailableProducts(1, false);
                 }
               }}
@@ -1148,10 +1375,18 @@ export default function SkuSequencingPage() {
                     selectedProductsForAdd.length > 0 && "border-primary"
                   )}
                 >
-                  <span className={selectedProductsForAdd.length > 0 ? 'font-medium' : 'text-muted-foreground'}>
+                  <span
+                    className={
+                      selectedProductsForAdd.length > 0
+                        ? "font-medium"
+                        : "text-muted-foreground"
+                    }
+                  >
                     {selectedProductsForAdd.length > 0
-                      ? `${selectedProductsForAdd.length} product${selectedProductsForAdd.length !== 1 ? 's' : ''} selected`
-                      : 'Select products to add...'}
+                      ? `${selectedProductsForAdd.length} product${
+                          selectedProductsForAdd.length !== 1 ? "s" : ""
+                        } selected`
+                      : "Select products to add..."}
                   </span>
                   <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
@@ -1176,7 +1411,8 @@ export default function SkuSequencingPage() {
                   />
                   <div className="flex items-center justify-between mb-2 px-2">
                     <span className="text-sm font-medium">
-                      {selectedProductsForAdd.length} selected | {availableProducts.length} loaded
+                      {selectedProductsForAdd.length} selected |{" "}
+                      {availableProducts.length} loaded
                     </span>
                     <div className="flex items-center gap-2">
                       <Button
@@ -1214,18 +1450,24 @@ export default function SkuSequencingPage() {
                   className="max-h-[300px] overflow-y-auto p-2"
                   onScroll={(e) => {
                     const target = e.target as HTMLDivElement;
-                    const bottom = target.scrollHeight - target.scrollTop === target.clientHeight;
+                    const bottom =
+                      target.scrollHeight - target.scrollTop ===
+                      target.clientHeight;
                     if (bottom && !loadingProducts && hasMoreProducts) {
                       loadMoreProducts();
                     }
                   }}
                 >
                   {availableProducts
-                    .filter(p => {
-                      const skuUID = p.UID || p.SKUUID || '';
-                      const existingSkuUIDs = new Set(skuSequences.map(s => s.skuUID));
+                    .filter((p) => {
+                      const skuUID = p.UID || p.SKUUID || "";
+                      const existingSkuUIDs = new Set(
+                        skuSequences.map((s) => s.skuUID)
+                      );
                       const isExisting = existingSkuUIDs.has(skuUID);
-                      const selectedUIDs = new Set(selectedProductsForAdd.map(sp => sp.UID || sp.SKUUID));
+                      const selectedUIDs = new Set(
+                        selectedProductsForAdd.map((sp) => sp.UID || sp.SKUUID)
+                      );
                       const isSelected = selectedUIDs.has(skuUID);
 
                       if (isExisting) return false;
@@ -1234,37 +1476,49 @@ export default function SkuSequencingPage() {
                       return true;
                     })
                     .map((product) => {
-                      const skuUID = product.UID || product.SKUUID || '';
-                      const selectedUIDs = new Set(selectedProductsForAdd.map(sp => sp.UID || sp.SKUUID));
+                      const skuUID = product.UID || product.SKUUID || "";
+                      const selectedUIDs = new Set(
+                        selectedProductsForAdd.map((sp) => sp.UID || sp.SKUUID)
+                      );
                       const isSelected = selectedUIDs.has(skuUID);
 
                       return (
                         <div
                           key={skuUID}
                           className={cn(
-                            'flex items-center space-x-2 p-2 rounded cursor-pointer select-none',
-                            isSelected && 'bg-accent/50 hover:bg-accent/70'
+                            "flex items-center space-x-2 p-2 rounded cursor-pointer select-none",
+                            isSelected && "bg-accent/50 hover:bg-accent/70"
                           )}
                           onClick={() => toggleProductSelection(product)}
                         >
                           <Checkbox
                             checked={isSelected}
-                            onCheckedChange={() => toggleProductSelection(product)}
+                            onCheckedChange={() =>
+                              toggleProductSelection(product)
+                            }
                           />
                           <div className="flex-1">
-                            <div className="font-medium">{product.Code || product.SKUCode}</div>
+                            <div className="font-medium">
+                              {product.Code || product.SKUCode}
+                            </div>
                             <div className="text-xs text-muted-foreground">
-                              {product.LongName || product.Name || product.SKULongName}
+                              {product.LongName ||
+                                product.Name ||
+                                product.SKULongName}
                             </div>
                           </div>
                         </div>
                       );
                     })}
-                  {availableProducts.filter(p => {
-                    const skuUID = p.UID || p.SKUUID || '';
-                    const existingSkuUIDs = new Set(skuSequences.map(s => s.skuUID));
+                  {availableProducts.filter((p) => {
+                    const skuUID = p.UID || p.SKUUID || "";
+                    const existingSkuUIDs = new Set(
+                      skuSequences.map((s) => s.skuUID)
+                    );
                     const isExisting = existingSkuUIDs.has(skuUID);
-                    const selectedUIDs = new Set(selectedProductsForAdd.map(sp => sp.UID || sp.SKUUID));
+                    const selectedUIDs = new Set(
+                      selectedProductsForAdd.map((sp) => sp.UID || sp.SKUUID)
+                    );
                     const isSelected = selectedUIDs.has(skuUID);
                     if (isExisting) return false;
                     if (hideSelectedItems && isSelected) return false;
@@ -1274,31 +1528,37 @@ export default function SkuSequencingPage() {
                       <p className="text-sm text-muted-foreground">
                         {hideSelectedItems
                           ? loadingProducts
-                            ? 'Loading more unselected items...'
+                            ? "Loading more unselected items..."
                             : hasMoreProducts
-                            ? 'Loading more items automatically...'
-                            : 'No more unselected items available'
+                            ? "Loading more items automatically..."
+                            : "No more unselected items available"
                           : productSearchQuery
-                          ? 'No products found matching your search'
+                          ? "No products found matching your search"
                           : loadingProducts
-                          ? 'Loading items...'
-                          : 'All products are already in the sequence'}
+                          ? "Loading items..."
+                          : "All products are already in the sequence"}
                       </p>
                     </div>
                   )}
                   {loadingProducts && (
                     <div className="flex items-center justify-center py-2">
                       <RefreshCw className="h-4 w-4 animate-spin mr-2" />
-                      <span className="text-sm text-muted-foreground">Loading more products...</span>
-                    </div>
-                  )}
-                  {!loadingProducts && hasMoreProducts && availableProducts.length > 0 && (
-                    <div className="text-center py-2">
-                      <span className="text-xs text-muted-foreground">
-                        {hideSelectedItems ? 'Auto-loading more...' : 'Scroll for more'}
+                      <span className="text-sm text-muted-foreground">
+                        Loading more products...
                       </span>
                     </div>
                   )}
+                  {!loadingProducts &&
+                    hasMoreProducts &&
+                    availableProducts.length > 0 && (
+                      <div className="text-center py-2">
+                        <span className="text-xs text-muted-foreground">
+                          {hideSelectedItems
+                            ? "Auto-loading more..."
+                            : "Scroll for more"}
+                        </span>
+                      </div>
+                    )}
                 </div>
                 <Separator />
                 <div className="p-2">
@@ -1307,7 +1567,10 @@ export default function SkuSequencingPage() {
                     disabled={selectedProductsForAdd.length === 0}
                     className="w-full"
                   >
-                    Add {selectedProductsForAdd.length > 0 && `(${selectedProductsForAdd.length})`} Product{selectedProductsForAdd.length !== 1 ? 's' : ''}
+                    Add{" "}
+                    {selectedProductsForAdd.length > 0 &&
+                      `(${selectedProductsForAdd.length})`}{" "}
+                    Product{selectedProductsForAdd.length !== 1 ? "s" : ""}
                   </Button>
                 </div>
               </PopoverContent>
@@ -1384,7 +1647,9 @@ export default function SkuSequencingPage() {
                           placeholder="Search by SKU code..."
                           value={jumpToSKU}
                           onChange={(e) => setJumpToSKU(e.target.value)}
-                          onKeyPress={(e) => e.key === 'Enter' && handleJumpToSKU()}
+                          onKeyPress={(e) =>
+                            e.key === "Enter" && handleJumpToSKU()
+                          }
                           className="flex-1 bg-white"
                         />
                         <Button
@@ -1397,7 +1662,9 @@ export default function SkuSequencingPage() {
                           Find
                         </Button>
                       </div>
-                      <p className="text-xs text-gray-500 mt-1">Scroll to and select a product by SKU code</p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Scroll to and select a product by SKU code
+                      </p>
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -1411,7 +1678,9 @@ export default function SkuSequencingPage() {
                           placeholder={`1-${skuSequences.length}`}
                           value={moveToPosition}
                           onChange={(e) => setMoveToPosition(e.target.value)}
-                          onKeyPress={(e) => e.key === 'Enter' && handleMoveToPosition()}
+                          onKeyPress={(e) =>
+                            e.key === "Enter" && handleMoveToPosition()
+                          }
                           className="w-32 bg-white"
                         />
                         <Button
@@ -1426,10 +1695,13 @@ export default function SkuSequencingPage() {
                       </div>
                       {selectedItems.size > 0 ? (
                         <p className="text-xs text-green-600 mt-1 font-medium">
-                          ✓ {selectedItems.size} item{selectedItems.size !== 1 ? 's' : ''} selected
+                          ✓ {selectedItems.size} item
+                          {selectedItems.size !== 1 ? "s" : ""} selected
                         </p>
                       ) : (
-                        <p className="text-xs text-gray-500 mt-1">Select items first, then enter target position</p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          Select items first, then enter target position
+                        </p>
                       )}
                     </div>
                   </div>
@@ -1445,7 +1717,10 @@ export default function SkuSequencingPage() {
                 <Skeleton className="h-4 w-24" />
               </div>
               {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="flex items-center gap-3 p-4 bg-white border rounded-lg">
+                <div
+                  key={i}
+                  className="flex items-center gap-3 p-4 bg-white border rounded-lg"
+                >
                   <Skeleton className="h-5 w-5" />
                   <Skeleton className="h-6 w-12" />
                   <div className="flex-1 grid grid-cols-2 gap-4">
@@ -1473,7 +1748,9 @@ export default function SkuSequencingPage() {
                   )}
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900">
-                  {searchQuery ? 'No products found' : 'No products in sequence'}
+                  {searchQuery
+                    ? "No products found"
+                    : "No products in sequence"}
                 </h3>
                 <p className="text-sm text-gray-600 max-w-md">
                   {searchQuery
@@ -1483,7 +1760,7 @@ export default function SkuSequencingPage() {
                 {searchQuery && skuSequences.length > 0 && (
                   <Button
                     variant="outline"
-                    onClick={() => setSearchQuery('')}
+                    onClick={() => setSearchQuery("")}
                     className="mt-2"
                   >
                     <X className="h-4 w-4 mr-2" />
@@ -1492,7 +1769,8 @@ export default function SkuSequencingPage() {
                 )}
                 {!searchQuery && (
                   <p className="text-xs text-gray-500 mt-2">
-                    💡 Tip: Select products from the dropdown to build your sequence
+                    💡 Tip: Select products from the dropdown to build your
+                    sequence
                   </p>
                 )}
               </div>
@@ -1502,11 +1780,13 @@ export default function SkuSequencingPage() {
               <div className="flex items-center justify-between pb-3 border-b">
                 <div className="flex items-center gap-3">
                   <span className="text-sm font-semibold text-gray-700">
-                    {filteredSequences.length} product{filteredSequences.length !== 1 ? 's' : ''}
+                    {filteredSequences.length} product
+                    {filteredSequences.length !== 1 ? "s" : ""}
                   </span>
                   {searchQuery && (
                     <Badge variant="secondary" className="text-xs">
-                      Showing {filteredSequences.length} of {skuSequences.length}
+                      Showing {filteredSequences.length} of{" "}
+                      {skuSequences.length}
                     </Badge>
                   )}
                   {selectedItems.size > 0 && (

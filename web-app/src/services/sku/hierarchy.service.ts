@@ -109,7 +109,7 @@ export interface PagedResponse<T> {
 
 class HierarchyService {
   private baseURL =
-    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
   // ============ SKU GROUP TYPE MANAGEMENT ============
 
@@ -123,9 +123,9 @@ class HierarchyService {
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify(request),
+        body: JSON.stringify(request)
       }
     );
 
@@ -151,8 +151,8 @@ class HierarchyService {
         method: "GET",
         headers: {
           ...getAuthHeaders(),
-          Accept: "application/json",
-        },
+          Accept: "application/json"
+        }
       }
     );
 
@@ -176,9 +176,9 @@ class HierarchyService {
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify(groupType),
+        body: JSON.stringify(groupType)
       }
     );
 
@@ -204,9 +204,9 @@ class HierarchyService {
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify(groupType),
+        body: JSON.stringify(groupType)
       }
     );
 
@@ -231,8 +231,8 @@ class HierarchyService {
         method: "DELETE",
         headers: {
           ...getAuthHeaders(),
-          Accept: "application/json",
-        },
+          Accept: "application/json"
+        }
       }
     );
 
@@ -257,8 +257,8 @@ class HierarchyService {
         method: "GET",
         headers: {
           ...getAuthHeaders(),
-          Accept: "application/json",
-        },
+          Accept: "application/json"
+        }
       }
     );
 
@@ -285,8 +285,8 @@ class HierarchyService {
         method: "GET",
         headers: {
           ...getAuthHeaders(),
-          Accept: "application/json",
-        },
+          Accept: "application/json"
+        }
       }
     );
 
@@ -318,9 +318,9 @@ class HierarchyService {
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify(request),
+        body: JSON.stringify(request)
       }
     );
 
@@ -343,8 +343,8 @@ class HierarchyService {
         method: "GET",
         headers: {
           ...getAuthHeaders(),
-          Accept: "application/json",
-        },
+          Accept: "application/json"
+        }
       }
     );
 
@@ -366,9 +366,9 @@ class HierarchyService {
       headers: {
         ...getAuthHeaders(),
         "Content-Type": "application/json",
-        Accept: "application/json",
+        Accept: "application/json"
       },
-      body: JSON.stringify(group),
+      body: JSON.stringify(group)
     });
 
     if (!response.ok) {
@@ -390,8 +390,8 @@ class HierarchyService {
         method: "POST",
         headers: {
           ...getAuthHeaders(),
-          Accept: "application/json",
-        },
+          Accept: "application/json"
+        }
       }
     );
 
@@ -417,9 +417,9 @@ class HierarchyService {
       headers: {
         ...getAuthHeaders(),
         "Content-Type": "application/json",
-        Accept: "application/json",
+        Accept: "application/json"
       },
-      body: JSON.stringify(group),
+      body: JSON.stringify(group)
     });
 
     if (!response.ok) {
@@ -441,8 +441,8 @@ class HierarchyService {
         method: "DELETE",
         headers: {
           ...getAuthHeaders(),
-          Accept: "application/json",
-        },
+          Accept: "application/json"
+        }
       }
     );
 
@@ -465,8 +465,8 @@ class HierarchyService {
         method: "GET",
         headers: {
           ...getAuthHeaders(),
-          Accept: "application/json",
-        },
+          Accept: "application/json"
+        }
       }
     );
 
@@ -495,8 +495,8 @@ class HierarchyService {
       method: "GET",
       headers: {
         ...getAuthHeaders(),
-        Accept: "application/json",
-      },
+        Accept: "application/json"
+      }
     });
 
     if (!response.ok) {
@@ -524,8 +524,8 @@ class HierarchyService {
         method: "GET",
         headers: {
           ...getAuthHeaders(),
-          Accept: "application/json",
-        },
+          Accept: "application/json"
+        }
       }
     );
 
@@ -555,9 +555,9 @@ class HierarchyService {
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify(request),
+        body: JSON.stringify(request)
       }
     );
 
@@ -589,9 +589,9 @@ class HierarchyService {
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify(request),
+        body: JSON.stringify(request)
       }
     );
 
@@ -619,8 +619,8 @@ class HierarchyService {
         method: "GET",
         headers: {
           ...getAuthHeaders(),
-          Accept: "application/json",
-        },
+          Accept: "application/json"
+        }
       }
     );
 
@@ -650,9 +650,9 @@ class HierarchyService {
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify(mapping),
+        body: JSON.stringify(mapping)
       }
     );
 
@@ -680,9 +680,9 @@ class HierarchyService {
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify(mapping),
+        body: JSON.stringify(mapping)
       }
     );
 
@@ -709,8 +709,8 @@ class HierarchyService {
         method: "DELETE",
         headers: {
           ...getAuthHeaders(),
-          Accept: "application/json",
-        },
+          Accept: "application/json"
+        }
       }
     );
 
@@ -739,9 +739,7 @@ class HierarchyService {
       if (value !== undefined && value !== null && value !== "") {
         criteria.push({
           Name: key,
-          Value: Array.isArray(value)
-            ? JSON.stringify(value)
-            : value.toString(),
+          Value: Array.isArray(value) ? JSON.stringify(value) : value.toString()
         });
       }
     });
@@ -756,8 +754,8 @@ class HierarchyService {
     return [
       {
         SortParameter: sortField,
-        Direction: sortDirection === "asc" ? "Asc" : "Desc",
-      },
+        Direction: sortDirection === "asc" ? "Asc" : "Desc"
+      }
     ];
   }
 
@@ -776,7 +774,7 @@ class HierarchyService {
       FilterCriterias: this.buildFilterCriteria(filters),
       SortCriterias: sortField
         ? this.buildSortCriteria(sortField, sortDirection)
-        : [],
+        : []
     };
   }
 }

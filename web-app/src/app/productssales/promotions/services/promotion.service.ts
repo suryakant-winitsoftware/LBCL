@@ -9,11 +9,11 @@ import {
   ISchemeBranch,
   ISchemeOrg,
   ISchemeBroadClassification,
-  IApiResponse,
+  IApiResponse
 } from "../types/promotion.types";
 import {
   transformApiResponse,
-  transformPagedResponse,
+  transformPagedResponse
 } from "../utils/apiResponseTransformer";
 
 // Define ActionType since it's not exported from types
@@ -77,7 +77,7 @@ export interface PagingRequest {
 
 // API Configuration
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 // Pagination configuration
 const PAGINATION_CONFIG = {
   PAGE_SIZES: {
@@ -90,8 +90,8 @@ const PAGINATION_CONFIG = {
     ROLES: 20,
     BRANCHES: 25,
     SKU_GROUPS: 30,
-    SKU_GROUP_TYPES: 20,
-  },
+    SKU_GROUP_TYPES: 20
+  }
 };
 
 // Helper function to create paging request
@@ -105,7 +105,7 @@ const createPagingRequest = (
     pageSize: pageSize || PAGINATION_CONFIG.PAGE_SIZES[entityType],
     sortCriterias: [],
     filterCriterias: [],
-    isCountRequired: true,
+    isCountRequired: true
   };
 };
 
@@ -163,7 +163,7 @@ class PromotionService {
     const token = localStorage.getItem("auth_token");
     return {
       "Content-Type": "application/json",
-      ...(token && { Authorization: `Bearer ${token}` }),
+      ...(token && { Authorization: `Bearer ${token}` })
     };
   }
 
@@ -216,7 +216,7 @@ class PromotionService {
 
       const config: RequestInit = {
         method,
-        headers: this.getAuthHeaders(),
+        headers: this.getAuthHeaders()
       };
 
       if (data && method !== "GET") {
@@ -268,7 +268,7 @@ class PromotionService {
                 responseData.isSuccess !== false,
               data: extractedData, // Keep the structure with PagedData
               message: responseData.Message || responseData.message,
-              status: response.status,
+              status: response.status
             };
           } else {
             // Return the extracted data as is
@@ -278,7 +278,7 @@ class PromotionService {
                 responseData.isSuccess !== false,
               data: extractedData,
               message: responseData.Message || responseData.message,
-              status: response.status,
+              status: response.status
             };
           }
         } else if ("Data" in responseData || "data" in responseData) {
@@ -287,21 +287,21 @@ class PromotionService {
             success: true,
             data: responseData.Data || responseData.data,
             message: responseData.Message || responseData.message,
-            status: response.status,
+            status: response.status
           };
         } else {
           // If response is direct data
           result = {
             success: true,
             data: responseData,
-            status: response.status,
+            status: response.status
           };
         }
       } else {
         result = {
           success: true,
           data: responseData,
-          status: response.status,
+          status: response.status
         };
       }
 
@@ -342,7 +342,7 @@ class PromotionService {
       // Transform result.data, not the raw responseData
       const transformedResult = {
         ...result,
-        data: transformApiResponse(result.data),
+        data: transformApiResponse(result.data)
       };
 
       return transformedResult;
@@ -351,7 +351,7 @@ class PromotionService {
         success: false,
         error: error.message || "Network error",
         status: 0,
-        details: error,
+        details: error
       };
     }
   }
@@ -432,8 +432,8 @@ class PromotionService {
               SchemeBroadClassifications:
                 result.data.SchemeBroadClassifications ||
                 result.data.schemeBroadClassifications ||
-                [],
-            },
+                []
+            }
           };
         }
 
@@ -465,8 +465,8 @@ class PromotionService {
                     UID: promoOfferUID,
                     PromotionUID: promotionUID,
                     OfferNo: 1,
-                    OfferType: "DISCOUNT",
-                  },
+                    OfferType: "DISCOUNT"
+                  }
                 ],
                 PromoOfferItemViewList: [
                   {
@@ -478,20 +478,20 @@ class PromotionService {
                     ItemAmount: 0,
                     ItemUOM: "PCS",
                     DiscountType: "PERCENTAGE",
-                    DiscountValue: 10, // Default value
-                  },
+                    DiscountValue: 10 // Default value
+                  }
                 ],
                 PromoConditionViewList: [],
                 ItemPromotionMapViewList: [],
                 SchemeBranches: [],
                 SchemeOrgs: [],
-                SchemeBroadClassifications: [],
+                SchemeBroadClassifications: []
               };
 
               return {
                 ...result,
                 data: fallbackData,
-                fallbackUsed: true,
+                fallbackUsed: true
               };
             }
           }
@@ -511,8 +511,8 @@ class PromotionService {
             ItemPromotionMapViewList: [],
             SchemeBranches: [],
             SchemeOrgs: [],
-            SchemeBroadClassifications: [],
-          },
+            SchemeBroadClassifications: []
+          }
         };
       }
     }
@@ -523,7 +523,7 @@ class PromotionService {
   async createUpdatePromotion(promotionData: any): Promise<any> {
     const data = {
       IsNew: !promotionData.UID || promotionData.UID.startsWith("promo-"),
-      PromotionView: promotionData,
+      PromotionView: promotionData
     };
     return this.makeRequest("POST", "/Promotion/CUDPromotionMaster", data);
   }
@@ -545,7 +545,7 @@ class PromotionService {
         {
           method: "PUT",
           headers: this.getAuthHeaders(),
-          body: JSON.stringify({ PromotionUID: promotionUID }),
+          body: JSON.stringify({ PromotionUID: promotionUID })
         }
       );
 
@@ -570,14 +570,14 @@ class PromotionService {
           responseData.IsSuccess !== false && responseData.isSuccess !== false,
         Data: data,
         StatusCode: response.status,
-        ErrorMessage: responseData.ErrorMessage || responseData.errorMessage,
+        ErrorMessage: responseData.ErrorMessage || responseData.errorMessage
       };
     } catch (error: any) {
       return {
         IsSuccess: false,
         Data: null,
         StatusCode: 500,
-        ErrorMessage: error.message,
+        ErrorMessage: error.message
       };
     }
   }
@@ -590,7 +590,7 @@ class PromotionService {
         {
           method: "PUT",
           headers: this.getAuthHeaders(),
-          body: JSON.stringify({ PromotionUID: promotionUID }),
+          body: JSON.stringify({ PromotionUID: promotionUID })
         }
       );
 
@@ -615,14 +615,14 @@ class PromotionService {
           responseData.IsSuccess !== false && responseData.isSuccess !== false,
         Data: data,
         StatusCode: response.status,
-        ErrorMessage: responseData.ErrorMessage || responseData.errorMessage,
+        ErrorMessage: responseData.ErrorMessage || responseData.errorMessage
       };
     } catch (error: any) {
       return {
         IsSuccess: false,
         Data: null,
         StatusCode: 500,
-        ErrorMessage: error.message,
+        ErrorMessage: error.message
       };
     }
   }
@@ -643,7 +643,7 @@ class PromotionService {
       DistributionChannelUIDs: [],
       AttributeTypes: [],
       PageNumber: pageNumber,
-      PageSize: pageSize || PAGINATION_CONFIG.PAGE_SIZES.PRODUCTS,
+      PageSize: pageSize || PAGINATION_CONFIG.PAGE_SIZES.PRODUCTS
     };
     return this.makeRequest("POST", "/SKU/GetAllSKUMasterData", data);
   }
@@ -797,7 +797,7 @@ class PromotionService {
       "Created By",
       "Created Date",
       "Modified By",
-      "Modified Date",
+      "Modified Date"
     ];
 
     const csvContent = [
@@ -858,9 +858,9 @@ class PromotionService {
             promotion.ModifiedTime
               ? new Date(promotion.ModifiedTime).toLocaleDateString()
               : ""
-          }"`,
+          }"`
         ].join(",");
-      }),
+      })
     ].join("\n");
 
     return new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
@@ -870,7 +870,7 @@ class PromotionService {
     // For now, return CSV format with Excel MIME type
     const csvContent = this.exportPromotionsToCSV(promotions);
     return new Blob([csvContent], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8;",
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8;"
     });
   }
 }

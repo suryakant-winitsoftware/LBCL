@@ -4,7 +4,7 @@
  */
 
 export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
 export const API_CONFIG = {
   baseURL: API_BASE_URL,
@@ -19,7 +19,7 @@ export const API_CONFIG = {
       getOrder: "/PromoOrder/GetPromoOrderDetailsByPromoUID",
       getOffer: "/PromoOffer/GetPromoOfferDetailsByPromoUID",
       getBranch: "/SchemeBranch/GetSchemeBranchDetailsByPromoUID",
-      getOrg: "/SchemeOrg/GetSchemeOrgDetailsByPromoUID",
+      getOrg: "/SchemeOrg/GetSchemeOrgDetailsByPromoUID"
     },
     // Product Hierarchy APIs
     sku: {
@@ -27,82 +27,82 @@ export const API_CONFIG = {
       getByUID: "/SKU/GetSKUDetailsByUID",
       createUpdate: "/SKU/CUDSKU",
       delete: "/SKU/DeleteSKUDetailsbyUID",
-      getAllMasterData: "/SKU/GetAllSKUMasterData",
+      getAllMasterData: "/SKU/GetAllSKUMasterData"
     },
     skuGroup: {
       selectAll: "/SKUGroup/SelectAllSKUGroupDetails",
       getByUID: "/SKUGroup/GetSKUGroupDetailsByUID",
       createUpdate: "/SKUGroup/CUDSKUGroup",
       delete: "/SKUGroup/DeleteSKUGroupDetailsbyUID",
-      getByTypeUID: "/SKUGroup/GetSKUGroupDetailsBySKUGroupTypeUID",
+      getByTypeUID: "/SKUGroup/GetSKUGroupDetailsBySKUGroupTypeUID"
     },
     skuGroupType: {
       selectAll: "/SKUGroupType/SelectAllSKUGroupTypeDetails",
       getByUID: "/SKUGroupType/GetSKUGroupTypeDetailsByUID",
       createUpdate: "/SKUGroupType/CUDSKUGroupType",
-      delete: "/SKUGroupType/DeleteSKUGroupTypeDetailsbyUID",
+      delete: "/SKUGroupType/DeleteSKUGroupTypeDetailsbyUID"
     },
     skuToGroupMapping: {
       selectAll: "/SKUToGroupMapping/SelectAllSKUToGroupMappingDetails",
       getByUID: "/SKUToGroupMapping/GetSKUToGroupMappingDetailsByUID",
       createUpdate: "/SKUToGroupMapping/CUDSKUToGroupMapping",
-      delete: "/SKUToGroupMapping/DeleteSKUToGroupMappingDetailsbyUID",
+      delete: "/SKUToGroupMapping/DeleteSKUToGroupMappingDetailsbyUID"
     },
     skuClassGroupItems: {
       selectAll: "/SKUClassGroupItems/SelectAllSKUClassGroupItemsDetails",
       selectView: "/SKUClassGroupItems/SelectAllSKUClassGroupItemView",
-      getByUID: "/SKUClassGroupItems/GetSKUClassGroupItemsByUID",
+      getByUID: "/SKUClassGroupItems/GetSKUClassGroupItemsByUID"
     },
     broadClassification: {
       selectAll: "/BroadClassification/SelectAllBroadClassificationDetails",
       getByUID: "/BroadClassification/GetBroadClassificationDetailsByUID",
       createUpdate: "/BroadClassification/CUDBroadClassification",
-      delete: "/BroadClassification/DeleteBroadClassificationDetailsbyUID",
+      delete: "/BroadClassification/DeleteBroadClassificationDetailsbyUID"
     },
     // Store Hierarchy APIs
     branch: {
       selectAll: "/Branch/SelectAllBranchDetails",
       getByUID: "/Branch/GetBranchDetailsByUID",
       createUpdate: "/Branch/CUDBranch",
-      delete: "/Branch/DeleteBranchDetailsbyUID",
+      delete: "/Branch/DeleteBranchDetailsbyUID"
     },
     storeGroup: {
       selectAll: "/StoreGroup/SelectAllStoreGroup",
       getByUID: "/StoreGroup/GetStoreGroupDetailsByUID",
       createUpdate: "/StoreGroup/CUDStoreGroup",
-      delete: "/StoreGroup/DeleteStoreGroupDetailsbyUID",
+      delete: "/StoreGroup/DeleteStoreGroupDetailsbyUID"
     },
     organization: {
       selectAll: "/Organization/SelectAllOrganizationDetails",
       getByUID: "/Organization/GetOrganizationDetailsByUID",
       createUpdate: "/Organization/CUDOrganization",
-      delete: "/Organization/DeleteOrganizationDetailsbyUID",
+      delete: "/Organization/DeleteOrganizationDetailsbyUID"
     },
     // Additional APIs
     org: {
-      getDetails: "/Org/GetOrgDetails",
+      getDetails: "/Org/GetOrgDetails"
     },
     location: {
-      getDetails: "/Location/GetLocationDetails",
+      getDetails: "/Location/GetLocationDetails"
     },
     employee: {
-      getDetails: "/MaintainUser/SelectAllMaintainUserDetails",
+      getDetails: "/MaintainUser/SelectAllMaintainUserDetails"
     },
     store: {
-      selectAll: "/Store/SelectAllStore",
+      selectAll: "/Store/SelectAllStore"
     },
     broadClassificationHeader: {
       getDetails:
-        "/BroadClassificationHeader/GetBroadClassificationHeaderDetails",
+        "/BroadClassificationHeader/GetBroadClassificationHeaderDetails"
     },
     broadClassificationLine: {
       getDetails: "/BroadClassificationLine/GetBroadClassificationLineDetails",
       getByUID:
         "/BroadClassificationLine/GetBroadClassificationLineDetailsByUID",
       getByHeaderUID:
-        "/BroadClassificationLine/GetBroadClassificationLineByHeaderUID",
-    },
-  },
+        "/BroadClassificationLine/GetBroadClassificationLineByHeaderUID"
+    }
+  }
 };
 
 import { getAuthHeaders } from "@/lib/auth-service";
@@ -115,7 +115,7 @@ export const getCommonHeaders = () => {
   return {
     "Content-Type": "application/json",
     Accept: "application/json",
-    ...authHeaders,
+    ...authHeaders
   };
 };
 
@@ -127,21 +127,21 @@ export const extractPagedData = (data: any) => {
   if (data.Data) {
     return {
       items: data.Data,
-      totalCount: data.TotalRecords || data.TotalCount || data.Data.length,
+      totalCount: data.TotalRecords || data.TotalCount || data.Data.length
     };
   }
 
   if (Array.isArray(data)) {
     return {
       items: data,
-      totalCount: data.length,
+      totalCount: data.length
     };
   }
 
   if (data.items) {
     return {
       items: data.items,
-      totalCount: data.totalCount || data.items.length,
+      totalCount: data.totalCount || data.items.length
     };
   }
 

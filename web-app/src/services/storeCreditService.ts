@@ -11,12 +11,12 @@ import {
   PagedResponse,
   ApiResponse,
   StoreCreditLimitRequest,
-  IStoreCreditLimit,
+  IStoreCreditLimit
 } from "@/types/storeCredit.types";
 
 class StoreCreditService {
   private getBaseUrl(): string {
-    return process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+    return process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
   }
 
   /**
@@ -34,7 +34,7 @@ class StoreCreditService {
           request.FilterCriterias || request.filterCriterias || [],
         sortCriterias: request.SortCriterias || request.sortCriterias || [],
         isCountRequired:
-          request.IsCountRequired ?? request.isCountRequired ?? true,
+          request.IsCountRequired ?? request.isCountRequired ?? true
       };
 
       console.log(
@@ -58,7 +58,7 @@ class StoreCreditService {
             pagedData: data.PagedData || data.pagedData || [],
             PagedData: data.PagedData || data.pagedData || [],
             totalCount: data.TotalCount ?? data.totalCount ?? -1,
-            TotalCount: data.TotalCount ?? data.totalCount ?? -1,
+            TotalCount: data.TotalCount ?? data.totalCount ?? -1
           };
         }
         // Handle PagedData from .NET API
@@ -68,7 +68,7 @@ class StoreCreditService {
             pagedData: response.PagedData,
             PagedData: response.PagedData,
             totalCount: response.TotalCount ?? -1,
-            TotalCount: response.TotalCount ?? -1,
+            TotalCount: response.TotalCount ?? -1
           };
         }
         // Handle pagedData (camelCase)
@@ -78,7 +78,7 @@ class StoreCreditService {
             pagedData: response.pagedData,
             PagedData: response.pagedData,
             totalCount: response.totalCount ?? -1,
-            TotalCount: response.totalCount ?? -1,
+            TotalCount: response.totalCount ?? -1
           };
         }
       }
@@ -88,7 +88,7 @@ class StoreCreditService {
         pagedData: [],
         PagedData: [],
         totalCount: 0,
-        TotalCount: 0,
+        TotalCount: 0
       };
     } catch (error) {
       console.error("Error fetching store credits:", error);

@@ -34,41 +34,72 @@ namespace Winit.Modules.WHStock.DL.Classes
             int count = 0;
             try
             {
+                Console.WriteLine("DEBUG: CUDWHStock - Starting");
                 using (var connection = PostgreConnection())
                 {
                     await connection.OpenAsync();
+                    Console.WriteLine("DEBUG: Connection opened");
 
                     using (var transaction = connection.BeginTransaction())
                     {
                         try
                         {
-                            if (wHRequestTempleteModel != null && wHRequestTempleteModel.WHStockRequest != null)
-                            {
-                                count += await CUDWHStockRequest(wHRequestTempleteModel.WHStockRequest, connection, transaction);
+                            Console.WriteLine("DEBUG: Transaction started");
 
-                            }
                             if (wHRequestTempleteModel != null && wHRequestTempleteModel.WHStockRequest != null)
                             {
-                                count += await CUDWHStockRequestLine(wHRequestTempleteModel.WHStockRequestLines, connection, transaction);
+                                Console.WriteLine("DEBUG: Creating WHStockRequest header");
+                                count += await CUDWHStockRequest(wHRequestTempleteModel.WHStockRequest, connection, transaction);
+                                Console.WriteLine($"DEBUG: WHStockRequest created, count: {count}");
                             }
-                            if (wHRequestTempleteModel?.WHStockLedgerList != null && wHRequestTempleteModel.WHStockLedgerList.Count == 0)
+
+                            if (wHRequestTempleteModel != null && wHRequestTempleteModel.WHStockRequestLines != null)
                             {
-                                count += await _stockUpdaterDL.UpdateStockAsync(wHRequestTempleteModel.WHStockLedgerList
-                                    .ToList<Winit.Modules.StockUpdater.Model.Interfaces.IWHStockLedger>(), 
-                                    connection, transaction);
+                                Console.WriteLine($"DEBUG: Creating {wHRequestTempleteModel.WHStockRequestLines.Count} WHStockRequestLines");
+                                count += await CUDWHStockRequestLine(wHRequestTempleteModel.WHStockRequestLines, connection, transaction);
+                                Console.WriteLine($"DEBUG: WHStockRequestLines created, count: {count}");
                             }
-                            transaction.Commit();
+
+                            if (wHRequestTempleteModel?.WHStockLedgerList != null && wHRequestTempleteModel.WHStockLedgerList.Count > 0)
+                            {
+                                Console.WriteLine($"DEBUG: Updating {wHRequestTempleteModel.WHStockLedgerList.Count} stock ledger entries");
+                                count += await _stockUpdaterDL.UpdateStockAsync(wHRequestTempleteModel.WHStockLedgerList
+                                    .ToList<Winit.Modules.StockUpdater.Model.Interfaces.IWHStockLedger>(),
+                                    connection, transaction);
+                                Console.WriteLine($"DEBUG: Stock ledger updated, count: {count}");
+                            }
+
+                            Console.WriteLine("DEBUG: About to commit transaction");
+                            await transaction.CommitAsync();
+                            Console.WriteLine("DEBUG: Transaction committed successfully");
                         }
-                        catch
+                        catch (Exception ex)
                         {
-                            transaction.Rollback();
+                            Console.WriteLine($"DEBUG: Exception in transaction: {ex.Message}");
+                            Console.WriteLine($"DEBUG: Transaction connection null? {transaction.Connection == null}");
+
+                            try
+                            {
+                                if (transaction.Connection != null)
+                                {
+                                    Console.WriteLine("DEBUG: Rolling back transaction");
+                                    await transaction.RollbackAsync();
+                                    Console.WriteLine("DEBUG: Rollback successful");
+                                }
+                            }
+                            catch (Exception rollbackEx)
+                            {
+                                Console.WriteLine($"DEBUG: Rollback failed: {rollbackEx.Message}");
+                            }
                             throw;
                         }
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine($"DEBUG: Outer exception: {ex.Message}");
+                Console.WriteLine($"DEBUG: Stack trace: {ex.StackTrace}");
                 throw;
             }
             return count;
@@ -194,19 +225,26 @@ namespace Winit.Modules.WHStock.DL.Classes
             int retVal = -1;
             int yearMonth = int.Parse(DateTime.Now.ToString("yyMM"));
             try {
-                
+
+                Console.WriteLine($"DEBUG: CreateWHStocKRequest - Partition Key Values:");
+                Console.WriteLine($"  OrgUID: '{wHStockRequest.OrgUID}'");
+                Console.WriteLine($"  WareHouseUID: '{wHStockRequest.WareHouseUID}'");
+                Console.WriteLine($"  YearMonth: {wHStockRequest.YearMonth}");
+                Console.WriteLine($"  Calculated yearMonth (for fallback): {yearMonth}");
+
                 var Query = @"INSERT INTO WH_stock_request (
-                  uid, company_uid, source_org_uid, source_wh_uid,  
-                  target_org_uid, target_wh_uid, code, request_type, request_by_emp_uid, job_position_uid, required_by_date, status, 
-                  remarks, stock_type, ss, created_time, modified_time, server_add_time, server_modified_time, 
+                  uid, company_uid, source_org_uid, source_wh_uid,
+                  target_org_uid, target_wh_uid, code, request_type, request_by_emp_uid, job_position_uid, required_by_date, status,
+                  remarks, stock_type, ss, created_time, modified_time, server_add_time, server_modified_time,
                   route_uid ,org_uid,warehouse_uid,year_month
               ) VALUES (
                   @UID, @CompanyUID, @SourceOrgUID, @SourceWHUID, @TargetOrgUID, @TargetWHUID,
-                  @Code, @RequestType, @RequestByEmpUID, @JobPositionUID, @RequiredByDate, @Status, @Remarks, @StockType, @SS, 
+                  @Code, @RequestType, @RequestByEmpUID, @JobPositionUID, @RequiredByDate, @Status, @Remarks, @StockType, @SS,
                   @CreatedTime, @ModifiedTime, @ServerAddTime, @ServerModifiedTime, @RouteUID,@OrgUID,@WareHouseUID,@YearMonth
               );
               ";
 
+                Console.WriteLine($"DEBUG: Executing INSERT query");
                 retVal= await ExecuteNonQueryAsync(Query, connection, transaction, wHStockRequest);
             }
             catch(Exception ex )
@@ -294,18 +332,18 @@ namespace Winit.Modules.WHStock.DL.Classes
                 int yearMonth = int.Parse(DateTime.Now.ToString("yyMM"));
 
                 var query = @"INSERT INTO wh_stock_request_line (
-                    uid, wh_stock_request_uid, stock_sub_type, sku_uid, uom1, uom2, uom, uom1_cnf, uom2_cnf, 
-                    requested_qty1, requested_qty2, cpe_approved_qty1, cpe_approved_qty2, 
-                    cpe_approved_qty, approved_qty1, approved_qty2, approved_qty, forward_qty1, 
-                    forward_qty2, forward_qty, collected_qty1, collected_qty2, collected_qty, wh_qty, ss, 
-                    created_time, modified_time, server_add_time, server_modified_time, template_qty1, 
+                    uid, wh_stock_request_uid, stock_sub_type, sku_uid, uom1, uom2, uom, uom1_cnf, uom2_cnf,
+                    requested_qty1, requested_qty2, requested_qty, cpe_approved_qty1, cpe_approved_qty2,
+                    cpe_approved_qty, approved_qty1, approved_qty2, approved_qty, forward_qty1,
+                    forward_qty2, forward_qty, collected_qty1, collected_qty2, collected_qty, wh_qty, ss,
+                    created_time, modified_time, server_add_time, server_modified_time, template_qty1,
                     template_qty2, sku_code, line_number, org_uid, warehouse_uid, year_month
                 ) VALUES (
-                    @UID, @WHStockRequestUID, @StockSubType, @SKUUID, @UOM1, @UOM2, @UOM, @UOM1CNF, @UOM2CNF, 
-                    @RequestedQty1, @RequestedQty2, @CPEApprovedQty1, @CPEApprovedQty2, 
-                    @CPEApprovedQty, @ApprovedQty1, @ApprovedQty2, @ApprovedQty, @ForwardQty1, 
-                    @ForwardQty2, @ForwardQty, @CollectedQty1, @CollectedQty2, @CollectedQty, @WHQty, 0, 
-                    @CreatedTime, @ModifiedTime, @ServerAddTime, @ServerModifiedTime, @TemplateQty1, 
+                    @UID, @WHStockRequestUID, @StockSubType, @SKUUID, @UOM1, @UOM2, @UOM, @UOM1CNF, @UOM2CNF,
+                    @RequestedQty1, @RequestedQty2, @RequestedQty, @CPEApprovedQty1, @CPEApprovedQty2,
+                    @CPEApprovedQty, @ApprovedQty1, @ApprovedQty2, @ApprovedQty, @ForwardQty1,
+                    @ForwardQty2, @ForwardQty, @CollectedQty1, @CollectedQty2, @CollectedQty, @WHQty, 0,
+                    @CreatedTime, @ModifiedTime, @ServerAddTime, @ServerModifiedTime, @TemplateQty1,
                     @TemplateQty2, @SKUCode, @LineNumber, @OrgUID, @WareHouseUID, @YearMonth
                 );
                 ";
@@ -379,8 +417,8 @@ namespace Winit.Modules.WHStock.DL.Classes
                                             org s on s.uid = wsr.source_wh_uid
                                         left join 
                                             org t on t.uid = wsr.target_wh_uid 
-                                        where 
-                                            wsr.status = @StockType 
+                                        where
+                                            (@StockType = 'all' OR wsr.status = @StockType) 
                                         order by 
                                             wsr.modified_time desc
                                     ) as subquery
@@ -415,8 +453,8 @@ namespace Winit.Modules.WHStock.DL.Classes
                                                     org s on s.uid = wsr.source_wh_uid
                                                 left join 
                                                     org t on t.uid = wsr.target_wh_uid 
-                                                where 
-                                                    wsr.status = @StockType
+                                                where
+                                                    (@StockType = 'all' OR wsr.status = @StockType)
                                             ) as subquery
                                             ");
                 }

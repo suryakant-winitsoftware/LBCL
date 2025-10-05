@@ -18,13 +18,13 @@ import type {
   SessionListRequest,
   SessionStats,
   SessionEvent,
-  SessionApiResponse,
+  SessionApiResponse
 } from "@/types/session.types";
 import { AuditLogLevel } from "@/types/audit.types";
 
 class SessionService {
   private readonly API_BASE_URL =
-    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
   private readonly SESSION_KEY = "winit_session_key";
   private readonly DEVICE_ID_KEY = "winit_device_id";
   private activityTimer?: NodeJS.Timeout;
@@ -39,7 +39,7 @@ class SessionService {
     allowMultipleDevices: true,
     requireDeviceTrust: false,
     sessionExtendOnActivity: true,
-    trackActivityDetails: true,
+    trackActivityDetails: true
   };
 
   /**
@@ -109,8 +109,8 @@ class SessionService {
         riskLevel: "Low",
         metadata: {
           fingerprint: deviceFingerprint,
-          loginMethod: "standard",
-        },
+          loginMethod: "standard"
+        }
       };
 
       // Check concurrent sessions
@@ -149,8 +149,8 @@ class SessionService {
             deviceType: session.deviceType,
             platform: session.platform,
             browser: session.browser,
-            location: session.location,
-          },
+            location: session.location
+          }
         },
         AuditLogLevel.INFO
       );
@@ -234,8 +234,8 @@ class SessionService {
         timestamp: now,
         details: {
           page: window.location.pathname,
-          title: document.title,
-        },
+          title: document.title
+        }
       };
 
       // Queue activity for batch processing
@@ -266,8 +266,8 @@ class SessionService {
           reason,
           sessionDuration:
             Date.now() - new Date(this.currentSession.loginTime).getTime(),
-          lastActivity: this.currentSession.lastActivityTime,
-        },
+          lastActivity: this.currentSession.lastActivityTime
+        }
       },
       AuditLogLevel.INFO
     );
@@ -315,8 +315,8 @@ class SessionService {
               method: "GET",
               headers: {
                 Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-              },
+                "Content-Type": "application/json"
+              }
             }
           );
 
@@ -339,12 +339,12 @@ class SessionService {
         averageSessionDuration:
           Date.now() - new Date(this.currentSession.loginTime).getTime(),
         deviceBreakdown: {
-          [this.currentSession.deviceType]: 1,
+          [this.currentSession.deviceType]: 1
         },
         locationBreakdown: {
-          [this.currentSession.location || "Unknown"]: 1,
+          [this.currentSession.location || "Unknown"]: 1
         },
-        hourlyActivity: [], // Empty array instead of mock data
+        hourlyActivity: [] // Empty array instead of mock data
       };
     } catch (error) {
       // Failed to get session stats
@@ -379,7 +379,7 @@ class SessionService {
       webGL: this.getWebGLInfo(),
       canvas: await this.getCanvasFingerprint(),
       fonts: await this.getInstalledFonts(),
-      plugins: this.getPlugins(),
+      plugins: this.getPlugins()
     };
 
     return fingerprint;
@@ -458,7 +458,7 @@ class SessionService {
       "Helvetica",
       "Times New Roman",
       "Courier New",
-      "Verdana",
+      "Verdana"
     ];
     return testFonts.filter((font) => document.fonts.check(`12px ${font}`));
   }

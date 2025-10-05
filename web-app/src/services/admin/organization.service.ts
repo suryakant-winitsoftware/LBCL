@@ -2,7 +2,7 @@ import { ApiResponse } from "@/types/admin.types";
 import { authService } from "@/lib/auth-service";
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
 interface Organization {
   uid: string;
@@ -23,9 +23,9 @@ class OrganizationService {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${authService.getToken()}`,
-          ...options.headers,
+          ...options.headers
         },
-        ...options,
+        ...options
       });
 
       if (!response.ok) {
@@ -36,14 +36,14 @@ class OrganizationService {
       return {
         success: true,
         data: data.data || data,
-        message: data.message,
+        message: data.message
       };
     } catch (error) {
       console.error(`API call failed for ${endpoint}:`, error);
       return {
         success: false,
         message:
-          error instanceof Error ? error.message : "Unknown error occurred",
+          error instanceof Error ? error.message : "Unknown error occurred"
       };
     }
   }

@@ -20,5 +20,13 @@ namespace Winit.Modules.Vehicle.Model.Classes
         public DateTime TruckSIDate { get; set; }
         public DateTime RoadTaxExpiryDate { get; set; }
         public DateTime InspectionDate { get; set; }
+
+        // Additional fields for vehicle specifications
+        public decimal? WeightLimit { get; set; }
+        public decimal? Capacity { get; set; }
+        public decimal? LoadingCapacity { get; set; }
+        public string? WarehouseCode { get; set; }
+        public string? LocationCode { get; set; }
+        public string? TerritoryUID { get; set; }
     }
 }

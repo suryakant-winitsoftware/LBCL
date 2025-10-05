@@ -20,12 +20,12 @@ import {
   PagedResponse,
   ApiResponse,
   StoreFormData,
-  StoreSearchParams,
+  StoreSearchParams
 } from "@/types/store.types";
 
 class StoreService {
   private getBaseUrl(): string {
-    return process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+    return process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
   }
 
   /**
@@ -50,7 +50,7 @@ class StoreService {
         if (response.PagedData !== undefined) {
           return {
             pagedData: response.PagedData,
-            totalCount: response.TotalCount || 0,
+            totalCount: response.TotalCount || 0
           };
         }
         // If response has Data property with PagedData (wrapped response)
@@ -67,14 +67,14 @@ class StoreService {
           }
           return {
             pagedData: response.Data.PagedData,
-            totalCount: response.Data.TotalCount || 0,
+            totalCount: response.Data.TotalCount || 0
           };
         }
         // If response has data property with PagedData
         if (response.data && response.data.PagedData !== undefined) {
           return {
             pagedData: response.data.PagedData,
-            totalCount: response.data.TotalCount || 0,
+            totalCount: response.data.TotalCount || 0
           };
         }
         // If response has lowercase pagedData
@@ -91,7 +91,7 @@ class StoreService {
       console.warn("Unexpected API response structure - check backend");
       return {
         pagedData: [],
-        totalCount: 0,
+        totalCount: 0
       };
     } catch (error) {
       console.error("Error fetching stores:", error);
@@ -113,20 +113,20 @@ class StoreService {
         if (response.PagedData !== undefined) {
           return {
             pagedData: response.PagedData,
-            totalCount: response.TotalCount || 0,
+            totalCount: response.TotalCount || 0
           };
         }
         if (response.Data && response.Data.PagedData !== undefined) {
           return {
             pagedData: response.Data.PagedData,
-            totalCount: response.Data.TotalCount || 0,
+            totalCount: response.Data.TotalCount || 0
           };
         }
       }
 
       return {
         pagedData: [],
-        totalCount: 0,
+        totalCount: 0
       };
     } catch (error) {
       console.error("Error fetching stores (old API):", error);
@@ -152,11 +152,11 @@ class StoreService {
           {
             name: "UID",
             value: uid,
-            operator: "equals",
-          },
+            operator: "equals"
+          }
         ],
         sortCriterias: [],
-        isCountRequired: false,
+        isCountRequired: false
       };
 
       console.log("📞 Trying filtered search for specific UID:", uid);
@@ -179,7 +179,7 @@ class StoreService {
         pageSize: 50, // Get more stores to increase chance of finding our target
         filterCriterias: [], // NO FILTERS to avoid SQL bug
         sortCriterias: [],
-        isCountRequired: false,
+        isCountRequired: false
       };
 
       console.log("📞 Getting store list and filtering for UID:", uid);
@@ -195,7 +195,7 @@ class StoreService {
             uid: s.uid,
             Code: s.Code,
             code: s.code,
-            Name: s.Name || s.name,
+            Name: s.Name || s.name
           }))
         );
 
@@ -243,7 +243,7 @@ class StoreService {
             pageSize: 200, // Get more stores
             filterCriterias: [],
             sortCriterias: [],
-            isCountRequired: false,
+            isCountRequired: false
           };
 
           const largerResponse = await this.getAllStores(largerRequest);
@@ -260,7 +260,7 @@ class StoreService {
               UID: s.UID,
               uid: s.uid,
               Code: s.Code,
-              code: s.code,
+              code: s.code
             }))
           );
 
@@ -421,14 +421,14 @@ class StoreService {
         // Add other required fields from currentStore if available
         Name: currentStore.Name || currentStore.name || "",
         Type: currentStore.Type || currentStore.type || "FRC",
-        Code: currentStore.Code || currentStore.code || uid,
+        Code: currentStore.Code || currentStore.code || uid
       };
 
       // Create StoreApprovalDTO structure expected by backend
       const storeApprovalDTO = {
         Store: storeData,
         ApprovalRequestItem: null,
-        ApprovalStatusUpdate: null,
+        ApprovalStatusUpdate: null
       };
 
       console.log("📤 Sending UpdateStoreStatus request:", storeApprovalDTO);
@@ -538,8 +538,8 @@ class StoreService {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${authService.getToken()}`,
-            },
+              Authorization: `Bearer ${authService.getToken()}`
+            }
           }
         );
 
@@ -558,7 +558,7 @@ class StoreService {
                   storeMaster.StoreCredits || storeMaster.storeCredits || [],
                 storeAdditionalInfo:
                   storeMaster.StoreAdditionalInfo ||
-                  storeMaster.storeAdditionalInfo,
+                  storeMaster.storeAdditionalInfo
               };
             }
           }
@@ -603,7 +603,7 @@ class StoreService {
           contactsCount:
             storeMaster.Contacts?.length || storeMaster.contacts?.length || 0,
           addressesCount:
-            storeMaster.addresses?.length || storeMaster.Addresses?.length || 0,
+            storeMaster.addresses?.length || storeMaster.Addresses?.length || 0
         });
 
         // Normalize the structure to match our interface - API uses mixed case
@@ -614,7 +614,7 @@ class StoreService {
           storeCredits:
             storeMaster.StoreCredits || storeMaster.storeCredits || [],
           storeAdditionalInfo:
-            storeMaster.StoreAdditionalInfo || storeMaster.storeAdditionalInfo,
+            storeMaster.StoreAdditionalInfo || storeMaster.storeAdditionalInfo
         };
       }
 
@@ -622,7 +622,7 @@ class StoreService {
         hasStoreMaster: !!storeMaster,
         hasStore: !!storeMaster?.store,
         hasStoreCapital: !!storeMaster?.Store,
-        keys: storeMaster ? Object.keys(storeMaster) : [],
+        keys: storeMaster ? Object.keys(storeMaster) : []
       });
       throw new Error(`Invalid or missing store data for UID: ${uid}`);
     } catch (error) {
@@ -633,7 +633,7 @@ class StoreService {
       const basicStore = await this.getStoreByUID(uid);
       const [contacts, addresses] = await Promise.all([
         this.getStoreContacts(uid).catch(() => []),
-        this.getStoreAddresses(uid).catch(() => []),
+        this.getStoreAddresses(uid).catch(() => [])
       ]);
 
       return {
@@ -641,7 +641,7 @@ class StoreService {
         contacts: contacts,
         addresses: addresses,
         storeCredits: [],
-        storeAdditionalInfo: null,
+        storeAdditionalInfo: null
       };
     }
   }
@@ -733,7 +733,7 @@ class StoreService {
         pageNumber: 1,
         pageSize: 100,
         filterCriterias: [],
-        sortCriterias: [{ sortParameter: "Name", direction: 0 }],
+        sortCriterias: [{ sortParameter: "Name", direction: 0 }]
       };
 
       // Build filter criteria (using camelCase for JSON)
@@ -741,35 +741,35 @@ class StoreService {
         request.filterCriterias?.push({
           name: "Name",
           value: params.searchText,
-          operator: "contains",
+          operator: "contains"
         });
       }
 
       if (params.type) {
         request.filterCriterias?.push({
           name: "Type",
-          value: params.type,
+          value: params.type
         });
       }
 
       if (params.classification) {
         request.filterCriterias?.push({
           name: "BroadClassification",
-          value: params.classification,
+          value: params.classification
         });
       }
 
       if (params.status) {
         request.filterCriterias?.push({
           name: "Status",
-          value: params.status,
+          value: params.status
         });
       }
 
       if (params.isActive !== undefined) {
         request.filterCriterias?.push({
           name: "IsActive",
-          value: params.isActive,
+          value: params.isActive
         });
       }
 
@@ -798,7 +798,7 @@ class StoreService {
         "Active",
         "Country",
         "Region",
-        "City",
+        "City"
       ];
       const rows = stores.map((store) => [
         store.code,
@@ -809,12 +809,12 @@ class StoreService {
         store.is_active ? "Yes" : "No",
         store.country_uid || "",
         store.region_uid || "",
-        store.city_uid || "",
+        store.city_uid || ""
       ]);
 
       const csv = [
         headers.join(","),
-        ...rows.map((row) => row.map((cell) => `"${cell}"`).join(",")),
+        ...rows.map((row) => row.map((cell) => `"${cell}"`).join(","))
       ].join("\n");
 
       return new Blob([csv], { type: "text/csv" });
@@ -836,8 +836,8 @@ class StoreService {
 
       const response = await apiService.post("/Store/ImportStores", formData, {
         headers: {
-          "Content-Type": "multipart/form-data",
-        },
+          "Content-Type": "multipart/form-data"
+        }
       });
 
       return response.data.data || response.data;
@@ -873,7 +873,7 @@ class StoreService {
 
     return {
       isValid: errors.length === 0,
-      errors,
+      errors
     };
   }
 
@@ -915,7 +915,7 @@ class StoreService {
         pageSize: 500, // Get more to ensure we have all data
         filterCriterias: [], // Empty filters - get all and filter client-side
         sortCriterias: [],
-        isCountRequired: false,
+        isCountRequired: false
       };
 
       console.log("🔍 Getting all contacts and filtering client-side...");
@@ -954,7 +954,7 @@ class StoreService {
           const linkedUID =
             contact.LinkedItemUID || contact.linked_item_uid || "";
           return linkedUID.includes(storeUID) || storeUID.includes(linkedUID);
-        },
+        }
       ];
 
       let storeContacts = [];
@@ -984,7 +984,7 @@ class StoreService {
           Name: contact.Name || contact.name || "NO_NAME",
           Mobile: contact.Mobile || contact.mobile || "NO_MOBILE",
           Email: contact.Email || contact.email || "NO_EMAIL",
-          HasRealData: !!(contact.Name || contact.Mobile || contact.Email),
+          HasRealData: !!(contact.Name || contact.Mobile || contact.Email)
         });
       });
 
@@ -1022,7 +1022,7 @@ class StoreService {
         pageSize: 500, // Get more to ensure we have all data
         filterCriterias: [], // Empty filters - get all and filter client-side
         sortCriterias: [],
-        isCountRequired: false,
+        isCountRequired: false
       };
 
       console.log("🔍 Getting all addresses and filtering client-side...");
@@ -1062,7 +1062,7 @@ class StoreService {
           const linkedUID =
             address.LinkedItemUID || address.linked_item_uid || "";
           return linkedUID.includes(storeUID) || storeUID.includes(linkedUID);
-        },
+        }
       ];
 
       let storeAddresses = [];
@@ -1093,7 +1093,7 @@ class StoreService {
           Name: address.Name || "NO_NAME",
           Line1: address.Line1 || "NO_ADDRESS",
           City: address.City || "NO_CITY",
-          HasRealData: !!(address.Line1 || address.City || address.Name),
+          HasRealData: !!(address.Line1 || address.City || address.Name)
         });
       });
 
@@ -1142,7 +1142,7 @@ class StoreService {
       const request: StoreListRequest = {
         pageNumber: 1,
         pageSize: 10000,
-        isCountRequired: true,
+        isCountRequired: true
       };
 
       const response = await this.getAllStores(request);
@@ -1154,7 +1154,7 @@ class StoreService {
         pendingStores: stores.filter((s) => s.status === "Pending").length,
         blockedStores: stores.filter((s) => s.is_blocked).length,
         byType: {} as Record<string, number>,
-        byClassification: {} as Record<string, number>,
+        byClassification: {} as Record<string, number>
       };
 
       // Count by type

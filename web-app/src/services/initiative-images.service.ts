@@ -60,7 +60,7 @@ export interface PagedResponseData<T> {
 
 class InitiativeImagesService {
   private baseURL =
-    process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
   // Get all images for specific Initiative UIDs
   async getInitiativeImages(
@@ -73,12 +73,12 @@ class InitiativeImagesService {
         IsCountRequired: false,
         FilterCriterias: [
           { Name: "LinkedItemType", Value: "Initiative" },
-          { Name: "LinkedItemUID", Value: initiativeUIDs.join(",") },
+          { Name: "LinkedItemUID", Value: initiativeUIDs.join(",") }
         ],
         SortCriterias: [
           { SortParameter: "IsDefault", Direction: "Desc" },
-          { SortParameter: "DisplayName", Direction: "Asc" },
-        ],
+          { SortParameter: "DisplayName", Direction: "Asc" }
+        ]
       };
 
       const response = await fetch(
@@ -88,9 +88,9 @@ class InitiativeImagesService {
           headers: {
             ...getAuthHeaders(),
             "Content-Type": "application/json",
-            Accept: "application/json",
+            Accept: "application/json"
           },
-          body: JSON.stringify(requestBody),
+          body: JSON.stringify(requestBody)
         }
       );
 
@@ -146,10 +146,10 @@ class InitiativeImagesService {
         PageSize: 1000, // Get all images
         IsCountRequired: true,
         FilterCriterias: [
-          { Name: "LinkedItemType", Value: "Initiative" },
+          { Name: "LinkedItemType", Value: "Initiative" }
           // Filter for image files only
         ],
-        SortCriterias: [],
+        SortCriterias: []
       };
 
       console.log("Fetching ALL Initiative images from database...");
@@ -160,9 +160,9 @@ class InitiativeImagesService {
           headers: {
             ...getAuthHeaders(),
             "Content-Type": "application/json",
-            Accept: "application/json",
+            Accept: "application/json"
           },
-          body: JSON.stringify(fileSysRequest),
+          body: JSON.stringify(fileSysRequest)
         }
       );
 
@@ -209,14 +209,14 @@ class InitiativeImagesService {
           const initiative = {
             InitiativeId: parseInt(initiativeUID) || initiativeUID,
             UID: initiativeUID,
-            Name: `Initiative ${initiativeUID}`,
+            Name: `Initiative ${initiativeUID}`
             // Add more fields as needed
           };
 
           return {
             initiative,
             images,
-            defaultImage,
+            defaultImage
           };
         }
       );
@@ -244,7 +244,7 @@ class InitiativeImagesService {
 
       return {
         initiativesWithImages: paginatedInitiatives,
-        totalCount: filteredInitiatives.length,
+        totalCount: filteredInitiatives.length
       };
     } catch (error) {
       console.error("Error fetching Initiatives with images:", error);
@@ -294,7 +294,7 @@ class InitiativeImagesService {
         {
           method: "POST",
           headers: headers,
-          body: formData,
+          body: formData
         }
       );
 
@@ -357,7 +357,7 @@ class InitiativeImagesService {
         IsDirectory: false,
         RelativePath: relativePath,
         FileSysFileType: 1, // 1 for Image
-        CreatedByEmpUID: empUID,
+        CreatedByEmpUID: empUID
       };
 
       console.log("Step 2: Creating file_sys record with path:", relativePath);
@@ -367,9 +367,9 @@ class InitiativeImagesService {
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: JSON.stringify(fileSysData),
+        body: JSON.stringify(fileSysData)
       });
 
       if (!response.ok) {
@@ -421,8 +421,8 @@ class InitiativeImagesService {
           headers: {
             ...getAuthHeaders(),
             "Content-Type": "application/json",
-            Accept: "application/json",
-          },
+            Accept: "application/json"
+          }
         }
       );
 
@@ -534,7 +534,7 @@ class InitiativeImagesService {
       return {
         images,
         imageUrls,
-        defaultImage,
+        defaultImage
       };
     } catch (error) {
       console.error(
@@ -543,7 +543,7 @@ class InitiativeImagesService {
       );
       return {
         images: [],
-        imageUrls: {},
+        imageUrls: {}
       };
     }
   }

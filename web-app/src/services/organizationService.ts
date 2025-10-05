@@ -88,7 +88,7 @@ export interface OrganizationHierarchyNode {
 }
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
 class OrganizationService {
   private baseUrl: string;
@@ -112,8 +112,8 @@ class OrganizationService {
         headers: {
           "Content-Type": "application/json",
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          ...options.headers,
-        },
+          ...options.headers
+        }
       });
 
       if (!response.ok) {
@@ -121,7 +121,10 @@ class OrganizationService {
         try {
           const errorText = await response.text();
           if (errorText) {
-            console.error("API Error:", errorText);
+            // Only log error details for non-404 errors
+            if (response.status !== 404) {
+              console.error("API Error:", errorText);
+            }
             errorMessage += ` - ${errorText}`;
           }
         } catch (e) {
@@ -134,14 +137,17 @@ class OrganizationService {
       return {
         success: data.IsSuccess !== false,
         data: data.Data || data,
-        message: data.Message || data.ErrorMessage || data.message,
+        message: data.Message || data.ErrorMessage || data.message
       };
     } catch (error) {
-      console.error(`API call failed for ${endpoint}:`, error);
+      // Only log errors if they're not 404s (which are expected for optional endpoints)
+      if (!(error instanceof Error && error.message.includes("status: 404"))) {
+        console.error(`API call failed for ${endpoint}:`, error);
+      }
       return {
         success: false,
         message:
-          error instanceof Error ? error.message : "Unknown error occurred",
+          error instanceof Error ? error.message : "Unknown error occurred"
       };
     }
   }
@@ -156,12 +162,12 @@ class OrganizationService {
       pageSize,
       sortCriterias: [],
       filterCriterias: [],
-      isCountRequired: true,
+      isCountRequired: true
     };
 
     const result = await this.apiCall<any>("/Org/GetOrgTypeDetails", {
       method: "POST",
-      body: JSON.stringify(pagingRequest),
+      body: JSON.stringify(pagingRequest)
     });
 
     if (result.success && result.data) {
@@ -185,12 +191,12 @@ class OrganizationService {
       pageSize: pageSize,
       sortCriterias: sorts || [],
       filterCriterias: filters || [],
-      isCountRequired: true,
+      isCountRequired: true
     };
 
     const response = await this.apiCall<any>("/Org/GetOrgDetails", {
       method: "POST",
-      body: JSON.stringify(pagingRequest),
+      body: JSON.stringify(pagingRequest)
     });
 
     if (!response.success) {
@@ -219,7 +225,7 @@ class OrganizationService {
 
     return {
       data: items,
-      total: totalCount,
+      total: totalCount
     };
   }
 
@@ -269,12 +275,12 @@ class OrganizationService {
       CreatedBy: organization.createdBy || currentUser,
       CreatedTime: organization.createdTime || currentTime,
       ModifiedBy: organization.modifiedBy || currentUser,
-      ModifiedTime: organization.modifiedTime || currentTime,
+      ModifiedTime: organization.modifiedTime || currentTime
     };
 
     const response = await this.apiCall<Organization>("/Org/CreateOrg", {
       method: "POST",
-      body: JSON.stringify(orgPayload),
+      body: JSON.stringify(orgPayload)
     });
     if (!response.success || !response.data) {
       throw new Error(response.message || "Failed to create organization");
@@ -284,7 +290,7 @@ class OrganizationService {
 
   async updateOrganization(
     uid: string,
-    organization: Partial<Organization>
+    organization: Partial<Organization> | any
   ): Promise<Organization> {
     // Get current user from token for ModifiedBy field
     const token =
@@ -294,24 +300,26 @@ class OrganizationService {
 
     const updatePayload = {
       UID: uid,
-      Code: organization.Code,
-      Name: organization.Name,
-      IsActive: organization.IsActive,
-      OrgTypeUID: organization.OrgTypeUID,
-      ParentUID: organization.ParentUID,
-      CountryUID: organization.CountryUID,
-      CompanyUID: organization.CompanyUID,
-      TaxGroupUID: organization.TaxGroupUID,
-      Status: organization.Status,
-      SeqCode: organization.SeqCode,
-      HasEarlyAccess: organization.HasEarlyAccess,
+      Code: organization.Code || organization.code,
+      Name: organization.Name || organization.name,
+      IsActive: organization.IsActive !== undefined ? organization.IsActive : organization.isActive,
+      OrgTypeUID: organization.OrgTypeUID || organization.orgTypeUID,
+      ParentUID: organization.ParentUID || organization.parentUID,
+      CountryUID: organization.CountryUID || organization.countryUID,
+      CompanyUID: organization.CompanyUID || organization.companyUID,
+      TaxGroupUID: organization.TaxGroupUID || organization.taxGroupUID,
+      Status: organization.Status || organization.status,
+      SeqCode: organization.SeqCode || organization.seqCode,
+      HasEarlyAccess: organization.HasEarlyAccess || organization.hasEarlyAccess,
+      ShowInUI: organization.ShowInUI !== undefined ? organization.ShowInUI : (organization.showInUI !== undefined ? organization.showInUI : true),
+      ShowInTemplate: organization.ShowInTemplate !== undefined ? organization.ShowInTemplate : (organization.showInTemplate !== undefined ? organization.showInTemplate : true),
       ModifiedBy: currentUser,
-      ModifiedTime: currentTime,
+      ModifiedTime: currentTime
     };
 
     const response = await this.apiCall<Organization>("/Org/UpdateOrg", {
       method: "PUT",
-      body: JSON.stringify(updatePayload),
+      body: JSON.stringify(updatePayload)
     });
     if (!response.success || !response.data) {
       throw new Error(response.message || "Failed to update organization");
@@ -321,7 +329,7 @@ class OrganizationService {
 
   async deleteOrganization(uid: string): Promise<boolean> {
     const response = await this.apiCall<any>(`/Org/DeleteOrg?UID=${uid}`, {
-      method: "DELETE",
+      method: "DELETE"
     });
     return response.success;
   }
@@ -333,30 +341,36 @@ class OrganizationService {
       pageSize: 1000,
       sortCriterias: [],
       filterCriterias: [],
-      isCountRequired: true,
+      isCountRequired: true
     };
 
     // Try multiple endpoints as fallback
     const endpoints = [
       "/Tax/GetTaxGroupDetails",
-      "/TaxMaster/SelectAllTaxMasterDetails",
+      "/TaxMaster/SelectAllTaxMasterDetails"
     ];
 
     for (const endpoint of endpoints) {
-      const result = await this.apiCall<any>(endpoint, {
-        method: "POST",
-        body: JSON.stringify(pagingRequest),
-      });
+      try {
+        const result = await this.apiCall<any>(endpoint, {
+          method: "POST",
+          body: JSON.stringify(pagingRequest)
+        });
 
-      if (result.success && result.data) {
-        const items =
-          result.data.PagedData || result.data.Data || result.data || [];
-        if (items.length > 0) {
-          return items;
+        if (result.success && result.data) {
+          const items =
+            result.data.PagedData || result.data.Data || result.data || [];
+          if (items.length > 0) {
+            return items;
+          }
         }
+      } catch (error) {
+        // Silently continue to next endpoint if this one fails
+        continue;
       }
     }
 
+    // Return empty array if all endpoints fail or return no data
     return [];
   }
 
@@ -371,11 +385,11 @@ class OrganizationService {
   ): Promise<{ IsSuccess: boolean; Error?: string }> {
     const response = await this.apiCall<any>("/Org/InsertOrgHierarchy", {
       method: "POST",
-      body: JSON.stringify({ orgUID }),
+      body: JSON.stringify({ orgUID })
     });
     return {
       IsSuccess: response.success,
-      Error: response.success ? undefined : response.message,
+      Error: response.success ? undefined : response.message
     };
   }
 
@@ -405,7 +419,7 @@ class OrganizationService {
         orgTypeName: org.OrgTypeName || "",
         orgTypeUID: org.OrgTypeUID,
         level: 0,
-        children: [],
+        children: []
       });
     });
 
@@ -498,8 +512,8 @@ class OrganizationService {
         Name: "OrgTypeUID",
         Value: orgTypeUID,
         Type: 0, // Equal
-        FilterType: 0,
-      },
+        FilterType: 0
+      }
     ];
 
     const { data } = await this.getOrganizations(1, 1000, filters);
@@ -561,7 +575,7 @@ class OrganizationService {
         )
         .map((org) => ({
           ...org,
-          OrgTypeName: org.OrgTypeName || orgTypeMap.get(org.OrgTypeUID) || "",
+          OrgTypeName: org.OrgTypeName || orgTypeMap.get(org.OrgTypeUID) || ""
         }));
     } catch (error) {
       console.error("Error fetching organizations for company UID:", error);
@@ -591,8 +605,8 @@ class OrganizationService {
           Name: "IsActive",
           Value: true,
           Type: 0, // Equal
-          FilterType: 0,
-        },
+          FilterType: 0
+        }
       ];
 
       const { data } = await this.getOrganizations(1, 1000, filters);
@@ -619,7 +633,7 @@ class OrganizationService {
           // Enhance display name to show hierarchy
           Name: `[${org.Code || "DIV"}] ${org.Name}`,
           // Keep original name for processing
-          OriginalName: org.Name,
+          OriginalName: org.Name
         }))
         .sort(
           (a, b) => a.OriginalName?.localeCompare(b.OriginalName || "") || 0
@@ -711,7 +725,7 @@ class OrganizationService {
       "Created By",
       "Created Date",
       "Modified By",
-      "Modified Date",
+      "Modified Date"
     ];
 
     const csvContent = [
@@ -741,9 +755,9 @@ class OrganizationService {
             org.ModifiedTime
               ? new Date(org.ModifiedTime).toLocaleDateString()
               : ""
-          }"`,
+          }"`
         ].join(",")
-      ),
+      )
     ].join("\n");
 
     return new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
@@ -754,7 +768,7 @@ class OrganizationService {
     // In the future, could use libraries like xlsx for proper Excel export
     const csvContent = this.exportToCSV(organizations);
     return new Blob([csvContent], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8;",
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8;"
     });
   }
 }

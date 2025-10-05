@@ -41,7 +41,6 @@ import {
   Home,
   Search,
 } from "lucide-react"
-import Image from "next/image"
 import { usePermissions } from "@/providers/permission-provider"
 import { SubModule, SubSubModule } from "@/types/permission.types"
 import { getModuleIcon, getSubModuleIcon } from "@/lib/navigation-icons"
@@ -249,15 +248,7 @@ export function ProfessionalSidebar({ className }: ProfessionalSidebarProps) {
         {!isCollapsed ? (
           // Logo when expanded - proper height
           <div className="h-16 flex items-center px-4">
-            <Image
-              src="/winitlogo.png"
-              alt="WINIT Logo"
-              width={150}
-              height={45}
-              className="object-contain h-10 w-auto"
-              priority
-              unoptimized
-            />
+            <span className="text-3xl font-bold text-gray-900 dark:text-gray-100">LBCL</span>
           </div>
         ) : (
           // Search icon when collapsed

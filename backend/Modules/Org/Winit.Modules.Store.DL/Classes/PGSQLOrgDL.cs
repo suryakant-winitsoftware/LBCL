@@ -141,7 +141,7 @@ namespace Winit.Modules.Org.DL.Classes
                                         server_add_time AS ServerAddTime,
                                         server_modified_time AS ServerModifiedTime,
                                         code AS Code,
-                                        '[' || code::text || ']' || name AS Name,
+                                        name AS Name,
                                         is_active AS IsActive,
                                         org_type_uid AS OrgTypeUID,
                                         parent_uid AS ParentUID,
@@ -164,10 +164,11 @@ namespace Winit.Modules.Org.DL.Classes
         {
             try
             {
-                var sql = @"INSERT INTO org (uid, created_by, created_time, modified_by, modified_time, server_add_time, server_modified_time, code, name, is_active, org_type_uid, parent_uid, country_uid, company_uid, tax_group_uid, status, seq_code, has_early_access, show_in_ui, show_in_template)
-                            VALUES (@UID, @CreatedBy, @CreatedTime, @ModifiedBy, @ModifiedTime, @ServerAddTime, @ServerModifiedTime, @Code, @Name, @IsActive, @OrgTypeUID, @ParentUID, @CountryUID, @CompanyUID, @TaxGroupUID, @Status, @SeqCode, @HasEarlyAccess, @ShowInUI, @ShowInTemplate);";
+                var sql = @"INSERT INTO org (id, uid, created_by, created_time, modified_by, modified_time, server_add_time, server_modified_time, code, name, is_active, org_type_uid, parent_uid, country_uid, company_uid, tax_group_uid, status, seq_code, has_early_access, show_in_ui, show_in_template)
+                            VALUES (@Id, @UID, @CreatedBy, @CreatedTime, @ModifiedBy, @ModifiedTime, @ServerAddTime, @ServerModifiedTime, @Code, @Name, @IsActive, @OrgTypeUID, @ParentUID, @CountryUID, @CompanyUID, @TaxGroupUID, @Status, @SeqCode, @HasEarlyAccess, @ShowInUI, @ShowInTemplate);";
                 Dictionary<string, object?> parameters = new Dictionary<string, object?>
             {
+                   {"Id", createOrg.Id},
                    {"UID", createOrg.UID},
                    {"CreatedBy", createOrg.CreatedBy},
                    {"ModifiedBy", createOrg.ModifiedBy},

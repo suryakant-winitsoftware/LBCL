@@ -43,9 +43,9 @@ class PlanogramFileService {
           IsCountRequired: true,
           FilterCriterias: [
             { Name: "LinkedItemType", Value: "Planogram" },
-            { Name: "LinkedItemUID", Value: planogramUid },
+            { Name: "LinkedItemUID", Value: planogramUid }
           ],
-          SortCriterias: [],
+          SortCriterias: []
         }
       );
 
@@ -77,9 +77,9 @@ class PlanogramFileService {
           FilterCriterias: [
             { Name: "LinkedItemType", Value: "Planogram" },
             { Name: "LinkedItemUID", Value: planogramUid },
-            { Name: "FileType", Value: "image/", Type: 10 }, // Type 10 = Contains
+            { Name: "FileType", Value: "image/", Type: 10 } // Type 10 = Contains
           ],
-          SortCriterias: [],
+          SortCriterias: []
         }
       );
 
@@ -106,7 +106,7 @@ class PlanogramFileService {
     try {
       // Get base URL from environment or default
       const baseUrl =
-        process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
       // Remove /api suffix to get the static file server base URL
       const staticUrl = baseUrl.replace("/api", "");

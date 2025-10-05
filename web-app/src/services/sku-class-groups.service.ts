@@ -1,6 +1,6 @@
 import { getAuthHeaders } from "@/lib/auth-service";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
 export interface SKUClassGroup {
   Id: number;
@@ -72,15 +72,15 @@ class SKUClassGroupsService {
           method: "POST",
           headers: {
             ...getAuthHeaders(),
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
           body: JSON.stringify({
             PageNumber: pageNumber,
             PageSize: pageSize,
             IsCountRequired: true,
             FilterCriterias: filterCriterias,
-            SortCriterias: [{ SortParameter: "Name", Direction: "Asc" }],
-          }),
+            SortCriterias: [{ SortParameter: "Name", Direction: "Asc" }]
+          })
         }
       );
 
@@ -107,7 +107,7 @@ class SKUClassGroupsService {
       if (result.IsSuccess && result.Data?.PagedData) {
         return {
           data: result.Data.PagedData,
-          totalCount: result.Data.TotalCount || 0,
+          totalCount: result.Data.TotalCount || 0
         };
       }
 
@@ -130,18 +130,20 @@ class SKUClassGroupsService {
         {
           method: "GET",
           headers: {
-            ...getAuthHeaders(),
-          },
+            ...getAuthHeaders()
+          }
         }
       );
 
       if (!response.ok) {
-        console.error(`Failed to fetch SKU Class Group: ${response.status} ${response.statusText}`);
+        console.error(
+          `Failed to fetch SKU Class Group: ${response.status} ${response.statusText}`
+        );
         return null;
       }
 
       const text = await response.text();
-      if (!text || text.trim() === '') {
+      if (!text || text.trim() === "") {
         console.error("Empty response from API");
         return null;
       }
@@ -171,9 +173,9 @@ class SKUClassGroupsService {
           method: "POST",
           headers: {
             ...getAuthHeaders(),
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
-          body: JSON.stringify(data),
+          body: JSON.stringify(data)
         }
       );
 
@@ -203,9 +205,9 @@ class SKUClassGroupsService {
           method: "PUT",
           headers: {
             ...getAuthHeaders(),
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
-          body: JSON.stringify(data),
+          body: JSON.stringify(data)
         }
       );
 
@@ -234,8 +236,8 @@ class SKUClassGroupsService {
         {
           method: "DELETE",
           headers: {
-            ...getAuthHeaders(),
-          },
+            ...getAuthHeaders()
+          }
         }
       );
 
@@ -263,7 +265,7 @@ class SKUClassGroupsService {
     return [
       { uid: "Farmley", name: "Farmley" },
       { uid: "EPIC01", name: "EPIC01" },
-      { uid: "Supplier", name: "Supplier" },
+      { uid: "Supplier", name: "Supplier" }
     ];
   }
 
@@ -278,7 +280,7 @@ class SKUClassGroupsService {
     return [
       { uid: "RO", name: "RO" },
       { uid: "DISTRIBUTOR_AAAAAAA", name: "Distributor" },
-      { uid: "FRANCHISEE", name: "Franchisee" },
+      { uid: "FRANCHISEE", name: "Franchisee" }
     ];
   }
 }

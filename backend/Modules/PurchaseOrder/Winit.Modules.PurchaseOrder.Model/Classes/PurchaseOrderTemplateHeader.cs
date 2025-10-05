@@ -7,7 +7,7 @@ public class PurchaseOrderTemplateHeader : BaseModel, IPurchaseOrderTemplateHead
 {
     public string OrgUID { get; set; } = string.Empty;
     public string TemplateName { get; set; } = string.Empty;
-    public string StoreUid { get; set; }
+    public string? StoreUid { get; set; }
     public bool IsCreatedByStore { get; set; }
     public bool IsActive { get; set; }
 }

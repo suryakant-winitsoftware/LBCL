@@ -1,7 +1,7 @@
 import {
   ApiResponse,
   FilterCriteria,
-  SortCriteria,
+  SortCriteria
 } from "@/types/common.types";
 
 export interface LocationType {
@@ -58,7 +58,7 @@ export interface LocationMapping {
 }
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api";
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
 class LocationService {
   private async apiCall<T>(
@@ -76,8 +76,8 @@ class LocationService {
         headers: {
           "Content-Type": "application/json",
           Authorization: token ? `Bearer ${token}` : "",
-          ...options.headers,
-        },
+          ...options.headers
+        }
       });
 
       if (!response.ok) {
@@ -98,14 +98,14 @@ class LocationService {
       return {
         success: data.IsSuccess !== false,
         data: data.Data || data,
-        message: data.Message || data.ErrorMessage || data.message,
+        message: data.Message || data.ErrorMessage || data.message
       };
     } catch (error) {
       console.error(`API call failed for ${endpoint}:`, error);
       return {
         success: false,
         message:
-          error instanceof Error ? error.message : "Unknown error occurred",
+          error instanceof Error ? error.message : "Unknown error occurred"
       };
     }
   }
@@ -117,14 +117,14 @@ class LocationService {
       pageSize: 1000, // Get all location types
       sortCriterias: [],
       filterCriterias: [],
-      isCountRequired: true,
+      isCountRequired: true
     };
 
     const response = await this.apiCall<any>(
       "/LocationType/SelectAllLocationTypeDetails",
       {
         method: "POST",
-        body: JSON.stringify(pagingRequest),
+        body: JSON.stringify(pagingRequest)
       }
     );
 
@@ -144,7 +144,7 @@ class LocationService {
       "/LocationType/CreateLocationType",
       {
         method: "POST",
-        body: JSON.stringify(locationType),
+        body: JSON.stringify(locationType)
       }
     );
     if (!response.success) {
@@ -161,7 +161,7 @@ class LocationService {
       "/LocationType/UpdateLocationTypeDetails",
       {
         method: "PUT",
-        body: JSON.stringify({ ...locationType, UID: uid }),
+        body: JSON.stringify({ ...locationType, UID: uid })
       }
     );
     if (!response.success) {
@@ -174,7 +174,7 @@ class LocationService {
     const response = await this.apiCall<any>(
       `/LocationType/DeleteLocationTypeDetails?UID=${uid}`,
       {
-        method: "DELETE",
+        method: "DELETE"
       }
     );
     return response.success;
@@ -192,14 +192,14 @@ class LocationService {
       pageSize: pageSize,
       sortCriterias: sorts || [],
       filterCriterias: filters || [],
-      isCountRequired: true,
+      isCountRequired: true
     };
 
     const response = await this.apiCall<any>(
       "/Location/SelectAllLocationDetails",
       {
         method: "POST",
-        body: JSON.stringify(pagingRequest),
+        body: JSON.stringify(pagingRequest)
       }
     );
 
@@ -229,7 +229,7 @@ class LocationService {
 
     return {
       data: items,
-      total: totalCount,
+      total: totalCount
     };
   }
 
@@ -253,7 +253,7 @@ class LocationService {
   async createLocation(location: Partial<Location>): Promise<Location> {
     const response = await this.apiCall<Location>("/Location/CreateLocation", {
       method: "POST",
-      body: JSON.stringify(location),
+      body: JSON.stringify(location)
     });
     if (!response.success || !response.data) {
       throw new Error(response.message || "Failed to create location");
@@ -269,7 +269,7 @@ class LocationService {
       "/Location/UpdateLocationDetails",
       {
         method: "PUT",
-        body: JSON.stringify({ ...location, UID: uid }),
+        body: JSON.stringify({ ...location, UID: uid })
       }
     );
     if (!response.success) {
@@ -282,7 +282,7 @@ class LocationService {
     const response = await this.apiCall<any>(
       `/Location/DeleteLocationDetails?UID=${uid}`,
       {
-        method: "DELETE",
+        method: "DELETE"
       }
     );
     return response.success;
@@ -296,12 +296,12 @@ class LocationService {
     const response = await this.apiCall<any>(
       `/LocationMapping/InsertLocationHierarchy?${params.toString()}`,
       {
-        method: "POST",
+        method: "POST"
       }
     );
     return {
       IsSuccess: response.success,
-      Error: response.success ? undefined : response.message,
+      Error: response.success ? undefined : response.message
     };
   }
 
@@ -357,7 +357,7 @@ class LocationService {
         locationTypeName: loc.LocationTypeName || "",
         levelNo: loc.ItemLevel || 0,
         children: [],
-        expanded: false,
+        expanded: false
       });
     });
 
@@ -403,8 +403,8 @@ class LocationService {
         Name: "Name",
         Value: searchText,
         Type: 1, // 1 = LIKE
-        FilterType: 1,
-      },
+        FilterType: 1
+      }
     ];
 
     if (locationTypeUID) {
@@ -412,7 +412,7 @@ class LocationService {
         Name: "LocationTypeUID",
         Value: locationTypeUID,
         Type: 0, // 0 = Equal
-        FilterType: 0,
+        FilterType: 0
       });
     }
 
@@ -431,8 +431,8 @@ class LocationService {
         Name: "Code",
         Value: code,
         Type: 0, // 0 = Equal
-        FilterType: 0,
-      },
+        FilterType: 0
+      }
     ];
 
     const { data } = await this.getLocations(1, 10, filters);
@@ -537,7 +537,7 @@ class LocationService {
             ...node,
             hierarchyPath: currentPath,
             hierarchyLevel: level,
-            parentPath: parentPath || "Root",
+            parentPath: parentPath || "Root"
           });
 
           if (node.children && node.children.length > 0) {
@@ -585,7 +585,7 @@ class LocationService {
       "Created By",
       "Created Date",
       "Modified By",
-      "Modified Date",
+      "Modified Date"
     ];
 
     const csvContent = [
@@ -610,9 +610,9 @@ class LocationService {
             location.ModifiedTime
               ? new Date(location.ModifiedTime).toLocaleDateString()
               : ""
-          }"`,
+          }"`
         ].join(",")
-      ),
+      )
     ].join("\n");
 
     return new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
@@ -626,7 +626,7 @@ class LocationService {
       "Level No",
       "Show In UI",
       "Show In Template",
-      "Company UID",
+      "Company UID"
     ];
 
     const csvContent = [
@@ -639,9 +639,9 @@ class LocationService {
           `"${type.LevelNo || 0}"`,
           `"${type.ShowInUI ? "Yes" : "No"}"`,
           `"${type.ShowInTemplate ? "Yes" : "No"}"`,
-          `"${type.CompanyUID || ""}"`,
+          `"${type.CompanyUID || ""}"`
         ].join(",")
-      ),
+      )
     ].join("\n");
 
     return new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
@@ -656,7 +656,7 @@ class LocationService {
       "Hierarchy Path",
       "Hierarchy Level",
       "Parent Path",
-      "Has Children",
+      "Has Children"
     ];
 
     const csvContent = [
@@ -670,9 +670,9 @@ class LocationService {
           `"${item.hierarchyPath || ""}"`,
           `"${item.hierarchyLevel || 0}"`,
           `"${item.parentPath || ""}"`,
-          `"${item.children && item.children.length > 0 ? "Yes" : "No"}"`,
+          `"${item.children && item.children.length > 0 ? "Yes" : "No"}"`
         ].join(",")
-      ),
+      )
     ].join("\n");
 
     return new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
@@ -681,21 +681,21 @@ class LocationService {
   private exportLocationsToExcel(locations: Location[]): Blob {
     const csvContent = this.exportLocationsToCSV(locations);
     return new Blob([csvContent], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8;",
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8;"
     });
   }
 
   private exportLocationTypesToExcel(locationTypes: LocationType[]): Blob {
     const csvContent = this.exportLocationTypesToCSV(locationTypes);
     return new Blob([csvContent], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8;",
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8;"
     });
   }
 
   private exportLocationHierarchyToExcel(hierarchyData: any[]): Blob {
     const csvContent = this.exportLocationHierarchyToCSV(hierarchyData);
     return new Blob([csvContent], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8;",
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8;"
     });
   }
 }

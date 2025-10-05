@@ -9,7 +9,7 @@ namespace Winit.Modules.Vehicle.Model.Interfaces
 {
     public interface IVehicle:IBaseModel
     {
-       
+
         public string? CompanyUID { get; set; }
         public string OrgUID { get; set; }
         public string VehicleNo { get; set; }
@@ -20,5 +20,13 @@ namespace Winit.Modules.Vehicle.Model.Interfaces
         public DateTime TruckSIDate { get; set; }
         public DateTime RoadTaxExpiryDate { get; set; }
         public DateTime InspectionDate { get; set; }
+
+        // Additional fields for vehicle specifications
+        public decimal? WeightLimit { get; set; }
+        public decimal? Capacity { get; set; }
+        public decimal? LoadingCapacity { get; set; }
+        public string? WarehouseCode { get; set; }
+        public string? LocationCode { get; set; }
+        public string? TerritoryUID { get; set; }
     }
 }

@@ -19,7 +19,7 @@ import {
   EyeOff,
   X,
   Check,
-  ChevronsUpDown,
+  ChevronsUpDown
 } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
@@ -32,7 +32,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from "@/components/ui/select";
 import {
   Command,
@@ -40,12 +40,12 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
-  CommandList,
+  CommandList
 } from "@/components/ui/command";
 import {
   Popover,
   PopoverContent,
-  PopoverTrigger,
+  PopoverTrigger
 } from "@/components/ui/popover";
 import {
   Form,
@@ -54,14 +54,14 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  FormMessage
 } from "@/components/ui/form";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { Switch } from "@/components/ui/switch";
@@ -71,7 +71,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { authService } from "@/lib/auth-service";
@@ -82,13 +82,13 @@ import { roleService } from "@/services/admin/role.service";
 import {
   organizationService,
   Organization,
-  OrgType,
+  OrgType
 } from "@/services/organizationService";
 import { employeeService } from "@/services/admin/employee.service";
 import {
   locationService,
   Location,
-  LocationType,
+  LocationType
 } from "@/services/locationService";
 import { mobileAppActionService } from "@/services/mobileAppActionService";
 import { listItemService, ListItem } from "@/services/listItemService";
@@ -100,7 +100,7 @@ import {
   getFinalSelectedOrganization,
   resetOrganizationHierarchy,
   OrganizationLevel,
-  getOrganizationDisplayName,
+  getOrganizationDisplayName
 } from "@/utils/organizationHierarchyUtils";
 
 // Import location hierarchy utilities
@@ -110,7 +110,7 @@ import {
   getFinalSelectedLocation,
   initializeLocationHierarchy,
   LocationLevel,
-  getLocationDisplayName,
+  getLocationDisplayName
 } from "@/utils/locationHierarchy";
 
 // Define the form schema based on web portal UserFormData structure
@@ -162,7 +162,7 @@ const routeUserFormSchema = z
     confirmPassword: z.string().optional().or(z.literal("")),
     startDate: z.string().optional(),
     routeFromDate: z.string().optional(),
-    routeToDate: z.string().optional(),
+    routeToDate: z.string().optional()
   })
   .refine(
     (data) => {
@@ -178,7 +178,7 @@ const routeUserFormSchema = z
     },
     {
       message: "Please confirm your password",
-      path: ["confirmPassword"],
+      path: ["confirmPassword"]
     }
   )
   .refine(
@@ -191,7 +191,7 @@ const routeUserFormSchema = z
     },
     {
       message: "Passwords do not match",
-      path: ["confirmPassword"],
+      path: ["confirmPassword"]
     }
   );
 
@@ -250,7 +250,7 @@ const LocationAssignmentComponent: React.FC<{
   onCountryChange,
   onDepotChange,
   onSubAreaChange,
-  locations,
+  locations
 }) => {
   // Get location hierarchy functions
   const getCountries = (): LocationItem[] => {
@@ -458,7 +458,7 @@ export function RouteUserForm({
   employeeId,
   onSuccess,
   onCancel,
-  isModal = false,
+  isModal = false
 }: RouteUserFormProps) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -552,8 +552,8 @@ export function RouteUserForm({
       // Location default values
       locationUID: "",
       locationType: "",
-      locationValue: "",
-    },
+      locationValue: ""
+    }
   });
 
   // Load master data on component mount
@@ -707,7 +707,7 @@ export function RouteUserForm({
                   description: `Mobile app access has been automatically enabled based on the ${
                     roleDetails.RoleNameEn || roleDetails.Code
                   } role configuration.`,
-                  variant: "default",
+                  variant: "default"
                 });
               } else {
                 toast({
@@ -715,7 +715,7 @@ export function RouteUserForm({
                   description: `Mobile app access has been automatically disabled based on the ${
                     roleDetails.RoleNameEn || roleDetails.Code
                   } role configuration.`,
-                  variant: "default",
+                  variant: "default"
                 });
               }
             }
@@ -759,7 +759,7 @@ export function RouteUserForm({
         loadDepartments(),
         loadReportToUsers(),
         loadLocations(),
-        loadAuthTypes(),
+        loadAuthTypes()
       ]);
 
       results.forEach((result, index) => {
@@ -769,7 +769,7 @@ export function RouteUserForm({
           "departments",
           "reportToUsers",
           "locations",
-          "authTypes",
+          "authTypes"
         ];
         if (result.status === "rejected") {
         } else {
@@ -787,7 +787,7 @@ export function RouteUserForm({
         title: "Warning",
         description:
           "Failed to load some master data. Some features may not work properly.",
-        variant: "destructive",
+        variant: "destructive"
       });
       setLoadingMasterData(false);
     }
@@ -922,7 +922,7 @@ export function RouteUserForm({
             uid: role.UID,
             code: role.Code,
             label: role.RoleNameEn || role.Code,
-            value: role.UID,
+            value: role.UID
           }));
         setUserRoles(processedRoles);
       } else {
@@ -950,7 +950,7 @@ export function RouteUserForm({
         uid: dept.code, // Use code as UID for consistency with backend
         code: dept.code,
         label: dept.name,
-        value: dept.code,
+        value: dept.code
       }));
       setDepartments(formattedDepartments);
     } catch (error) {
@@ -972,7 +972,7 @@ export function RouteUserForm({
             uid: emp.UID || emp.uid,
             code: emp.Code || emp.code,
             label: `[${emp.Code || emp.code}] ${emp.Name || emp.name}`,
-            value: emp.UID || emp.uid,
+            value: emp.UID || emp.uid
           })
         );
         setReportToUsers(processedEmployees);
@@ -1002,7 +1002,7 @@ export function RouteUserForm({
       // Load location types and locations in parallel
       const [locationTypesResult, locationsResult] = await Promise.allSettled([
         locationService.getLocationTypes(),
-        locationService.getLocations(1, 500), // Reduced from 5000 to 500
+        locationService.getLocations(1, 500) // Reduced from 5000 to 500
       ]);
 
       // Handle location types
@@ -1072,7 +1072,7 @@ export function RouteUserForm({
           code: route.Code,
           name: route.Label,
           description: route.Label,
-          isActive: true,
+          isActive: true
         }));
 
         setRoutes(formattedRoutes);
@@ -1184,7 +1184,7 @@ export function RouteUserForm({
 
     toast({
       title: "Success",
-      description: `User code generated: ${generatedCode}`,
+      description: `User code generated: ${generatedCode}`
     });
   };
 
@@ -1197,7 +1197,7 @@ export function RouteUserForm({
       toast({
         title: "Error",
         description: "Failed to load user details",
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setLoading(false);
@@ -1211,14 +1211,14 @@ export function RouteUserForm({
       // Use the correct API endpoint
       const response = await fetch(
         `${
-          process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
         }/MaintainUser/SelectMaintainUserDetailsByUID?empUID=${empId}`,
         {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            ...authService.getAuthHeaders(),
-          },
+            ...authService.getAuthHeaders()
+          }
         }
       );
 
@@ -1415,7 +1415,7 @@ export function RouteUserForm({
         title: "Warning",
         description:
           "Could not load employee data. Please check if the employee exists.",
-        variant: "default",
+        variant: "default"
       });
     } finally {
       setLoadingEmployee(false);
@@ -1624,7 +1624,7 @@ export function RouteUserForm({
         title: "Validation Error",
         description:
           "Please select a source employee to copy location mappings from.",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
@@ -1666,7 +1666,7 @@ export function RouteUserForm({
         // Reload the page to get updated data
         toast({
           title: "Success",
-          description: "Location data copied successfully! Reloading...",
+          description: "Location data copied successfully! Reloading..."
         });
 
         setTimeout(() => {
@@ -1826,7 +1826,7 @@ export function RouteUserForm({
 
         toast({
           title: "Success",
-          description: "Location data copied to form! Please review and save.",
+          description: "Location data copied to form! Please review and save."
         });
       }
 
@@ -1839,7 +1839,7 @@ export function RouteUserForm({
         title: "Error",
         description:
           error.message || "Failed to copy location data. Please try again.",
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setLoading(false);
@@ -1865,7 +1865,7 @@ export function RouteUserForm({
         toast({
           title: "Validation Error",
           description: "Please fill in all required fields.",
-          variant: "destructive",
+          variant: "destructive"
         });
         setLoading(false);
         return;
@@ -1899,7 +1899,7 @@ export function RouteUserForm({
         userRoleUID: values.userRoleUID,
         companyUID: companyUID,
         email: values.email,
-        phone: values.phone,
+        phone: values.phone
       });
 
       // Build the employee data structure exactly matching the backend C# model (PascalCase)
@@ -1934,7 +1934,7 @@ export function RouteUserForm({
           ServerModifiedTime: currentTime,
           SS: 0,
           KeyUID: userUID,
-          IsSelected: false,
+          IsSelected: false
         },
         EmpInfo: {
           // Don't send id field - let backend auto-generate it
@@ -1956,7 +1956,7 @@ export function RouteUserForm({
           ServerModifiedTime: currentTime,
           SS: 0,
           KeyUID: userUID, // Use same UID
-          IsSelected: false,
+          IsSelected: false
         },
         JobPosition: {
           // Don't send id field - let backend auto-generate it
@@ -1991,33 +1991,33 @@ export function RouteUserForm({
           ServerModifiedTime: currentTime,
           SS: 0,
           KeyUID: jobPositionUID, // Use job position UID
-          IsSelected: false,
+          IsSelected: false
         },
         EmpOrgMapping: values.applicableOrgs?.map((orgUID: string) => ({
           EmpUID: userUID,
           OrgUID: orgUID,
-          IsActive: true,
+          IsActive: true
         })) || [
           {
             EmpUID: userUID,
             OrgUID: values.orgUID,
-            IsActive: true,
-          },
-        ],
+            IsActive: true
+          }
+        ]
       };
 
       // Call the API using the same endpoint as web portal
       const response = await fetch(
         `${
-          process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
         }/MaintainUser/CUDEmployee`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            ...authService.getAuthHeaders(),
+            ...authService.getAuthHeaders()
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(formData)
         }
       );
 
@@ -2077,7 +2077,7 @@ export function RouteUserForm({
             title: "Warning",
             description:
               "Employee saved but location update failed. You can update it later.",
-            variant: "default",
+            variant: "default"
           });
         }
       }
@@ -2127,7 +2127,7 @@ export function RouteUserForm({
             description: errorMessage.includes("not available")
               ? "Employee created. Mobile app feature is currently not available."
               : "Employee created but mobile app access setup failed. You can enable it later.",
-            variant: "default",
+            variant: "default"
           });
         }
       } else if (isEdit) {
@@ -2152,7 +2152,7 @@ export function RouteUserForm({
             description: errorMessage.includes("not available")
               ? "Employee updated. Mobile app feature is currently not available."
               : "Employee updated but mobile app access update failed.",
-            variant: "default",
+            variant: "default"
           });
         }
       }
@@ -2192,7 +2192,7 @@ export function RouteUserForm({
               ServerAddTime: currentTime,
               ServerModifiedTime: currentTime,
               // Don't send Id field - let backend auto-generate it
-              SS: 0,
+              SS: 0
             };
           });
 
@@ -2200,15 +2200,15 @@ export function RouteUserForm({
 
           const routeResponse = await fetch(
             `${
-              process.env.NEXT_PUBLIC_API_URL || "https://multiplex-promotions-api.winitsoftware.com/api"
+              process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
             }/RouteUser/CreateRouteUser`,
             {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                ...authService.getAuthHeaders(),
+                ...authService.getAuthHeaders()
               },
-              body: JSON.stringify(routeUsers),
+              body: JSON.stringify(routeUsers)
             }
           );
 
@@ -2222,7 +2222,7 @@ export function RouteUserForm({
               description: `Route user ${
                 isEdit ? "updated" : "created"
               } successfully, but failed to assign some routes.`,
-              variant: "destructive",
+              variant: "destructive"
             });
           }
         } catch (routeError) {
@@ -2232,7 +2232,7 @@ export function RouteUserForm({
             description: `Route user ${
               isEdit ? "updated" : "created"
             } successfully, but failed to assign routes.`,
-            variant: "destructive",
+            variant: "destructive"
           });
         }
       }
@@ -2245,15 +2245,13 @@ export function RouteUserForm({
           routesToAssign.length > 0
             ? ` with ${routesToAssign.length} route(s) assigned`
             : ""
-        }${
-          !isEdit && values.mobileAppAccess ? " with mobile app access" : ""
-        }!`,
+        }${!isEdit && values.mobileAppAccess ? " with mobile app access" : ""}!`
       });
 
       // Show additional success info
       toast({
         title: "Route User Details",
-        description: `User Code: ${values.code} | Name: ${values.name}`,
+        description: `User Code: ${values.code} | Name: ${values.name}`
       });
 
       onSuccess();
@@ -2266,7 +2264,7 @@ export function RouteUserForm({
       console.error("❌ Error details:", {
         message: error instanceof Error ? error.message : String(error),
         name: error instanceof Error ? error.name : "Unknown",
-        cause: error instanceof Error ? error.cause : undefined,
+        cause: error instanceof Error ? error.cause : undefined
       });
 
       toast({
@@ -2276,7 +2274,7 @@ export function RouteUserForm({
         } route user. Please try again. Error: ${
           error instanceof Error ? error.message : String(error)
         }`,
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setLoading(false);
@@ -2393,7 +2391,7 @@ export function RouteUserForm({
               toast({
                 title: "Missing Required Fields",
                 description: `Please fill in: ${missingFields.join(", ")}`,
-                variant: "destructive",
+                variant: "destructive"
               });
             }
 
@@ -2407,7 +2405,7 @@ export function RouteUserForm({
               toast({
                 title: "Validation Error",
                 description: errorMessages.join(", "),
-                variant: "destructive",
+                variant: "destructive"
               });
             })(e);
           }}

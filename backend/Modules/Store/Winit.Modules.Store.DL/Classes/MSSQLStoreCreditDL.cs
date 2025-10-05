@@ -39,6 +39,7 @@ public class MSSQLStoreCreditDL : Base.DL.DBManager.SqlServerDBManager, Interfac
                                                            sc.is_allow_cash_on_credit_exceed AS IsAllowCashOnCreditExceed, 
                                                            sc.is_outstanding_bill_control AS IsOutstandingBillControl, sc.is_negative_invoice_allowed AS IsNegativeInvoiceAllowed,
                                                            sc.credit_days AS CreditDays,sc.temporary_credit_days AS TemporaryCreditDays,sc.division_org_uid AS DivisionOrgUID,
+                                                           sc.temporary_credit_approval_date AS TemporaryCreditApprovalDate,
                                                            (select name from emp where uid = sc.division_org_uid) as AsmEmpName,
 						                                   (select name from org where uid = sc.division_org_uid) as DivisionName 
                                                     FROM store_credit sc
@@ -64,7 +65,7 @@ public class MSSQLStoreCreditDL : Base.DL.DBManager.SqlServerDBManager, Interfac
                                                            sc.is_allow_cash_on_credit_exceed AS IsAllowCashOnCreditExceed, 
                                                            sc.is_outstanding_bill_control AS IsOutstandingBillControl, sc.is_negative_invoice_allowed AS IsNegativeInvoiceAllowed,
                                                            sc.credit_days AS CreditDays,sc.temporary_credit_days AS TemporaryCreditDays,sc.division_org_uid AS DivisionOrgUID,
-                                                           sc.temporary_credit_days AS TemporaryCreditApprovalDate
+                                                           sc.temporary_credit_approval_date AS TemporaryCreditApprovalDate
                                                     FROM store_credit sc) as subquery");
             }
             Dictionary<string, object> parameters = [];
@@ -164,7 +165,7 @@ public class MSSQLStoreCreditDL : Base.DL.DBManager.SqlServerDBManager, Interfac
                                             sc.credit_days AS CreditDays,
                                             sc.temporary_credit_days AS TemporaryCreditDays,
                                             sc.division_org_uid AS DivisionOrgUID,
-                                            sc.temporary_credit_days AS TemporaryCreditApprovalDate
+                                            sc.temporary_credit_approval_date AS TemporaryCreditApprovalDate
                                         FROM 
                                             store_credit sc 
                                         WHERE 
@@ -176,15 +177,15 @@ public class MSSQLStoreCreditDL : Base.DL.DBManager.SqlServerDBManager, Interfac
 
     public async Task<int> CreateStoreCredit(Model.Interfaces.IStoreCredit storeCredit)
     {
-        string sql = @"INSERT INTO store_credit ( uid, created_by, created_time, modified_by, modified_time, server_add_time, server_modified_time,
+        string sql = @"INSERT INTO store_credit ( id, uid, created_by, created_time, modified_by, modified_time, server_add_time, server_modified_time,
                             store_uid, payment_term_uid,credit_type, credit_limit, temporary_credit, org_uid, distribution_channel_uid, preferred_payment_mode,
                             is_active, is_blocked, blocking_reason_code, blocking_reason_description, price_list, authorized_item_grp_key, message_key,
-                            tax_key_field,promotion_key, disabled, bill_to_address_uid, ship_to_address_uid, outstanding_invoices, preferred_payment_method, 
-                            payment_type, invoice_admin_fee_per_billing_cycle, invoice_admin_fee_per_delivery, invoice_late_payment_fee, is_cancellation_of_invoice_allowed, 
+                            tax_key_field,promotion_key, disabled, bill_to_address_uid, ship_to_address_uid, outstanding_invoices, preferred_payment_method,
+                            payment_type, invoice_admin_fee_per_billing_cycle, invoice_admin_fee_per_delivery, invoice_late_payment_fee, is_cancellation_of_invoice_allowed,
                             is_allow_cash_on_credit_exceed, is_outstanding_bill_control, is_negative_invoice_allowed, store_group_data_uid,
-                            credit_days,temporary_credit_days,division_org_uid,temporary_credit_days)
+                            credit_days,temporary_credit_days,division_org_uid,temporary_credit_approval_date)
                             VALUES (
-                             @UID, @CreatedBy, @CreatedTime, @ModifiedBy, @ModifiedTime, @ServerAddTime, @ServerModifiedTime,
+                             @Id, @UID, @CreatedBy, @CreatedTime, @ModifiedBy, @ModifiedTime, @ServerAddTime, @ServerModifiedTime,
                             @StoreUID, @PaymentTermUID, @CreditType, @CreditLimit, @TemporaryCredit,
                             @OrgUID, @DistributionChannelUID, @PreferredPaymentMode, @IsActive, @IsBlocked,
                             @BlockingReasonCode, @BlockingReasonDescription,@PriceList, @AuthorizedItemGRPKey,
@@ -211,7 +212,7 @@ public class MSSQLStoreCreditDL : Base.DL.DBManager.SqlServerDBManager, Interfac
                             invoice_late_payment_fee = @InvoiceLatePaymentFee, is_cancellation_of_invoice_allowed = @IsCancellationOfInvoiceAllowed,
                             is_allow_cash_on_credit_exceed = @IsAllowCashOnCreditExceed, is_outstanding_bill_control = @IsOutstandingBillControl,
                             is_negative_invoice_allowed = @IsNegativeInvoiceAllowed,credit_days=@CreditDays,temporary_credit_days=@TemporaryCreditDays,
-                            division_org_uid=@DivisionOrgUID,temporary_credit_days=@TemporaryCreditApprovalDate
+                            division_org_uid=@DivisionOrgUID,temporary_credit_approval_date=@TemporaryCreditApprovalDate
                               WHERE uid = @UID;";
 
 
@@ -292,10 +293,10 @@ public class MSSQLStoreCreditDL : Base.DL.DBManager.SqlServerDBManager, Interfac
                            sc.credit_days AS CreditDays,
                            sc.temporary_credit_days AS TemporaryCreditDays,
                            sc.division_org_uid AS DivisionOrgUID,
-                           sc.temporary_credit_days AS TemporaryCreditApprovalDate
-                       FROM 
-                           store_credit sc 
-                       WHERE 
+                           sc.temporary_credit_approval_date AS TemporaryCreditApprovalDate
+                       FROM
+                           store_credit sc
+                       WHERE
                            sc.store_uid = @UID";
 
             return await ExecuteSingleAsync<Model.Interfaces.IStoreCredit>(sql, parameters);

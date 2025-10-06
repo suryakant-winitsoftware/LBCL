@@ -28,6 +28,7 @@ import { DeliveryNoteDialog } from "@/app/lbcl/components/delivery-note-dialog";
 import { roleService } from "@/services/admin/role.service";
 import { employeeService } from "@/services/admin/employee.service";
 import { SuccessDialog } from "@/components/dialogs/success-dialog";
+import { useAuth } from "@/providers/auth-provider";
 
 export default function StockReceivingActivityLog({
   deliveryId,
@@ -37,6 +38,30 @@ export default function StockReceivingActivityLog({
   readOnly?: boolean;
 }) {
   const router = useRouter();
+  const { user } = useAuth();
+
+  // Check user roles for field visibility
+  const isSecurityOfficer = user?.roles?.some(role =>
+    role.roleNameEn?.toUpperCase().includes("SECURITY") ||
+    role.code?.toUpperCase().includes("SECURITY") ||
+    role.uid?.toUpperCase() === "SECURITYOFFICER" ||
+    role.code?.toUpperCase() === "SECURITYOFFICER"
+  );
+
+  const isOperator = user?.roles?.some(role =>
+    role.roleNameEn?.toUpperCase().includes("OPERATOR") ||
+    role.code?.toUpperCase().includes("OPERATOR")
+  );
+
+  const isAgent = user?.roles?.some(role =>
+    role.roleNameEn?.toUpperCase().includes("AGENT") ||
+    role.code?.toUpperCase().includes("AGENT")
+  );
+
+  console.log("🔐 Stock Receiving Activity Log - User Role Check:");
+  console.log("   - Is Security Officer:", isSecurityOfficer);
+  console.log("   - Is Operator:", isOperator);
+  console.log("   - Is Agent:", isAgent);
   const [expandedSections, setExpandedSections] = useState<
     Record<number, boolean>
   >({
@@ -692,9 +717,9 @@ export default function StockReceivingActivityLog({
                     <Select
                       value={securityOfficer}
                       onValueChange={setSecurityOfficer}
-                      disabled={loadingSecurityOfficers || readOnly}
+                      disabled={loadingSecurityOfficers || readOnly || !isSecurityOfficer}
                     >
-                      <SelectTrigger className={`${readOnly ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}>
+                      <SelectTrigger className={`${(readOnly || !isSecurityOfficer) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}>
                         <SelectValue
                           placeholder={
                             loadingSecurityOfficers
@@ -720,19 +745,19 @@ export default function StockReceivingActivityLog({
                       <Input
                         type="number"
                         placeholder="15"
-                        className={`w-20 ${readOnly ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
+                        className={`w-20 ${(readOnly || !isSecurityOfficer) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
                         value={arrivalHour}
                         onChange={(e) => setArrivalHour(e.target.value)}
-                        disabled={readOnly}
+                        disabled={readOnly || !isSecurityOfficer}
                       />
                       <span className="text-gray-400 self-center">HH</span>
                       <Input
                         type="number"
                         placeholder="00"
-                        className={`w-20 ${readOnly ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
+                        className={`w-20 ${(readOnly || !isSecurityOfficer) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
                         value={arrivalMin}
                         onChange={(e) => setArrivalMin(e.target.value)}
-                        disabled={readOnly}
+                        disabled={readOnly || !isSecurityOfficer}
                       />
                       <span className="text-gray-400 self-center">Min</span>
                     </div>
@@ -745,7 +770,7 @@ export default function StockReceivingActivityLog({
                     onCheckedChange={(checked) =>
                       setNotifyLBCL(checked as boolean)
                     }
-                    disabled={readOnly}
+                    disabled={readOnly || !isSecurityOfficer}
                   />
                   <label htmlFor="notify-lbcl" className="text-sm font-medium">
                     Notify LBCL Logistics
@@ -804,9 +829,9 @@ export default function StockReceivingActivityLog({
                   <Select
                     value={forkLiftOperator}
                     onValueChange={setForkLiftOperator}
-                    disabled={loadingForkLiftOperators || readOnly}
+                    disabled={loadingForkLiftOperators || readOnly || !isOperator}
                   >
-                    <SelectTrigger className={`${readOnly ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}>
+                    <SelectTrigger className={`${(readOnly || !isOperator) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}>
                       <SelectValue
                         placeholder={
                           loadingForkLiftOperators
@@ -833,10 +858,10 @@ export default function StockReceivingActivityLog({
                       <Input
                         type="number"
                         placeholder="16"
-                        className={`w-16 ${readOnly ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
+                        className={`w-16 ${(readOnly || !isOperator) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
                         value={unloadStartHour}
                         onChange={(e) => setUnloadStartHour(e.target.value)}
-                        disabled={readOnly}
+                        disabled={readOnly || !isOperator}
                       />
                       <span className="text-gray-400 self-center text-xs">
                         HH
@@ -844,10 +869,10 @@ export default function StockReceivingActivityLog({
                       <Input
                         type="number"
                         placeholder="02"
-                        className={`w-16 ${readOnly ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
+                        className={`w-16 ${(readOnly || !isOperator) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
                         value={unloadStartMin}
                         onChange={(e) => setUnloadStartMin(e.target.value)}
-                        disabled={readOnly}
+                        disabled={readOnly || !isOperator}
                       />
                       <span className="text-gray-400 self-center text-xs">
                         Min
@@ -862,10 +887,10 @@ export default function StockReceivingActivityLog({
                       <Input
                         type="number"
                         placeholder="16"
-                        className={`w-16 ${readOnly ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
+                        className={`w-16 ${(readOnly || !isOperator) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
                         value={unloadEndHour}
                         onChange={(e) => setUnloadEndHour(e.target.value)}
-                        disabled={readOnly}
+                        disabled={readOnly || !isOperator}
                       />
                       <span className="text-gray-400 self-center text-xs">
                         HH
@@ -873,10 +898,10 @@ export default function StockReceivingActivityLog({
                       <Input
                         type="number"
                         placeholder="58"
-                        className={`w-16 ${readOnly ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
+                        className={`w-16 ${(readOnly || !isOperator) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
                         value={unloadEndMin}
                         onChange={(e) => setUnloadEndMin(e.target.value)}
-                        disabled={readOnly}
+                        disabled={readOnly || !isOperator}
                       />
                       <span className="text-gray-400 self-center text-xs">
                         Min
@@ -908,9 +933,9 @@ export default function StockReceivingActivityLog({
                 <Select
                   value={forkLiftOperator}
                   onValueChange={setForkLiftOperator}
-                  disabled={loadingForkLiftOperators || readOnly}
+                  disabled={loadingForkLiftOperators || readOnly || !isOperator}
                 >
-                  <SelectTrigger className={`${readOnly ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}>
+                  <SelectTrigger className={`${(readOnly || !isOperator) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}>
                     <SelectValue
                       placeholder={
                         loadingForkLiftOperators
@@ -937,12 +962,12 @@ export default function StockReceivingActivityLog({
                     <Input
                       type="number"
                       placeholder="17"
-                      className={`w-16 ${readOnly ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
+                      className={`w-16 ${(readOnly || !isOperator) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
                       value={loadEmptyStartHour}
                       onChange={(e) => setLoadEmptyStartHour(e.target.value)}
                       min="0"
                       max="23"
-                      disabled={readOnly}
+                      disabled={readOnly || !isOperator}
                     />
                     <span className="text-gray-400 self-center text-xs">
                       HH
@@ -950,12 +975,12 @@ export default function StockReceivingActivityLog({
                     <Input
                       type="number"
                       placeholder="25"
-                      className={`w-16 ${readOnly ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
+                      className={`w-16 ${(readOnly || !isOperator) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
                       value={loadEmptyStartMin}
                       onChange={(e) => setLoadEmptyStartMin(e.target.value)}
                       min="0"
                       max="59"
-                      disabled={readOnly}
+                      disabled={readOnly || !isOperator}
                     />
                     <span className="text-gray-400 self-center text-xs">
                       Min
@@ -970,12 +995,12 @@ export default function StockReceivingActivityLog({
                     <Input
                       type="number"
                       placeholder="18"
-                      className={`w-16 ${readOnly ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
+                      className={`w-16 ${(readOnly || !isOperator) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
                       value={loadEmptyEndHour}
                       onChange={(e) => setLoadEmptyEndHour(e.target.value)}
                       min="0"
                       max="23"
-                      disabled={readOnly}
+                      disabled={readOnly || !isOperator}
                     />
                     <span className="text-gray-400 self-center text-xs">
                       HH
@@ -983,12 +1008,12 @@ export default function StockReceivingActivityLog({
                     <Input
                       type="number"
                       placeholder="08"
-                      className={`w-16 ${readOnly ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
+                      className={`w-16 ${(readOnly || !isOperator) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
                       value={loadEmptyEndMin}
                       onChange={(e) => setLoadEmptyEndMin(e.target.value)}
                       min="0"
                       max="59"
-                      disabled={readOnly}
+                      disabled={readOnly || !isOperator}
                     />
                     <span className="text-gray-400 self-center text-xs">
                       Min
@@ -1027,9 +1052,9 @@ export default function StockReceivingActivityLog({
                   <Select
                     value={getpassEmployee}
                     onValueChange={setGetpassEmployee}
-                    disabled={loadingSecurityOfficers || readOnly}
+                    disabled={loadingSecurityOfficers || readOnly || !isSecurityOfficer}
                   >
-                    <SelectTrigger className={`${readOnly ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}>
+                    <SelectTrigger className={`${(readOnly || !isSecurityOfficer) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}>
                       <SelectValue
                         placeholder={
                           loadingSecurityOfficers
@@ -1055,29 +1080,29 @@ export default function StockReceivingActivityLog({
                     <Input
                       type="number"
                       placeholder="18"
-                      className={`w-20 ${readOnly ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
+                      className={`w-20 ${(readOnly || !isSecurityOfficer) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
                       value={getpassHour}
                       onChange={(e) => setGetpassHour(e.target.value)}
                       min="0"
                       max="23"
-                      disabled={readOnly}
+                      disabled={readOnly || !isSecurityOfficer}
                     />
                     <span className="text-gray-400 self-center">HH</span>
                     <Input
                       type="number"
                       placeholder="14"
-                      className={`w-20 ${readOnly ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
+                      className={`w-20 ${(readOnly || !isSecurityOfficer) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
                       value={getpassMin}
                       onChange={(e) => setGetpassMin(e.target.value)}
                       min="0"
                       max="59"
-                      disabled={readOnly}
+                      disabled={readOnly || !isSecurityOfficer}
                     />
                     <span className="text-gray-400 self-center">Min</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Checkbox id="notify-lbcl-2" defaultChecked disabled={readOnly} />
+                  <Checkbox id="notify-lbcl-2" defaultChecked disabled={readOnly || !isSecurityOfficer} />
                   <label
                     htmlFor="notify-lbcl-2"
                     className="text-sm font-medium"

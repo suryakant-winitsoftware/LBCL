@@ -246,6 +246,48 @@ class OrganizationService {
     return response.data.Data || response.data;
   }
 
+  // Get complete organization details with org type information
+  async getOrganizationWithType(uid: string): Promise<{
+    organization: Organization;
+    orgType: OrgType | null;
+  }> {
+    try {
+      console.log("🔍 Fetching organization details for UID:", uid);
+
+      // Get the organization
+      const organization = await this.getOrganizationByUID(uid);
+      console.log("✅ Organization found:", organization);
+
+      if (!organization.OrgTypeUID) {
+        console.warn("⚠️ Organization has no OrgTypeUID");
+        return { organization, orgType: null };
+      }
+
+      // Get all org types
+      const orgTypes = await this.getOrganizationTypes();
+      console.log("📋 Total org types loaded:", orgTypes.length);
+
+      // Find the matching org type
+      const orgType = orgTypes.find(type => type.UID === organization.OrgTypeUID) || null;
+
+      if (orgType) {
+        console.log("✅ Organization Type found:", {
+          Name: orgType.Name,
+          IsCompanyOrg: orgType.IsCompanyOrg,
+          IsFranchiseeOrg: orgType.IsFranchiseeOrg,
+          IsWh: orgType.IsWh
+        });
+      } else {
+        console.warn("⚠️ Organization type not found for OrgTypeUID:", organization.OrgTypeUID);
+      }
+
+      return { organization, orgType };
+    } catch (error) {
+      console.error("❌ Error fetching organization with type:", error);
+      throw error;
+    }
+  }
+
   async createOrganization(
     organization: CreateOrganizationForm
   ): Promise<Organization> {

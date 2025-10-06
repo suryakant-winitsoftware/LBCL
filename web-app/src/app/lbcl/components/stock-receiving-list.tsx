@@ -4,6 +4,8 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { ChevronRight, FileText, ClipboardList, RefreshCw } from "lucide-react"
 import { deliveryLoadingService } from "@/services/deliveryLoadingService"
+import { useAuth } from "@/providers/auth-provider"
+import purchaseOrderService from "@/services/purchaseOrder"
 
 export default function StockReceivingList() {
   const [activeTab, setActiveTab] = useState<"pending" | "completed">("pending")
@@ -11,27 +13,41 @@ export default function StockReceivingList() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const router = useRouter()
+  const { user } = useAuth()
 
   useEffect(() => {
     fetchDeliveries()
-  }, [activeTab])
+  }, [activeTab, user])
 
   const fetchDeliveries = async () => {
     try {
       setLoading(true)
       setError("")
 
+      if (!user?.companyUID) {
+        console.warn("⚠️ No companyUID found for user")
+        setDeliveries([])
+        setLoading(false)
+        return
+      }
+
       // For pending tab: fetch SHIPPED deliveries (ready to receive)
       // For completed tab: fetch RECEIVED deliveries
       const status = activeTab === "pending" ? "SHIPPED" : "RECEIVED"
 
       console.log("🔍 Fetching delivery loading tracking with status:", status)
+      console.log("🏢 User CompanyUID:", user.companyUID)
 
       const data = await deliveryLoadingService.getByStatus(status)
 
-      console.log("📦 Delivery Loading Tracking Data:", data)
+      console.log("📦 Delivery Loading Tracking Data (before filter):", data)
 
-      setDeliveries(data || [])
+      // Filter deliveries to only show those matching the user's organization
+      const filteredDeliveries = await filterDeliveriesByOrganization(data, user.companyUID)
+
+      console.log("✅ Filtered Delivery Data (after filter):", filteredDeliveries)
+
+      setDeliveries(filteredDeliveries || [])
     } catch (error) {
       console.error("Error fetching deliveries:", error)
       setError("Failed to fetch deliveries")
@@ -39,6 +55,42 @@ export default function StockReceivingList() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const filterDeliveriesByOrganization = async (deliveries: any[], companyUID: string) => {
+    if (!deliveries || deliveries.length === 0) {
+      return []
+    }
+
+    // Filter deliveries by checking if the purchase order's OrgUID matches the user's companyUID
+    const filtered = []
+
+    for (const delivery of deliveries) {
+      try {
+        const poUID = delivery.PurchaseOrderUID || delivery.purchaseOrderUID
+        if (!poUID) continue
+
+        // Fetch purchase order details to get OrgUID
+        const poResponse = await purchaseOrderService.getPurchaseOrderMasterByUID(poUID)
+
+        if (poResponse.success && poResponse.master) {
+          const header = poResponse.master.PurchaseOrderHeader || poResponse.master.purchaseOrderHeader
+          const orgUID = header?.OrgUID || header?.orgUID
+
+          console.log(`🔍 PO ${poUID}: OrgUID = ${orgUID}, User CompanyUID = ${companyUID}`)
+
+          // Include delivery if OrgUID matches user's companyUID
+          if (orgUID === companyUID) {
+            filtered.push(delivery)
+          }
+        }
+      } catch (error) {
+        console.error(`Error fetching PO details for ${delivery.PurchaseOrderUID}:`, error)
+      }
+    }
+
+    console.log(`✅ Filtered ${filtered.length} out of ${deliveries.length} deliveries`)
+    return filtered
   }
 
   const formatDate = (dateString: string) => {

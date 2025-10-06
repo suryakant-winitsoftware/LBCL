@@ -48,6 +48,8 @@ public class PGSQLPurchaseOrderHeaderDL : Winit.Modules.Base.DL.DBManager.Postgr
                                         poh.line_count AS LineCount,
                                         poh.total_amount AS TotalAmount,
                                         poh.net_amount AS NetAmount,
+                                        COALESCE(org.name, franchise_org.name) AS ChannelPartnerName,
+                                        COALESCE(org.code, franchise_org.code) AS ChannelPartnerCode,
                                         poh.app1_emp_uid AS App1EmpUID,
                                         e1.name AS App1EmpName,
                                         poh.app2_emp_uid AS App2EmpUID,
@@ -64,6 +66,10 @@ public class PGSQLPurchaseOrderHeaderDL : Winit.Modules.Base.DL.DBManager.Postgr
                                         purchase_order_header poh
                                     LEFT JOIN
                                         store wh ON poh.warehouse_uid = wh.uid
+                                    LEFT JOIN
+                                        org franchise_org ON wh.franchisee_org_uid = franchise_org.uid
+                                    LEFT JOIN
+                                        org ON poh.org_uid = org.uid
                                     LEFT JOIN
                                         emp e1 ON poh.app1_emp_uid = e1.uid
                                     LEFT JOIN
@@ -82,7 +88,10 @@ public class PGSQLPurchaseOrderHeaderDL : Winit.Modules.Base.DL.DBManager.Postgr
             StringBuilder sqlCount = new();
             if (isCountRequired)
             {
-                sqlCount = new StringBuilder(@"SELECT COUNT(1) AS Cnt FROM public.purchase_order_header poh");
+                sqlCount = new StringBuilder(@"SELECT COUNT(1) AS Cnt FROM public.purchase_order_header poh
+                    LEFT JOIN store wh ON poh.warehouse_uid = wh.uid
+                    LEFT JOIN org franchise_org ON wh.franchisee_org_uid = franchise_org.uid
+                    LEFT JOIN org ON poh.org_uid = org.uid");
             }
 
             Dictionary<string, object> parameters = new();

@@ -191,7 +191,7 @@ public class PGSQLDeliveryLoadingTrackingDL : Winit.Modules.Base.DL.DBManager.Po
                 DeliveryNoteNumber = deliveryLoadingTracking.DeliveryNoteNumber,
                 IsActive = deliveryLoadingTracking.IsActive,
                 CreatedDate = DateTime.UtcNow,
-                CreatedBy = string.IsNullOrWhiteSpace(deliveryLoadingTracking.CreatedBy) ? (Guid?)null : Guid.Parse(deliveryLoadingTracking.CreatedBy)
+                CreatedBy = string.IsNullOrWhiteSpace(deliveryLoadingTracking.CreatedBy) ? null : deliveryLoadingTracking.CreatedBy
             };
 
             var rowsAffected = await ExecuteNonQueryAsync(sql, parameters);
@@ -245,7 +245,7 @@ public class PGSQLDeliveryLoadingTrackingDL : Winit.Modules.Base.DL.DBManager.Po
                 DeliveryNoteFilePath = deliveryLoadingTracking.DeliveryNoteFilePath,
                 DeliveryNoteNumber = deliveryLoadingTracking.DeliveryNoteNumber,
                 ModifiedDate = DateTime.UtcNow,
-                ModifiedBy = string.IsNullOrWhiteSpace(deliveryLoadingTracking.ModifiedBy) ? (Guid?)null : Guid.Parse(deliveryLoadingTracking.ModifiedBy)
+                ModifiedBy = string.IsNullOrWhiteSpace(deliveryLoadingTracking.ModifiedBy) ? null : deliveryLoadingTracking.ModifiedBy
             };
 
             var rowsAffected = await ExecuteNonQueryAsync(sql, parameters);

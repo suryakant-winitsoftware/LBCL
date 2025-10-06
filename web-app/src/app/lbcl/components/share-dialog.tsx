@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { MessageSquare, Mail, MessageCircle, Download } from "lucide-react"
+import { Mail, MessageCircle, Download } from "lucide-react"
 import jsPDF from "jspdf"
 import autoTable from "jspdf-autotable"
 
@@ -138,21 +138,6 @@ export function ShareDialog({ open, onOpenChange, purchaseOrder, orderLines = []
     }
   }
 
-  const handleShareSMS = () => {
-    const doc = generateDeliveryNotePDF()
-    if (doc) {
-      // For SMS, we'll provide a message with the delivery note details
-      const orderNumber = purchaseOrder?.OrderNumber || purchaseOrder?.orderNumber || 'N/A'
-      const message = `Delivery Note for Order ${orderNumber}. Please download the PDF from the shared link.`
-
-      // Open SMS with pre-filled message (mobile devices will handle this)
-      window.open(`sms:?body=${encodeURIComponent(message)}`, '_blank')
-
-      // Also download the PDF for the user to attach manually
-      handleDownloadPDF()
-    }
-  }
-
   const handleShareEmail = () => {
     const doc = generateDeliveryNotePDF()
     if (doc) {
@@ -197,7 +182,7 @@ export function ShareDialog({ open, onOpenChange, purchaseOrder, orderLines = []
 
           <div className="mb-6">
             <h3 className="font-medium mb-4">Share Files Via</h3>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               <button
                 onClick={handleDownloadPDF}
                 disabled={generating}
@@ -205,15 +190,6 @@ export function ShareDialog({ open, onOpenChange, purchaseOrder, orderLines = []
               >
                 <Download className="w-8 h-8 text-[#A08B5C]" />
                 <span className="text-sm font-medium">Download PDF</span>
-              </button>
-
-              <button
-                onClick={handleShareSMS}
-                disabled={generating}
-                className="flex flex-col items-center gap-2 p-4 border rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
-              >
-                <MessageSquare className="w-8 h-8 text-[#A08B5C]" />
-                <span className="text-sm font-medium">SMS</span>
               </button>
 
               <button

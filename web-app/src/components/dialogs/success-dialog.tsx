@@ -50,15 +50,15 @@ export function SuccessDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl p-0 overflow-hidden">
         {/* Header */}
-        <DialogTitle className="flex items-center justify-between px-6 py-4 border-b">
-          <h2 className="text-2xl font-bold">Success</h2>
+        <div className="flex items-center justify-between px-6 py-4 border-b">
+          <DialogTitle className="text-2xl font-bold">Success</DialogTitle>
           <button
             onClick={() => onOpenChange(false)}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
           >
             <X className="w-6 h-6" />
           </button>
-        </DialogTitle>
+        </div>
 
         {/* Content */}
         <div className="px-6 py-8">

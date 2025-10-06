@@ -126,6 +126,7 @@ class AuthService {
           mobile: empData.Mobile || empData.PhoneNumber || "",
           status: empData.Status || "Active",
           lastLoginTime: new Date(),
+          companyUID: empData.CompanyUID || "",
           preferences: {
             theme: empData.Theme || "system",
             language: empData.Language || "en",

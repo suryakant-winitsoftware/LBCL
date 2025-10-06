@@ -94,12 +94,18 @@ public class AuthController : WINITBaseController
                     if (loginResponse != null)
                     {
                         loginResponse.AuthMaster.Emp = emp;
+
+                        // Log CompanyUID for debugging
+                        Console.WriteLine($"✅ User {emp.LoginId} logged in with CompanyUID: {emp.CompanyUID}");
+
                         string[] userPermissions = { "read", "write" };
                         List<Claim> claims = new()
                         {
                             new Claim(ClaimTypes.Name, loginResponse.AuthMaster.Emp.Name),
                             new Claim(ClaimTypes.UserData, loginResponse.AuthMaster.Emp.LoginId),
                             new Claim(ClaimTypes.Role, loginResponse.AuthMaster?.Role?.Code ?? ""),
+                            new Claim("CompanyUID", emp.CompanyUID ?? ""),
+                            new Claim("UserUID", emp.UID ?? ""),
                         };
                         foreach (string permission in userPermissions)
                         {

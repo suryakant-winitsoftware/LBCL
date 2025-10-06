@@ -8,6 +8,7 @@ export interface User {
   status: 'Active' | 'Inactive' | 'Suspended';
   lastLoginTime: Date;
   profilePicture?: string;
+  companyUID?: string;
   preferences: UserPreferences;
   roles: UserRole[];
   currentOrganization?: Organization;

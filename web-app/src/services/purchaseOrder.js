@@ -162,11 +162,24 @@ class PurchaseOrderService {
 
       if (response.success) {
         const masterData = response.data?.Data || response.data;
-        // Ensure warehouse_uid is properly mapped
-        if (masterData && (masterData.warehouse_uid || masterData.WareHouseUID || masterData.wareHouseUID)) {
-          masterData.wareHouseUID = masterData.warehouse_uid || masterData.WareHouseUID || masterData.wareHouseUID;
-          masterData.warehouse_uid = masterData.warehouse_uid || masterData.WareHouseUID || masterData.wareHouseUID;
+
+        // Map header fields if present
+        if (masterData && masterData.PurchaseOrderHeader) {
+          const header = masterData.PurchaseOrderHeader;
+
+          // Ensure warehouse UID is properly mapped
+          if (header.warehouse_uid || header.WareHouseUID || header.wareHouseUID) {
+            header.wareHouseUID = header.warehouse_uid || header.WareHouseUID || header.wareHouseUID;
+            header.warehouse_uid = header.warehouse_uid || header.WareHouseUID || header.wareHouseUID;
+          }
+
+          // Ensure organization name is properly mapped
+          if (header.OrgName || header.orgName) {
+            header.OrgName = header.OrgName || header.orgName;
+            header.orgName = header.OrgName || header.orgName;
+          }
         }
+
         return {
           success: true,
           data: masterData,

@@ -120,6 +120,40 @@ class DeliveryLoadingService {
     return response.data || null;
   }
 
+  // Alternative method that directly calls the API (for debugging)
+  async getDeliveryLoadingByPO(purchaseOrderUID: string): Promise<any> {
+    try {
+      const token =
+        typeof window !== "undefined"
+          ? localStorage.getItem("auth_token")
+          : null;
+
+      const response = await fetch(
+        `${API_BASE_URL}/DeliveryLoadingTracking/GetByPurchaseOrderUID/${purchaseOrderUID}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token ? `Bearer ${token}` : "",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        console.warn("No existing delivery loading data found");
+        return null;
+      }
+
+      const result = await response.json();
+      console.log("🔍 Raw API response for existing data:", result);
+
+      return result;
+    } catch (error) {
+      console.error("Error fetching existing delivery loading data:", error);
+      return null;
+    }
+  }
+
   // Save delivery loading tracking
   async saveDeliveryLoadingTracking(
     deliveryLoadingTracking: DeliveryLoadingTracking

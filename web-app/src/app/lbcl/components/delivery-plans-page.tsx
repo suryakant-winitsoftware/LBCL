@@ -340,20 +340,13 @@ export function DeliveryPlansPage() {
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 max-w-7xl mx-auto">
               {deliveryPlans.map((plan) => {
-                const isShipped = (plan.Status || plan.status) === 'SHIPPED';
-
                 return (
                   <button
                     key={plan.UID || plan.uid}
                     onClick={() => {
-                      if (!isShipped) {
-                        router.push(`/lbcl/activity-log/${plan.UID || plan.uid}`)
-                      }
+                      router.push(`/lbcl/activity-log/${plan.UID || plan.uid}`)
                     }}
-                    className={`bg-white rounded-lg p-4 sm:p-6 shadow-sm transition-shadow text-left ${
-                      isShipped ? 'cursor-not-allowed opacity-75' : 'hover:shadow-md cursor-pointer'
-                    }`}
-                    disabled={isShipped}
+                    className="bg-white rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition-shadow text-left cursor-pointer"
                   >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
@@ -362,7 +355,7 @@ export function DeliveryPlansPage() {
                       </h3>
                       <p className="text-sm sm:text-base mb-2 break-words">
                         <span className="font-bold text-gray-900">
-                          {plan.OrgName || plan.orgName || plan.ChannelPartnerName || plan.channelPartnerName || plan.WareHouseUID || plan.warehouseUID || 'N/A'}
+                          {plan.OrgName || plan.orgName || plan.ChannelPartnerName || plan.channelPartnerName || plan.OrgUID || plan.orgUID || 'N/A'}
                         </span>
                         {' '}
                         <span className="text-orange-500 font-medium">

@@ -89,73 +89,73 @@ export function RDTruckLoadingRequest() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       {/* Info Section */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
-        <div className="max-w-7xl mx-auto grid grid-cols-5 gap-4 text-sm">
+      <div className="bg-gray-50 p-4 border-b border-gray-200">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-4">
           <div>
-            <div className="text-xs text-gray-500 mb-1">Load Request No</div>
-            <div className="font-bold text-gray-900">RHTT15E0000001</div>
+            <div className="text-xs text-gray-600 mb-1">Load Request No</div>
+            <div className="font-bold text-sm">RHTT15E0000001</div>
           </div>
           <div>
-            <div className="text-xs text-gray-500 mb-1">Distributor</div>
-            <div className="font-bold text-gray-900">
-              [5844] R.T DISTRIBUTOR
-            </div>
+            <div className="text-xs text-gray-600 mb-1">Distributor</div>
+            <div className="font-bold text-sm">[5844] R.T DISTRIBUTOR</div>
           </div>
           <div>
-            <div className="text-xs text-gray-500 mb-1">Date</div>
-            <div className="font-bold text-gray-900">25 MAY 2025</div>
+            <div className="text-xs text-gray-600 mb-1">Date</div>
+            <div className="font-bold text-sm">25 MAY 2025</div>
           </div>
           <div>
-            <div className="text-xs text-gray-500 mb-1">
-              Vehicle Capacity Limit
-            </div>
-            <div className="font-bold text-gray-900">45 m3</div>
+            <div className="text-xs text-gray-600 mb-1">Vehicle Capacity Limit</div>
+            <div className="font-bold text-sm">45 m3</div>
           </div>
           <div>
-            <div className="text-xs text-gray-500 mb-1">
-              Total Number of Litres
-            </div>
-            <div className="font-bold text-gray-900">40 m3</div>
+            <div className="text-xs text-gray-600 mb-1">Total Number of Litres</div>
+            <div className="font-bold text-sm">40 m3</div>
           </div>
         </div>
-        <div className="max-w-7xl mx-auto grid grid-cols-2 gap-4 text-sm mt-4">
+        <div className="grid grid-cols-2 gap-4 mb-4">
           <div>
-            <div className="text-xs text-gray-500 mb-1">Driver Details</div>
-            <div className="font-bold text-gray-900">[3678] VANSANTH KUMAR</div>
+            <div className="text-xs text-gray-600 mb-1">Driver Details</div>
+            <div className="font-bold text-sm">[3678] VANSANTH KUMAR</div>
           </div>
           <div>
-            <div className="text-xs text-gray-500 mb-1">Helper Details</div>
-            <div className="font-bold text-gray-900">[5378] PRASHANTH</div>
+            <div className="text-xs text-gray-600 mb-1">Helper Details</div>
+            <div className="font-bold text-sm">[5378] PRASHANTH</div>
           </div>
         </div>
+        <button
+          onClick={handleSubmit}
+          className="w-full sm:w-auto bg-[#A08B5C] hover:bg-[#8A7549] text-white px-6 py-2 rounded-lg font-medium transition-colors"
+        >
+          Submit
+        </button>
       </div>
 
       {/* Search Section */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
-        <div className="max-w-7xl mx-auto flex items-center gap-4">
-          <div className="flex-1 relative">
+      <div className="bg-gray-50 border-b border-gray-200 p-4">
+        <div className="flex flex-col sm:flex-row items-center gap-4">
+          <div className="flex-1 relative w-full">
             <input
               type="text"
               placeholder="Search by Brand"
               value={searchBrand}
               onChange={(e) => setSearchBrand(e.target.value)}
-              className="w-full pl-4 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#A08B5C]"
+              className="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#A08B5C]"
             />
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
           </div>
-          <div className="flex-1 relative">
+          <div className="flex-1 relative w-full">
             <input
               type="text"
               placeholder="Search by Item Code/Description"
               value={searchItem}
               onChange={(e) => setSearchItem(e.target.value)}
-              className="w-full pl-4 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#A08B5C]"
+              className="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#A08B5C]"
             />
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
           </div>
-          <button className="px-6 py-3 border-2 border-[#A08B5C] text-[#A08B5C] font-medium rounded-lg hover:bg-[#FFF8E7] transition-colors flex items-center gap-2">
+          <button className="px-4 py-2 border-2 border-[#A08B5C] text-[#A08B5C] font-medium rounded-lg hover:bg-[#FFF8E7] transition-colors flex items-center gap-2">
             <svg
               className="w-5 h-5"
               viewBox="0 0 24 24"
@@ -169,124 +169,93 @@ export function RDTruckLoadingRequest() {
           </button>
           <button
             onClick={handleViewActivityLog}
-            className="px-6 py-3 border-2 border-[#A08B5C] text-[#A08B5C] font-medium rounded-lg hover:bg-[#FFF8E7] transition-colors"
+            className="px-4 py-2 border-2 border-[#A08B5C] text-[#A08B5C] font-medium rounded-lg hover:bg-[#FFF8E7] transition-colors whitespace-nowrap"
           >
             View Activity Log
-          </button>
-          <button
-            onClick={handleSubmit}
-            className="px-8 py-3 bg-[#A08B5C] text-white font-medium rounded-lg hover:bg-[#8F7A4D] transition-colors"
-          >
-            Submit
           </button>
         </div>
       </div>
 
       {/* Products Table */}
-      <div className="p-4 max-w-7xl mx-auto">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-[#FFF8E7]">
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead className="bg-[#F5E6D3] sticky top-0 z-20">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 min-w-[250px]">
+                <th className="text-left p-3 font-semibold text-sm">
                   Item Code/Description
                 </th>
-                <th className="px-4 py-3 text-center text-xs font-medium text-gray-700 min-w-[100px]">
+                <th className="text-center p-3 font-semibold text-sm">
                   Planned Qty
                 </th>
-                <th className="px-4 py-3 text-center text-xs font-medium text-gray-700 min-w-[120px]">
+                <th className="text-center p-3 font-semibold text-sm">
                   Pre Order Qty
                 </th>
-                <th className="px-4 py-3 text-center text-xs font-medium text-gray-700 min-w-[150px]">
+                <th className="text-center p-3 font-semibold text-sm">
                   Buffer Qty
                 </th>
-                <th className="px-4 py-3 text-center text-xs font-medium text-gray-700 min-w-[120px]">
+                <th className="text-center p-3 font-semibold text-sm">
                   Loadable Qty
                 </th>
-                <th className="px-4 py-3 text-center text-xs font-medium text-gray-700 min-w-[120px]">
+                <th className="text-center p-3 font-semibold text-sm">
                   Balance Qty
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody>
               {products.map((product) => (
-                <tr key={product.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-4">
+                <tr key={product.id} className="border-b border-gray-200">
+                  <td className="p-3">
                     <div className="flex items-center gap-3">
-                      <img
-                        src={product.image || "/placeholder.svg"}
-                        alt={product.name}
-                        className="w-10 h-10 object-contain"
-                      />
+                      <div className="w-12 h-12 bg-gray-200 rounded flex items-center justify-center">
+                        <span className="text-2xl">🍺</span>
+                      </div>
                       <div>
-                        <div className="font-medium text-gray-900">
-                          {product.name}
-                        </div>
-                        <div className="text-sm text-gray-500 flex items-center gap-2">
-                          {product.code}
-                          <span className="inline-flex items-center justify-center w-5 h-5 bg-[#D4A853] rounded-full">
-                            <svg
-                              className="w-3 h-3 text-white"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                            >
-                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                            </svg>
-                          </span>
-                        </div>
+                        <div className="font-semibold">{product.name}</div>
+                        <div className="text-sm text-gray-600">{product.code}</div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-4 text-center">
-                    <div className="font-medium text-gray-900">
-                      {product.plannedQty}
-                    </div>
+                  <td className="text-center p-3">
+                    <div className="font-medium">{product.plannedQty}</div>
                   </td>
-                  <td className="px-4 py-4 text-center">
-                    <div className="font-medium text-gray-900">
-                      {product.preOrderQty}
-                    </div>
+                  <td className="text-center p-3">
+                    <div className="font-medium">{product.preOrderQty}</div>
                   </td>
-                  <td className="px-4 py-4">
+                  <td className="text-center p-3">
                     <div className="flex items-center justify-center gap-2">
-                      <button className="w-10 h-10 border border-gray-300 rounded-lg flex items-center justify-center hover:bg-gray-50">
+                      <button className="w-8 h-8 border border-gray-300 rounded flex items-center justify-center hover:bg-gray-50">
                         {product.bufferQty > 0 ? (
                           <Minus className="w-4 h-4" />
                         ) : (
                           <Plus className="w-4 h-4" />
                         )}
                       </button>
-                      <button className="w-10 h-10 border border-gray-300 rounded-lg flex items-center justify-center hover:bg-gray-50">
+                      <button className="w-8 h-8 border border-gray-300 rounded flex items-center justify-center hover:bg-gray-50">
                         <ChevronDown className="w-4 h-4" />
                       </button>
                       <input
                         type="number"
                         value={product.bufferQty}
-                        className="w-20 px-3 py-2 border border-gray-300 rounded-lg text-center focus:outline-none focus:ring-2 focus:ring-[#A08B5C]"
+                        className="w-20 px-2 py-1 border border-gray-300 rounded text-center focus:outline-none focus:ring-2 focus:ring-[#A08B5C]"
                         readOnly
                       />
                     </div>
                   </td>
-                  <td className="px-4 py-4">
-                    <div className="flex justify-center">
-                      <input
-                        type="number"
-                        value={product.loadableQty}
-                        className="w-24 px-3 py-2 border border-gray-300 rounded-lg text-center bg-gray-50"
-                        readOnly
-                      />
-                    </div>
+                  <td className="text-center p-3">
+                    <input
+                      type="number"
+                      value={product.loadableQty}
+                      className="w-24 mx-auto text-center px-2 py-1 border border-gray-300 rounded bg-gray-50"
+                      readOnly
+                    />
                   </td>
-                  <td className="px-4 py-4 text-center">
-                    <div className="font-medium text-gray-900">
-                      {product.balanceQty}
-                    </div>
+                  <td className="text-center p-3">
+                    <div className="font-medium">{product.balanceQty}</div>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </div>
       </div>
 
       {/* Floating Action Button */}

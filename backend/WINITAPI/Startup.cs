@@ -759,6 +759,18 @@ public class Startup
             .AddTransient<Winit.Modules.PurchaseOrder.Model.Interfaces.IDeliveryLoadingTracking,
                 Winit.Modules.PurchaseOrder.Model.Classes.DeliveryLoadingTracking>();
 
+        // Stock Receiving Tracking
+        _ = services.AddDatabaseProvider<Winit.Modules.PurchaseOrder.DL.Interfaces.IStockReceivingTrackingDL, Winit.Modules.PurchaseOrder.DL.Classes.PGSQLStockReceivingTrackingDL, Winit.Modules.PurchaseOrder.DL.Classes.PGSQLStockReceivingTrackingDL>(Configuration);
+        _ = services
+            .AddTransient<Winit.Modules.PurchaseOrder.Model.Interfaces.IStockReceivingTracking,
+                Winit.Modules.PurchaseOrder.Model.Classes.StockReceivingTracking>();
+
+        // Stock Receiving Detail
+        _ = services.AddDatabaseProvider<Winit.Modules.PurchaseOrder.DL.Interfaces.IStockReceivingDetailDL, Winit.Modules.PurchaseOrder.DL.Classes.PGSQLStockReceivingDetailDL, Winit.Modules.PurchaseOrder.DL.Classes.MSSQLStockReceivingDetailDL>(Configuration);
+        _ = services
+            .AddTransient<Winit.Modules.PurchaseOrder.Model.Interfaces.IStockReceivingDetail,
+                Winit.Modules.PurchaseOrder.Model.Classes.StockReceivingDetail>();
+
 
         //PurchaseOrderTemplate
         _ = services

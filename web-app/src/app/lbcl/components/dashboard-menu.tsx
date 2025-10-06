@@ -9,7 +9,8 @@ import {
   AlertTriangle,
   ClipboardCheck,
   Bell,
-  User
+  User,
+  PackageOpen
 } from "lucide-react";
 import Image from "next/image";
 import { NavigationMenu } from "@/app/lbcl/components/navigation-menu";
@@ -47,6 +48,12 @@ export function DashboardMenu() {
       icon: Package,
       path: "/empties-receiving",
       description: "Manage empties stock receiving and physical count"
+    },
+    {
+      title: "Empties Stock Loading",
+      icon: PackageOpen,
+      path: "/empties-loading",
+      description: "Manage empties stock loading operations"
     },
     {
       title: "Damage Collection & Scrapping",

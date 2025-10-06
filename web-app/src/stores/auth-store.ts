@@ -11,7 +11,7 @@ import {
 
 interface AuthStore extends AuthState {
   // Actions
-  login: (credentials: LoginCredentials) => Promise<boolean>
+  login: (credentials: LoginCredentials) => Promise<{ success: boolean; user?: User }>
   logout: () => Promise<void>
   refreshToken: () => Promise<boolean>
   validateSession: () => Promise<boolean>
@@ -50,10 +50,10 @@ export const useAuthStore = create<AuthStore>()(
       // Authentication Actions
       login: async (credentials: LoginCredentials) => {
         set({ isLoading: true, error: null })
-        
+
         try {
           const response = await authService.login(credentials)
-          
+
           if (response.success) {
             console.log("🎉 Authentication successful in store!");
             console.log("🔐 Login completed for user:", response.user?.loginId);
@@ -63,20 +63,20 @@ export const useAuthStore = create<AuthStore>()(
               isLoading: false,
               error: null
             })
-            return true
+            return { success: true, user: response.user }
           } else {
             set({
               isLoading: false,
               error: response.error || "Login failed"
             })
-            return false
+            return { success: false }
           }
         } catch {
           set({
             isLoading: false,
             error: "Authentication service unavailable"
           })
-          return false
+          return { success: false }
         }
       },
 

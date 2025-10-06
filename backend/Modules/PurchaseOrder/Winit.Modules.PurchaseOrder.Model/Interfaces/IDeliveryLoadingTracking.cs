@@ -16,5 +16,7 @@ public interface IDeliveryLoadingTracking : IBaseModel
     public string? LogisticsSignature { get; set; }
     public string? DriverSignature { get; set; }
     public string? Notes { get; set; }
+    public string? DeliveryNoteFilePath { get; set; }
+    public string? DeliveryNoteNumber { get; set; }
     public bool IsActive { get; set; }
 }

@@ -8,9 +8,12 @@ interface DeliveryNoteDialogProps {
   onOpenChange: (open: boolean) => void
   orderLines?: any[]
   purchaseOrder?: any
+  onSaveDeliveryNote?: () => void
+  isSaving?: boolean
+  isSaved?: boolean
 }
 
-export function DeliveryNoteDialog({ open, onOpenChange, orderLines = [], purchaseOrder }: DeliveryNoteDialogProps) {
+export function DeliveryNoteDialog({ open, onOpenChange, orderLines = [], purchaseOrder, onSaveDeliveryNote, isSaving = false, isSaved = false }: DeliveryNoteDialogProps) {
   const formatDate = (dateString: string) => {
     if (!dateString) return "N/A";
     const date = new Date(dateString);
@@ -179,7 +182,7 @@ export function DeliveryNoteDialog({ open, onOpenChange, orderLines = [], purcha
             <Button
               variant="outline"
               onClick={handlePrint}
-              className="flex-1 min-w-[200px] border-[#A08B5C] text-[#A08B5C] hover:bg-[#A08B5C] hover:text-white h-11 font-semibold"
+              className="flex-1 min-w-[150px] border-[#A08B5C] text-[#A08B5C] hover:bg-[#A08B5C] hover:text-white h-11 font-semibold"
             >
               <Printer className="w-4 h-4 mr-2" />
               Print
@@ -187,14 +190,23 @@ export function DeliveryNoteDialog({ open, onOpenChange, orderLines = [], purcha
             <Button
               variant="outline"
               onClick={handleDownloadPDF}
-              className="flex-1 min-w-[200px] border-[#A08B5C] text-[#A08B5C] hover:bg-[#A08B5C] hover:text-white h-11 font-semibold"
+              className="flex-1 min-w-[150px] border-[#A08B5C] text-[#A08B5C] hover:bg-[#A08B5C] hover:text-white h-11 font-semibold"
             >
               <Download className="w-4 h-4 mr-2" />
               Download PDF
             </Button>
+            {onSaveDeliveryNote && !isSaved && (
+              <Button
+                onClick={onSaveDeliveryNote}
+                disabled={isSaving}
+                className="flex-1 min-w-[150px] bg-green-600 hover:bg-green-700 text-white h-11 font-semibold"
+              >
+                {isSaving ? "Saving..." : "Save Delivery Note"}
+              </Button>
+            )}
             <Button
               onClick={() => onOpenChange(false)}
-              className="flex-1 min-w-[200px] bg-[#A08B5C] hover:bg-[#8F7A4B] text-white h-11 font-semibold"
+              className="flex-1 min-w-[150px] bg-[#A08B5C] hover:bg-[#8F7A4B] text-white h-11 font-semibold"
             >
               Close
             </Button>

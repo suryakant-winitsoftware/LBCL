@@ -4,6 +4,7 @@ namespace Winit.Modules.PurchaseOrder.DL.Interfaces;
 
 public interface IDeliveryLoadingTrackingDL
 {
+    Task<List<IDeliveryLoadingTracking>> GetByStatusAsync(string status);
     Task<IDeliveryLoadingTracking?> GetByPurchaseOrderUIDAsync(string purchaseOrderUID);
     Task<bool> SaveDeliveryLoadingTrackingAsync(IDeliveryLoadingTracking deliveryLoadingTracking);
     Task<bool> UpdateDeliveryLoadingTrackingAsync(IDeliveryLoadingTracking deliveryLoadingTracking);

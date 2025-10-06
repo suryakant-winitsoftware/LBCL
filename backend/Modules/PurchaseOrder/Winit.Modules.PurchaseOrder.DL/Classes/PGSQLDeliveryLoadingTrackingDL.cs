@@ -15,39 +15,99 @@ public class PGSQLDeliveryLoadingTrackingDL : Winit.Modules.Base.DL.DBManager.Po
     {
     }
 
+    public async Task<List<IDeliveryLoadingTracking>> GetByStatusAsync(string status)
+    {
+        try
+        {
+            string sql = @"
+                SELECT
+                    dlt.""UID""::text as ""UID"",
+                    dlt.""PurchaseOrderUID""::text as ""PurchaseOrderUID"",
+                    dlt.""VehicleUID"",
+                    dlt.""DriverEmployeeUID"",
+                    dlt.""ForkLiftOperatorUID"",
+                    dlt.""SecurityOfficerUID"",
+                    dlt.""ArrivalTime"",
+                    dlt.""LoadingStartTime"",
+                    dlt.""LoadingEndTime"",
+                    dlt.""DepartureTime"",
+                    dlt.""LogisticsSignature"",
+                    dlt.""DriverSignature"",
+                    dlt.""Notes"",
+                    dlt.""DeliveryNoteFilePath"",
+                    dlt.""DeliveryNoteNumber"",
+                    dlt.""IsActive"",
+                    dlt.""CreatedDate"",
+                    dlt.""CreatedBy""::text as ""CreatedBy"",
+                    dlt.""ModifiedDate"",
+                    dlt.""ModifiedBy""::text as ""ModifiedBy"",
+                    poh.order_number,
+                    poh.order_date,
+                    poh.warehouse_uid,
+                    poh.status,
+                    org.name as OrgName
+                FROM public.""DeliveryLoadingTracking"" dlt
+                INNER JOIN public.purchase_order_header poh ON dlt.""PurchaseOrderUID""::text = poh.uid
+                LEFT JOIN public.org org ON poh.org_uid = org.uid
+                WHERE poh.status = @Status
+                AND dlt.""IsActive"" = true
+                ORDER BY dlt.""CreatedDate"" DESC";
+
+            var parameters = new { Status = status };
+
+            using var connection = new NpgsqlConnection(_connectionString);
+            var results = await connection.QueryAsync<DeliveryLoadingTracking>(sql, parameters);
+            return results.Cast<IDeliveryLoadingTracking>().ToList();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error in GetByStatusAsync: {ex.Message}");
+            throw;
+        }
+    }
+
     public async Task<IDeliveryLoadingTracking?> GetByPurchaseOrderUIDAsync(string purchaseOrderUID)
     {
         try
         {
             string sql = @"
                 SELECT
-                    ""UID""::text as ""UID"",
-                    ""PurchaseOrderUID""::text as ""PurchaseOrderUID"",
-                    ""VehicleUID"",
-                    ""DriverEmployeeUID"",
-                    ""ForkLiftOperatorUID"",
-                    ""SecurityOfficerUID"",
-                    ""ArrivalTime"",
-                    ""LoadingStartTime"",
-                    ""LoadingEndTime"",
-                    ""DepartureTime"",
-                    ""LogisticsSignature"",
-                    ""DriverSignature"",
-                    ""Notes"",
-                    ""IsActive"",
-                    ""CreatedDate"",
-                    ""CreatedBy""::text as ""CreatedBy"",
-                    ""ModifiedDate"",
-                    ""ModifiedBy""::text as ""ModifiedBy""
-                FROM public.""DeliveryLoadingTracking""
-                WHERE ""PurchaseOrderUID"" = @PurchaseOrderUID
-                AND ""IsActive"" = true
-                ORDER BY ""CreatedDate"" DESC
+                    dlt.""UID""::text as ""UID"",
+                    dlt.""PurchaseOrderUID""::text as ""PurchaseOrderUID"",
+                    dlt.""VehicleUID"",
+                    dlt.""DriverEmployeeUID"",
+                    dlt.""ForkLiftOperatorUID"",
+                    dlt.""SecurityOfficerUID"",
+                    dlt.""ArrivalTime"",
+                    dlt.""LoadingStartTime"",
+                    dlt.""LoadingEndTime"",
+                    dlt.""DepartureTime"",
+                    dlt.""LogisticsSignature"",
+                    dlt.""DriverSignature"",
+                    dlt.""Notes"",
+                    dlt.""DeliveryNoteFilePath"",
+                    dlt.""DeliveryNoteNumber"",
+                    dlt.""IsActive"",
+                    dlt.""CreatedDate"",
+                    dlt.""CreatedBy""::text as ""CreatedBy"",
+                    dlt.""ModifiedDate"",
+                    dlt.""ModifiedBy""::text as ""ModifiedBy"",
+                    poh.order_number,
+                    poh.order_date,
+                    poh.warehouse_uid,
+                    poh.status,
+                    org.name as OrgName
+                FROM public.""DeliveryLoadingTracking"" dlt
+                INNER JOIN public.purchase_order_header poh ON dlt.""PurchaseOrderUID""::text = poh.uid
+                LEFT JOIN public.org org ON poh.org_uid = org.uid
+                WHERE dlt.""PurchaseOrderUID""::text = @PurchaseOrderUID
+                AND dlt.""IsActive"" = true
+                ORDER BY dlt.""CreatedDate"" DESC
                 LIMIT 1";
 
             var parameters = new
             {
-                PurchaseOrderUID = Guid.Parse(purchaseOrderUID)
+                PurchaseOrderUID = purchaseOrderUID
             };
 
             // Use direct Dapper query with concrete class to avoid interface mapping issues
@@ -82,6 +142,8 @@ public class PGSQLDeliveryLoadingTrackingDL : Winit.Modules.Base.DL.DBManager.Po
                     ""LogisticsSignature"",
                     ""DriverSignature"",
                     ""Notes"",
+                    ""DeliveryNoteFilePath"",
+                    ""DeliveryNoteNumber"",
                     ""IsActive"",
                     ""CreatedDate"",
                     ""CreatedBy""
@@ -101,6 +163,8 @@ public class PGSQLDeliveryLoadingTrackingDL : Winit.Modules.Base.DL.DBManager.Po
                     @LogisticsSignature,
                     @DriverSignature,
                     @Notes,
+                    @DeliveryNoteFilePath,
+                    @DeliveryNoteNumber,
                     @IsActive,
                     @CreatedDate,
                     @CreatedBy
@@ -123,6 +187,8 @@ public class PGSQLDeliveryLoadingTrackingDL : Winit.Modules.Base.DL.DBManager.Po
                 LogisticsSignature = deliveryLoadingTracking.LogisticsSignature,
                 DriverSignature = deliveryLoadingTracking.DriverSignature,
                 Notes = deliveryLoadingTracking.Notes,
+                DeliveryNoteFilePath = deliveryLoadingTracking.DeliveryNoteFilePath,
+                DeliveryNoteNumber = deliveryLoadingTracking.DeliveryNoteNumber,
                 IsActive = deliveryLoadingTracking.IsActive,
                 CreatedDate = DateTime.UtcNow,
                 CreatedBy = string.IsNullOrWhiteSpace(deliveryLoadingTracking.CreatedBy) ? (Guid?)null : Guid.Parse(deliveryLoadingTracking.CreatedBy)
@@ -156,6 +222,8 @@ public class PGSQLDeliveryLoadingTrackingDL : Winit.Modules.Base.DL.DBManager.Po
                     ""LogisticsSignature"" = @LogisticsSignature,
                     ""DriverSignature"" = @DriverSignature,
                     ""Notes"" = @Notes,
+                    ""DeliveryNoteFilePath"" = @DeliveryNoteFilePath,
+                    ""DeliveryNoteNumber"" = @DeliveryNoteNumber,
                     ""ModifiedDate"" = @ModifiedDate,
                     ""ModifiedBy"" = @ModifiedBy
                 WHERE ""UID"" = @UID";
@@ -174,6 +242,8 @@ public class PGSQLDeliveryLoadingTrackingDL : Winit.Modules.Base.DL.DBManager.Po
                 LogisticsSignature = deliveryLoadingTracking.LogisticsSignature,
                 DriverSignature = deliveryLoadingTracking.DriverSignature,
                 Notes = deliveryLoadingTracking.Notes,
+                DeliveryNoteFilePath = deliveryLoadingTracking.DeliveryNoteFilePath,
+                DeliveryNoteNumber = deliveryLoadingTracking.DeliveryNoteNumber,
                 ModifiedDate = DateTime.UtcNow,
                 ModifiedBy = string.IsNullOrWhiteSpace(deliveryLoadingTracking.ModifiedBy) ? (Guid?)null : Guid.Parse(deliveryLoadingTracking.ModifiedBy)
             };

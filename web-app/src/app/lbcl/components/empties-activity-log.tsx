@@ -82,14 +82,14 @@ export function EmptiesActivityLog() {
         </div>
 
         {/* Action Buttons */}
-        <div className="p-4 flex gap-3 justify-end">
+        <div className="p-4 flex gap-2 justify-end">
           <button
             onClick={() => router.back()}
-            className="py-3 px-8 bg-white border-2 border-[#A08B5C] text-[#A08B5C] rounded-lg font-semibold hover:bg-gray-50 transition-colors"
+            className="py-2 px-4 bg-white border border-[#A08B5C] text-[#A08B5C] rounded text-sm font-medium hover:bg-gray-50 transition-colors"
           >
             Back
           </button>
-          <button className="py-3 px-8 bg-[#A08B5C] text-white rounded-lg font-semibold hover:bg-[#8F7A4D] transition-colors">
+          <button className="py-2 px-4 bg-[#A08B5C] text-white rounded text-sm font-medium hover:bg-[#8F7A4D] transition-colors">
             Submit
           </button>
         </div>
@@ -104,13 +104,13 @@ export function EmptiesActivityLog() {
               >
                 <button
                   onClick={() => handleStepClick(step.id)}
-                  className="w-full p-4 flex items-center gap-4 hover:bg-gray-50 transition-colors"
+                  className="w-full p-3 flex items-center gap-3 hover:bg-gray-50 transition-colors"
                 >
-                  <div className="w-10 h-10 rounded-full bg-[#FFF8E7] flex items-center justify-center flex-shrink-0">
-                    <span className="font-bold text-[#A08B5C]">{step.id}</span>
+                  <div className="w-8 h-8 rounded-full bg-[#FFF8E7] flex items-center justify-center flex-shrink-0">
+                    <span className="font-semibold text-sm text-[#A08B5C]">{step.id}</span>
                   </div>
                   <div className="flex-1 text-left">
-                    <div className="font-semibold text-gray-900">
+                    <div className="font-medium text-sm text-gray-900">
                       {step.title}
                     </div>
                   </div>
@@ -206,13 +206,13 @@ export function EmptiesActivityLog() {
               >
                 <button
                   onClick={() => handleStepClick(step.id)}
-                  className="w-full p-4 flex items-center gap-4 hover:bg-gray-50 transition-colors"
+                  className="w-full p-3 flex items-center gap-3 hover:bg-gray-50 transition-colors"
                 >
-                  <div className="w-10 h-10 rounded-full bg-[#FFF8E7] flex items-center justify-center flex-shrink-0">
-                    <span className="font-bold text-[#A08B5C]">{step.id}</span>
+                  <div className="w-8 h-8 rounded-full bg-[#FFF8E7] flex items-center justify-center flex-shrink-0">
+                    <span className="font-semibold text-sm text-[#A08B5C]">{step.id}</span>
                   </div>
                   <div className="flex-1 text-left">
-                    <div className="font-semibold text-gray-900">
+                    <div className="font-medium text-sm text-gray-900">
                       {step.title}
                     </div>
                   </div>

@@ -8,12 +8,12 @@ import { Input } from "@/components/ui/input"
 import { User, Lock, ArrowLeft } from "lucide-react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
-import { useDeliveryAuth } from "@/providers/delivery-auth-provider"
+import { useAuth } from "@/providers/auth-provider"
 import { toast } from "sonner"
 
 export function LoginPage() {
   const router = useRouter()
-  const { login, isLoading } = useDeliveryAuth()
+  const { login, isLoading, user } = useAuth()
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
 
@@ -26,37 +26,51 @@ export function LoginPage() {
     }
 
     try {
-      const success = await login({
+      const result = await login({
         loginId: username,
         password: password,
+        rememberMe: false,
       })
 
-      if (success) {
+      if (result.success && result.user) {
         toast.success("Login successful!")
-        router.push("/lbcl/dashboard")
+
+        console.log("🔍 Checking user organization:", result.user.currentOrganization)
+        console.log("🔍 Checking user roles:", result.user.roles)
+
+        // Check if user belongs to PRINCIPLE organization OR has PRINCIPLE role
+        const isPrincipalOrg = result.user.currentOrganization?.type?.toUpperCase() === "PRINCIPAL"
+        const isPrincipalRole = result.user.roles?.some(role => {
+          console.log("👤 Role:", role.roleNameEn, "isPrincipalRole:", role.isPrincipalRole)
+          return role.isPrincipalRole === true
+        })
+
+        const isPrincipal = isPrincipalOrg || isPrincipalRole
+
+        console.log("✅ Is Principal Org:", isPrincipalOrg)
+        console.log("✅ Is Principal Role:", isPrincipalRole)
+        console.log("✅ Is Principal (final):", isPrincipal)
+
+        if (isPrincipal) {
+          console.log("🚀 Redirecting PRINCIPLE user to delivery-plans")
+          // Redirect PRINCIPLE users to delivery-plans
+          router.push("/lbcl/delivery-plans")
+        } else {
+          console.log("🚀 Redirecting regular user to dashboard")
+          // Redirect other users to dashboard
+          router.push("/lbcl/dashboard")
+        }
       } else {
         toast.error("Invalid credentials")
       }
     } catch (error) {
+      console.error("Login error:", error)
       toast.error("Login failed")
     }
   }
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      {/* Back to LBCL Button */}
-      <div className="absolute top-4 left-4 z-10">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => router.push("/login")}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span className="hidden sm:inline">Back to LBCL</span>
-        </Button>
-      </div>
-
       {/* Login Form with Logo - Centered */}
       <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8">
         <div className="w-full max-w-md">

@@ -26,48 +26,48 @@ export function RDTruckActivityLog() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Action Buttons */}
-      <div className="bg-white border-b border-gray-200 px-4 py-4">
-        <div className="flex items-center justify-end gap-2">
-          <button
-            onClick={() => router.back()}
-            className="px-6 py-2 border-2 border-[#A08B5C] text-[#A08B5C] font-medium rounded-lg hover:bg-[#FFF8E7] transition-colors"
-          >
-            Back
-          </button>
-          <button
-            onClick={handleSubmit}
-            className="px-6 py-2 bg-[#A08B5C] text-white font-medium rounded-lg hover:bg-[#8F7A4D] transition-colors"
-          >
-            Submit
-          </button>
-        </div>
-      </div>
-
       {/* Info Section */}
       <div className="bg-gray-100 border-b border-gray-200 px-4 py-4">
-        <div className="max-w-7xl mx-auto grid grid-cols-5 gap-4 text-sm">
-          <div>
-            <div className="text-xs text-gray-600 mb-1">Load Request No</div>
-            <div className="font-bold text-gray-900">85444127121</div>
+        <div className="max-w-7xl mx-auto">
+          {/* Action Buttons */}
+          <div className="flex items-center justify-end gap-2 mb-4">
+            <button
+              onClick={() => router.back()}
+              className="px-6 py-2 border-2 border-[#A08B5C] text-[#A08B5C] font-medium rounded-lg hover:bg-[#FFF8E7] transition-colors"
+            >
+              Back
+            </button>
+            <button
+              onClick={handleSubmit}
+              className="px-6 py-2 bg-[#A08B5C] text-white font-medium rounded-lg hover:bg-[#8F7A4D] transition-colors"
+            >
+              Submit
+            </button>
           </div>
-          <div>
-            <div className="text-xs text-gray-600 mb-1">Distributor</div>
-            <div className="font-bold text-gray-900">
-              [5844] R.T DISTRIBUTOR
+
+          <div className="grid grid-cols-5 gap-4 text-sm">
+            <div>
+              <div className="text-xs text-gray-600 mb-1">Load Request No</div>
+              <div className="font-bold text-gray-900">85444127121</div>
             </div>
-          </div>
-          <div>
-            <div className="text-xs text-gray-600 mb-1">Date</div>
-            <div className="font-bold text-gray-900">25 MAY 2025</div>
-          </div>
-          <div>
-            <div className="text-xs text-gray-600 mb-1">Driver Details</div>
-            <div className="font-bold text-gray-900">[3678] VANSANTH KUMAR</div>
-          </div>
-          <div>
-            <div className="text-xs text-gray-600 mb-1">Helper Details</div>
-            <div className="font-bold text-gray-900">[5378] PRASHANTH</div>
+            <div>
+              <div className="text-xs text-gray-600 mb-1">Distributor</div>
+              <div className="font-bold text-gray-900">
+                [5844] R.T DISTRIBUTOR
+              </div>
+            </div>
+            <div>
+              <div className="text-xs text-gray-600 mb-1">Date</div>
+              <div className="font-bold text-gray-900">25 MAY 2025</div>
+            </div>
+            <div>
+              <div className="text-xs text-gray-600 mb-1">Driver Details</div>
+              <div className="font-bold text-gray-900">[3678] VANSANTH KUMAR</div>
+            </div>
+            <div>
+              <div className="text-xs text-gray-600 mb-1">Helper Details</div>
+              <div className="font-bold text-gray-900">[5378] PRASHANTH</div>
+            </div>
           </div>
         </div>
       </div>
@@ -178,13 +178,13 @@ export function RDTruckActivityLog() {
                       <div className="flex gap-2">
                         <input
                           type="number"
-                          value="11"
+                          defaultValue="11"
                           className="w-20 px-3 py-2 border border-gray-300 rounded-lg text-center"
                           placeholder="HH"
                         />
                         <input
                           type="number"
-                          value="14"
+                          defaultValue="14"
                           className="w-20 px-3 py-2 border border-gray-300 rounded-lg text-center"
                           placeholder="Min"
                         />
@@ -197,13 +197,13 @@ export function RDTruckActivityLog() {
                       <div className="flex gap-2">
                         <input
                           type="number"
-                          value="12"
+                          defaultValue="12"
                           className="w-20 px-3 py-2 border border-gray-300 rounded-lg text-center"
                           placeholder="HH"
                         />
                         <input
                           type="number"
-                          value="25"
+                          defaultValue="25"
                           className="w-20 px-3 py-2 border border-gray-300 rounded-lg text-center"
                           placeholder="Min"
                         />
@@ -332,13 +332,13 @@ export function RDTruckActivityLog() {
                     <div className="flex gap-2">
                       <input
                         type="number"
-                        value="13"
+                        defaultValue="13"
                         className="w-20 px-3 py-2 border border-gray-300 rounded-lg text-center"
                         placeholder="HH"
                       />
                       <input
                         type="number"
-                        value="26"
+                        defaultValue="26"
                         className="w-20 px-3 py-2 border border-gray-300 rounded-lg text-center"
                         placeholder="Min"
                       />

@@ -22,13 +22,27 @@ import { organizationService } from "@/services/organizationService";
 import { employeeService } from "@/services/admin/employee.service";
 import { roleService } from "@/services/admin/role.service";
 import { deliveryLoadingService } from "@/services/deliveryLoadingService";
+import { useAuth } from "@/providers/auth-provider";
 
 interface ActivityLogPageProps {
   deliveryPlanId: string;
+  readOnly?: boolean;
 }
 
-export function ActivityLogPage({ deliveryPlanId }: ActivityLogPageProps) {
+export function ActivityLogPage({ deliveryPlanId, readOnly = false }: ActivityLogPageProps) {
   const router = useRouter();
+  const { user } = useAuth();
+
+  // Check if user has PRINCIPLE role or belongs to PRINCIPLE organization
+  const isPrincipalRole = user?.roles?.some(role => role.isPrincipalRole === true);
+  const isPrincipalOrg = user?.currentOrganization?.type?.toUpperCase() === "PRINCIPAL";
+  const isPrincipalUser = isPrincipalRole || isPrincipalOrg;
+
+  // Check if user is an OPERATOR
+  const isOperator = user?.roles?.some(role =>
+    role.roleNameEn?.toUpperCase().includes("OPERATOR") ||
+    role.code?.toUpperCase().includes("OPERATOR")
+  );
   const [expandedSections, setExpandedSections] = useState<number[]>([3, 6]);
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [showPickListDialog, setShowPickListDialog] = useState(false);
@@ -36,23 +50,236 @@ export function ActivityLogPage({ deliveryPlanId }: ActivityLogPageProps) {
   const [showSignatureDialog, setShowSignatureDialog] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
+  const handleGenerateDeliveryNotePdf = async () => {
+    try {
+      setGeneratingPdf(true);
+
+      // Generate delivery note number
+      const now = new Date();
+      const orderNumber = purchaseOrder.OrderNumber || purchaseOrder.orderNumber || 'PO';
+      const timestamp = now.getTime().toString().slice(-6);
+      const deliveryNoteNumber = `DN-${orderNumber}-${timestamp}`;
+
+      // Create delivery note HTML content (same as DeliveryNoteDialog)
+      const deliveryNoteHtml = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Delivery Note - ${deliveryNoteNumber}</title>
+          <style>
+            body { font-family: Arial, sans-serif; padding: 20px; }
+            .header { background-color: #A08B5C; color: white; padding: 20px; }
+            .content { padding: 20px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+            th { background-color: #f2f2f2; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>Delivery Note</h1>
+            <p>${deliveryNoteNumber}</p>
+          </div>
+          <div class="content">
+            <h3>Order Information</h3>
+            <p><strong>Order Number:</strong> ${purchaseOrder.OrderNumber || purchaseOrder.orderNumber || 'N/A'}</p>
+            <p><strong>Order Date:</strong> ${new Date(purchaseOrder.OrderDate || purchaseOrder.orderDate).toLocaleDateString()}</p>
+            <p><strong>Delivery Date:</strong> ${now.toLocaleDateString()}</p>
+
+            <h3>Shipping Details</h3>
+            <p><strong>Ship To:</strong> ${purchaseOrder.OrgName || purchaseOrder.orgName || 'N/A'}</p>
+            <p><strong>From Warehouse:</strong> ${purchaseOrder.WarehouseName || purchaseOrder.warehouseName || 'N/A'}</p>
+
+            <h3>Order Items</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Product Code</th>
+                  <th>Description</th>
+                  <th>Unit</th>
+                  <th>Quantity</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${orderLines.map((line: any, index: number) => `
+                  <tr>
+                    <td>${index + 1}</td>
+                    <td>${line.SKUCode || line.skuCode || 'N/A'}</td>
+                    <td>${line.SKUName || line.skuName || line.ProductName || 'N/A'}</td>
+                    <td>${line.UOM || line.uom || 'N/A'}</td>
+                    <td>${line.RequestedQty || line.requestedQty || 0}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+            <p><strong>Total Items:</strong> ${orderLines.reduce((sum: number, line: any) => sum + (line.RequestedQty || line.requestedQty || 0), 0)}</p>
+          </div>
+        </body>
+        </html>
+      `;
+
+      // Convert HTML to file blob
+      const htmlBlob = new Blob([deliveryNoteHtml], { type: 'text/html' });
+      const htmlFile = new File([htmlBlob], `${deliveryNoteNumber}.html`, { type: 'text/html' });
+
+      // Step 1: Upload the physical file to Data folder (same pattern as initiatives)
+      const formData = new FormData();
+      formData.append('files', htmlFile, htmlFile.name);
+
+      // Use same folder structure as initiatives: Data/delivery-notes/{purchaseOrderUID}
+      const purchaseOrderUID = purchaseOrder.UID || purchaseOrder.uid;
+      formData.append('folderPath', `delivery-notes/${purchaseOrderUID}`);
+
+      const authToken = localStorage.getItem("auth_token");
+      const uploadResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'}/FileUpload/UploadFile`, {
+        method: 'POST',
+        headers: {
+          'Authorization': authToken ? `Bearer ${authToken}` : ''
+        },
+        body: formData
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error('Failed to upload delivery note file');
+      }
+
+      const uploadResult = await uploadResponse.json();
+      console.log("✅ File uploaded:", uploadResult);
+
+      if (uploadResult.Status !== 1) {
+        throw new Error(uploadResult.Message || 'File upload failed');
+      }
+
+      // Extract the relative path
+      let relativePath = '';
+      if (uploadResult.SavedImgsPath && uploadResult.SavedImgsPath.length > 0) {
+        relativePath = uploadResult.SavedImgsPath[0];
+        // Remove duplicate "Data/" prefix if present
+        if (relativePath.startsWith('Data/Data/')) {
+          relativePath = relativePath.substring(5);
+        }
+      } else {
+        relativePath = `Data/delivery-notes/${purchaseOrderUID}/${htmlFile.name}`;
+      }
+
+      console.log("📄 Delivery note file path:", relativePath);
+
+      // Step 2: Create FileSys record (same pattern as initiatives)
+      const uniqueUID = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = (Math.random() * 16) | 0;
+        const v = c === 'x' ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+      });
+
+      // Get user info
+      let empUID: string | null = null;
+      try {
+        const userInfoStr = localStorage.getItem('user_info');
+        if (userInfoStr) {
+          const userInfo = JSON.parse(userInfoStr);
+          empUID = userInfo.uid || userInfo.id || userInfo.UID;
+        }
+      } catch (e) {
+        console.error('Failed to parse user_info:', e);
+      }
+
+      if (!empUID) {
+        throw new Error('User not authenticated');
+      }
+
+      const fileSysData = {
+        UID: uniqueUID,
+        SS: 1,
+        CreatedBy: empUID,
+        CreatedTime: new Date().toISOString(),
+        ModifiedBy: empUID,
+        ModifiedTime: new Date().toISOString(),
+        LinkedItemType: 'PurchaseOrder',
+        LinkedItemUID: purchaseOrderUID,
+        FileSysType: 'DeliveryNote',
+        FileType: 'text/html',
+        FileName: htmlFile.name.length > 50 ? htmlFile.name.substring(0, 46) + htmlFile.name.slice(-4) : htmlFile.name,
+        DisplayName: deliveryNoteNumber,
+        FileSize: htmlFile.size,
+        IsDefault: false,
+        IsDirectory: false,
+        RelativePath: relativePath,
+        FileSysFileType: 2, // Document type
+        CreatedByEmpUID: empUID
+      };
+
+      console.log('Creating FileSys record:', fileSysData);
+
+      const fileSysResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'}/FileSys/CUDFileSys`, {
+        method: 'POST',
+        headers: {
+          'Authorization': authToken ? `Bearer ${authToken}` : '',
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(fileSysData)
+      });
+
+      if (!fileSysResponse.ok) {
+        const errorText = await fileSysResponse.text();
+        console.error('FileSys creation failed:', errorText);
+        throw new Error('Failed to create FileSys record');
+      }
+
+      const fileSysResult = await fileSysResponse.json();
+      console.log('📊 FileSys creation result:', fileSysResult);
+
+      if (fileSysResult.IsSuccess === false) {
+        throw new Error(fileSysResult.ErrorMessage || 'FileSys creation failed');
+      }
+
+      // Store the file path and mark as generated
+      setDeliveryNoteFilePath(relativePath);
+      setDeliveryNoteGenerated(true);
+
+      console.log(`✅ Delivery note saved successfully:`, {
+        deliveryNoteNumber,
+        fileUID: uniqueUID,
+        path: relativePath
+      });
+    } catch (error) {
+      console.error("Error generating delivery note:", error);
+      setError("Failed to generate delivery note");
+    } finally {
+      setGeneratingPdf(false);
+    }
+  };
+
   const handleSignatureSave = async (logisticsSignature: string, driverSignature: string, signatureNotes: string) => {
     try {
+      // Generate PDF first if PRINCIPLE user
+      if (isPrincipalUser && !deliveryNoteGenerated) {
+        await handleGenerateDeliveryNotePdf();
+      }
+
       // Create delivery loading tracking data
       const now = new Date();
       const todayDate = now.toISOString().split('T')[0]; // YYYY-MM-DD
 
-      // Combine hour and minute for times
-      const loadingStartTime = `${todayDate}T${loadingStartHour.padStart(2, '0')}:${loadingStartMin.padStart(2, '0')}:00`;
-      const loadingEndTime = `${todayDate}T${loadingEndHour.padStart(2, '0')}:${loadingEndMin.padStart(2, '0')}:00`;
-      const departureTime = `${todayDate}T${departureHour.padStart(2, '0')}:${departureMin.padStart(2, '0')}:00`;
+      // For PRINCIPLE users, set restricted fields to null/0
+      // For other users, use the actual values
+      const loadingStartTime = isPrincipalUser ? null : `${todayDate}T${loadingStartHour.padStart(2, '0')}:${loadingStartMin.padStart(2, '0')}:00`;
+      const loadingEndTime = isPrincipalUser ? null : `${todayDate}T${loadingEndHour.padStart(2, '0')}:${loadingEndMin.padStart(2, '0')}:00`;
+      const departureTime = isPrincipalUser ? null : `${todayDate}T${departureHour.padStart(2, '0')}:${departureMin.padStart(2, '0')}:00`;
+
+      // Auto-generate delivery note number based on order number and timestamp
+      const orderNumber = purchaseOrder.OrderNumber || purchaseOrder.orderNumber || 'PO';
+      const timestamp = now.getTime().toString().slice(-6); // Last 6 digits of timestamp
+      const autoDeliveryNoteNumber = `DN-${orderNumber}-${timestamp}`;
 
       const deliveryLoadingData = {
         PurchaseOrderUID: purchaseOrder.UID || purchaseOrder.uid,
         VehicleUID: selectedVehicle || null,
         DriverEmployeeUID: selectedDriver || null,
-        ForkLiftOperatorUID: selectedOperator || null,
-        SecurityOfficerUID: selectedSecurityOfficer || null,
+        // Set restricted fields to null for PRINCIPLE users
+        ForkLiftOperatorUID: isPrincipalUser ? null : (selectedOperator || null),
+        SecurityOfficerUID: isPrincipalUser ? null : (selectedSecurityOfficer || null),
         ArrivalTime: arrivalTime || null,
         LoadingStartTime: loadingStartTime,
         LoadingEndTime: loadingEndTime,
@@ -60,14 +287,17 @@ export function ActivityLogPage({ deliveryPlanId }: ActivityLogPageProps) {
         LogisticsSignature: logisticsSignature || null,
         DriverSignature: driverSignature || null,
         Notes: signatureNotes || notes || null,
+        DeliveryNoteNumber: autoDeliveryNoteNumber,
+        DeliveryNoteFilePath: deliveryNoteFilePath || null,
         IsActive: true
       };
 
       console.log("📦 Delivery Loading Data being sent:", {
+        isPrincipalUser,
         VehicleUID: selectedVehicle,
         DriverEmployeeUID: selectedDriver,
-        ForkLiftOperatorUID: selectedOperator,
-        SecurityOfficerUID: selectedSecurityOfficer,
+        ForkLiftOperatorUID: deliveryLoadingData.ForkLiftOperatorUID,
+        SecurityOfficerUID: deliveryLoadingData.SecurityOfficerUID,
         ArrivalTime: arrivalTime,
         LoadingStartTime: loadingStartTime,
         LoadingEndTime: loadingEndTime,
@@ -130,6 +360,11 @@ export function ActivityLogPage({ deliveryPlanId }: ActivityLogPageProps) {
   // Signature states
   const [logisticsSignature, setLogisticsSignature] = useState<string>("");
   const [driverSignature, setDriverSignature] = useState<string>("");
+
+  // Delivery Note states
+  const [deliveryNoteGenerated, setDeliveryNoteGenerated] = useState(false);
+  const [deliveryNoteFilePath, setDeliveryNoteFilePath] = useState<string>("");
+  const [generatingPdf, setGeneratingPdf] = useState(false);
 
   useEffect(() => {
     fetchPurchaseOrderData();
@@ -372,12 +607,14 @@ export function ActivityLogPage({ deliveryPlanId }: ActivityLogPageProps) {
           >
             Back
           </Button>
-          <Button
-            onClick={() => setShowSignatureDialog(true)}
-            className="bg-[#A08B5C] hover:bg-[#8F7A4B] text-white text-xs sm:text-sm px-3 sm:px-6"
-          >
-            Submit
-          </Button>
+          {!readOnly && (
+            <Button
+              onClick={() => setShowSignatureDialog(true)}
+              className="bg-[#A08B5C] hover:bg-[#8F7A4B] text-white text-xs sm:text-sm px-3 sm:px-6"
+            >
+              Submit
+            </Button>
+          )}
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-sm text-center">
           <div>
@@ -408,8 +645,9 @@ export function ActivityLogPage({ deliveryPlanId }: ActivityLogPageProps) {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 max-w-7xl mx-auto">
           {/* Step 1: Share Delivery Plan */}
           <button
-            onClick={() => setShowShareDialog(true)}
-            className="bg-white rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition-shadow"
+            onClick={() => !readOnly && setShowShareDialog(true)}
+            className={`bg-white rounded-lg p-4 sm:p-6 shadow-sm transition-shadow ${!readOnly ? 'hover:shadow-md' : 'cursor-default opacity-60'}`}
+            disabled={readOnly}
           >
             <div className="flex items-center gap-3 sm:gap-4">
               <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#F5E6C8] flex items-center justify-center flex-shrink-0">
@@ -468,9 +706,9 @@ export function ActivityLogPage({ deliveryPlanId }: ActivityLogPageProps) {
                     <Select
                       value={selectedVehicle}
                       onValueChange={setSelectedVehicle}
-                      disabled={loadingVehicles}
+                      disabled={loadingVehicles || readOnly}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className={readOnly ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}>
                         <SelectValue placeholder={loadingVehicles ? "Loading vehicles..." : "Select vehicle"} />
                       </SelectTrigger>
                       <SelectContent>
@@ -489,9 +727,9 @@ export function ActivityLogPage({ deliveryPlanId }: ActivityLogPageProps) {
                     <Select
                       value={selectedDriver}
                       onValueChange={setSelectedDriver}
-                      disabled={loadingDrivers}
+                      disabled={loadingDrivers || readOnly}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className={readOnly ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}>
                         <SelectValue placeholder={loadingDrivers ? "Loading drivers..." : "Select driver"} />
                       </SelectTrigger>
                       <SelectContent>
@@ -505,6 +743,7 @@ export function ActivityLogPage({ deliveryPlanId }: ActivityLogPageProps) {
                   </div>
                 </div>
 
+                {/* Disable Fork Lift Operator and Load Times for PRINCIPLE users */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="text-xs sm:text-sm font-medium mb-2 block">
@@ -513,9 +752,9 @@ export function ActivityLogPage({ deliveryPlanId }: ActivityLogPageProps) {
                     <Select
                       value={selectedOperator}
                       onValueChange={setSelectedOperator}
-                      disabled={loadingOperators}
+                      disabled={loadingOperators || readOnly || isPrincipalUser}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className={readOnly || isPrincipalUser ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}>
                         <SelectValue placeholder={loadingOperators ? "Loading operators..." : "Select operator"} />
                       </SelectTrigger>
                       <SelectContent>
@@ -536,7 +775,8 @@ export function ActivityLogPage({ deliveryPlanId }: ActivityLogPageProps) {
                         <Input
                           value={loadingStartHour}
                           onChange={(e) => setLoadingStartHour(e.target.value)}
-                          className="text-center"
+                          className={`text-center ${readOnly || isPrincipalUser ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
+                          disabled={readOnly || isPrincipalUser}
                         />
                         <span className="text-xs text-gray-500 self-center">
                           HH
@@ -544,7 +784,8 @@ export function ActivityLogPage({ deliveryPlanId }: ActivityLogPageProps) {
                         <Input
                           value={loadingStartMin}
                           onChange={(e) => setLoadingStartMin(e.target.value)}
-                          className="text-center"
+                          className={`text-center ${readOnly || isPrincipalUser ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
+                          disabled={readOnly || isPrincipalUser}
                         />
                         <span className="text-xs text-gray-500 self-center">
                           Min
@@ -559,7 +800,8 @@ export function ActivityLogPage({ deliveryPlanId }: ActivityLogPageProps) {
                         <Input
                           value={loadingEndHour}
                           onChange={(e) => setLoadingEndHour(e.target.value)}
-                          className="text-center"
+                          className={`text-center ${readOnly || isPrincipalUser ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
+                          disabled={readOnly || isPrincipalUser}
                         />
                         <span className="text-xs text-gray-500 self-center">
                           HH
@@ -567,7 +809,8 @@ export function ActivityLogPage({ deliveryPlanId }: ActivityLogPageProps) {
                         <Input
                           value={loadingEndMin}
                           onChange={(e) => setLoadingEndMin(e.target.value)}
-                          className="text-center"
+                          className={`text-center ${readOnly || isPrincipalUser ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
+                          disabled={readOnly || isPrincipalUser}
                         />
                         <span className="text-xs text-gray-500 self-center">
                           Min
@@ -592,6 +835,7 @@ export function ActivityLogPage({ deliveryPlanId }: ActivityLogPageProps) {
               <span className="text-sm sm:text-base font-medium flex-1 text-left">
                 View / Generate Delivery Note ({orderLines.length} items)
               </span>
+              {deliveryNoteGenerated && <Check className="w-5 h-5 text-green-500 flex-shrink-0" />}
               <FileText className="w-4 h-4 text-red-500 flex-shrink-0" />
               <ChevronRight className="w-5 h-5 text-gray-400 flex-shrink-0" />
             </div>
@@ -599,8 +843,9 @@ export function ActivityLogPage({ deliveryPlanId }: ActivityLogPageProps) {
 
           {/* Step 5: Receive Stock */}
           <button
-            onClick={() => setShowSignatureDialog(true)}
-            className="bg-white rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition-shadow"
+            onClick={() => !readOnly && setShowSignatureDialog(true)}
+            className={`bg-white rounded-lg p-4 sm:p-6 shadow-sm transition-shadow ${!readOnly ? 'hover:shadow-md' : 'cursor-default opacity-60'}`}
+            disabled={readOnly}
           >
             <div className="flex items-center gap-3 sm:gap-4">
               <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#F5E6C8] flex items-center justify-center flex-shrink-0">
@@ -635,6 +880,7 @@ export function ActivityLogPage({ deliveryPlanId }: ActivityLogPageProps) {
 
             {expandedSections.includes(6) && (
               <div className="mt-4 sm:mt-6 space-y-4">
+                {/* Disable Security Officer and Prime Mover Departure for PRINCIPLE users */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="text-xs sm:text-sm font-medium mb-2 block">
@@ -643,9 +889,9 @@ export function ActivityLogPage({ deliveryPlanId }: ActivityLogPageProps) {
                     <Select
                       value={selectedSecurityOfficer}
                       onValueChange={setSelectedSecurityOfficer}
-                      disabled={loadingSecurityOfficers}
+                      disabled={loadingSecurityOfficers || readOnly || isPrincipalUser}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className={readOnly || isPrincipalUser ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}>
                         <SelectValue placeholder={loadingSecurityOfficers ? "Loading security officers..." : "Select security officer"} />
                       </SelectTrigger>
                       <SelectContent>
@@ -665,7 +911,8 @@ export function ActivityLogPage({ deliveryPlanId }: ActivityLogPageProps) {
                       <Input
                         value={departureHour}
                         onChange={(e) => setDepartureHour(e.target.value)}
-                        className="text-center flex-1"
+                        className={`text-center flex-1 ${readOnly || isPrincipalUser ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
+                        disabled={readOnly || isPrincipalUser}
                       />
                       <span className="text-xs text-gray-500 self-center">
                         HH
@@ -673,7 +920,8 @@ export function ActivityLogPage({ deliveryPlanId }: ActivityLogPageProps) {
                       <Input
                         value={departureMin}
                         onChange={(e) => setDepartureMin(e.target.value)}
-                        className="text-center flex-1"
+                        className={`text-center flex-1 ${readOnly || isPrincipalUser ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
+                        disabled={readOnly || isPrincipalUser}
                       />
                       <span className="text-xs text-gray-500 self-center">
                         Min
@@ -794,7 +1042,12 @@ export function ActivityLogPage({ deliveryPlanId }: ActivityLogPageProps) {
       </main>
 
       {/* Dialogs */}
-      <ShareDialog open={showShareDialog} onOpenChange={setShowShareDialog} />
+      <ShareDialog
+        open={showShareDialog}
+        onOpenChange={setShowShareDialog}
+        purchaseOrder={purchaseOrder}
+        orderLines={orderLines}
+      />
       <PickListDialog
         open={showPickListDialog}
         onOpenChange={setShowPickListDialog}
@@ -806,6 +1059,9 @@ export function ActivityLogPage({ deliveryPlanId }: ActivityLogPageProps) {
         onOpenChange={setShowDeliveryNoteDialog}
         orderLines={orderLines}
         purchaseOrder={purchaseOrder}
+        onSaveDeliveryNote={handleGenerateDeliveryNotePdf}
+        isSaving={generatingPdf}
+        isSaved={deliveryNoteGenerated}
       />
       <SignatureDialog
         open={showSignatureDialog}

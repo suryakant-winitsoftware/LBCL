@@ -5,7 +5,6 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { AuthProvider } from "./auth-provider";
 import { PermissionProvider } from "./permission-provider";
-import { DeliveryAuthProvider } from "./delivery-auth-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -42,17 +41,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        {isDeliveryRoute ? (
-          // Delivery routes use DeliveryAuthProvider
-          <DeliveryAuthProvider>
-            {children}
-          </DeliveryAuthProvider>
-        ) : (
-          // LBCL routes use standard AuthProvider with PermissionProvider
-          <AuthProvider>
-            <PermissionProvider>{children}</PermissionProvider>
-          </AuthProvider>
-        )}
+        {/* Both LBCL and delivery routes now use the same AuthProvider */}
+        <AuthProvider>
+          {!isDeliveryRoute && <PermissionProvider>{children}</PermissionProvider>}
+          {isDeliveryRoute && children}
+        </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );

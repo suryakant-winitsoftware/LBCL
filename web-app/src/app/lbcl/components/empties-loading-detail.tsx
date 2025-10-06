@@ -1,0 +1,287 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Clock, Check } from "lucide-react";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { SignatureDialog } from "@/app/lbcl/components/signature-dialog";
+
+type Product = {
+  id: string;
+  code: string;
+  name: string;
+  image: string;
+  stockInHand: number;
+  previousDepositQty: number;
+  previousEmptyTrust: number;
+  requirementForCurrentShipment: number;
+  emptiesGoodReturn: number;
+  emptiesDefectReturn: number;
+};
+
+export function EmptiesLoadingDetail() {
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState<
+    "ALL" | "LION SCOUT" | "LION LAGER" | "CALSBURG" | "LUXURY BRAND"
+  >("ALL");
+  const [showSignatureDialog, setShowSignatureDialog] = useState(false);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [agentSignature, setAgentSignature] = useState("");
+  const [driverSignature, setDriverSignature] = useState("");
+  const [notes, setNotes] = useState("");
+
+  const products: Product[] = [
+    {
+      id: "1",
+      code: "5213",
+      name: "Lion Large Beer bottle 625ml",
+      image: "/amber-beer-bottle.png",
+      stockInHand: 50,
+      previousDepositQty: 80,
+      previousEmptyTrust: 10,
+      requirementForCurrentShipment: 30,
+      emptiesGoodReturn: 30,
+      emptiesDefectReturn: 10
+    },
+    {
+      id: "2",
+      code: "5214",
+      name: "Lion Large Beer bottle 330ml",
+      image: "/amber-beer-bottle.png",
+      stockInHand: 20,
+      previousDepositQty: 20,
+      previousEmptyTrust: 20,
+      requirementForCurrentShipment: 20,
+      emptiesGoodReturn: 10,
+      emptiesDefectReturn: 10
+    },
+    {
+      id: "3",
+      code: "5216",
+      name: "Lion Scout Beer bottle 625ml",
+      image: "/amber-beer-bottle.png",
+      stockInHand: 30,
+      previousDepositQty: 30,
+      previousEmptyTrust: 30,
+      requirementForCurrentShipment: 30,
+      emptiesGoodReturn: 20,
+      emptiesDefectReturn: 20
+    },
+    {
+      id: "4",
+      code: "5210",
+      name: "Lion Scout Beer bottle 330ml",
+      image: "/amber-beer-bottle.png",
+      stockInHand: 10,
+      previousDepositQty: 10,
+      previousEmptyTrust: 10,
+      requirementForCurrentShipment: 10,
+      emptiesGoodReturn: 5,
+      emptiesDefectReturn: 5
+    }
+  ];
+
+  const handleSubmit = () => {
+    setShowSignatureDialog(true);
+  };
+
+  const handleSignatureSave = (logisticSig: string, driverSig: string, signatureNotes: string) => {
+    setAgentSignature(logisticSig);
+    setDriverSignature(driverSig);
+    setNotes(signatureNotes);
+    setShowSuccessDialog(true);
+  };
+
+  const handleSuccessDone = () => {
+    setShowSuccessDialog(false);
+    router.push("/lbcl/empties-loading");
+  };
+
+  return (
+    <div className="min-h-screen bg-white">
+      {/* Header with Timer */}
+      <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center justify-end sticky top-0 z-30">
+        <div className="flex items-center gap-2 bg-[#D4A853] text-white px-4 py-2 rounded-lg">
+          <Clock className="w-5 h-5" />
+          <span className="font-mono font-bold text-lg">24:15 Min</span>
+        </div>
+      </header>
+
+      {/* Info Section */}
+      <div className="bg-gray-50 p-4 border-b border-gray-200">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
+          <div>
+            <div className="text-xs text-gray-600 mb-1">Agent Name</div>
+            <div className="font-bold text-sm">R.T DISTRIBUTORS</div>
+          </div>
+          <div>
+            <div className="text-xs text-gray-600 mb-1">Delivery Order No</div>
+            <div className="font-bold text-sm">DO4673899</div>
+          </div>
+          <div>
+            <div className="text-xs text-gray-600 mb-1">Prime Mover</div>
+            <div className="font-bold text-sm">LK1673 (U KUMAR)</div>
+          </div>
+          <div>
+            <div className="text-xs text-gray-600 mb-1">Date</div>
+            <div className="font-bold text-sm">24 MAY 2025</div>
+          </div>
+        </div>
+        <button
+          onClick={handleSubmit}
+          className="w-full sm:w-auto bg-[#A08B5C] hover:bg-[#8A7549] text-white px-6 py-2 rounded-lg font-medium transition-colors"
+        >
+          Submit
+        </button>
+      </div>
+
+      {/* Tabs */}
+      <div className="bg-gray-50 border-b border-gray-200 mb-4">
+        <div className="flex overflow-x-auto">
+          {(
+            [
+              "ALL",
+              "LION SCOUT",
+              "LION LAGER",
+              "CALSBURG",
+              "LUXURY BRAND"
+            ] as const
+          ).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-6 py-4 text-sm font-semibold whitespace-nowrap transition-colors relative ${
+                activeTab === tab
+                  ? "text-[#A08B5C]"
+                  : "text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              {tab}
+              {activeTab === tab && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#A08B5C]" />
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Products Table */}
+      <div className="overflow-x-auto px-4">
+        <table className="w-full">
+          <thead className="bg-[#F5E6D3] sticky top-0 z-20">
+            <tr>
+              <th className="text-left p-3 font-semibold text-sm">
+                Product Code/Description
+              </th>
+              <th className="text-center p-3 font-semibold text-sm">
+                Stock in Hand<br />at Agency
+              </th>
+              <th className="text-center p-3 font-semibold text-sm">
+                Previous<br />Deposit Qty
+              </th>
+              <th className="text-center p-3 font-semibold text-sm">
+                Previous<br />Empty Trust
+              </th>
+              <th className="text-center p-3 font-semibold text-sm">
+                Requirement<br />for Current<br />Shipment
+              </th>
+              <th className="text-center p-3 font-semibold text-sm">
+                Empties Good<br />Return
+              </th>
+              <th className="text-center p-3 font-semibold text-sm">
+                Empties Defect<br />Return
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {products.map((product) => (
+              <tr key={product.id} className="border-b border-gray-200">
+                <td className="p-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-gray-200 rounded flex items-center justify-center">
+                      <span className="text-2xl">🍺</span>
+                    </div>
+                    <div>
+                      <div className="font-semibold">{product.name}</div>
+                      <div className="text-sm text-gray-600">{product.code}</div>
+                    </div>
+                  </div>
+                </td>
+                <td className="text-center p-3">
+                  <div className="font-medium">{product.stockInHand}</div>
+                </td>
+                <td className="text-center p-3">
+                  <div className="font-medium">{product.previousDepositQty}</div>
+                </td>
+                <td className="text-center p-3">
+                  <div className="font-medium">{product.previousEmptyTrust}</div>
+                </td>
+                <td className="text-center p-3">
+                  <div className="font-medium">{product.requirementForCurrentShipment}</div>
+                </td>
+                <td className="text-center p-3">
+                  <input
+                    type="number"
+                    defaultValue={product.emptiesGoodReturn}
+                    className="w-24 mx-auto text-center px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#A08B5C]"
+                  />
+                </td>
+                <td className="text-center p-3">
+                  <input
+                    type="number"
+                    defaultValue={product.emptiesDefectReturn}
+                    className="w-24 mx-auto text-center px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#A08B5C]"
+                  />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Signature Dialog */}
+      <SignatureDialog
+        open={showSignatureDialog}
+        onOpenChange={setShowSignatureDialog}
+        selectedDriverName="R.M.K.P. Rathnayake (U KUMAR)"
+        organizationName="R.T DISTRIBUTORS"
+        onSave={handleSignatureSave}
+      />
+
+      {/* Success Dialog */}
+      <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+        <DialogContent className="max-w-xl">
+          <DialogTitle className="text-2xl font-bold text-gray-900 text-center">Success</DialogTitle>
+          <div className="p-6 pt-0 text-center">
+
+            <div className="flex justify-center mb-6">
+              <div className="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center">
+                <Check className="w-12 h-12 text-white" strokeWidth={3} />
+              </div>
+            </div>
+
+            <h3 className="text-xl font-bold text-gray-900 mb-2">
+              Empties Stock Loaded Successfully
+            </h3>
+            <p className="text-gray-600 mb-8">
+              Empties Stock has completed in{" "}
+              <span className="font-bold">20 Min</span>
+            </p>
+
+            <div className="grid grid-cols-2 gap-4">
+              <button className="py-4 bg-gray-400 text-white font-medium rounded-lg hover:bg-gray-500 transition-colors">
+                PRINT
+              </button>
+              <button
+                onClick={handleSuccessDone}
+                className="py-4 bg-[#A08B5C] text-white font-medium rounded-lg hover:bg-[#8F7A4D] transition-colors"
+              >
+                DONE
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}

@@ -77,29 +77,10 @@ export default function TimelineStamps() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center justify-between sticky top-0 z-10">
-        <button className="p-2">
-          <Menu className="w-6 h-6" />
-        </button>
-        <h1 className="text-lg sm:text-xl md:text-2xl font-bold flex-1 text-center">Time Line Stamps</h1>
-        <div className="flex items-center gap-2">
-          <button className="p-2">
-            <Clock className="w-6 h-6" />
-          </button>
-          <button className="p-2">
-            <Bell className="w-6 h-6" />
-          </button>
-          <Button className="bg-[#A08B5C] hover:bg-[#8A7549] text-white" onClick={() => router.back()}>
-            DONE
-          </Button>
-        </div>
-      </header>
-
       {/* Table - Scrollable */}
       <div className="overflow-x-auto">
         <table className="w-full min-w-[1400px]">
-          <thead className="bg-[#F5E6D3] sticky top-[73px]">
+          <thead className="bg-[#F5E6D3] sticky top-0">
             <tr>
               <th className="text-left p-3 font-semibold text-sm border-r border-gray-300">Delivery Order Number</th>
               <th className="text-left p-3 font-semibold text-sm border-r border-gray-300">Date</th>

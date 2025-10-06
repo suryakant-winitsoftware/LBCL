@@ -250,7 +250,7 @@ export function PhysicalCountModal({ onClose }: PhysicalCountModalProps) {
 
       {/* Info Section */}
       <div className="bg-white p-4 border-b border-gray-200">
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-4 mb-4">
           <div>
             <div className="text-xs text-gray-500 mb-1">Agent Name</div>
             <div className="font-bold text-gray-900">R.T DISTRIBUTORS</div>
@@ -264,22 +264,24 @@ export function PhysicalCountModal({ onClose }: PhysicalCountModalProps) {
             <div className="font-bold text-gray-900">24 NOV 2024</div>
           </div>
         </div>
-        <button
-          onClick={handleSubmit}
-          className="w-full mt-4 py-3 bg-[#A08B5C] text-white rounded-lg font-semibold hover:bg-[#8F7A4D]"
-        >
-          Submit
-        </button>
+        <div className="flex justify-center">
+          <button
+            onClick={handleSubmit}
+            className="px-8 py-2 bg-[#A08B5C] text-white rounded text-sm font-medium hover:bg-[#8F7A4D]"
+          >
+            Submit
+          </button>
+        </div>
       </div>
 
       {/* Tabs */}
-      <div className="bg-white border-b border-gray-200 overflow-x-auto">
-        <div className="flex min-w-max">
+      <div className="bg-white border-b border-gray-200">
+        <div className="flex justify-center">
           {["ALL", "LION SCOUT", "LION LAGER", "CALSBURG", "LUXURY BRAND"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-6 py-4 text-sm font-semibold whitespace-nowrap transition-colors relative ${
+              className={`px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors relative ${
                 activeTab === tab ? "text-[#A08B5C]" : "text-gray-500"
               }`}
             >
@@ -291,14 +293,14 @@ export function PhysicalCountModal({ onClose }: PhysicalCountModalProps) {
       </div>
 
       {/* Table Header */}
-      <div className="bg-[#FFF8E7] px-4 py-3 border-b border-gray-200 overflow-x-auto">
-        <div className="flex gap-4 min-w-max text-xs font-semibold text-gray-700">
-          <div className="w-48">Product Code/Description</div>
-          <div className="w-24 text-center">Good Empties Collected Qty</div>
-          <div className="w-24 text-center">Sample Good Qty</div>
-          <div className="w-24 text-center">Damage Empties Collected Qty</div>
+      <div className="bg-[#FFF8E7] px-4 py-2 border-b border-gray-200 overflow-x-auto">
+        <div className="flex gap-3 min-w-max text-xs font-medium text-gray-700">
+          <div className="w-56">Product Code/Description</div>
+          <div className="w-32 text-center">Good Empties Collected Qty</div>
+          <div className="w-28 text-center">Sample Good Qty</div>
+          <div className="w-32 text-center">Damage Empties Collected Qty</div>
           <div className="w-24 text-center">Damage Qty</div>
-          <div className="w-24 text-center">Missing</div>
+          <div className="w-20 text-center">Missing</div>
           <div className="w-16 text-center">Image</div>
           <div className="w-16 text-center">Notes</div>
         </div>
@@ -307,36 +309,32 @@ export function PhysicalCountModal({ onClose }: PhysicalCountModalProps) {
       {/* Products List */}
       <div className="divide-y divide-gray-200">
         {products.map((product) => (
-          <div key={product.id} className="bg-white px-4 py-4 overflow-x-auto">
-            <div className="flex gap-4 items-center min-w-max">
-              <div className="w-48 flex items-center gap-3">
-                <img
-                  src={product.image || "/placeholder.svg"}
-                  alt={product.name}
-                  className="w-10 h-10 object-contain"
-                />
-                <span className="text-sm font-medium">{product.name}</span>
+          <div key={product.id} className="bg-white px-4 py-3 overflow-x-auto">
+            <div className="flex gap-3 items-center min-w-max">
+              <div className="w-56 flex items-center gap-2">
+                <span className="text-sm">{product.name}</span>
               </div>
-              <div className="w-24">
+              <div className="w-32">
                 <input
                   type="number"
                   value={product.goodCollected}
-                  className="w-full px-2 py-2 border border-gray-300 rounded text-center"
+                  className="w-full px-2 py-1.5 border border-gray-300 rounded text-center text-sm"
                   readOnly
                 />
               </div>
-              <div className="w-24">
+              <div className="w-28">
                 <input
                   type="number"
                   value={product.sampleGood}
-                  className="w-full px-2 py-2 border border-gray-300 rounded text-center bg-gray-50"
+                  onChange={() => {}}
+                  className="w-full px-2 py-1.5 border border-gray-300 rounded text-center text-sm bg-gray-50"
                 />
               </div>
-              <div className="w-24">
+              <div className="w-32">
                 <input
                   type="number"
                   value={product.damageCollected}
-                  className="w-full px-2 py-2 border border-gray-300 rounded text-center"
+                  className="w-full px-2 py-1.5 border border-gray-300 rounded text-center text-sm"
                   readOnly
                 />
               </div>
@@ -344,14 +342,16 @@ export function PhysicalCountModal({ onClose }: PhysicalCountModalProps) {
                 <input
                   type="number"
                   value={product.damage}
-                  className="w-full px-2 py-2 border border-gray-300 rounded text-center bg-gray-50"
+                  onChange={() => {}}
+                  className="w-full px-2 py-1.5 border border-gray-300 rounded text-center text-sm bg-gray-50"
                 />
               </div>
-              <div className="w-24">
+              <div className="w-20">
                 <input
                   type="number"
                   value={product.missing}
-                  className="w-full px-2 py-2 border border-gray-300 rounded text-center bg-gray-50"
+                  onChange={() => {}}
+                  className="w-full px-2 py-1.5 border border-gray-300 rounded text-center text-sm bg-gray-50"
                 />
               </div>
               <div className="w-16 flex justify-center">

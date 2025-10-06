@@ -14,11 +14,19 @@ export interface DeliveryLoadingTracking {
   LogisticsSignature?: string | null;
   DriverSignature?: string | null;
   Notes?: string | null;
+  DeliveryNoteFilePath?: string | null;
+  DeliveryNoteNumber?: string | null;
   IsActive?: boolean;
   CreatedBy?: string;
   CreatedDate?: string;
   ModifiedBy?: string;
   ModifiedDate?: string;
+  // Purchase Order fields (from JOIN)
+  order_number?: string;
+  order_date?: string;
+  warehouse_uid?: string;
+  status?: string;
+  org_name?: string;
 }
 
 const API_BASE_URL =
@@ -74,6 +82,23 @@ class DeliveryLoadingService {
     }
   }
 
+  // Get delivery loading tracking records by status
+  async getByStatus(status: string): Promise<DeliveryLoadingTracking[]> {
+    const response = await this.apiCall<DeliveryLoadingTracking[]>(
+      `/DeliveryLoadingTracking/GetByStatus/${status}`,
+      {
+        method: "GET",
+      }
+    );
+
+    if (!response.success) {
+      console.warn(response.message || "No delivery loading tracking found");
+      return [];
+    }
+
+    return response.data || [];
+  }
+
   // Get delivery loading tracking by Purchase Order UID
   async getByPurchaseOrderUID(
     purchaseOrderUID: string
@@ -99,6 +124,9 @@ class DeliveryLoadingService {
   async saveDeliveryLoadingTracking(
     deliveryLoadingTracking: DeliveryLoadingTracking
   ): Promise<boolean> {
+    console.log("📤 Saving delivery loading tracking:", deliveryLoadingTracking);
+    console.log("📦 JSON payload:", JSON.stringify(deliveryLoadingTracking, null, 2));
+
     const response = await this.apiCall<any>(
       "/DeliveryLoadingTracking/SaveDeliveryLoadingTracking",
       {
@@ -108,6 +136,7 @@ class DeliveryLoadingService {
     );
 
     if (!response.success) {
+      console.error("❌ Save failed:", response);
       throw new Error(
         response.message || "Failed to save delivery loading tracking"
       );

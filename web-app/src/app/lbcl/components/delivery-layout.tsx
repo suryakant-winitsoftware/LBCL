@@ -3,8 +3,8 @@
 import { usePathname, useRouter } from "next/navigation";
 import { PageHeader } from "@/app/lbcl/components/page-header";
 import { Button } from "@/components/ui/button";
-import { LogOut, ArrowLeft } from "lucide-react";
-import { useDeliveryAuth } from "@/providers/delivery-auth-provider";
+import { LogOut } from "lucide-react";
+import { useAuth } from "@/providers/auth-provider";
 
 interface DeliveryLayoutProps {
   children: React.ReactNode;
@@ -13,7 +13,7 @@ interface DeliveryLayoutProps {
 export function DeliveryLayout({ children }: DeliveryLayoutProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, logout } = useDeliveryAuth();
+  const { user, logout } = useAuth();
 
   // Don't show header on login page
   if (pathname === "/lbcl/login" || pathname === "/lbcl") {
@@ -23,10 +23,6 @@ export function DeliveryLayout({ children }: DeliveryLayoutProps) {
   const handleLogout = () => {
     logout();
     router.push("/lbcl/login");
-  };
-
-  const handleBackToLBCL = () => {
-    router.push("/login");
   };
 
   // Get page title based on pathname
@@ -46,6 +42,7 @@ export function DeliveryLayout({ children }: DeliveryLayoutProps) {
     if (pathname?.includes("/empties-receiving/activity-log"))
       return "Empties Activity Log";
     if (pathname?.includes("/empties-receiving")) return "Empties Receiving";
+    if (pathname?.includes("/empties-loading")) return "Empties Stock Loading";
     if (pathname?.includes("/damage-collection")) return "Damage Collection";
     if (pathname?.includes("/stock-reconciliation"))
       return "Stock Reconciliation";
@@ -63,15 +60,6 @@ export function DeliveryLayout({ children }: DeliveryLayoutProps) {
                 {user.name || user.loginId}
               </span>
             )}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleBackToLBCL}
-              className="text-xs"
-            >
-              <ArrowLeft className="w-4 h-4 mr-1" />
-              <span className="hidden sm:inline">LBCL</span>
-            </Button>
             <Button variant="ghost" size="sm" onClick={handleLogout}>
               <LogOut className="w-4 h-4" />
             </Button>

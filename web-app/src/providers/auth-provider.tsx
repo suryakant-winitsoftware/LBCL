@@ -9,7 +9,7 @@ interface AuthContextType {
   isAuthenticated: boolean
   isLoading: boolean
   error: string | null
-  login: (credentials: { loginId: string; password: string; rememberMe: boolean }) => Promise<boolean>
+  login: (credentials: { loginId: string; password: string; rememberMe: boolean }) => Promise<{ success: boolean; user?: User }>
   logout: () => Promise<void>
   refreshToken: () => Promise<boolean>
   validateSession: () => Promise<boolean>

@@ -23,6 +23,31 @@ public class DeliveryLoadingTrackingController : WINITBaseController
     }
 
     /// <summary>
+    /// Get all Delivery Loading Tracking records by Purchase Order Status
+    /// </summary>
+    /// <param name="status">Purchase Order Status (SHIPPED or RECEIVED)</param>
+    /// <returns>List of Delivery Loading Tracking data with Purchase Order details</returns>
+    [HttpGet("GetByStatus/{status}")]
+    public async Task<ActionResult> GetByStatus(string status)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(status))
+            {
+                return BadRequest("Status is required");
+            }
+
+            var result = await _deliveryLoadingTrackingDL.GetByStatusAsync(status);
+
+            return Ok(new { success = true, data = result });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { success = false, error = ex.Message });
+        }
+    }
+
+    /// <summary>
     /// Get Delivery Loading Tracking by Purchase Order UID
     /// </summary>
     /// <param name="purchaseOrderUID">Purchase Order UID</param>

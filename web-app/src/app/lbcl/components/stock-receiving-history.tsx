@@ -1,109 +1,157 @@
 "use client"
 
-import { Menu, Search, Clock, Bell } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-
-const historyData = [
-  {
-    deliveryPlanNo: "85444127121",
-    deliveryNoteNo: "DN4673899",
-    orderDate: "20-MAY-2025",
-    uniqueSkus: 40,
-  },
-  {
-    deliveryPlanNo: "85444127954",
-    deliveryNoteNo: "DN4673834",
-    orderDate: "20-MAY-2025",
-    uniqueSkus: 20,
-  },
-  {
-    deliveryPlanNo: "85444127633",
-    deliveryNoteNo: "DN4673536",
-    orderDate: "20-MAY-2025",
-    uniqueSkus: 20,
-  },
-]
+import { ChevronRight, FileText, ClipboardList, RefreshCw } from "lucide-react"
+import { stockReceivingService } from "@/services/stockReceivingService"
 
 export default function StockReceivingHistory() {
   const router = useRouter()
+  const [historyData, setHistoryData] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
+
+  useEffect(() => {
+    fetchHistory()
+  }, [])
+
+  const fetchHistory = async () => {
+    try {
+      setLoading(true)
+      setError("")
+
+      console.log("🔍 Fetching all stock receiving history...")
+
+      // Get all completed stock receiving records with joined data
+      const stockReceivingRecords = await stockReceivingService.getAll()
+
+      console.log("📦 Stock Receiving Records:", stockReceivingRecords)
+
+      if (!stockReceivingRecords || stockReceivingRecords.length === 0) {
+        setHistoryData([])
+        return
+      }
+
+      // Map records to history format
+      const historyWithDetails = stockReceivingRecords.map((record: any) => {
+        console.log("📋 Processing record:", {
+          PurchaseOrderUID: record.PurchaseOrderUID,
+          DeliveryNoteNumber: record.DeliveryNoteNumber,
+          order_number: record.order_number,
+          order_date: record.order_date,
+          CreatedDate: record.CreatedDate
+        })
+
+        return {
+          id: record.PurchaseOrderUID,
+          deliveryNoteNo: record.DeliveryNoteNumber || record.order_number || "N/A",
+          orderDate: formatDate(record.order_date || record.CreatedDate),
+          uniqueSkus: 0, // Will need to fetch purchase order lines separately if needed
+          status: "completed",
+        }
+      })
+
+      setHistoryData(historyWithDetails)
+
+    } catch (error) {
+      console.error("Error fetching history:", error)
+      setError("Failed to fetch stock receiving history")
+      setHistoryData([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const formatDate = (dateString: string) => {
+    if (!dateString) return "N/A"
+    const date = new Date(dateString)
+    return date.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    }).toUpperCase()
+  }
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center gap-4 sticky top-0 z-10">
-        <button className="p-2">
-          <Menu className="w-6 h-6" />
-        </button>
-        <h1 className="text-lg sm:text-xl md:text-2xl font-bold flex-1">Agent Stock Receiving History</h1>
-        <div className="flex items-center gap-2">
-          <button className="p-2">
-            <Clock className="w-6 h-6" />
-          </button>
-          <button className="p-2">
-            <Bell className="w-6 h-6" />
+    <div className="p-4 space-y-4">
+      {loading ? (
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <RefreshCw className="w-8 h-8 text-[#A08B5C] animate-spin mx-auto mb-2" />
+            <p className="text-gray-600">Loading history...</p>
+          </div>
+        </div>
+      ) : error ? (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
+          <p className="text-red-700">{error}</p>
+          <button
+            onClick={fetchHistory}
+            className="mt-2 text-sm text-red-600 hover:text-red-800 underline"
+          >
+            Try again
           </button>
         </div>
-      </header>
-
-      {/* Search */}
-      <div className="p-4 bg-gray-50 border-b border-gray-200">
-        <div className="flex gap-2">
-          <div className="flex-1 relative">
-            <Input placeholder="Search by Delivery Number" className="pr-10" />
-            <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-          </div>
-          <Button variant="outline" className="border-[#A08B5C] text-[#A08B5C] bg-transparent">
-            Search
-          </Button>
+      ) : historyData.length === 0 ? (
+        <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
+          <ClipboardList className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+          <p className="text-gray-600 text-lg font-medium">No stock receiving history found</p>
+          <p className="text-gray-500 text-sm mt-1">Completed stock receiving records will appear here</p>
         </div>
-      </div>
+      ) : (
+        historyData.map((delivery) => (
+          <div
+            key={delivery.id}
+            className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
+          >
+            <div className="p-4 flex items-center gap-4">
+              {/* Delivery Plan No */}
+              <div className="flex-shrink-0">
+                <div className="text-xs text-gray-500 mb-1">Delivery Plan No</div>
+                <div className="font-bold text-gray-900 text-sm">{delivery.id}</div>
+              </div>
 
-      {/* History List */}
-      <div className="p-4 space-y-4">
-        {historyData.map((item) => (
-          <div key={item.deliveryPlanNo} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
-              <div>
-                <div className="text-sm text-gray-600 mb-1">Delivery Plan No</div>
-                <div className="font-bold">{item.deliveryPlanNo}</div>
+              {/* Delivery Note No */}
+              <div className="flex-shrink-0">
+                <div className="text-xs text-gray-500 mb-1">Delivery Note No</div>
+                <div className="font-bold text-gray-900 text-sm">{delivery.deliveryNoteNo}</div>
               </div>
-              <div>
-                <div className="text-sm text-gray-600 mb-1">Delivery Note No</div>
-                <div className="font-bold">{item.deliveryNoteNo}</div>
-              </div>
-              <div>
-                <div className="text-sm text-gray-600 mb-1">Order Date</div>
-                <div className="font-bold">{item.orderDate}</div>
-              </div>
-              <div>
-                <div className="text-sm text-gray-600 mb-1">No of Unique Sku</div>
-                <div className="font-bold">{item.uniqueSkus}</div>
-              </div>
-            </div>
 
-            <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
-              <Button
-                variant="outline"
-                className="flex-1 border-[#A08B5C] text-[#A08B5C] hover:bg-[#A08B5C] hover:text-white bg-transparent"
-                onClick={() => router.push(`/lbcl/stock-receiving/${item.deliveryPlanNo}/activity-log`)}
-              >
-                <span className="mr-2">📋</span>
-                Activity Log
-              </Button>
-              <Button
-                variant="outline"
-                className="flex-1 border-[#A08B5C] text-[#A08B5C] hover:bg-[#A08B5C] hover:text-white bg-transparent"
-                onClick={() => router.push(`/lbcl/stock-receiving/${item.deliveryPlanNo}`)}
-              >
-                <span className="mr-2">📄</span>
-                View Details
-              </Button>
+              {/* Order Date */}
+              <div className="flex-shrink-0">
+                <div className="text-xs text-gray-500 mb-1">Order Date</div>
+                <div className="font-bold text-gray-900 text-sm">{delivery.orderDate}</div>
+              </div>
+
+              {/* No of Unique SKU */}
+              <div className="flex-shrink-0">
+                <div className="text-xs text-gray-500 mb-1">No of Unique Sku</div>
+                <div className="font-bold text-gray-900 text-sm">{delivery.uniqueSkus}</div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="ml-auto flex items-center gap-2">
+                <button
+                  onClick={() => router.push(`/lbcl/stock-receiving-history/${delivery.id}/activity-log`)}
+                  className="flex flex-col items-center justify-center px-3 py-2 text-gray-600 hover:text-[#A08B5C] transition-colors"
+                >
+                  <ClipboardList className="w-6 h-6 mb-1" />
+                  <span className="text-xs font-medium">Activity Log</span>
+                </button>
+
+                <button
+                  onClick={() => router.push(`/lbcl/stock-receiving-history/${delivery.id}`)}
+                  className="flex flex-col items-center justify-center px-3 py-2 text-gray-600 hover:text-[#A08B5C] transition-colors"
+                >
+                  <FileText className="w-6 h-6 mb-1" />
+                  <span className="text-xs font-medium">View Details</span>
+                </button>
+
+                <ChevronRight className="w-6 h-6 text-gray-400 ml-2" />
+              </div>
             </div>
           </div>
-        ))}
-      </div>
+        ))
+      )}
     </div>
   )
 }

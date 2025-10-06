@@ -3,7 +3,6 @@
 import type React from "react";
 
 import { Bell, User } from "lucide-react";
-import { NavigationMenu } from "@/app/lbcl/components/navigation-menu";
 
 interface PageHeaderProps {
   title: string;
@@ -21,13 +20,8 @@ export function PageHeader({
   return (
     <header className="bg-white border-b border-gray-200 px-4 py-4 sticky top-0 z-50 shadow-sm">
       <div className="flex items-center justify-between gap-4 max-w-full">
-        {/* Left: Hamburger Menu */}
-        <div className="flex-shrink-0">
-          <NavigationMenu />
-        </div>
-
         {/* Center: Page Title */}
-        <h1 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-900 text-center flex-1 px-2 truncate">
+        <h1 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-900 flex-1 px-2 truncate">
           {title}
         </h1>
 

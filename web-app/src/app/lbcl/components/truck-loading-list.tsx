@@ -109,7 +109,7 @@ export function TruckLoadingList() {
         {filteredRequests.map((request) => (
           <div
             key={request.id}
-            onClick={() => router.push(`/lbcl/truck-loading/${request.id}`)}
+            onClick={() => router.push(`/lbcl/truck-loading/activity-log`)}
             className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
           >
             {/* Request Header */}

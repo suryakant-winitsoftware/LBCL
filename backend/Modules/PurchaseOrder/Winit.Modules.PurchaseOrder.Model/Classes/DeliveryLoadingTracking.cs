@@ -17,5 +17,14 @@ public class DeliveryLoadingTracking : BaseModel, IDeliveryLoadingTracking
     public string? LogisticsSignature { get; set; }
     public string? DriverSignature { get; set; }
     public string? Notes { get; set; }
+    public string? DeliveryNoteFilePath { get; set; }
+    public string? DeliveryNoteNumber { get; set; }
     public bool IsActive { get; set; }
+
+    // Purchase Order fields (for joined queries)
+    public string? order_number { get; set; }
+    public DateTime? order_date { get; set; }
+    public string? warehouse_uid { get; set; }
+    public string? status { get; set; }
+    public string? OrgName { get; set; }
 }

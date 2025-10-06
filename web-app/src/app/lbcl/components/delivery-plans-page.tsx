@@ -38,38 +38,84 @@ export function DeliveryPlansPage() {
       setLoading(true)
       setError("")
 
-      // Map tabs to purchase order statuses
-      const statusMap: Record<string, string> = {
-        pending: "PENDING",
-        approved: "CONFIRMED",
-        shipped: "SHIPPED"
+      console.log("🔍 Fetching delivery plans for tab:", activeTab)
+
+      let response: any;
+
+      // For "approved" tab, we need to fetch both CONFIRMED and SHIPPED orders
+      if (activeTab === "approved") {
+        const filters = {
+          startDate: fromDate,
+          endDate: toDate,
+          page: 1,
+          pageSize: 100
+        }
+
+        // Fetch both CONFIRMED and SHIPPED orders
+        const [confirmedResponse, shippedResponse] = await Promise.all([
+          purchaseOrderService.getPurchaseOrdersByStatus("CONFIRMED", { ...filters, status: "CONFIRMED" }),
+          purchaseOrderService.getPurchaseOrdersByStatus("SHIPPED", { ...filters, status: "SHIPPED" })
+        ])
+
+        // Combine the results and remove duplicates based on UID
+        const confirmedHeaders = confirmedResponse.success ? (confirmedResponse.headers || []) : []
+        const shippedHeaders = shippedResponse.success ? (shippedResponse.headers || []) : []
+
+        const allHeaders = [...confirmedHeaders, ...shippedHeaders]
+
+        // Remove duplicates by UID
+        const uniqueHeaders = allHeaders.filter((plan, index, self) => {
+          const uid = plan.UID || plan.uid
+          return index === self.findIndex(p => (p.UID || p.uid) === uid)
+        })
+
+        response = {
+          success: true,
+          headers: uniqueHeaders
+        }
+      } else {
+        // For other tabs, use single status
+        const statusMap: Record<string, string> = {
+          pending: "PENDING",
+          received: "RECEIVED"
+        }
+
+        const status = statusMap[activeTab] || "PENDING"
+
+        const filters = {
+          status: status,
+          startDate: fromDate,
+          endDate: toDate,
+          page: 1,
+          pageSize: 100
+        }
+
+        response = await purchaseOrderService.getPurchaseOrdersByStatus(status, filters)
       }
-
-      const status = statusMap[activeTab] || "PENDING"
-
-      console.log("🔍 Fetching delivery plans for tab:", activeTab, "with status:", status)
-
-      const filters = {
-        status: status,
-        startDate: fromDate,
-        endDate: toDate,
-        page: 1,
-        pageSize: 100
-      }
-
-      const response = await purchaseOrderService.getPurchaseOrdersByStatus(status, filters)
 
       console.log("📦 API Response:", response)
       console.log("📊 Filtered plans:", response.headers?.length || 0)
 
       if (response.success) {
-        // Additional client-side filtering to ensure correct status and date range
+        // Additional client-side filtering for date range and status validation
         const filteredPlans = (response.headers || []).filter((plan: any) => {
           const planStatus = plan.Status || plan.status || ''
-          console.log(`Plan ${plan.OrderNumber}: Status = "${planStatus}", Expected = "${status}"`)
+          console.log(`Plan ${plan.OrderNumber}: Status = "${planStatus}", Tab = "${activeTab}"`)
 
-          // Check status match
-          if (planStatus !== status) return false
+          // Validate status based on tab
+          let statusValid = false
+          if (activeTab === "pending") {
+            statusValid = planStatus === "PENDING"
+          } else if (activeTab === "approved") {
+            statusValid = planStatus === "CONFIRMED" || planStatus === "SHIPPED"
+          } else if (activeTab === "received") {
+            statusValid = planStatus === "RECEIVED"
+          }
+
+          if (!statusValid) {
+            console.log(`❌ Filtered out: Status "${planStatus}" not valid for tab "${activeTab}"`)
+            return false
+          }
 
           // Check date range based on selected filter type
           const dateToCheck = dateFilterType === "order"
@@ -254,9 +300,9 @@ export function DeliveryPlansPage() {
           APPROVED PENDING SHIPMENT
         </button>
         <button
-          onClick={() => setActiveTab("shipped")}
+          onClick={() => setActiveTab("received")}
           className={`flex-1 min-w-[120px] px-4 py-3 sm:py-4 text-xs sm:text-sm font-medium whitespace-nowrap ${
-            activeTab === "shipped" ? "text-[#A08B5C] border-b-2 border-[#A08B5C]" : "text-gray-600"
+            activeTab === "received" ? "text-[#A08B5C] border-b-2 border-[#A08B5C]" : "text-gray-600"
           }`}
         >
           SHIPPED

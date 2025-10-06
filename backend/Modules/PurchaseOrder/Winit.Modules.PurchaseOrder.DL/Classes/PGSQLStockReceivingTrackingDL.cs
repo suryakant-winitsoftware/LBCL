@@ -37,6 +37,7 @@ public class PGSQLStockReceivingTrackingDL : Winit.Modules.Base.DL.DBManager.Pos
                     ""PhysicalCountEndTime"",
                     ""ReceiverSignature"",
                     ""Notes"",
+                    ""Status"",
                     ""IsActive"",
                     ""CreatedDate"",
                     ""CreatedBy""::text as ""CreatedBy"",
@@ -86,6 +87,7 @@ public class PGSQLStockReceivingTrackingDL : Winit.Modules.Base.DL.DBManager.Pos
                     srt.""PhysicalCountEndTime"",
                     srt.""ReceiverSignature"",
                     srt.""Notes"",
+                    srt.""Status"",
                     srt.""IsActive"",
                     srt.""CreatedDate"",
                     srt.""CreatedBy""::text as ""CreatedBy"",
@@ -134,6 +136,7 @@ public class PGSQLStockReceivingTrackingDL : Winit.Modules.Base.DL.DBManager.Pos
                     ""PhysicalCountEndTime"",
                     ""ReceiverSignature"",
                     ""Notes"",
+                    ""Status"",
                     ""IsActive"",
                     ""CreatedDate"",
                     ""CreatedBy""
@@ -156,6 +159,7 @@ public class PGSQLStockReceivingTrackingDL : Winit.Modules.Base.DL.DBManager.Pos
                     @PhysicalCountEndTime,
                     @ReceiverSignature,
                     @Notes,
+                    @Status,
                     @IsActive,
                     @CreatedDate,
                     @CreatedBy
@@ -181,6 +185,7 @@ public class PGSQLStockReceivingTrackingDL : Winit.Modules.Base.DL.DBManager.Pos
                 PhysicalCountEndTime = stockReceivingTracking.PhysicalCountEndTime,
                 ReceiverSignature = stockReceivingTracking.ReceiverSignature,
                 Notes = stockReceivingTracking.Notes,
+                Status = string.IsNullOrWhiteSpace(stockReceivingTracking.Status) ? "PENDING" : stockReceivingTracking.Status,
                 IsActive = stockReceivingTracking.IsActive,
                 CreatedDate = DateTime.UtcNow,
                 CreatedBy = stockReceivingTracking.CreatedBy
@@ -217,6 +222,7 @@ public class PGSQLStockReceivingTrackingDL : Winit.Modules.Base.DL.DBManager.Pos
                     ""PhysicalCountEndTime"" = @PhysicalCountEndTime,
                     ""ReceiverSignature"" = @ReceiverSignature,
                     ""Notes"" = @Notes,
+                    ""Status"" = @Status,
                     ""ModifiedDate"" = @ModifiedDate,
                     ""ModifiedBy"" = @ModifiedBy
                 WHERE ""UID"" = @UID";
@@ -238,6 +244,7 @@ public class PGSQLStockReceivingTrackingDL : Winit.Modules.Base.DL.DBManager.Pos
                 PhysicalCountEndTime = stockReceivingTracking.PhysicalCountEndTime,
                 ReceiverSignature = stockReceivingTracking.ReceiverSignature,
                 Notes = stockReceivingTracking.Notes,
+                Status = string.IsNullOrWhiteSpace(stockReceivingTracking.Status) ? "PENDING" : stockReceivingTracking.Status,
                 ModifiedDate = DateTime.UtcNow,
                 ModifiedBy = stockReceivingTracking.ModifiedBy
             };

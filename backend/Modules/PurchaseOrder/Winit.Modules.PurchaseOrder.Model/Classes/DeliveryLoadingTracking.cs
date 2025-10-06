@@ -19,6 +19,7 @@ public class DeliveryLoadingTracking : BaseModel, IDeliveryLoadingTracking
     public string? Notes { get; set; }
     public string? DeliveryNoteFilePath { get; set; }
     public string? DeliveryNoteNumber { get; set; }
+    public string? Status { get; set; }
     public bool IsActive { get; set; }
 
     // Purchase Order fields (for joined queries)

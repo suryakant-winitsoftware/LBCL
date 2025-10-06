@@ -17,6 +17,7 @@ export interface StockReceivingTracking {
   PhysicalCountEndTime?: string | null;
   ReceiverSignature?: string | null;
   Notes?: string | null;
+  Status?: string | null;
   IsActive?: boolean;
   CreatedBy?: string;
   CreatedDate?: string;

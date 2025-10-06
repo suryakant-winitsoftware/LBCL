@@ -16,6 +16,7 @@ export interface DeliveryLoadingTracking {
   Notes?: string | null;
   DeliveryNoteFilePath?: string | null;
   DeliveryNoteNumber?: string | null;
+  Status?: string | null;
   IsActive?: boolean;
   CreatedBy?: string;
   CreatedDate?: string;

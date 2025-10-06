@@ -494,6 +494,7 @@ export default function StockReceivingActivityLog({
         PhysicalCountEndTime: null,
         ReceiverSignature: null,
         Notes: null,
+        Status: "COMPLETED",
         IsActive: true
       };
 

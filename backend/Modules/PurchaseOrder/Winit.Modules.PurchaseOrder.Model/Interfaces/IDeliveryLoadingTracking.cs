@@ -18,5 +18,6 @@ public interface IDeliveryLoadingTracking : IBaseModel
     public string? Notes { get; set; }
     public string? DeliveryNoteFilePath { get; set; }
     public string? DeliveryNoteNumber { get; set; }
+    public string? Status { get; set; }
     public bool IsActive { get; set; }
 }

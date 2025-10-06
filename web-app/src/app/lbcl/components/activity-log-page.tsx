@@ -145,6 +145,7 @@ export function ActivityLogPage({ deliveryPlanId, readOnly = false }: ActivityLo
         Notes: signatureNotes || notes || existingData?.Notes || existingData?.notes || null,
         DeliveryNoteNumber: autoDeliveryNoteNumber,
         DeliveryNoteFilePath: existingData?.DeliveryNoteFilePath || existingData?.deliveryNoteFilePath || null,
+        Status: "SHIPPED",
         IsActive: true
       };
 

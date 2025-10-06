@@ -36,6 +36,7 @@ public class PGSQLDeliveryLoadingTrackingDL : Winit.Modules.Base.DL.DBManager.Po
                     dlt.""Notes"",
                     dlt.""DeliveryNoteFilePath"",
                     dlt.""DeliveryNoteNumber"",
+                    dlt.""Status"",
                     dlt.""IsActive"",
                     dlt.""CreatedDate"",
                     dlt.""CreatedBy""::text as ""CreatedBy"",
@@ -49,7 +50,7 @@ public class PGSQLDeliveryLoadingTrackingDL : Winit.Modules.Base.DL.DBManager.Po
                 FROM public.""DeliveryLoadingTracking"" dlt
                 INNER JOIN public.purchase_order_header poh ON dlt.""PurchaseOrderUID""::text = poh.uid
                 LEFT JOIN public.org org ON poh.org_uid = org.uid
-                WHERE poh.status = @Status
+                WHERE dlt.""Status"" = @Status
                 AND dlt.""IsActive"" = true
                 ORDER BY dlt.""CreatedDate"" DESC";
 
@@ -87,6 +88,7 @@ public class PGSQLDeliveryLoadingTrackingDL : Winit.Modules.Base.DL.DBManager.Po
                     dlt.""Notes"",
                     dlt.""DeliveryNoteFilePath"",
                     dlt.""DeliveryNoteNumber"",
+                    dlt.""Status"",
                     dlt.""IsActive"",
                     dlt.""CreatedDate"",
                     dlt.""CreatedBy""::text as ""CreatedBy"",
@@ -144,6 +146,7 @@ public class PGSQLDeliveryLoadingTrackingDL : Winit.Modules.Base.DL.DBManager.Po
                     ""Notes"",
                     ""DeliveryNoteFilePath"",
                     ""DeliveryNoteNumber"",
+                    ""Status"",
                     ""IsActive"",
                     ""CreatedDate"",
                     ""CreatedBy""
@@ -165,6 +168,7 @@ public class PGSQLDeliveryLoadingTrackingDL : Winit.Modules.Base.DL.DBManager.Po
                     @Notes,
                     @DeliveryNoteFilePath,
                     @DeliveryNoteNumber,
+                    @Status,
                     @IsActive,
                     @CreatedDate,
                     @CreatedBy
@@ -189,6 +193,7 @@ public class PGSQLDeliveryLoadingTrackingDL : Winit.Modules.Base.DL.DBManager.Po
                 Notes = deliveryLoadingTracking.Notes,
                 DeliveryNoteFilePath = deliveryLoadingTracking.DeliveryNoteFilePath,
                 DeliveryNoteNumber = deliveryLoadingTracking.DeliveryNoteNumber,
+                Status = string.IsNullOrWhiteSpace(deliveryLoadingTracking.Status) ? "PENDING" : deliveryLoadingTracking.Status,
                 IsActive = deliveryLoadingTracking.IsActive,
                 CreatedDate = DateTime.UtcNow,
                 CreatedBy = string.IsNullOrWhiteSpace(deliveryLoadingTracking.CreatedBy) ? null : deliveryLoadingTracking.CreatedBy
@@ -224,6 +229,7 @@ public class PGSQLDeliveryLoadingTrackingDL : Winit.Modules.Base.DL.DBManager.Po
                     ""Notes"" = @Notes,
                     ""DeliveryNoteFilePath"" = @DeliveryNoteFilePath,
                     ""DeliveryNoteNumber"" = @DeliveryNoteNumber,
+                    ""Status"" = @Status,
                     ""ModifiedDate"" = @ModifiedDate,
                     ""ModifiedBy"" = @ModifiedBy
                 WHERE ""UID"" = @UID";
@@ -244,6 +250,7 @@ public class PGSQLDeliveryLoadingTrackingDL : Winit.Modules.Base.DL.DBManager.Po
                 Notes = deliveryLoadingTracking.Notes,
                 DeliveryNoteFilePath = deliveryLoadingTracking.DeliveryNoteFilePath,
                 DeliveryNoteNumber = deliveryLoadingTracking.DeliveryNoteNumber,
+                Status = string.IsNullOrWhiteSpace(deliveryLoadingTracking.Status) ? "PENDING" : deliveryLoadingTracking.Status,
                 ModifiedDate = DateTime.UtcNow,
                 ModifiedBy = string.IsNullOrWhiteSpace(deliveryLoadingTracking.ModifiedBy) ? null : deliveryLoadingTracking.ModifiedBy
             };

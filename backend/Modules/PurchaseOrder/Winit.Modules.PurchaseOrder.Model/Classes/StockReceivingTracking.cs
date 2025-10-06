@@ -20,6 +20,7 @@ public class StockReceivingTracking : BaseModel, IStockReceivingTracking
     public DateTime? PhysicalCountEndTime { get; set; }
     public string? ReceiverSignature { get; set; }
     public string? Notes { get; set; }
+    public string? Status { get; set; }
     public bool IsActive { get; set; }
 
     // Additional fields from JOIN queries

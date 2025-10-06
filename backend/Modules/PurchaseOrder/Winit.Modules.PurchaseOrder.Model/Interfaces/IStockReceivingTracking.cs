@@ -19,5 +19,6 @@ public interface IStockReceivingTracking : IBaseModel
     public DateTime? PhysicalCountEndTime { get; set; }
     public string? ReceiverSignature { get; set; }
     public string? Notes { get; set; }
+    public string? Status { get; set; }
     public bool IsActive { get; set; }
 }

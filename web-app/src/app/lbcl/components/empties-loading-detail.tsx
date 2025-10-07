@@ -67,9 +67,9 @@ export function EmptiesLoadingDetail() {
       stockInHand: 50,
       previousDepositQty: 80,
       previousEmptyTrust: 10,
-      requirementForCurrentShipment: 30,
-      emptiesGoodReturn: 30,
-      emptiesDefectReturn: 10
+      requirementForCurrentShipment: 0,
+      emptiesGoodReturn: 0,
+      emptiesDefectReturn: 0
     },
     {
       id: "2",
@@ -79,9 +79,9 @@ export function EmptiesLoadingDetail() {
       stockInHand: 20,
       previousDepositQty: 20,
       previousEmptyTrust: 20,
-      requirementForCurrentShipment: 20,
-      emptiesGoodReturn: 10,
-      emptiesDefectReturn: 10
+      requirementForCurrentShipment: 0,
+      emptiesGoodReturn: 0,
+      emptiesDefectReturn: 0
     },
     {
       id: "3",
@@ -91,9 +91,9 @@ export function EmptiesLoadingDetail() {
       stockInHand: 30,
       previousDepositQty: 30,
       previousEmptyTrust: 30,
-      requirementForCurrentShipment: 30,
-      emptiesGoodReturn: 20,
-      emptiesDefectReturn: 20
+      requirementForCurrentShipment: 0,
+      emptiesGoodReturn: 0,
+      emptiesDefectReturn: 0
     },
     {
       id: "4",
@@ -103,9 +103,9 @@ export function EmptiesLoadingDetail() {
       stockInHand: 10,
       previousDepositQty: 10,
       previousEmptyTrust: 10,
-      requirementForCurrentShipment: 10,
-      emptiesGoodReturn: 5,
-      emptiesDefectReturn: 5
+      requirementForCurrentShipment: 0,
+      emptiesGoodReturn: 0,
+      emptiesDefectReturn: 0
     }
   ];
 

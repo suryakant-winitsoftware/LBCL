@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 
 interface DamageItem {
@@ -55,30 +55,48 @@ export function DamageCollectionPage() {
   const [items, setItems] = useState<DamageItem[]>([])
   const [showItemSelector, setShowItemSelector] = useState(false)
   const [showSuccessModal, setShowSuccessModal] = useState(false)
-  const [selectedItemCode, setSelectedItemCode] = useState("")
+  const [selectedItemCodes, setSelectedItemCodes] = useState<string[]>([])
   const [brandSearch, setBrandSearch] = useState("")
   const [itemSearch, setItemSearch] = useState("")
 
-  const handleAddItem = () => {
-    if (!selectedItemCode) return
+  const handleToggleItem = (code: string) => {
+    setSelectedItemCodes(prev =>
+      prev.includes(code)
+        ? prev.filter(c => c !== code)
+        : [...prev, code]
+    )
+  }
 
-    const selectedItem = availableItems.find((item) => item.code === selectedItemCode)
-    if (!selectedItem) return
-
-    const newItem: DamageItem = {
-      id: Date.now().toString(),
-      code: selectedItem.code,
-      description: selectedItem.description,
-      inventory: selectedItem.inventory,
-      type: "Unsellable",
-      reason: "Damage Supply Chain",
-      source: "Warehouse",
-      qty: 0,
+  const handleSelectAll = () => {
+    if (selectedItemCodes.length === availableItems.length) {
+      setSelectedItemCodes([])
+    } else {
+      setSelectedItemCodes(availableItems.map(item => item.code))
     }
+  }
 
-    setItems([...items, newItem])
+  const handleAddItems = () => {
+    if (selectedItemCodes.length === 0) return
+
+    const newItems: DamageItem[] = selectedItemCodes.map((code, index) => {
+      const selectedItem = availableItems.find((item) => item.code === code)
+      if (!selectedItem) return null
+
+      return {
+        id: (Date.now() + index).toString(),
+        code: selectedItem.code,
+        description: selectedItem.description,
+        inventory: selectedItem.inventory,
+        type: "Unsellable",
+        reason: "Damage Supply Chain",
+        source: "Warehouse",
+        qty: 0,
+      }
+    }).filter((item): item is DamageItem => item !== null)
+
+    setItems([...items, ...newItems])
     setShowItemSelector(false)
-    setSelectedItemCode("")
+    setSelectedItemCodes([])
   }
 
   const handleFinalize = () => {
@@ -246,27 +264,48 @@ export function DamageCollectionPage() {
       <Dialog open={showItemSelector} onOpenChange={setShowItemSelector}>
         <DialogContent className="max-w-2xl max-h-[80vh] p-0">
           <DialogHeader className="px-6 py-4 border-b border-gray-200">
-            <div className="flex items-center justify-between">
-              <DialogTitle className="text-xl font-bold">Select Item</DialogTitle>
-              <button onClick={() => setShowItemSelector(false)} className="p-1 hover:bg-gray-100 rounded">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+            <DialogTitle className="text-xl font-bold">Select Item</DialogTitle>
           </DialogHeader>
 
           <div className="overflow-y-auto max-h-[60vh]">
             <div className="bg-[#FFF8E7] px-6 py-3 border-b border-gray-200">
-              <h3 className="font-semibold text-gray-700">Item Code/Description</h3>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-semibold text-gray-700">Item Code/Description</h3>
+                {selectedItemCodes.length > 0 && (
+                  <span className="text-sm text-[#A08B5C] font-medium">
+                    {selectedItemCodes.length} selected
+                  </span>
+                )}
+              </div>
+              <div
+                className="flex items-center gap-3 cursor-pointer hover:opacity-80"
+                onClick={handleSelectAll}
+              >
+                <Checkbox
+                  checked={selectedItemCodes.length === availableItems.length}
+                  onCheckedChange={handleSelectAll}
+                  id="select-all"
+                  className="border-[#A08B5C] data-[state=checked]:bg-[#A08B5C] data-[state=checked]:border-[#A08B5C]"
+                />
+                <Label htmlFor="select-all" className="cursor-pointer font-semibold text-gray-700">
+                  Select All
+                </Label>
+              </div>
             </div>
 
-            <RadioGroup value={selectedItemCode} onValueChange={setSelectedItemCode} className="p-0">
+            <div className="p-0">
               {availableItems.map((item) => (
                 <div
                   key={item.code}
                   className="flex items-center gap-4 px-6 py-4 border-b border-gray-200 hover:bg-gray-50 cursor-pointer"
-                  onClick={() => setSelectedItemCode(item.code)}
+                  onClick={() => handleToggleItem(item.code)}
                 >
-                  <RadioGroupItem value={item.code} id={item.code} className="border-[#A08B5C]" />
+                  <Checkbox
+                    checked={selectedItemCodes.includes(item.code)}
+                    onCheckedChange={() => handleToggleItem(item.code)}
+                    id={item.code}
+                    className="border-[#A08B5C] data-[state=checked]:bg-[#A08B5C] data-[state=checked]:border-[#A08B5C]"
+                  />
                   <Label htmlFor={item.code} className="flex-1 cursor-pointer">
                     <div className="font-semibold text-gray-900">{item.description}</div>
                     <div className="text-sm text-gray-500 mt-1">
@@ -275,16 +314,16 @@ export function DamageCollectionPage() {
                   </Label>
                 </div>
               ))}
-            </RadioGroup>
+            </div>
           </div>
 
           <div className="p-4 border-t border-gray-200">
             <Button
-              onClick={handleAddItem}
-              disabled={!selectedItemCode}
+              onClick={handleAddItems}
+              disabled={selectedItemCodes.length === 0}
               className="w-full bg-[#A08B5C] hover:bg-[#8A7549] text-white h-12 text-base font-semibold"
             >
-              DONE
+              ADD {selectedItemCodes.length > 0 && `(${selectedItemCodes.length})`}
             </Button>
           </div>
         </DialogContent>

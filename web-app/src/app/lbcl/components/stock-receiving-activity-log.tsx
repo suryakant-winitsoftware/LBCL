@@ -389,6 +389,12 @@ export default function StockReceivingActivityLog({
         setOrderLines(lines);
 
         console.log("🏢 WH Stock Request TargetOrgUID:", header.TargetOrgUID);
+        console.log("📅 Date fields in header:", {
+          RequiredByDate: header.RequiredByDate,
+          RequestedTime: header.RequestedTime,
+          CreatedTime: header.CreatedTime,
+          created_time: header.created_time
+        });
       } else {
         setError("Failed to load WH stock request");
       }
@@ -400,6 +406,12 @@ export default function StockReceivingActivityLog({
           "🚚 DL Keys:",
           dlResponse ? Object.keys(dlResponse) : "null"
         );
+
+        // Log important fields for debugging
+        console.log("🚗 VehicleUID:", dlResponse.VehicleUID);
+        console.log("👤 DriverEmployeeUID:", dlResponse.DriverEmployeeUID);
+        console.log("📅 DepartureTime:", dlResponse.DepartureTime);
+        console.log("🏢 OrgName:", dlResponse.OrgName);
 
         // Log delivery note information if available
         const deliveryNotePath = dlResponse.DeliveryNoteFilePath;
@@ -836,10 +848,13 @@ export default function StockReceivingActivityLog({
             <div className="text-gray-600 mb-1">Date</div>
             <div className="font-bold">
               {formatDate(
-                deliveryLoading?.order_date ||
-                  purchaseOrder.order_date ||
-                  purchaseOrder.OrderDate ||
-                  purchaseOrder.orderDate ||
+                deliveryLoading?.DepartureTime ||
+                  deliveryLoading?.departureTime ||
+                  deliveryLoading?.order_date ||
+                  deliveryLoading?.created_time ||
+                  purchaseOrder.RequestedTime ||
+                  purchaseOrder.CreatedTime ||
+                  purchaseOrder.created_time ||
                   ""
               )}
             </div>

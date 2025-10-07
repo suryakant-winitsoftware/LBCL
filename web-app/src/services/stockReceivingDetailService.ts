@@ -2,8 +2,8 @@ import { ApiResponse } from "@/types/common.types";
 
 export interface StockReceivingDetail {
   UID?: string;
-  PurchaseOrderUID: string;
-  PurchaseOrderLineUID: string;
+  WHStockRequestUID: string;
+  WHStockRequestLineUID: string;
   SKUCode?: string;
   SKUName?: string;
   OrderedQty: number;
@@ -64,13 +64,13 @@ class StockReceivingDetailService {
   }
 
   /**
-   * Get stock receiving details by purchase order UID
+   * Get stock receiving details by WH Stock Request UID
    */
-  async getByPurchaseOrderUID(
-    purchaseOrderUID: string
+  async getByWHStockRequestUID(
+    whStockRequestUID: string
   ): Promise<StockReceivingDetail[]> {
     const response = await this.apiCall<any>(
-      `/StockReceivingDetail/GetByPurchaseOrderUID/${purchaseOrderUID}`,
+      `/StockReceivingDetail/GetByWHStockRequestUID/${whStockRequestUID}`,
       {
         method: "GET",
       }
@@ -83,6 +83,15 @@ class StockReceivingDetailService {
     }
 
     return response.data || [];
+  }
+
+  /**
+   * Get stock receiving details by purchase order UID (Deprecated - use getByWHStockRequestUID)
+   */
+  async getByPurchaseOrderUID(
+    purchaseOrderUID: string
+  ): Promise<StockReceivingDetail[]> {
+    return this.getByWHStockRequestUID(purchaseOrderUID);
   }
 
   /**

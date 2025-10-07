@@ -74,9 +74,8 @@ export function ActivityLogPage({ deliveryPlanId, readOnly = false }: ActivityLo
       // Load existing delivery loading data to preserve fields the current user cannot modify
       let existingData: any = null;
       try {
-        const existingResponse = await deliveryLoadingService.getDeliveryLoadingByPO(purchaseOrder.UID || purchaseOrder.uid);
-        if (existingResponse && existingResponse.data) {
-          existingData = existingResponse.data;
+        existingData = await deliveryLoadingService.getByWHStockRequestUID(purchaseOrder.UID || purchaseOrder.uid);
+        if (existingData) {
           console.log("📋 Existing delivery loading data:", existingData);
         }
       } catch (error) {

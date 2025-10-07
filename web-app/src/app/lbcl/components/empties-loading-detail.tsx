@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Clock, Check } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -29,6 +29,34 @@ export function EmptiesLoadingDetail() {
   const [agentSignature, setAgentSignature] = useState("");
   const [driverSignature, setDriverSignature] = useState("");
   const [notes, setNotes] = useState("");
+  const [productReturns, setProductReturns] = useState<Record<string, { good: number | ''; defect: number | '' }>>({});
+  const [productRequirements, setProductRequirements] = useState<Record<string, number | ''>>({});
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [currentDate, setCurrentDate] = useState("");
+
+  useEffect(() => {
+    // Set current date
+    const date = new Date();
+    const formatted = date.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    }).toUpperCase();
+    setCurrentDate(formatted);
+
+    // Timer interval
+    const timer = setInterval(() => {
+      setElapsedTime(prev => prev + 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')} Min`;
+  };
 
   const products: Product[] = [
     {
@@ -81,6 +109,134 @@ export function EmptiesLoadingDetail() {
     }
   ];
 
+  const getReturnValue = (productId: string, type: 'good' | 'defect', defaultValue: number) => {
+    return productReturns[productId]?.[type] ?? defaultValue;
+  };
+
+  const getRequirementValue = (productId: string, defaultValue: number) => {
+    return productRequirements[productId] ?? defaultValue;
+  };
+
+  const handleReturnChange = (productId: string, type: 'good' | 'defect', value: string, stockInHand: number, requirement: number | '') => {
+    // Allow empty string
+    if (value === '') {
+      setProductReturns(prev => ({
+        ...prev,
+        [productId]: {
+          ...prev[productId],
+          good: type === 'good' ? '' : (prev[productId]?.good ?? 0),
+          defect: type === 'defect' ? '' : (prev[productId]?.defect ?? 0)
+        }
+      }));
+      return;
+    }
+
+    const numValue = parseInt(value) || 0;
+
+    // Get the other return value (good or defect)
+    const currentReturns = productReturns[productId] || { good: 0, defect: 0 };
+    const otherValue = type === 'good' ? (typeof currentReturns.defect === 'number' ? currentReturns.defect : 0) : (typeof currentReturns.good === 'number' ? currentReturns.good : 0);
+
+    // The maximum allowed sum is the minimum of requirement and stockInHand
+    const reqValue = typeof requirement === 'number' ? requirement : 0;
+    const maxAllowedSum = Math.min(reqValue, stockInHand);
+
+    // Clamp the value to ensure sum doesn't exceed the max allowed
+    let clampedValue = Math.max(0, numValue);
+    if (clampedValue + otherValue > maxAllowedSum) {
+      clampedValue = Math.max(0, maxAllowedSum - otherValue);
+    }
+
+    setProductReturns(prev => ({
+      ...prev,
+      [productId]: {
+        ...prev[productId],
+        good: type === 'good' ? clampedValue : (prev[productId]?.good ?? 0),
+        defect: type === 'defect' ? clampedValue : (prev[productId]?.defect ?? 0)
+      }
+    }));
+  };
+
+  const handleRequirementChange = (productId: string, value: string, stockInHand: number) => {
+    // Allow empty string
+    if (value === '') {
+      setProductRequirements(prev => ({
+        ...prev,
+        [productId]: ''
+      }));
+      return;
+    }
+
+    const numValue = parseInt(value) || 0;
+    // Limit requirement to stockInHand
+    const clampedValue = Math.min(Math.max(0, numValue), stockInHand);
+
+    setProductRequirements(prev => ({
+      ...prev,
+      [productId]: clampedValue
+    }));
+
+    // Adjust returns if they exceed the new max allowed (min of requirement and stockInHand)
+    const currentReturns = productReturns[productId];
+    if (currentReturns) {
+      const good = typeof currentReturns.good === 'number' ? currentReturns.good : 0;
+      const defect = typeof currentReturns.defect === 'number' ? currentReturns.defect : 0;
+      const totalReturns = good + defect;
+      const maxAllowedSum = Math.min(clampedValue, stockInHand);
+
+      if (totalReturns > maxAllowedSum) {
+        setProductReturns(prev => ({
+          ...prev,
+          [productId]: {
+            good: Math.min(good, maxAllowedSum),
+            defect: 0
+          }
+        }));
+      }
+    }
+  };
+
+  const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (e.target.value === '0') {
+      e.target.value = '';
+    }
+  };
+
+  const handleBlur = (productId: string, type: 'good' | 'defect' | 'requirement') => {
+    if (type === 'requirement') {
+      const currentValue = productRequirements[productId];
+      if (currentValue === '') {
+        setProductRequirements(prev => ({
+          ...prev,
+          [productId]: 0
+        }));
+      }
+    } else {
+      const currentReturns = productReturns[productId];
+      if (currentReturns) {
+        if (type === 'good' && currentReturns.good === '') {
+          setProductReturns(prev => ({
+            ...prev,
+            [productId]: {
+              ...prev[productId],
+              good: 0,
+              defect: prev[productId]?.defect ?? 0
+            }
+          }));
+        } else if (type === 'defect' && currentReturns.defect === '') {
+          setProductReturns(prev => ({
+            ...prev,
+            [productId]: {
+              ...prev[productId],
+              good: prev[productId]?.good ?? 0,
+              defect: 0
+            }
+          }));
+        }
+      }
+    }
+  };
+
   const handleSubmit = () => {
     setShowSignatureDialog(true);
   };
@@ -103,7 +259,7 @@ export function EmptiesLoadingDetail() {
       <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center justify-end sticky top-0 z-30">
         <div className="flex items-center gap-2 bg-[#D4A853] text-white px-4 py-2 rounded-lg">
           <Clock className="w-5 h-5" />
-          <span className="font-mono font-bold text-lg">24:15 Min</span>
+          <span className="font-mono font-bold text-lg">{formatTime(elapsedTime)}</span>
         </div>
       </header>
 
@@ -124,7 +280,7 @@ export function EmptiesLoadingDetail() {
           </div>
           <div>
             <div className="text-xs text-gray-600 mb-1">Date</div>
-            <div className="font-bold text-sm">24 MAY 2025</div>
+            <div className="font-bold text-sm">{currentDate}</div>
           </div>
         </div>
         <button
@@ -177,10 +333,10 @@ export function EmptiesLoadingDetail() {
                 Stock in Hand<br />at Agency
               </th>
               <th className="text-center p-3 font-semibold text-sm">
-                Previous<br />Deposit Qty
+                Retail<br />Deposit Qty
               </th>
               <th className="text-center p-3 font-semibold text-sm">
-                Previous<br />Empty Trust
+                Retail<br />Empty Trust
               </th>
               <th className="text-center p-3 font-semibold text-sm">
                 Requirement<br />for Current<br />Shipment
@@ -217,19 +373,36 @@ export function EmptiesLoadingDetail() {
                   <div className="font-medium">{product.previousEmptyTrust}</div>
                 </td>
                 <td className="text-center p-3">
-                  <div className="font-medium">{product.requirementForCurrentShipment}</div>
-                </td>
-                <td className="text-center p-3">
                   <input
                     type="number"
-                    defaultValue={product.emptiesGoodReturn}
+                    min="0"
+                    max={product.stockInHand}
+                    value={getRequirementValue(product.id, product.requirementForCurrentShipment)}
+                    onChange={(e) => handleRequirementChange(product.id, e.target.value, product.stockInHand)}
+                    onFocus={handleFocus}
+                    onBlur={() => handleBlur(product.id, 'requirement')}
                     className="w-24 mx-auto text-center px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#A08B5C]"
                   />
                 </td>
                 <td className="text-center p-3">
                   <input
                     type="number"
-                    defaultValue={product.emptiesDefectReturn}
+                    min="0"
+                    value={getReturnValue(product.id, 'good', product.emptiesGoodReturn)}
+                    onChange={(e) => handleReturnChange(product.id, 'good', e.target.value, product.stockInHand, getRequirementValue(product.id, product.requirementForCurrentShipment))}
+                    onFocus={handleFocus}
+                    onBlur={() => handleBlur(product.id, 'good')}
+                    className="w-24 mx-auto text-center px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#A08B5C]"
+                  />
+                </td>
+                <td className="text-center p-3">
+                  <input
+                    type="number"
+                    min="0"
+                    value={getReturnValue(product.id, 'defect', product.emptiesDefectReturn)}
+                    onChange={(e) => handleReturnChange(product.id, 'defect', e.target.value, product.stockInHand, getRequirementValue(product.id, product.requirementForCurrentShipment))}
+                    onFocus={handleFocus}
+                    onBlur={() => handleBlur(product.id, 'defect')}
                     className="w-24 mx-auto text-center px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#A08B5C]"
                   />
                 </td>

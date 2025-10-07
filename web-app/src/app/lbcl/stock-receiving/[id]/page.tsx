@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { use } from "react"
 import PhysicalCountPage from "@/app/lbcl/components/physical-count-page"
-import { deliveryLoadingService } from "@/services/deliveryLoadingService"
+import { stockReceivingService } from "@/services/stockReceivingService"
 
 export default function StockReceivingDetailsPage({
   params,
@@ -17,12 +17,22 @@ export default function StockReceivingDetailsPage({
   useEffect(() => {
     const checkStatus = async () => {
       try {
-        const delivery = await deliveryLoadingService.getByPurchaseOrderUID(id)
-        if (delivery && delivery.status === "RECEIVED") {
+        // Check if stock receiving is completed
+        const stockReceiving = await stockReceivingService.getByWHStockRequestUID(id)
+        console.log("📦 Stock Receiving Status:", stockReceiving)
+
+        // Only set read-only if physical count is already completed
+        if (stockReceiving && stockReceiving.PhysicalCountEndTime) {
+          console.log("🔒 Physical count already completed - setting to read-only")
           setIsReadOnly(true)
+        } else {
+          console.log("✏️ Physical count not completed - allowing edit")
+          setIsReadOnly(false)
         }
       } catch (error) {
-        console.error("Error checking delivery status:", error)
+        console.error("Error checking stock receiving status:", error)
+        // If no stock receiving record exists, allow editing
+        setIsReadOnly(false)
       } finally {
         setLoading(false)
       }

@@ -5,8 +5,8 @@ namespace Winit.Modules.PurchaseOrder.Model.Classes;
 
 public class StockReceivingDetail : BaseModel, IStockReceivingDetail
 {
-    public string PurchaseOrderUID { get; set; } = string.Empty;
-    public string PurchaseOrderLineUID { get; set; } = string.Empty;
+    public string WHStockRequestUID { get; set; } = string.Empty;
+    public string WHStockRequestLineUID { get; set; } = string.Empty;
     public string? SKUCode { get; set; }
     public string? SKUName { get; set; }
     public decimal OrderedQty { get; set; }

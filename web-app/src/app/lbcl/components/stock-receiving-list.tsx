@@ -33,15 +33,41 @@ export default function StockReceivingList() {
       }
 
       // Fetch SHIPPED deliveries (ready to receive)
-      console.log("🔍 Fetching SHIPPED deliveries")
+      console.log("🔍 Fetching SHIPPED deliveries from DeliveryLoadingTracking")
       console.log("🏢 User CompanyUID:", user.companyUID)
 
       const shippedDeliveries = await deliveryLoadingService.getByStatus("SHIPPED")
 
       console.log("📦 SHIPPED Deliveries (before filter):", shippedDeliveries)
+      console.log("📦 Total deliveries with Status=SHIPPED:", shippedDeliveries.length)
+
+      // Log each delivery's status
+      shippedDeliveries.forEach((delivery, index) => {
+        console.log(`📦 Delivery ${index + 1}:`, {
+          WHStockRequestUID: delivery.WHStockRequestUID,
+          DeliveryLoadingStatus: delivery.Status,
+          WHStockRequestStatus: delivery.status,
+          RequestCode: delivery.request_code
+        })
+      })
+
+      // Filter out deliveries where wh_stock_request.status is still "Approved"
+      // We only want deliveries where BOTH DeliveryLoadingTracking AND wh_stock_request are SHIPPED
+      const actuallyShippedDeliveries = shippedDeliveries.filter(delivery => {
+        const whStatus = delivery.status // wh_stock_request.status
+        const isShipped = whStatus === "SHIPPED" || whStatus === "RECEIVED"
+
+        if (!isShipped) {
+          console.log(`🚫 Filtering out delivery ${delivery.request_code} - wh_stock_request.status is "${whStatus}" (not SHIPPED or RECEIVED)`)
+        }
+
+        return isShipped
+      })
+
+      console.log("📦 Deliveries after status filter:", actuallyShippedDeliveries.length, "out of", shippedDeliveries.length)
 
       // Filter deliveries to only show those matching the user's organization and activeTab
-      const filteredDeliveries = await filterDeliveriesByOrganization(shippedDeliveries, user.companyUID)
+      const filteredDeliveries = await filterDeliveriesByOrganization(actuallyShippedDeliveries, user.companyUID)
 
       console.log("✅ Filtered Delivery Data (after filter):", filteredDeliveries)
 
@@ -195,11 +221,11 @@ export default function StockReceivingList() {
                   </div>
                 </div>
 
-                {/* Request Date */}
+                {/* Received Date */}
                 <div className="flex-shrink-0">
-                  <div className="text-xs text-gray-500 mb-1">Request Date</div>
+                  <div className="text-xs text-gray-500 mb-1">Received Date</div>
                   <div className="font-bold text-gray-900 text-sm">
-                    {formatDate(delivery.created_time || delivery.CreatedTime || '')}
+                    {formatDate(delivery.DepartureTime || delivery.departureTime || delivery.ModifiedDate || delivery.created_time || '')}
                   </div>
                 </div>
 

@@ -24,21 +24,21 @@ public class StockReceivingDetailController : WINITBaseController
     }
 
     /// <summary>
-    /// Get Stock Receiving Details by Purchase Order UID
+    /// Get Stock Receiving Details by WH Stock Request UID
     /// </summary>
-    /// <param name="purchaseOrderUID">Purchase Order UID</param>
+    /// <param name="whStockRequestUID">WH Stock Request UID</param>
     /// <returns>List of Stock Receiving Detail data</returns>
-    [HttpGet("GetByPurchaseOrderUID/{purchaseOrderUID}")]
-    public async Task<ActionResult> GetByPurchaseOrderUID(string purchaseOrderUID)
+    [HttpGet("GetByWHStockRequestUID/{whStockRequestUID}")]
+    public async Task<ActionResult> GetByWHStockRequestUID(string whStockRequestUID)
     {
         try
         {
-            if (string.IsNullOrEmpty(purchaseOrderUID))
+            if (string.IsNullOrEmpty(whStockRequestUID))
             {
-                return BadRequest("Purchase Order UID is required");
+                return BadRequest("WH Stock Request UID is required");
             }
 
-            var result = await _stockReceivingDetailDL.GetByPurchaseOrderUIDAsync(purchaseOrderUID);
+            var result = await _stockReceivingDetailDL.GetByWHStockRequestUIDAsync(whStockRequestUID);
 
             return Ok(new { success = true, data = result });
         }
@@ -46,6 +46,15 @@ public class StockReceivingDetailController : WINITBaseController
         {
             return StatusCode(500, new { success = false, error = ex.Message });
         }
+    }
+
+    /// <summary>
+    /// Get Stock Receiving Details by Purchase Order UID (Deprecated - use GetByWHStockRequestUID)
+    /// </summary>
+    [HttpGet("GetByPurchaseOrderUID/{purchaseOrderUID}")]
+    public async Task<ActionResult> GetByPurchaseOrderUID(string purchaseOrderUID)
+    {
+        return await GetByWHStockRequestUID(purchaseOrderUID);
     }
 
     /// <summary>
@@ -71,9 +80,9 @@ public class StockReceivingDetailController : WINITBaseController
                 detail.CreatedBy = userId;
             }
 
-            // Delete existing details for this purchase order (soft delete)
-            var purchaseOrderUID = details[0].PurchaseOrderUID;
-            await _stockReceivingDetailDL.DeleteByPurchaseOrderUIDAsync(purchaseOrderUID);
+            // Delete existing details for this WH stock request (soft delete)
+            var whStockRequestUID = details[0].WHStockRequestUID;
+            await _stockReceivingDetailDL.DeleteByWHStockRequestUIDAsync(whStockRequestUID);
 
             // Save new details
             bool success = await _stockReceivingDetailDL.SaveStockReceivingDetailsAsync(details);

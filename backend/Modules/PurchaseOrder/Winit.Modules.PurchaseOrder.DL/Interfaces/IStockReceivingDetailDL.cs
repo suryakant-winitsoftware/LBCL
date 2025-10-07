@@ -4,7 +4,7 @@ namespace Winit.Modules.PurchaseOrder.DL.Interfaces;
 
 public interface IStockReceivingDetailDL
 {
-    Task<IEnumerable<IStockReceivingDetail>> GetByPurchaseOrderUIDAsync(string purchaseOrderUID);
+    Task<IEnumerable<IStockReceivingDetail>> GetByWHStockRequestUIDAsync(string whStockRequestUID);
     Task<bool> SaveStockReceivingDetailsAsync(IEnumerable<IStockReceivingDetail> details);
-    Task<bool> DeleteByPurchaseOrderUIDAsync(string purchaseOrderUID);
+    Task<bool> DeleteByWHStockRequestUIDAsync(string whStockRequestUID);
 }

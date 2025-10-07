@@ -15,15 +15,15 @@ public class PGSQLStockReceivingDetailDL : Winit.Modules.Base.DL.DBManager.Postg
     {
     }
 
-    public async Task<IEnumerable<IStockReceivingDetail>> GetByPurchaseOrderUIDAsync(string purchaseOrderUID)
+    public async Task<IEnumerable<IStockReceivingDetail>> GetByWHStockRequestUIDAsync(string whStockRequestUID)
     {
         try
         {
             string sql = @"
                 SELECT
                     ""UID""::text as ""UID"",
-                    ""PurchaseOrderUID"",
-                    ""PurchaseOrderLineUID""::text as ""PurchaseOrderLineUID"",
+                    ""WHStockRequestUID"",
+                    ""WHStockRequestLineUID""::text as ""WHStockRequestLineUID"",
                     ""SKUCode"",
                     ""SKUName"",
                     ""OrderedQty"",
@@ -37,13 +37,13 @@ public class PGSQLStockReceivingDetailDL : Winit.Modules.Base.DL.DBManager.Postg
                     ""ModifiedDate"",
                     ""ModifiedBy""::text as ""ModifiedBy""
                 FROM public.""StockReceivingDetail""
-                WHERE ""PurchaseOrderUID"" = @PurchaseOrderUID
+                WHERE ""WHStockRequestUID"" = @WHStockRequestUID
                 AND ""IsActive"" = true
                 ORDER BY ""CreatedDate"" ASC";
 
             var parameters = new
             {
-                PurchaseOrderUID = purchaseOrderUID
+                WHStockRequestUID = whStockRequestUID
             };
 
             using var connection = new NpgsqlConnection(_connectionString);
@@ -52,7 +52,7 @@ public class PGSQLStockReceivingDetailDL : Winit.Modules.Base.DL.DBManager.Postg
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error in GetByPurchaseOrderUIDAsync: {ex.Message}");
+            Console.WriteLine($"Error in GetByWHStockRequestUIDAsync: {ex.Message}");
             throw;
         }
     }
@@ -73,8 +73,8 @@ public class PGSQLStockReceivingDetailDL : Winit.Modules.Base.DL.DBManager.Postg
                         INSERT INTO public.""StockReceivingDetail""
                         (
                             ""UID"",
-                            ""PurchaseOrderUID"",
-                            ""PurchaseOrderLineUID"",
+                            ""WHStockRequestUID"",
+                            ""WHStockRequestLineUID"",
                             ""SKUCode"",
                             ""SKUName"",
                             ""OrderedQty"",
@@ -89,8 +89,8 @@ public class PGSQLStockReceivingDetailDL : Winit.Modules.Base.DL.DBManager.Postg
                         VALUES
                         (
                             @UID,
-                            @PurchaseOrderUID,
-                            @PurchaseOrderLineUID,
+                            @WHStockRequestUID,
+                            @WHStockRequestLineUID,
                             @SKUCode,
                             @SKUName,
                             @OrderedQty,
@@ -108,8 +108,8 @@ public class PGSQLStockReceivingDetailDL : Winit.Modules.Base.DL.DBManager.Postg
                     var parameters = new
                     {
                         UID = uid,
-                        PurchaseOrderUID = detail.PurchaseOrderUID,
-                        PurchaseOrderLineUID = detail.PurchaseOrderLineUID,
+                        WHStockRequestUID = detail.WHStockRequestUID,
+                        WHStockRequestLineUID = detail.WHStockRequestLineUID,
                         SKUCode = detail.SKUCode,
                         SKUName = detail.SKUName,
                         OrderedQty = detail.OrderedQty,
@@ -141,7 +141,7 @@ public class PGSQLStockReceivingDetailDL : Winit.Modules.Base.DL.DBManager.Postg
         }
     }
 
-    public async Task<bool> DeleteByPurchaseOrderUIDAsync(string purchaseOrderUID)
+    public async Task<bool> DeleteByWHStockRequestUIDAsync(string whStockRequestUID)
     {
         try
         {
@@ -149,11 +149,11 @@ public class PGSQLStockReceivingDetailDL : Winit.Modules.Base.DL.DBManager.Postg
                 UPDATE public.""StockReceivingDetail""
                 SET ""IsActive"" = false,
                     ""ModifiedDate"" = @ModifiedDate
-                WHERE ""PurchaseOrderUID"" = @PurchaseOrderUID";
+                WHERE ""WHStockRequestUID"" = @WHStockRequestUID";
 
             var parameters = new
             {
-                PurchaseOrderUID = purchaseOrderUID,
+                WHStockRequestUID = whStockRequestUID,
                 ModifiedDate = DateTime.UtcNow
             };
 
@@ -162,7 +162,7 @@ public class PGSQLStockReceivingDetailDL : Winit.Modules.Base.DL.DBManager.Postg
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error in DeleteByPurchaseOrderUIDAsync: {ex.Message}");
+            Console.WriteLine($"Error in DeleteByWHStockRequestUIDAsync: {ex.Message}");
             throw;
         }
     }

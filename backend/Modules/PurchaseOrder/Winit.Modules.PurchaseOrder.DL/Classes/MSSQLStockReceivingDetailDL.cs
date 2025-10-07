@@ -15,15 +15,15 @@ public class MSSQLStockReceivingDetailDL : Winit.Modules.Base.DL.DBManager.SqlSe
     {
     }
 
-    public async Task<IEnumerable<IStockReceivingDetail>> GetByPurchaseOrderUIDAsync(string purchaseOrderUID)
+    public async Task<IEnumerable<IStockReceivingDetail>> GetByWHStockRequestUIDAsync(string whStockRequestUID)
     {
         try
         {
             string sql = @"
                 SELECT
                     CAST([UID] AS VARCHAR(50)) as [UID],
-                    [PurchaseOrderUID],
-                    CAST([PurchaseOrderLineUID] AS VARCHAR(50)) as [PurchaseOrderLineUID],
+                    [WHStockRequestUID],
+                    CAST([WHStockRequestLineUID] AS VARCHAR(50)) as [WHStockRequestLineUID],
                     [SKUCode],
                     [SKUName],
                     [OrderedQty],
@@ -37,13 +37,13 @@ public class MSSQLStockReceivingDetailDL : Winit.Modules.Base.DL.DBManager.SqlSe
                     [ModifiedDate],
                     CAST([ModifiedBy] AS VARCHAR(250)) as [ModifiedBy]
                 FROM [dbo].[StockReceivingDetail]
-                WHERE [PurchaseOrderUID] = @PurchaseOrderUID
+                WHERE [WHStockRequestUID] = @WHStockRequestUID
                 AND [IsActive] = 1
                 ORDER BY [CreatedDate] ASC";
 
             var parameters = new
             {
-                PurchaseOrderUID = purchaseOrderUID
+                WHStockRequestUID = whStockRequestUID
             };
 
             using var connection = new SqlConnection(_connectionString);
@@ -52,7 +52,7 @@ public class MSSQLStockReceivingDetailDL : Winit.Modules.Base.DL.DBManager.SqlSe
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error in GetByPurchaseOrderUIDAsync: {ex.Message}");
+            Console.WriteLine($"Error in GetByWHStockRequestUIDAsync: {ex.Message}");
             throw;
         }
     }
@@ -73,8 +73,8 @@ public class MSSQLStockReceivingDetailDL : Winit.Modules.Base.DL.DBManager.SqlSe
                         INSERT INTO [dbo].[StockReceivingDetail]
                         (
                             [UID],
-                            [PurchaseOrderUID],
-                            [PurchaseOrderLineUID],
+                            [WHStockRequestUID],
+                            [WHStockRequestLineUID],
                             [SKUCode],
                             [SKUName],
                             [OrderedQty],
@@ -89,8 +89,8 @@ public class MSSQLStockReceivingDetailDL : Winit.Modules.Base.DL.DBManager.SqlSe
                         VALUES
                         (
                             @UID,
-                            @PurchaseOrderUID,
-                            @PurchaseOrderLineUID,
+                            @WHStockRequestUID,
+                            @WHStockRequestLineUID,
                             @SKUCode,
                             @SKUName,
                             @OrderedQty,
@@ -108,8 +108,8 @@ public class MSSQLStockReceivingDetailDL : Winit.Modules.Base.DL.DBManager.SqlSe
                     var parameters = new
                     {
                         UID = uid,
-                        PurchaseOrderUID = detail.PurchaseOrderUID,
-                        PurchaseOrderLineUID = detail.PurchaseOrderLineUID,
+                        WHStockRequestUID = detail.WHStockRequestUID,
+                        WHStockRequestLineUID = detail.WHStockRequestLineUID,
                         SKUCode = detail.SKUCode,
                         SKUName = detail.SKUName,
                         OrderedQty = detail.OrderedQty,
@@ -141,7 +141,7 @@ public class MSSQLStockReceivingDetailDL : Winit.Modules.Base.DL.DBManager.SqlSe
         }
     }
 
-    public async Task<bool> DeleteByPurchaseOrderUIDAsync(string purchaseOrderUID)
+    public async Task<bool> DeleteByWHStockRequestUIDAsync(string whStockRequestUID)
     {
         try
         {
@@ -149,11 +149,11 @@ public class MSSQLStockReceivingDetailDL : Winit.Modules.Base.DL.DBManager.SqlSe
                 UPDATE [dbo].[StockReceivingDetail]
                 SET [IsActive] = 0,
                     [ModifiedDate] = @ModifiedDate
-                WHERE [PurchaseOrderUID] = @PurchaseOrderUID";
+                WHERE [WHStockRequestUID] = @WHStockRequestUID";
 
             var parameters = new
             {
-                PurchaseOrderUID = purchaseOrderUID,
+                WHStockRequestUID = whStockRequestUID,
                 ModifiedDate = DateTime.UtcNow
             };
 
@@ -162,7 +162,7 @@ public class MSSQLStockReceivingDetailDL : Winit.Modules.Base.DL.DBManager.SqlSe
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error in DeleteByPurchaseOrderUIDAsync: {ex.Message}");
+            Console.WriteLine($"Error in DeleteByWHStockRequestUIDAsync: {ex.Message}");
             throw;
         }
     }

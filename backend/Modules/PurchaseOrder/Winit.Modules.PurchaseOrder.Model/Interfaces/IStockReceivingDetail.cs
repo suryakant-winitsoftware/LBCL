@@ -4,8 +4,8 @@ namespace Winit.Modules.PurchaseOrder.Model.Interfaces;
 
 public interface IStockReceivingDetail : IBaseModel
 {
-    public string PurchaseOrderUID { get; set; }
-    public string PurchaseOrderLineUID { get; set; }
+    public string WHStockRequestUID { get; set; }
+    public string WHStockRequestLineUID { get; set; }
     public string? SKUCode { get; set; }
     public string? SKUName { get; set; }
     public decimal OrderedQty { get; set; }

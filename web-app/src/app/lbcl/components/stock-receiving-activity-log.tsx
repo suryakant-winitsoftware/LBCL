@@ -400,6 +400,18 @@ export default function StockReceivingActivityLog({
           "🚚 DL Keys:",
           dlResponse ? Object.keys(dlResponse) : "null"
         );
+
+        // Log delivery note information if available
+        const deliveryNotePath = dlResponse.DeliveryNoteFilePath;
+        const deliveryNoteNumber = dlResponse.DeliveryNoteNumber;
+
+        if (deliveryNotePath) {
+          console.log("📄 Delivery Note File Path:", deliveryNotePath);
+          console.log("📄 Delivery Note Number:", deliveryNoteNumber);
+        } else {
+          console.log("⚠️ No delivery note file path found");
+        }
+
         setDeliveryLoading(dlResponse);
       } else {
         console.log(
@@ -482,6 +494,23 @@ export default function StockReceivingActivityLog({
         hour12: false
       }) + " HRS"
     );
+  };
+
+  // Handle delivery note view
+  const handleViewDeliveryNote = () => {
+    const deliveryNotePath = deliveryLoading?.DeliveryNoteFilePath;
+
+    if (deliveryNotePath) {
+      // Open saved PDF file
+      console.log("📄 Opening saved delivery note:", deliveryNotePath);
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+      const fileUrl = `${apiUrl.replace('/api', '')}/${deliveryNotePath}`;
+      window.open(fileUrl, "_blank");
+    } else {
+      // Generate PDF on-the-fly
+      console.log("📄 Generating delivery note PDF");
+      openDeliveryNotePDFInNewTab(purchaseOrder, orderLines);
+    }
   };
 
   // Determine next status based on current user role and fields filled
@@ -835,19 +864,27 @@ export default function StockReceivingActivityLog({
           {/* Step 1: View Delivery Note */}
           <div className="bg-white border border-gray-200 rounded-lg p-4">
             <button
-              onClick={() =>
-                openDeliveryNotePDFInNewTab(purchaseOrder, orderLines)
-              }
+              onClick={handleViewDeliveryNote}
               className="flex items-center justify-between w-full"
             >
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-[#F5E6D3] rounded-full flex items-center justify-center font-bold">
                   1
                 </div>
-                <span className="font-semibold">View Delivery Note</span>
+                <div className="flex flex-col items-start">
+                  <span className="font-semibold">View Delivery Note</span>
+                  {deliveryLoading?.DeliveryNoteNumber && (
+                    <span className="text-xs text-gray-500">
+                      {deliveryLoading.DeliveryNoteNumber}
+                    </span>
+                  )}
+                </div>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-red-600 text-sm">PDF</span>
+                {deliveryLoading?.DeliveryNoteFilePath && (
+                  <span className="text-green-600 text-xs">✓ Saved</span>
+                )}
                 <ChevronRight className="w-5 h-5" />
               </div>
             </button>

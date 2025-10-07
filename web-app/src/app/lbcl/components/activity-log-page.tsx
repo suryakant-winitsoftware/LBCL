@@ -22,7 +22,7 @@ import { roleService } from "@/services/admin/role.service";
 import { deliveryLoadingService } from "@/services/deliveryLoadingService";
 import { useAuth } from "@/providers/auth-provider";
 import { openPickListPDFInNewTab } from "@/utils/pickListPDF";
-import { openDeliveryNotePDFInNewTab } from "@/utils/deliveryNotePDF";
+import { openDeliveryNotePDFInNewTab, getDeliveryNotePDFBlob, getDeliveryNoteNumber } from "@/utils/deliveryNotePDF";
 
 interface ActivityLogPageProps {
   deliveryPlanId: string;
@@ -110,9 +110,53 @@ export function ActivityLogPage({ deliveryPlanId, readOnly = false }: ActivityLo
         : `${todayDate}T${departureHour.padStart(2, '0')}:${departureMin.padStart(2, '0')}:00`;
 
       // Auto-generate delivery note number based on order number and timestamp
-      const orderNumber = purchaseOrder.OrderNumber || purchaseOrder.orderNumber || 'PO';
-      const timestamp = now.getTime().toString().slice(-6); // Last 6 digits of timestamp
-      const autoDeliveryNoteNumber = existingData?.DeliveryNoteNumber || existingData?.deliveryNoteNumber || `DN-${orderNumber}-${timestamp}`;
+      const autoDeliveryNoteNumber = existingData?.DeliveryNoteNumber || existingData?.deliveryNoteNumber || getDeliveryNoteNumber(purchaseOrder);
+
+      // Generate and upload delivery note PDF
+      let deliveryNoteFilePath = existingData?.DeliveryNoteFilePath || existingData?.deliveryNoteFilePath || null;
+
+      if (!deliveryNoteFilePath) {
+        try {
+          console.log("📄 Generating delivery note PDF...");
+          const pdfBlob = getDeliveryNotePDFBlob(purchaseOrder, orderLines);
+          const pdfFileName = `${autoDeliveryNoteNumber}.pdf`;
+
+          // Create FormData to upload PDF
+          const formData = new FormData();
+          formData.append('file', pdfBlob, pdfFileName);
+          formData.append('folderPath', 'DeliveryNotes');
+
+          // Upload PDF to server
+          const token = typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
+          const uploadResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"}/FileUpload/UploadFile`, {
+            method: 'POST',
+            headers: {
+              Authorization: token ? `Bearer ${token}` : "",
+            },
+            body: formData
+          });
+
+          if (uploadResponse.ok) {
+            const uploadResult = await uploadResponse.json();
+            console.log("📤 Upload response:", uploadResult);
+            // Check both possible property names (SavedImgsPath with capital letters)
+            const savedPaths = uploadResult.SavedImgsPath || uploadResult.savedImgsPath;
+            if (savedPaths && savedPaths.length > 0) {
+              deliveryNoteFilePath = savedPaths[0];
+              console.log("✅ Delivery note PDF saved:", deliveryNoteFilePath);
+            } else {
+              console.warn("⚠️ No file path returned from upload");
+            }
+          } else {
+            console.error("❌ Upload failed with status:", uploadResponse.status);
+            const errorText = await uploadResponse.text();
+            console.error("Error details:", errorText);
+          }
+        } catch (pdfError) {
+          console.error("❌ Error saving delivery note PDF:", pdfError);
+          // Continue even if PDF save fails
+        }
+      }
 
       const deliveryLoadingData = {
         WHStockRequestUID: purchaseOrder.UID || purchaseOrder.uid,
@@ -144,7 +188,7 @@ export function ActivityLogPage({ deliveryPlanId, readOnly = false }: ActivityLo
           : (driverSignature || existingData?.DriverSignature || existingData?.driverSignature || null),
         Notes: signatureNotes || notes || existingData?.Notes || existingData?.notes || null,
         DeliveryNoteNumber: autoDeliveryNoteNumber,
-        DeliveryNoteFilePath: existingData?.DeliveryNoteFilePath || existingData?.deliveryNoteFilePath || null,
+        DeliveryNoteFilePath: deliveryNoteFilePath,
         Status: "SHIPPED",
         IsActive: true
       };
@@ -523,8 +567,7 @@ export function ActivityLogPage({ deliveryPlanId, readOnly = false }: ActivityLo
 
         const deliveryNotePath = existingData.DeliveryNoteFilePath || existingData.deliveryNoteFilePath;
         if (deliveryNotePath) {
-          setDeliveryNoteFilePath(deliveryNotePath);
-          setDeliveryNoteGenerated(true);
+          console.log("📄 Delivery Note File Path loaded:", deliveryNotePath);
         }
 
         console.log("✅ All existing data loaded successfully");

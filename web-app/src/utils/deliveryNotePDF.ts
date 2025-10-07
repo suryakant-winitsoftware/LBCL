@@ -191,3 +191,18 @@ export const openDeliveryNotePDFInNewTab = (
   const url = URL.createObjectURL(pdfBlob);
   window.open(url, "_blank");
 };
+
+export const getDeliveryNotePDFBlob = (
+  purchaseOrder: PurchaseOrder,
+  orderLines: OrderLine[]
+): Blob => {
+  const doc = generateDeliveryNotePDF(purchaseOrder, orderLines);
+  return doc.output("blob");
+};
+
+export const getDeliveryNoteNumber = (purchaseOrder: PurchaseOrder): string => {
+  const now = new Date();
+  const orderNumber = purchaseOrder?.OrderNumber || purchaseOrder?.orderNumber || "PO";
+  const timestamp = now.getTime().toString().slice(-6);
+  return `DN-${orderNumber}-${timestamp}`;
+};

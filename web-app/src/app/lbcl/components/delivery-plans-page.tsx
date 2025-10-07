@@ -8,7 +8,7 @@ import { inventoryService, type PagingRequest, type IWHStockRequestItemView } fr
 
 export function DeliveryPlansPage() {
   const router = useRouter()
-  const [activeTab, setActiveTab] = useState("pending")
+  const [activeTab, setActiveTab] = useState("approved")
   const [fromDate, setFromDate] = useState("")
   const [toDate, setToDate] = useState("")
   const [dateFilterType, setDateFilterType] = useState<"order" | "delivery">("order")

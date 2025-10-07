@@ -5,8 +5,8 @@ import type React from "react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { User, Lock, ArrowLeft } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { User, Lock, ArrowLeft, Eye, EyeOff } from "lucide-react"
+import { useRouter, usePathname } from "next/navigation"
 import Image from "next/image"
 import { useAuth } from "@/providers/auth-provider"
 import { toast } from "sonner"
@@ -14,9 +14,11 @@ import { organizationService } from "@/services/organizationService"
 
 export function LoginPage() {
   const router = useRouter()
+  const pathname = usePathname()
   const { login, isLoading, user } = useAuth()
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -35,6 +37,13 @@ export function LoginPage() {
 
       if (result.success && result.user) {
         toast.success("Login successful!")
+
+        // If logging in from /login route, redirect to /dashboard
+        if (pathname === "/login") {
+          console.log("🚀 Logging in from /login -> Redirecting to /dashboard")
+          router.push("/dashboard")
+          return
+        }
 
         // Log complete user details
         console.log("==================== USER LOGIN DETAILS ====================")
@@ -238,13 +247,25 @@ export function LoginPage() {
               <Lock className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <Input
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="pl-12 sm:pl-14 h-12 sm:h-14 text-base sm:text-lg bg-white border-none shadow-md"
+              className="pl-12 sm:pl-14 pr-12 sm:pr-14 h-12 sm:h-14 text-base sm:text-lg bg-white border-none shadow-md"
               disabled={isLoading}
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-800 focus:outline-none"
+              disabled={isLoading}
+            >
+              {showPassword ? (
+                <EyeOff className="w-5 h-5 sm:w-6 sm:h-6" />
+              ) : (
+                <Eye className="w-5 h-5 sm:w-6 sm:h-6" />
+              )}
+            </button>
           </div>
 
           {/* Login Button */}

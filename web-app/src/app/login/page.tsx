@@ -1,15 +1,7 @@
-import { Suspense } from "react"
-import { LoginForm } from "@/components/auth/login-form"
+"use client";
 
-export default function LoginPage() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <LoginForm />
-    </Suspense>
-  )
-}
+import { LoginPage } from "@/app/lbcl/components/login-page";
 
-export const metadata = {
-  title: "Login - WINIT Access Control",
-  description: "Sign in to WINIT Access Control System",
+export default function Login() {
+  return <LoginPage />;
 }

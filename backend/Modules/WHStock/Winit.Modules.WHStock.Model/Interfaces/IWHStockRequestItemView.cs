@@ -8,7 +8,7 @@ using Winit.Shared.Models.Enums;
 
 namespace Winit.Modules.WHStock.Model.Interfaces
 {
-    public interface IWHStockRequestItemView  
+    public interface IWHStockRequestItemView
     {
         public string UID { get; set; }
         public string RequestCode { get; set; }
@@ -33,6 +33,16 @@ namespace Winit.Modules.WHStock.Model.Interfaces
         public string TargetWHUID { get; set; }
         public string WareHouseUID { get; set; }
         public int YearMonth { get; set; }
+
+        // New fields for organization and warehouse names
+        public string SourceOrgCode { get; set; }
+        public string SourceOrgName { get; set; }
+        public string SourceWHCode { get; set; }
+        public string SourceWHName { get; set; }
+        public string TargetOrgCode { get; set; }
+        public string TargetOrgName { get; set; }
+        public string TargetWHCode { get; set; }
+        public string TargetWHName { get; set; }
 
     }
 }

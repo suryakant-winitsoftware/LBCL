@@ -136,6 +136,7 @@ export default function CreateStockRequestPage() {
   const [skuDialogOpen, setSkuDialogOpen] = useState(false)
   const [skuSearchQuery, setSkuSearchQuery] = useState('')
   const [selectedSKUs, setSelectedSKUs] = useState<Set<string>>(new Set())
+  const [globalUOM, setGlobalUOM] = useState<string>('')
 
   const [formData, setFormData] = useState({
     CompanyUID: '',
@@ -165,6 +166,15 @@ export default function CreateStockRequestPage() {
     loadSKUs()
     loadUOMTypes() // Load UOM types from database
   }, [])
+
+  // Update global UOM when uomOptions loads
+  useEffect(() => {
+    if (uomOptions.length > 0 && !globalUOM) {
+      const defaultUOM = uomOptions[0].UID
+      console.log('🔵 UOM Options loaded, setting default global UOM to:', defaultUOM)
+      setGlobalUOM(defaultUOM)
+    }
+  }, [uomOptions, globalUOM])
 
   useEffect(() => {
     console.log('🔵 Source Org Changed:', formData.SourceOrgUID)
@@ -576,10 +586,25 @@ export default function CreateStockRequestPage() {
     setLines([...lines, newLine])
   }
 
+  // Helper function to validate and get correct UOM
+  const getValidUOM = (skuUOM?: string): string => {
+    // If SKU has a UOM and it exists in our options, use it
+    if (skuUOM && uomOptions.some(opt => opt.UID === skuUOM)) {
+      return skuUOM
+    }
+    // Otherwise use first available UOM or fallback to 'EA'
+    return uomOptions.length > 0 ? uomOptions[0].UID : 'EA'
+  }
+
   // Open multi-select SKU dialog
   const openSKUDialog = () => {
     setSkuDialogOpen(true)
     setSkuSearchQuery('')
+    // Set default global UOM to first available UOM
+    const defaultUOM = uomOptions.length > 0 ? uomOptions[0].UID : 'EA'
+    console.log('🔵 Opening SKU Dialog - Available UOM Options:', uomOptions)
+    console.log('🔵 Setting Global UOM to:', defaultUOM)
+    setGlobalUOM(defaultUOM)
   }
 
   // Handle SKU selection toggle
@@ -595,18 +620,29 @@ export default function CreateStockRequestPage() {
 
   // Add selected SKUs as lines
   const addSelectedSKUs = () => {
-    const defaultUOM = uomOptions.length > 0 ? uomOptions[0].UID : 'EA'
+    console.log('🔵 Adding selected SKUs with Global UOM:', globalUOM)
+    console.log('🔵 Available UOM Options:', uomOptions)
     const newLines: StockRequestLine[] = []
 
     selectedSKUs.forEach((skuUID) => {
       const sku = skus.find(s => s.UID === skuUID)
       if (sku && !lines.find(line => line.SKUUID === skuUID)) {
+        // Use globalUOM if set and valid, otherwise use SKU's UOM (validated), otherwise default
+        let finalUOM: string
+        if (globalUOM && uomOptions.some(opt => opt.UID === globalUOM)) {
+          finalUOM = globalUOM
+          console.log(`✅ Using Global UOM: ${finalUOM} for SKU: ${sku.Code}`)
+        } else {
+          finalUOM = getValidUOM(sku.UOM)
+          console.log(`⚠️ Global UOM not valid, using fallback: ${finalUOM} for SKU: ${sku.Code} (SKU UOM was: ${sku.UOM})`)
+        }
+
         newLines.push({
           UID: `LINE-${Date.now()}-${lines.length + newLines.length}`,
           SKUUID: sku.UID,
           SKUCode: sku.Code,
           SKUName: sku.Name,
-          UOM: sku.UOM || defaultUOM,
+          UOM: finalUOM,
           UOM1: sku.UOM1,
           UOM2: sku.UOM2,
           UOM1CNF: sku.UOM1CNF,
@@ -623,7 +659,7 @@ export default function CreateStockRequestPage() {
 
     toast({
       title: 'Success',
-      description: `Added ${newLines.length} SKU(s) to request`,
+      description: `Added ${newLines.length} SKU(s) to request with UOM: ${globalUOM}`,
     })
   }
 
@@ -653,7 +689,7 @@ export default function CreateStockRequestPage() {
           SKUUID: sku.UID,
           SKUCode: sku.Code,
           SKUName: sku.Name,
-          UOM: sku.UOM,
+          UOM: getValidUOM(sku.UOM), // Validate UOM
           UOM1: sku.UOM1,
           UOM2: sku.UOM2,
           UOM1CNF: sku.UOM1CNF,
@@ -811,14 +847,14 @@ export default function CreateStockRequestPage() {
 
       toast({
         title: 'Success',
-        description: 'Stock request created successfully',
+        description: 'Load request created successfully',
       })
 
       router.push('/administration/warehouse-management/stock-requests')
     } catch (error: any) {
       toast({
         title: 'Error',
-        description: error?.response?.data?.message || 'Failed to create stock request',
+        description: error?.response?.data?.message || 'Failed to create load request',
         variant: 'destructive'
       })
     } finally {
@@ -838,8 +874,7 @@ export default function CreateStockRequestPage() {
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
-            <h1 className="text-2xl font-bold">Create Stock Request</h1>
-            <p className="text-sm text-muted-foreground">Add a new warehouse stock request with line items</p>
+            <h1 className="text-2xl font-bold">Load Request</h1>
           </div>
         </div>
       </div>
@@ -847,7 +882,7 @@ export default function CreateStockRequestPage() {
       <Card>
         <CardHeader>
           <CardTitle>Request Details</CardTitle>
-          <CardDescription>Enter the stock request information</CardDescription>
+          <CardDescription>Enter the load request information</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Basic Information */}
@@ -925,17 +960,6 @@ export default function CreateStockRequestPage() {
                 type="date"
                 value={formData.RequiredByDate}
                 onChange={(e) => setFormData({ ...formData, RequiredByDate: e.target.value })}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="yearMonth">Year Month *</Label>
-              <Input
-                id="yearMonth"
-                type="number"
-                value={formData.YearMonth}
-                onChange={(e) => setFormData({ ...formData, YearMonth: parseInt(e.target.value) })}
-                placeholder="202510"
               />
             </div>
           </div>
@@ -1246,7 +1270,7 @@ export default function CreateStockRequestPage() {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle>Line Items</CardTitle>
-              <CardDescription>Add SKU items to this stock request</CardDescription>
+              <CardDescription>Add SKU items to this load request</CardDescription>
             </div>
             <div className="flex gap-2">
               <Button onClick={openSKUDialog} size="sm" variant="outline">
@@ -1277,7 +1301,6 @@ export default function CreateStockRequestPage() {
                     <TableHead>Code</TableHead>
                     <TableHead>UOM</TableHead>
                     <TableHead className="w-32">Requested Qty *</TableHead>
-                    <TableHead className="w-32">Approved Qty</TableHead>
                     <TableHead className="w-12"></TableHead>
                   </TableRow>
                 </TableHeader>
@@ -1325,18 +1348,24 @@ export default function CreateStockRequestPage() {
                         <Input
                           type="number"
                           min="0"
-                          value={line.RequestedQty}
-                          onChange={(e) => updateLine(index, 'RequestedQty', parseFloat(e.target.value) || 0)}
-                          placeholder="0"
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Input
-                          type="number"
-                          min="0"
-                          value={line.ApprovedQty || 0}
-                          onChange={(e) => updateLine(index, 'ApprovedQty', parseFloat(e.target.value) || 0)}
-                          placeholder="0"
+                          value={line.RequestedQty === 0 ? '' : line.RequestedQty}
+                          onChange={(e) => updateLine(index, 'RequestedQty', e.target.value === '' ? 0 : parseFloat(e.target.value) || 0)}
+                          onKeyDown={(e) => {
+                            // Prevent alphabetic characters (a-z, A-Z) and special characters except numbers, backspace, delete, arrows, tab
+                            if (
+                              !/[0-9]/.test(e.key) &&
+                              e.key !== 'Backspace' &&
+                              e.key !== 'Delete' &&
+                              e.key !== 'Tab' &&
+                              e.key !== 'ArrowLeft' &&
+                              e.key !== 'ArrowRight' &&
+                              e.key !== '.' &&
+                              !(e.ctrlKey || e.metaKey) // Allow Ctrl/Cmd shortcuts
+                            ) {
+                              e.preventDefault()
+                            }
+                          }}
+                          placeholder="Enter quantity"
                         />
                       </TableCell>
                       <TableCell>
@@ -1371,7 +1400,7 @@ export default function CreateStockRequestPage() {
           onClick={handleSubmit}
           disabled={loading.skus}
         >
-          {loading.skus ? 'Creating...' : 'Create Stock Request'}
+          {loading.skus ? 'Creating...' : 'Create Load Request'}
         </Button>
       </div>
 
@@ -1381,24 +1410,55 @@ export default function CreateStockRequestPage() {
           <DialogHeader>
             <DialogTitle>Add Multiple SKUs</DialogTitle>
             <DialogDescription>
-              Search and select multiple SKUs to add to the stock request
+              Search and select multiple SKUs to add to the load request
             </DialogDescription>
           </DialogHeader>
 
-          {/* Search Bar */}
-          <div className="flex items-center gap-2 pb-4 border-b">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search by SKU Code, Name, or UID..."
-                value={skuSearchQuery}
-                onChange={(e) => setSkuSearchQuery(e.target.value)}
-                className="pl-10"
-              />
+          {/* Search Bar and Global UOM Selector */}
+          <div className="space-y-3 pb-4 border-b">
+            <div className="flex items-center gap-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search by SKU Code, Name, or UID..."
+                  value={skuSearchQuery}
+                  onChange={(e) => setSkuSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <Badge variant="secondary" className="px-3 py-1">
+                {selectedSKUs.size} selected
+              </Badge>
             </div>
-            <Badge variant="secondary" className="px-3 py-1">
-              {selectedSKUs.size} selected
-            </Badge>
+
+            {/* Global UOM Selector */}
+            <div className="flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-lg p-3">
+              <Label className="text-sm font-semibold whitespace-nowrap text-blue-900">Apply UOM to all selected items:</Label>
+              <Select
+                value={globalUOM}
+                onValueChange={(value) => {
+                  console.log('🔵 Global UOM changed to:', value)
+                  setGlobalUOM(value)
+                }}
+                disabled={loading.uom || uomOptions.length === 0}
+              >
+                <SelectTrigger className="w-[250px] bg-white border-blue-300 font-medium">
+                  <SelectValue placeholder="Select UOM" />
+                </SelectTrigger>
+                <SelectContent>
+                  {uomOptions.map((uom) => (
+                    <SelectItem key={uom.UID} value={uom.UID}>
+                      {uom.UID} - {uom.Name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {globalUOM && (
+                <Badge variant="default" className="bg-blue-600">
+                  Selected: {globalUOM}
+                </Badge>
+              )}
+            </div>
           </div>
 
           {/* SKU List */}
@@ -1421,13 +1481,12 @@ export default function CreateStockRequestPage() {
                   <TableHead>Code</TableHead>
                   <TableHead>Name</TableHead>
                   <TableHead>UOM</TableHead>
-                  <TableHead>UID</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredSKUs.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-12 text-muted-foreground">
+                    <TableCell colSpan={4} className="text-center py-12 text-muted-foreground">
                       <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
                       <p>No SKUs found</p>
                       <p className="text-sm">Try adjusting your search query</p>
@@ -1462,7 +1521,6 @@ export default function CreateStockRequestPage() {
                         </TableCell>
                         <TableCell>{sku.Name}</TableCell>
                         <TableCell>{sku.UOM || 'EA'}</TableCell>
-                        <TableCell className="text-xs text-muted-foreground">{sku.UID}</TableCell>
                       </TableRow>
                     )
                   })

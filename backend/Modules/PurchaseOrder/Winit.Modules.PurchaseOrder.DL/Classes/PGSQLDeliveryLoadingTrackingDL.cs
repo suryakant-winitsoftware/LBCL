@@ -22,7 +22,7 @@ public class PGSQLDeliveryLoadingTrackingDL : Winit.Modules.Base.DL.DBManager.Po
             string sql = @"
                 SELECT
                     dlt.""UID""::text as ""UID"",
-                    dlt.""PurchaseOrderUID""::text as ""PurchaseOrderUID"",
+                    dlt.""WHStockRequestUID"" as ""WHStockRequestUID"",
                     dlt.""VehicleUID"",
                     dlt.""DriverEmployeeUID"",
                     dlt.""ForkLiftOperatorUID"",
@@ -42,14 +42,15 @@ public class PGSQLDeliveryLoadingTrackingDL : Winit.Modules.Base.DL.DBManager.Po
                     dlt.""CreatedBy""::text as ""CreatedBy"",
                     dlt.""ModifiedDate"",
                     dlt.""ModifiedBy""::text as ""ModifiedBy"",
-                    poh.order_number,
-                    poh.order_date,
-                    poh.warehouse_uid,
-                    poh.status,
-                    org.name as OrgName
+                    wsr.code as request_code,
+                    wsr.created_time,
+                    wsr.warehouse_uid,
+                    wsr.status,
+                    COALESCE(TargetOrg.name, TargetWH.name) as OrgName
                 FROM public.""DeliveryLoadingTracking"" dlt
-                INNER JOIN public.purchase_order_header poh ON dlt.""PurchaseOrderUID""::text = poh.uid
-                LEFT JOIN public.org org ON poh.org_uid = org.uid
+                INNER JOIN public.wh_stock_request wsr ON dlt.""WHStockRequestUID"" = wsr.uid
+                LEFT JOIN public.org TargetWH ON wsr.target_wh_uid = TargetWH.uid
+                LEFT JOIN public.org TargetOrg ON wsr.target_org_uid = TargetOrg.uid
                 WHERE dlt.""Status"" = @Status
                 AND dlt.""IsActive"" = true
                 ORDER BY dlt.""CreatedDate"" DESC";
@@ -67,14 +68,14 @@ public class PGSQLDeliveryLoadingTrackingDL : Winit.Modules.Base.DL.DBManager.Po
         }
     }
 
-    public async Task<IDeliveryLoadingTracking?> GetByPurchaseOrderUIDAsync(string purchaseOrderUID)
+    public async Task<IDeliveryLoadingTracking?> GetByWHStockRequestUIDAsync(string whStockRequestUID)
     {
         try
         {
             string sql = @"
                 SELECT
                     dlt.""UID""::text as ""UID"",
-                    dlt.""PurchaseOrderUID""::text as ""PurchaseOrderUID"",
+                    dlt.""WHStockRequestUID"" as ""WHStockRequestUID"",
                     dlt.""VehicleUID"",
                     dlt.""DriverEmployeeUID"",
                     dlt.""ForkLiftOperatorUID"",
@@ -94,22 +95,23 @@ public class PGSQLDeliveryLoadingTrackingDL : Winit.Modules.Base.DL.DBManager.Po
                     dlt.""CreatedBy""::text as ""CreatedBy"",
                     dlt.""ModifiedDate"",
                     dlt.""ModifiedBy""::text as ""ModifiedBy"",
-                    poh.order_number,
-                    poh.order_date,
-                    poh.warehouse_uid,
-                    poh.status,
-                    org.name as OrgName
+                    wsr.code as request_code,
+                    wsr.created_time,
+                    wsr.warehouse_uid,
+                    wsr.status,
+                    COALESCE(TargetOrg.name, TargetWH.name) as OrgName
                 FROM public.""DeliveryLoadingTracking"" dlt
-                INNER JOIN public.purchase_order_header poh ON dlt.""PurchaseOrderUID""::text = poh.uid
-                LEFT JOIN public.org org ON poh.org_uid = org.uid
-                WHERE dlt.""PurchaseOrderUID""::text = @PurchaseOrderUID
+                INNER JOIN public.wh_stock_request wsr ON dlt.""WHStockRequestUID"" = wsr.uid
+                LEFT JOIN public.org TargetWH ON wsr.target_wh_uid = TargetWH.uid
+                LEFT JOIN public.org TargetOrg ON wsr.target_org_uid = TargetOrg.uid
+                WHERE dlt.""WHStockRequestUID"" = @WHStockRequestUID
                 AND dlt.""IsActive"" = true
                 ORDER BY dlt.""CreatedDate"" DESC
                 LIMIT 1";
 
             var parameters = new
             {
-                PurchaseOrderUID = purchaseOrderUID
+                WHStockRequestUID = whStockRequestUID
             };
 
             // Use direct Dapper query with concrete class to avoid interface mapping issues
@@ -119,7 +121,7 @@ public class PGSQLDeliveryLoadingTrackingDL : Winit.Modules.Base.DL.DBManager.Po
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error in GetByPurchaseOrderUIDAsync: {ex.Message}");
+            Console.WriteLine($"Error in GetByWHStockRequestUIDAsync: {ex.Message}");
             throw;
         }
     }
@@ -132,7 +134,7 @@ public class PGSQLDeliveryLoadingTrackingDL : Winit.Modules.Base.DL.DBManager.Po
                 INSERT INTO public.""DeliveryLoadingTracking""
                 (
                     ""UID"",
-                    ""PurchaseOrderUID"",
+                    ""WHStockRequestUID"",
                     ""VehicleUID"",
                     ""DriverEmployeeUID"",
                     ""ForkLiftOperatorUID"",
@@ -154,7 +156,7 @@ public class PGSQLDeliveryLoadingTrackingDL : Winit.Modules.Base.DL.DBManager.Po
                 VALUES
                 (
                     @UID,
-                    @PurchaseOrderUID,
+                    @WHStockRequestUID,
                     @VehicleUID,
                     @DriverEmployeeUID,
                     @ForkLiftOperatorUID,
@@ -179,7 +181,7 @@ public class PGSQLDeliveryLoadingTrackingDL : Winit.Modules.Base.DL.DBManager.Po
             var parameters = new
             {
                 UID = uid,
-                PurchaseOrderUID = Guid.Parse(deliveryLoadingTracking.PurchaseOrderUID),
+                WHStockRequestUID = deliveryLoadingTracking.WHStockRequestUID,
                 VehicleUID = string.IsNullOrWhiteSpace(deliveryLoadingTracking.VehicleUID) ? null : deliveryLoadingTracking.VehicleUID,
                 DriverEmployeeUID = string.IsNullOrWhiteSpace(deliveryLoadingTracking.DriverEmployeeUID) ? null : deliveryLoadingTracking.DriverEmployeeUID,
                 ForkLiftOperatorUID = string.IsNullOrWhiteSpace(deliveryLoadingTracking.ForkLiftOperatorUID) ? null : deliveryLoadingTracking.ForkLiftOperatorUID,
@@ -265,18 +267,18 @@ public class PGSQLDeliveryLoadingTrackingDL : Winit.Modules.Base.DL.DBManager.Po
         }
     }
 
-    public async Task<bool> UpdatePurchaseOrderStatusAsync(string purchaseOrderUID, string status)
+    public async Task<bool> UpdateWHStockRequestStatusAsync(string whStockRequestUID, string status)
     {
         try
         {
             string sql = @"
-                UPDATE purchase_order_header
+                UPDATE wh_stock_request
                 SET status = @Status
                 WHERE uid = @UID";
 
             var parameters = new
             {
-                UID = purchaseOrderUID,
+                UID = whStockRequestUID,
                 Status = status
             };
 
@@ -285,7 +287,7 @@ public class PGSQLDeliveryLoadingTrackingDL : Winit.Modules.Base.DL.DBManager.Po
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error in UpdatePurchaseOrderStatusAsync: {ex.Message}");
+            Console.WriteLine($"Error in UpdateWHStockRequestStatusAsync: {ex.Message}");
             throw;
         }
     }

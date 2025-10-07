@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Calendar, RefreshCw, ChevronRight, RotateCcw } from "lucide-react"
 import { useRouter } from "next/navigation"
-import purchaseOrderService from "@/services/purchaseOrder"
+import { inventoryService, type PagingRequest, type IWHStockRequestItemView } from "@/services/inventory/inventory.service"
 
 export function DeliveryPlansPage() {
   const router = useRouter()
@@ -12,7 +12,7 @@ export function DeliveryPlansPage() {
   const [fromDate, setFromDate] = useState("")
   const [toDate, setToDate] = useState("")
   const [dateFilterType, setDateFilterType] = useState<"order" | "delivery">("order")
-  const [deliveryPlans, setDeliveryPlans] = useState<any[]>([])
+  const [deliveryPlans, setDeliveryPlans] = useState<IWHStockRequestItemView[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const [totalCount, setTotalCount] = useState(0)
@@ -38,91 +38,50 @@ export function DeliveryPlansPage() {
       setLoading(true)
       setError("")
 
-      console.log("🔍 Fetching delivery plans for tab:", activeTab)
+      console.log("🔍 Fetching load requests for tab:", activeTab)
 
-      let response: any;
-
-      // For "approved" tab, we need to fetch both CONFIRMED and SHIPPED orders
-      if (activeTab === "approved") {
-        const filters = {
-          startDate: fromDate,
-          endDate: toDate,
-          page: 1,
-          pageSize: 100
-        }
-
-        // Fetch both CONFIRMED and SHIPPED orders
-        const [confirmedResponse, shippedResponse] = await Promise.all([
-          purchaseOrderService.getPurchaseOrdersByStatus("CONFIRMED", { ...filters, status: "CONFIRMED" }),
-          purchaseOrderService.getPurchaseOrdersByStatus("SHIPPED", { ...filters, status: "SHIPPED" })
-        ])
-
-        // Combine the results and remove duplicates based on UID
-        const confirmedHeaders = confirmedResponse.success ? (confirmedResponse.headers || []) : []
-        const shippedHeaders = shippedResponse.success ? (shippedResponse.headers || []) : []
-
-        const allHeaders = [...confirmedHeaders, ...shippedHeaders]
-
-        // Remove duplicates by UID
-        const uniqueHeaders = allHeaders.filter((plan, index, self) => {
-          const uid = plan.UID || plan.uid
-          return index === self.findIndex(p => (p.UID || p.uid) === uid)
-        })
-
-        response = {
-          success: true,
-          headers: uniqueHeaders
-        }
-      } else {
-        // For other tabs, use single status
-        const statusMap: Record<string, string> = {
-          pending: "PENDING",
-          received: "RECEIVED"
-        }
-
-        const status = statusMap[activeTab] || "PENDING"
-
-        const filters = {
-          status: status,
-          startDate: fromDate,
-          endDate: toDate,
-          page: 1,
-          pageSize: 100
-        }
-
-        response = await purchaseOrderService.getPurchaseOrdersByStatus(status, filters)
+      const statusMap: Record<string, string[]> = {
+        pending: ["Pending"],
+        approved: ["Approved"],
+        shipped: ["SHIPPED"]
       }
 
+      const allowedStatuses = statusMap[activeTab] || ["Pending"]
+
+      // Fetch all records without status filter (filter client-side instead)
+      const pagingRequest: PagingRequest = {
+        pageNumber: 1,
+        pageSize: 1000, // Increased to get all records
+        isCountRequired: true,
+        filterCriterias: [], // No server-side filters
+        sortCriterias: [] // No server-side sorting - will sort client-side
+      }
+
+      console.log("📤 Request:", pagingRequest)
+
+      const response = await inventoryService.selectLoadRequestData(
+        pagingRequest,
+        "all" // StockType parameter
+      )
+
       console.log("📦 API Response:", response)
-      console.log("📊 Filtered plans:", response.headers?.length || 0)
+      console.log("📊 Load requests count:", response.PagedData?.length || 0)
 
-      if (response.success) {
-        // Additional client-side filtering for date range and status validation
-        const filteredPlans = (response.headers || []).filter((plan: any) => {
-          const planStatus = plan.Status || plan.status || ''
-          console.log(`Plan ${plan.OrderNumber}: Status = "${planStatus}", Tab = "${activeTab}"`)
-
-          // Validate status based on tab
-          let statusValid = false
-          if (activeTab === "pending") {
-            statusValid = planStatus === "PENDING"
-          } else if (activeTab === "approved") {
-            statusValid = planStatus === "CONFIRMED" || planStatus === "SHIPPED"
-          } else if (activeTab === "received") {
-            statusValid = planStatus === "RECEIVED"
-          }
-
-          if (!statusValid) {
-            console.log(`❌ Filtered out: Status "${planStatus}" not valid for tab "${activeTab}"`)
+      if (response && response.PagedData) {
+        // Client-side filtering for both status and date
+        const filteredData = response.PagedData.filter((plan: IWHStockRequestItemView) => {
+          // Status filter - check if plan status is in allowed statuses
+          const planStatus = plan.Status || ''
+          if (!allowedStatuses.includes(planStatus)) {
             return false
           }
 
-          // Check date range based on selected filter type
+          // Date filter
           const dateToCheck = dateFilterType === "order"
-            ? (plan.OrderDate || plan.orderDate)
-            : (plan.RequestedDeliveryDate || plan.requestedDeliveryDate || plan.ExpectedDeliveryDate || plan.expectedDeliveryDate)
+            ? (plan.RequestedTime || plan.ModifiedTime)
+            : (plan.RequiredByDate)
 
-          if (!dateToCheck) return true // Include if date is missing
+          if (!dateToCheck) return true
 
           const checkDate = new Date(dateToCheck).setHours(0, 0, 0, 0)
           const from = new Date(fromDate).setHours(0, 0, 0, 0)
@@ -131,18 +90,25 @@ export function DeliveryPlansPage() {
           return checkDate >= from && checkDate <= to
         })
 
-        console.log("✅ Final filtered plans:", filteredPlans.length)
+        // Client-side sorting by ModifiedTime (newest first)
+        const sortedData = filteredData.sort((a, b) => {
+          const dateA = new Date(a.ModifiedTime || a.RequestedTime || 0).getTime()
+          const dateB = new Date(b.ModifiedTime || b.RequestedTime || 0).getTime()
+          return dateB - dateA // Descending order (newest first)
+        })
 
-        setDeliveryPlans(filteredPlans)
-        setTotalCount(filteredPlans.length)
+        console.log("✅ After filtering - Allowed Statuses:", allowedStatuses, "Count:", sortedData.length)
+
+        setDeliveryPlans(sortedData)
+        setTotalCount(sortedData.length)
       } else {
-        setError(response.error || "Failed to fetch delivery plans")
+        console.warn("⚠️ No data returned")
         setDeliveryPlans([])
         setTotalCount(0)
       }
     } catch (error) {
-      console.error("Error fetching delivery plans:", error)
-      setError("Failed to fetch delivery plans")
+      console.error("Error fetching load requests:", error)
+      setError("Failed to fetch load requests")
       setDeliveryPlans([])
       setTotalCount(0)
     } finally {
@@ -188,15 +154,12 @@ export function DeliveryPlansPage() {
 
   const getStatusDisplay = (status: string) => {
     const statusMap: Record<string, string> = {
-      DRAFT: "Pending Approval",
-      PENDING: "Pending Approval",
-      CONFIRMED: "Approved Pending Shipment",
+      Pending: "Pending Approval",
+      Approved: "Approved",
       SHIPPED: "Shipped",
-      DISPATCHED: "Shipped",
-      SENT: "Sent to SAP",
+      Completed: "Completed",
       RECEIVED: "Received",
-      REJECTED: "Rejected",
-      ERROR: "Error"
+      Rejected: "Rejected"
     }
     return statusMap[status] || status
   }
@@ -218,7 +181,7 @@ export function DeliveryPlansPage() {
                     : "bg-white text-gray-600 border hover:bg-gray-100"
                 }`}
               >
-                Order Date
+                Request Date
               </button>
               <button
                 onClick={() => setDateFilterType("delivery")}
@@ -228,7 +191,7 @@ export function DeliveryPlansPage() {
                     : "bg-white text-gray-600 border hover:bg-gray-100"
                 }`}
               >
-                Delivery Date
+                Required By Date
               </button>
             </div>
           </div>
@@ -237,52 +200,57 @@ export function DeliveryPlansPage() {
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 max-w-4xl">
             <div className="flex items-center gap-2 flex-1">
               <span className="text-sm font-medium whitespace-nowrap">From Date</span>
-              <div className="bg-white px-3 py-2 rounded-lg border flex-1">
+              <div className="relative flex-1 max-w-xs">
                 <input
                   type="date"
                   value={fromDate}
                   onChange={(e) => setFromDate(e.target.value)}
-                  className="text-sm text-gray-600 border-none outline-none w-full"
+                  className="w-full px-4 py-2.5 pr-10 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#A08B5C] text-sm"
                 />
+                <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 pointer-events-none" />
               </div>
             </div>
 
             <div className="flex items-center gap-2 flex-1">
               <span className="text-sm font-medium whitespace-nowrap">To Date</span>
-              <div className="bg-white px-3 py-2 rounded-lg border flex-1">
+              <div className="relative flex-1 max-w-xs">
                 <input
                   type="date"
                   value={toDate}
                   onChange={(e) => setToDate(e.target.value)}
-                  className="text-sm text-gray-600 border-none outline-none w-full"
+                  className="w-full px-4 py-2.5 pr-10 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#A08B5C] text-sm"
                 />
+                <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 pointer-events-none" />
               </div>
             </div>
 
-            <div className="flex gap-2 self-center sm:self-auto">
-              <button
+            <div className="flex gap-2">
+              <Button
                 onClick={handleRefresh}
-                className="p-2 hover:bg-gray-200 rounded-lg"
-                disabled={loading}
-                title="Reload"
+                variant="outline"
+                size="sm"
+                className="border-[#A08B5C] text-[#A08B5C] hover:bg-[#A08B5C] hover:text-white whitespace-nowrap"
               >
-                <RefreshCw className={`w-5 h-5 text-[#A08B5C] ${loading ? 'animate-spin' : ''}`} />
-              </button>
-              <button
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Refresh
+              </Button>
+
+              <Button
                 onClick={handleReset}
-                className="p-2 hover:bg-gray-200 rounded-lg"
-                disabled={loading}
-                title="Reset Filters"
+                variant="outline"
+                size="sm"
+                className="border-gray-300 text-gray-600 hover:bg-gray-100 whitespace-nowrap"
               >
-                <RotateCcw className="w-5 h-5 text-[#A08B5C]" />
-              </button>
+                <RotateCcw className="w-4 h-4 mr-2" />
+                Reset
+              </Button>
             </div>
           </div>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex border-t overflow-x-auto">
+      <div className="flex overflow-x-auto bg-white border-b sticky top-0 z-10 scrollbar-hide">
         <button
           onClick={() => setActiveTab("pending")}
           className={`flex-1 min-w-[120px] px-4 py-3 sm:py-4 text-xs sm:text-sm font-medium whitespace-nowrap ${
@@ -293,16 +261,16 @@ export function DeliveryPlansPage() {
         </button>
         <button
           onClick={() => setActiveTab("approved")}
-          className={`flex-1 min-w-[180px] px-4 py-3 sm:py-4 text-xs sm:text-sm font-medium whitespace-nowrap ${
+          className={`flex-1 min-w-[120px] px-4 py-3 sm:py-4 text-xs sm:text-sm font-medium whitespace-nowrap ${
             activeTab === "approved" ? "text-[#A08B5C] border-b-2 border-[#A08B5C]" : "text-gray-600"
           }`}
         >
-          APPROVED PENDING SHIPMENT
+          APPROVED/PENDING SHIPMENT
         </button>
         <button
-          onClick={() => setActiveTab("received")}
+          onClick={() => setActiveTab("shipped")}
           className={`flex-1 min-w-[120px] px-4 py-3 sm:py-4 text-xs sm:text-sm font-medium whitespace-nowrap ${
-            activeTab === "received" ? "text-[#A08B5C] border-b-2 border-[#A08B5C]" : "text-gray-600"
+            activeTab === "shipped" ? "text-[#A08B5C] border-b-2 border-[#A08B5C]" : "text-gray-600"
           }`}
         >
           SHIPPED
@@ -315,7 +283,7 @@ export function DeliveryPlansPage() {
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
               <RefreshCw className="w-8 h-8 text-[#A08B5C] animate-spin mx-auto mb-2" />
-              <p className="text-gray-600">Loading delivery plans...</p>
+              <p className="text-gray-600">Loading load requests...</p>
             </div>
           </div>
         ) : error ? (
@@ -330,50 +298,50 @@ export function DeliveryPlansPage() {
           </div>
         ) : deliveryPlans.length === 0 ? (
           <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
-            <p className="text-gray-600 mb-2">No delivery plans found</p>
+            <p className="text-gray-600 mb-2">No load requests found</p>
             <p className="text-sm text-gray-500">Try adjusting your date range or filters</p>
           </div>
         ) : (
           <div>
             <div className="mb-4 text-sm text-gray-600">
-              Showing {deliveryPlans.length} of {totalCount} delivery plan{totalCount !== 1 ? 's' : ''}
+              Showing {deliveryPlans.length} of {totalCount} load request{totalCount !== 1 ? 's' : ''}
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 max-w-7xl mx-auto">
               {deliveryPlans.map((plan) => {
                 return (
                   <button
-                    key={plan.UID || plan.uid}
+                    key={plan.UID}
                     onClick={() => {
-                      router.push(`/lbcl/activity-log/${plan.UID || plan.uid}`)
+                      router.push(`/lbcl/activity-log/${plan.UID}`)
                     }}
                     className="bg-white rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition-shadow text-left cursor-pointer"
                   >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <h3 className="text-base sm:text-lg font-bold mb-2 break-all">
-                        {plan.OrderNumber || plan.orderNumber || plan.DraftOrderNumber || plan.draftOrderNumber || 'N/A'}
+                        {plan.RequestCode || plan.UID || 'N/A'}
                       </h3>
                       <p className="text-sm sm:text-base mb-2 break-words">
                         <span className="font-bold text-gray-900">
-                          {plan.OrgName || plan.orgName || plan.ChannelPartnerName || plan.channelPartnerName || plan.OrgUID || plan.orgUID || 'N/A'}
+                          {plan.TargetOrgName || plan.TargetWHName || 'N/A'}
                         </span>
                         {' '}
                         <span className="text-orange-500 font-medium">
-                          {getStatusDisplay(plan.Status || plan.status || '')}
+                          {getStatusDisplay(plan.Status || '')}
                         </span>
                       </p>
 
-                      {/* Order Date and Delivery Date */}
+                      {/* Requested On and Required By Date */}
                       <div className="space-y-1 mb-2">
                         <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600">
-                          <span className="font-medium">Order Date:</span>
-                          <span>{formatDate(plan.OrderDate || plan.orderDate || '')}</span>
+                          <span className="font-medium">Requested On:</span>
+                          <span>{formatDateTime(plan.RequestedTime || '')}</span>
                         </div>
-                        {plan.RequestedDeliveryDate || plan.requestedDeliveryDate || plan.ExpectedDeliveryDate || plan.expectedDeliveryDate ? (
+                        {plan.RequiredByDate ? (
                           <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600">
-                            <span className="font-medium">Delivery Date:</span>
+                            <span className="font-medium">Required By:</span>
                             <span className="text-green-600 font-medium">
-                              {formatDate(plan.RequestedDeliveryDate || plan.requestedDeliveryDate || plan.ExpectedDeliveryDate || plan.expectedDeliveryDate)}
+                              {formatDate(plan.RequiredByDate)}
                             </span>
                           </div>
                         ) : null}

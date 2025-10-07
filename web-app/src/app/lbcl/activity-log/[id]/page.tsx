@@ -19,7 +19,7 @@ export default function ActivityLog({ params }: PageProps) {
   useEffect(() => {
     const checkStatus = async () => {
       try {
-        const delivery = await deliveryLoadingService.getByPurchaseOrderUID(id);
+        const delivery = await deliveryLoadingService.getByWHStockRequestUID(id);
         if (delivery && delivery.status === "RECEIVED") {
           setIsReadOnly(true);
         }

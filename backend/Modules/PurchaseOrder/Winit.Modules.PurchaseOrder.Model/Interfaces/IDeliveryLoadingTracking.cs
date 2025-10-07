@@ -4,7 +4,7 @@ namespace Winit.Modules.PurchaseOrder.Model.Interfaces;
 
 public interface IDeliveryLoadingTracking : IBaseModel
 {
-    public string PurchaseOrderUID { get; set; }
+    public string WHStockRequestUID { get; set; }
     public string? VehicleUID { get; set; }
     public string? DriverEmployeeUID { get; set; }
     public string? ForkLiftOperatorUID { get; set; }

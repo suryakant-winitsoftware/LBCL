@@ -14,7 +14,7 @@ import {
 import { ChevronRight, ChevronDown, FileText, Check, RefreshCw } from "lucide-react";
 import { ShareDialog } from "@/app/lbcl/components/share-dialog";
 import { SignatureDialog } from "@/app/lbcl/components/signature-dialog";
-import purchaseOrderService from "@/services/purchaseOrder";
+import { inventoryService } from "@/services/inventory/inventory.service";
 import { vehicleService, Vehicle } from "@/services/vehicleService";
 import { organizationService } from "@/services/organizationService";
 import { employeeService } from "@/services/admin/employee.service";
@@ -115,7 +115,7 @@ export function ActivityLogPage({ deliveryPlanId, readOnly = false }: ActivityLo
       const autoDeliveryNoteNumber = existingData?.DeliveryNoteNumber || existingData?.deliveryNoteNumber || `DN-${orderNumber}-${timestamp}`;
 
       const deliveryLoadingData = {
-        PurchaseOrderUID: sanitizeGuid(purchaseOrder.UID || purchaseOrder.uid),
+        WHStockRequestUID: purchaseOrder.UID || purchaseOrder.uid,
         // For OPERATOR/SECURITY: preserve existing Vehicle/Driver, For PRINCIPLE (non-OPERATOR/non-SECURITY): save new value, For others: save new value
         VehicleUID: (isOperatorFromPrincipal || isSecurityOfficerFromPrincipal)
           ? sanitizeGuid(existingData?.VehicleUID || existingData?.vehicleUID)
@@ -388,34 +388,95 @@ export function ActivityLogPage({ deliveryPlanId, readOnly = false }: ActivityLo
       setLoading(true);
       setError("");
 
-      const response = await purchaseOrderService.getPurchaseOrderMasterByUID(deliveryPlanId);
+      console.log('🔍 Fetching load request data for:', deliveryPlanId);
+      const response = await inventoryService.selectLoadRequestDataByUID(deliveryPlanId);
 
-      if (response.success && response.master) {
-        const header = response.master.PurchaseOrderHeader || response.master.purchaseOrderHeader;
-        console.log('🔍 Purchase Order Header:', header);
-        console.log('🏢 OrgName:', header?.OrgName, header?.orgName);
-        console.log('🏭 WarehouseName:', header?.WarehouseName, header?.warehouseName);
+      console.log('📦 Load Request Response:', response);
 
-        setPurchaseOrder(header);
-        setOrderLines(response.master.PurchaseOrderLines || response.master.purchaseOrderLines || []);
+      if (response && response.WHStockRequest) {
+        const header = response.WHStockRequest;
+        const lines = response.WHStockRequestLines || [];
+
+        console.log('✅ Load Request Header:', header);
+        console.log('📋 Load Request Lines:', lines);
+
+        // Transform WH Stock Request to match expected purchaseOrder format
+        const transformedHeader = {
+          UID: header.UID,
+          uid: header.UID,
+          Code: header.RequestCode,
+          RequestCode: header.RequestCode,
+          OrderNumber: header.RequestCode, // For "Delivery Plan No"
+          DraftOrderNumber: header.RequestCode,
+          OrgName: header.TargetOrgName, // Target Organization Name
+          orgName: header.TargetOrgName,
+          WarehouseName: header.TargetWHName, // Target Warehouse Name
+          warehouseName: header.TargetWHName,
+          Status: header.Status,
+          status: header.Status,
+          RequiredByDate: header.RequiredByDate,
+          RequestedDeliveryDate: header.RequiredByDate, // For "Date"
+          requestedDeliveryDate: header.RequiredByDate,
+          ExpectedDeliveryDate: header.RequiredByDate,
+          expectedDeliveryDate: header.RequiredByDate,
+          OrderDate: header.RequestedTime,
+          orderDate: header.RequestedTime,
+          RequestedTime: header.RequestedTime,
+          SourceOrgUID: header.SourceOrgUID,
+          SourceOrgName: header.SourceOrgName,
+          SourceWHUID: header.SourceWHUID,
+          SourceWHName: header.SourceWHName,
+          TargetOrgUID: header.TargetOrgUID,
+          TargetOrgName: header.TargetOrgName,
+          TargetWHUID: header.TargetWHUID,
+          TargetWHName: header.TargetWHName,
+          Remarks: header.Remarks
+        };
+
+        // Debug: Check if SKUName is present in raw lines data
+        console.log("📦 Raw lines from API:", lines);
+        console.log("🏷️ First line SKUName:", lines[0]?.SKUName);
+
+        // Transform lines to match expected format
+        const transformedLines = lines.map((line: any) => ({
+          UID: line.UID,
+          SKUCode: line.SKUCode,
+          skuCode: line.SKUCode,
+          SKUUID: line.SKUUID,
+          SKUName: line.SKUName, // Add SKU Name for PDF
+          skuName: line.SKUName,
+          ProductName: line.SKUName, // Fallback field name
+          RequestedQty: line.RequestedQty,
+          requestedQty: line.RequestedQty,
+          ApprovedQty: line.ApprovedQty,
+          UOM: line.UOM,
+          uom: line.UOM,
+          Remarks: line.Remarks
+        }));
+
+        console.log("✅ Transformed lines:", transformedLines);
+        console.log("🏷️ First transformed line SKUName:", transformedLines[0]?.SKUName);
+
+        setPurchaseOrder(transformedHeader);
+        setOrderLines(transformedLines);
 
         // Load existing delivery loading data if available
-        await loadExistingDeliveryLoadingData(header.UID || header.uid);
+        await loadExistingDeliveryLoadingData(header.UID);
       } else {
-        setError(response.error || "Failed to fetch delivery plan data");
+        setError("Failed to fetch load request data");
       }
     } catch (error) {
-      console.error("Error fetching purchase order:", error);
-      setError("Failed to load delivery plan data");
+      console.error("Error fetching load request:", error);
+      setError("Failed to load load request data");
     } finally {
       setLoading(false);
     }
   };
 
-  const loadExistingDeliveryLoadingData = async (purchaseOrderUID: string) => {
+  const loadExistingDeliveryLoadingData = async (whStockRequestUID: string) => {
     try {
-      console.log("🔍 Loading existing delivery loading data for PO:", purchaseOrderUID);
-      const response = await deliveryLoadingService.getDeliveryLoadingByPO(purchaseOrderUID);
+      console.log("🔍 Loading existing delivery loading data for WH Stock Request:", whStockRequestUID);
+      const response = await deliveryLoadingService.getDeliveryLoadingByWHStockRequest(whStockRequestUID);
 
       if (response && response.data) {
         const existingData = response.data;

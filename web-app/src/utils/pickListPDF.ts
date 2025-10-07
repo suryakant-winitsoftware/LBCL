@@ -28,6 +28,11 @@ export const generatePickListPDF = (
   purchaseOrder: PurchaseOrder,
   orderLines: OrderLine[]
 ) => {
+  console.log("📋 Pick List PDF - Order Lines:", orderLines);
+  console.log("🏷️ Pick List PDF - First line SKUName:", orderLines[0]?.SKUName);
+  console.log("🏷️ Pick List PDF - First line skuName:", orderLines[0]?.skuName);
+  console.log("🏷️ Pick List PDF - First line ProductName:", orderLines[0]?.ProductName);
+
   const doc = new jsPDF();
 
   // Header with background color

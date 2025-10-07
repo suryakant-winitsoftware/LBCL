@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { ChevronRight, FileText, ClipboardList, RefreshCw } from "lucide-react"
 import { deliveryLoadingService } from "@/services/deliveryLoadingService"
 import { useAuth } from "@/providers/auth-provider"
-import purchaseOrderService from "@/services/purchaseOrder"
+import { inventoryService } from "@/services/inventory/inventory.service"
 
 export default function StockReceivingList() {
   const [activeTab, setActiveTab] = useState<"pending" | "completed">("pending")
@@ -62,30 +62,34 @@ export default function StockReceivingList() {
       return []
     }
 
-    // Filter deliveries by checking if the purchase order's OrgUID matches the user's companyUID
     const filtered = []
 
     for (const delivery of deliveries) {
       try {
-        const poUID = delivery.PurchaseOrderUID || delivery.purchaseOrderUID
-        if (!poUID) continue
+        const whStockRequestUID = delivery.WHStockRequestUID || delivery.whStockRequestUID
+        if (!whStockRequestUID) continue
 
-        // Fetch purchase order details to get OrgUID
-        const poResponse = await purchaseOrderService.getPurchaseOrderMasterByUID(poUID)
+        const whStockRequest = await inventoryService.selectLoadRequestDataByUID(whStockRequestUID)
 
-        if (poResponse.success && poResponse.master) {
-          const header = poResponse.master.PurchaseOrderHeader || poResponse.master.purchaseOrderHeader
-          const orgUID = header?.OrgUID || header?.orgUID
+        if (whStockRequest) {
+          const header = whStockRequest.WHStockRequest
+          const targetOrgUID = header?.TargetOrgUID
+          const targetWHUID = header?.TargetWHUID
 
-          console.log(`🔍 PO ${poUID}: OrgUID = ${orgUID}, User CompanyUID = ${companyUID}`)
+          console.log(`🔍 WH Stock Request ${whStockRequestUID}: TargetOrgUID = ${targetOrgUID}, TargetWHUID = ${targetWHUID}, User CompanyUID = ${companyUID}`)
 
-          // Include delivery if OrgUID matches user's companyUID
-          if (orgUID === companyUID) {
-            filtered.push(delivery)
+          if (targetOrgUID === companyUID || targetWHUID === companyUID) {
+            filtered.push({
+              ...delivery,
+              request_code: header?.Code || header?.RequestCode,
+              created_time: header?.RequestedTime || header?.CreatedTime,
+              warehouse_uid: targetWHUID,
+              OrgName: header?.TargetOrgName
+            })
           }
         }
       } catch (error) {
-        console.error(`Error fetching PO details for ${delivery.PurchaseOrderUID}:`, error)
+        console.error(`Error fetching WH Stock Request details for ${delivery.WHStockRequestUID}:`, error)
       }
     }
 
@@ -165,7 +169,7 @@ export default function StockReceivingList() {
                 <div className="flex-shrink-0">
                   <div className="text-xs text-gray-500 mb-1">Delivery Plan No</div>
                   <div className="font-bold text-gray-900 text-sm">
-                    {delivery.order_number || delivery.OrderNumber || delivery.orderNumber || 'N/A'}
+                    {delivery.request_code || delivery.RequestCode || 'N/A'}
                   </div>
                 </div>
 
@@ -177,11 +181,11 @@ export default function StockReceivingList() {
                   </div>
                 </div>
 
-                {/* Order Date */}
+                {/* Request Date */}
                 <div className="flex-shrink-0">
-                  <div className="text-xs text-gray-500 mb-1">Order Date</div>
+                  <div className="text-xs text-gray-500 mb-1">Request Date</div>
                   <div className="font-bold text-gray-900 text-sm">
-                    {formatDate(delivery.order_date || delivery.OrderDate || delivery.orderDate || '')}
+                    {formatDate(delivery.created_time || delivery.CreatedTime || '')}
                   </div>
                 </div>
 
@@ -196,7 +200,7 @@ export default function StockReceivingList() {
                 {/* Action Buttons */}
                 <div className="ml-auto flex items-center gap-2">
                   <button
-                    onClick={() => router.push(`/lbcl/stock-receiving/${delivery.PurchaseOrderUID || delivery.purchaseOrderUID}/activity-log`)}
+                    onClick={() => router.push(`/lbcl/stock-receiving/${delivery.WHStockRequestUID || delivery.whStockRequestUID}/activity-log`)}
                     className="flex flex-col items-center justify-center px-3 py-2 text-gray-600 hover:text-[#A08B5C] transition-colors"
                   >
                     <ClipboardList className="w-6 h-6 mb-1" />
@@ -204,7 +208,7 @@ export default function StockReceivingList() {
                   </button>
 
                   <button
-                    onClick={() => router.push(`/lbcl/stock-receiving/${delivery.PurchaseOrderUID || delivery.purchaseOrderUID}`)}
+                    onClick={() => router.push(`/lbcl/stock-receiving/${delivery.WHStockRequestUID || delivery.whStockRequestUID}`)}
                     className="flex flex-col items-center justify-center px-3 py-2 text-gray-600 hover:text-[#A08B5C] transition-colors"
                   >
                     <FileText className="w-6 h-6 mb-1" />

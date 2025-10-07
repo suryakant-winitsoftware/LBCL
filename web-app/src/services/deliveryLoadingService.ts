@@ -2,7 +2,7 @@ import { ApiResponse } from "@/types/common.types";
 
 export interface DeliveryLoadingTracking {
   UID?: string;
-  PurchaseOrderUID: string;
+  WHStockRequestUID: string;
   VehicleUID?: string | null;
   DriverEmployeeUID?: string | null;
   ForkLiftOperatorUID?: string | null;
@@ -22,12 +22,12 @@ export interface DeliveryLoadingTracking {
   CreatedDate?: string;
   ModifiedBy?: string;
   ModifiedDate?: string;
-  // Purchase Order fields (from JOIN)
-  order_number?: string;
-  order_date?: string;
+  // WH Stock Request fields (from JOIN)
+  request_code?: string;
+  created_time?: string;
   warehouse_uid?: string;
   status?: string;
-  org_name?: string;
+  OrgName?: string;
 }
 
 const API_BASE_URL =
@@ -100,12 +100,12 @@ class DeliveryLoadingService {
     return response.data || [];
   }
 
-  // Get delivery loading tracking by Purchase Order UID
-  async getByPurchaseOrderUID(
-    purchaseOrderUID: string
+  // Get delivery loading tracking by WH Stock Request UID
+  async getByWHStockRequestUID(
+    whStockRequestUID: string
   ): Promise<DeliveryLoadingTracking | null> {
     const response = await this.apiCall<DeliveryLoadingTracking>(
-      `/DeliveryLoadingTracking/GetByPurchaseOrderUID/${purchaseOrderUID}`,
+      `/DeliveryLoadingTracking/GetByWHStockRequestUID/${whStockRequestUID}`,
       {
         method: "GET",
       }
@@ -122,7 +122,7 @@ class DeliveryLoadingService {
   }
 
   // Alternative method that directly calls the API (for debugging)
-  async getDeliveryLoadingByPO(purchaseOrderUID: string): Promise<any> {
+  async getDeliveryLoadingByWHStockRequest(whStockRequestUID: string): Promise<any> {
     try {
       const token =
         typeof window !== "undefined"
@@ -130,7 +130,7 @@ class DeliveryLoadingService {
           : null;
 
       const response = await fetch(
-        `${API_BASE_URL}/DeliveryLoadingTracking/GetByPurchaseOrderUID/${purchaseOrderUID}`,
+        `${API_BASE_URL}/DeliveryLoadingTracking/GetByWHStockRequestUID/${whStockRequestUID}`,
         {
           method: "GET",
           headers: {

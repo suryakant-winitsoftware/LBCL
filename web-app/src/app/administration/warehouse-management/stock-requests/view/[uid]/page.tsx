@@ -26,6 +26,14 @@ interface WHStockRequestDetail {
   SourceWHUID?: string
   TargetOrgUID?: string
   TargetWHUID?: string
+  SourceOrgCode?: string
+  SourceOrgName?: string
+  SourceWHCode?: string
+  SourceWHName?: string
+  TargetOrgCode?: string
+  TargetOrgName?: string
+  TargetWHCode?: string
+  TargetWHName?: string
   Status: string
   StockType?: string
   RequiredByDate: string
@@ -236,8 +244,27 @@ export default function StockRequestViewPage() {
             <div className="flex items-start gap-3">
               <MapPin className="h-5 w-5 text-gray-400 mt-0.5" />
               <div>
+                <p className="text-sm font-medium text-gray-600">Source Organization</p>
+                <p className="text-sm font-semibold">{requestData.SourceOrgName || '-'}</p>
+                <p className="text-xs text-gray-500">{requestData.SourceOrgCode || '-'}</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <MapPin className="h-5 w-5 text-gray-400 mt-0.5" />
+              <div>
                 <p className="text-sm font-medium text-gray-600">Source Warehouse</p>
-                <p className="text-sm font-semibold">{requestData.SourceWHUID || '-'}</p>
+                <p className="text-sm font-semibold">{requestData.SourceWHName || '-'}</p>
+                <p className="text-xs text-gray-500">{requestData.SourceWHCode || '-'}</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <MapPin className="h-5 w-5 text-gray-400 mt-0.5" />
+              <div>
+                <p className="text-sm font-medium text-gray-600">Target Organization</p>
+                <p className="text-sm font-semibold">{requestData.TargetOrgName || '-'}</p>
+                <p className="text-xs text-gray-500">{requestData.TargetOrgCode || '-'}</p>
               </div>
             </div>
 
@@ -245,7 +272,8 @@ export default function StockRequestViewPage() {
               <MapPin className="h-5 w-5 text-gray-400 mt-0.5" />
               <div>
                 <p className="text-sm font-medium text-gray-600">Target Warehouse</p>
-                <p className="text-sm font-semibold">{requestData.TargetWHUID || '-'}</p>
+                <p className="text-sm font-semibold">{requestData.TargetWHName || '-'}</p>
+                <p className="text-xs text-gray-500">{requestData.TargetWHCode || '-'}</p>
               </div>
             </div>
 

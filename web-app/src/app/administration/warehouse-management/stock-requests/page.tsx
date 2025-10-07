@@ -339,7 +339,7 @@ export default function StockRequestsPage() {
   return (
     <div className="container mx-auto py-4 space-y-4">
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold">Warehouse Stock Requests</h1>
+        <h1 className="text-2xl font-bold">Load Request</h1>
         <div className="flex gap-2">
           <Button variant="outline" size="sm">
             <Upload className="h-4 w-4 mr-2" />

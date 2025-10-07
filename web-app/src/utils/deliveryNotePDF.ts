@@ -18,16 +18,26 @@ interface PurchaseOrder {
   orderNumber?: string;
   OrderDate?: string;
   orderDate?: string;
+  RequiredByDate?: string;
+  requestedDeliveryDate?: string;
+  expectedDeliveryDate?: string;
   OrgName?: string;
   orgName?: string;
   WarehouseName?: string;
   warehouseName?: string;
+  TargetOrgName?: string;
+  TargetWHName?: string;
 }
 
 export const generateDeliveryNotePDF = (
   purchaseOrder: PurchaseOrder,
   orderLines: OrderLine[]
 ) => {
+  console.log("🚚 Delivery Note PDF - Order Lines:", orderLines);
+  console.log("🏷️ Delivery Note PDF - First line SKUName:", orderLines[0]?.SKUName);
+  console.log("🏷️ Delivery Note PDF - First line skuName:", orderLines[0]?.skuName);
+  console.log("🏷️ Delivery Note PDF - First line ProductName:", orderLines[0]?.ProductName);
+
   const doc = new jsPDF();
 
   // Header with background color
@@ -40,10 +50,9 @@ export const generateDeliveryNotePDF = (
   doc.setFont("helvetica", "bold");
   doc.text("DELIVERY NOTE", 105, 20, { align: "center" });
 
-  // Delivery Note Number
+  // Generate Delivery Note Number
   const now = new Date();
-  const orderNumber =
-    purchaseOrder?.OrderNumber || purchaseOrder?.orderNumber || "PO";
+  const orderNumber = purchaseOrder?.OrderNumber || purchaseOrder?.orderNumber || "PO";
   const timestamp = now.getTime().toString().slice(-6);
   const deliveryNoteNumber = `DN-${orderNumber}-${timestamp}`;
 
@@ -81,7 +90,17 @@ export const generateDeliveryNotePDF = (
     yPos
   );
   yPos += 6;
-  doc.text(`Delivery Date: ${now.toLocaleDateString()}`, 14, yPos);
+  doc.text(
+    `Delivery Date: ${
+      purchaseOrder?.RequiredByDate || purchaseOrder?.requestedDeliveryDate || purchaseOrder?.expectedDeliveryDate
+        ? new Date(
+            purchaseOrder.RequiredByDate || purchaseOrder.requestedDeliveryDate || purchaseOrder.expectedDeliveryDate
+          ).toLocaleDateString()
+        : "N/A"
+    }`,
+    14,
+    yPos
+  );
 
   // Shipping Details Section
   yPos += 12;
@@ -92,11 +111,17 @@ export const generateDeliveryNotePDF = (
   yPos += 8;
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-  doc.text(
-    `Ship To: ${purchaseOrder?.OrgName || purchaseOrder?.orgName || "N/A"}`,
-    14,
-    yPos
-  );
+
+  // Show organization name first
+  const orgName = purchaseOrder?.TargetOrgName || purchaseOrder?.OrgName || purchaseOrder?.orgName || "N/A";
+  doc.text(`Ship To: ${orgName}`, 14, yPos);
+
+  // Show warehouse name below with label at same alignment
+  yPos += 5;
+  const whName = purchaseOrder?.TargetWHName || purchaseOrder?.WarehouseName || purchaseOrder?.warehouseName || "";
+  if (whName) {
+    doc.text(`Warehouse - ${whName}`, 14, yPos);
+  }
 
   // Order Items Table
   yPos += 12;

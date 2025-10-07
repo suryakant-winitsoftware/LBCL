@@ -99,18 +99,44 @@ export interface IWHRequestTemplateModel {
 
 export interface IWHStockRequestItemView {
   UID: string;
-  Code: string;
+  RequestCode: string;
+  Code?: string; // Keep for backward compatibility
   RequestType: string;
   Status: string;
-  SourceOrgName: string;
-  SourceWHName: string;
-  TargetOrgName: string;
-  TargetWHName: string;
-  RequestByEmpName: string;
+  // Source Organization
+  SourceOrgUID?: string;
+  SourceOrgCode?: string;
+  SourceOrgName?: string;
+  // Source Warehouse
+  SourceWHUID?: string;
+  SourceWHCode?: string;
+  SourceWHName?: string;
+  // Target Organization
+  TargetOrgUID?: string;
+  TargetOrgCode?: string;
+  TargetOrgName?: string;
+  // Target Warehouse
+  TargetWHUID?: string;
+  TargetWHCode?: string;
+  TargetWHName?: string;
+  // Legacy fields
+  SourceCode?: string;
+  SourceName?: string;
+  TargetCode?: string;
+  TargetName?: string;
+  // Other fields
+  RequestByEmpName?: string;
   RequiredByDate: string;
-  StockType: string;
-  TotalItems: number;
-  CreatedTime: string;
+  StockType?: string;
+  TotalItems?: number;
+  RequestedTime: string;
+  ModifiedTime?: string;
+  CreatedTime?: string; // Keep for backward compatibility
+  OrgUID?: string;
+  Remarks?: string;
+  RouteCode?: string;
+  RouteName?: string;
+  YearMonth?: number;
 }
 
 export interface IViewLoadRequestItemView {

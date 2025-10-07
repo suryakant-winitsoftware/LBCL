@@ -1,0 +1,116 @@
+/* Modal fixes for proper display */
+.dialog-content {
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+  overflow: hidden;
+}
+
+/* Table container with proper scrolling */
+.table-scroll-container {
+  flex: 1;
+  overflow: auto;
+  min-height: 0;
+  position: relative;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+/* Sticky table header */
+.table-scroll-container table thead {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #f9fafb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Sticky table footer */
+.table-scroll-container table tfoot {
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+  background: #f9fafb;
+  box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Table body scrolling */
+.table-scroll-container tbody {
+  overflow-y: auto;
+}
+
+/* Horizontal scroll for wide tables */
+.table-wrapper {
+  overflow-x: auto;
+  overflow-y: visible;
+  width: 100%;
+}
+
+/* Product table specific styling */
+.product-table {
+  min-width: 1400px;
+  width: 100%;
+}
+
+/* Selected row highlighting */
+.product-table tbody tr.selected {
+  background-color: #eff6ff;
+  border-left: 4px solid #3b82f6;
+}
+
+/* Modal overlay fixes */
+[role="dialog"] {
+  max-width: 95vw !important;
+  max-height: 90vh !important;
+}
+
+/* Dialog content scrolling */
+[role="dialog"] > div {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 90vh;
+}
+
+/* Fix for add items modal scrolling */
+[data-radix-dialog-content] {
+  overflow: hidden !important;
+}
+
+/* Ensure flex containers properly handle overflow */
+.flex-1 {
+  min-height: 0;
+}
+
+/* Ensure proper z-index layering */
+.dialog-overlay {
+  z-index: 50;
+}
+
+.dialog-content {
+  z-index: 51;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .product-table {
+    font-size: 0.875rem;
+  }
+  
+  .product-table th,
+  .product-table td {
+    padding: 0.5rem 0.25rem;
+  }
+}
+
+@media (max-width: 768px) {
+  [role="dialog"] {
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+  }
+  
+  .product-table {
+    font-size: 0.75rem;
+  }
+}

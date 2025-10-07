@@ -392,34 +392,55 @@ namespace Winit.Modules.WHStock.DL.Classes
                     try
                     {
                        var sql = new StringBuilder(@"select * from (
-                                        select 
+                                        select
                                             wsr.uid as ""UID"",
                                             wsr.code as ""RequestCode"",
                                             wsr.request_type as ""RequestType"",
-                                            r.code as ""RouteCode"", 
-                                            r.name as ""RouteName"", 
-                                            s.code as ""SourceCode"", 
-                                            s.uid as ""OrgUID"", 
-                                            s.name as ""SourceName"",
-                                            t.code as ""TargetCode"", 
-                                            t.name as ""TargetName"", 
+                                            r.code as ""RouteCode"",
+                                            r.name as ""RouteName"",
+                                            COALESCE(SourceOrg.code, SourceWHParent.code) AS ""SourceOrgCode"",
+                                            COALESCE(SourceOrg.name, SourceWHParent.name) AS ""SourceOrgName"",
+                                            SourceWH.code AS ""SourceWHCode"",
+                                            SourceWH.name AS ""SourceWHName"",
+                                            COALESCE(TargetOrg.code, TargetWHParent.code) AS ""TargetOrgCode"",
+                                            COALESCE(TargetOrg.name, TargetWHParent.name) AS ""TargetOrgName"",
+                                            TargetWH.code AS ""TargetWHCode"",
+                                            TargetWH.name AS ""TargetWHName"",
+                                            SourceWH.code AS ""SourceCode"",
+                                            SourceWH.name AS ""SourceName"",
+                                            TargetWH.code AS ""TargetCode"",
+                                            TargetWH.name AS ""TargetName"",
+                                            wsr.source_org_uid AS ""SourceOrgUID"",
+                                            wsr.target_org_uid AS ""TargetOrgUID"",
+                                            wsr.source_wh_uid AS ""SourceWHUID"",
+                                            wsr.target_wh_uid AS ""TargetWHUID"",
+                                            wsr.org_uid AS ""OrgUID"",
                                             wsr.modified_time as ""ModifiedTime"",
                                             wsr.created_time as ""RequestedTime"",
                                             wsr.required_by_date as ""RequiredByDate"",
                                             wsr.status as ""Status"",
-                                            wsr.remarks as ""Remarks""
-                                            -- case when wsr.remarks = 'Auto Generated' then 0 else 1 end as IsDeleteEnabled
-                                        from 
+                                            wsr.remarks as ""Remarks"",
+                                            wsr.stock_type as ""StockType"",
+                                            wsr.year_month as ""YearMonth""
+                                        from
                                             wh_stock_request wsr
-                                        left join 
-                                            route r on r.uid = wsr.route_uid 
-                                        left join 
-                                            org s on s.uid = wsr.source_wh_uid
-                                        left join 
-                                            org t on t.uid = wsr.target_wh_uid 
+                                        left join
+                                            route r on r.uid = wsr.route_uid
+                                        left join
+                                            org SourceWH on SourceWH.uid = wsr.source_wh_uid
+                                        left join
+                                            org SourceOrg on SourceOrg.uid = wsr.source_org_uid
+                                        left join
+                                            org SourceWHParent on SourceWHParent.uid = SourceWH.parent_uid
+                                        left join
+                                            org TargetWH on TargetWH.uid = wsr.target_wh_uid
+                                        left join
+                                            org TargetOrg on TargetOrg.uid = wsr.target_org_uid
+                                        left join
+                                            org TargetWHParent on TargetWHParent.uid = TargetWH.parent_uid
                                         where
-                                            (@StockType = 'all' OR wsr.status = @StockType) 
-                                        order by 
+                                            (@StockType = 'all' OR wsr.status = @StockType)
+                                        order by
                                             wsr.modified_time desc
                                     ) as subquery
                                     ");
@@ -428,31 +449,46 @@ namespace Winit.Modules.WHStock.DL.Classes
                 if (isCountRequired)
                 {
                     sqlCount = new StringBuilder(@"select count(1) as ""Cnt""  from (
-                                                select 
+                                                select
                                                     wsr.uid as ""UID"",
                                                     wsr.code as ""RequestCode"",
                                                     wsr.request_type as ""RequestType"",
-                                                    r.code as ""RouteCode"", 
-                                                    r.name as ""RouteName"", 
-                                                    s.code as ""SourceCode"", 
-                                                    s.uid as ""OrgUID"", 
-                                                    s.name as ""SourceName"",
-                                                    t.code as ""TargetCode"", 
-                                                    t.name as ""TargetName"", 
+                                                    r.code as ""RouteCode"",
+                                                    r.name as ""RouteName"",
+                                                    COALESCE(SourceOrg.code, SourceWHParent.code) AS ""SourceOrgCode"",
+                                                    COALESCE(SourceOrg.name, SourceWHParent.name) AS ""SourceOrgName"",
+                                                    SourceWH.code AS ""SourceWHCode"",
+                                                    SourceWH.name AS ""SourceWHName"",
+                                                    COALESCE(TargetOrg.code, TargetWHParent.code) AS ""TargetOrgCode"",
+                                                    COALESCE(TargetOrg.name, TargetWHParent.name) AS ""TargetOrgName"",
+                                                    TargetWH.code AS ""TargetWHCode"",
+                                                    TargetWH.name AS ""TargetWHName"",
+                                                    wsr.source_org_uid AS ""SourceOrgUID"",
+                                                    wsr.target_org_uid AS ""TargetOrgUID"",
+                                                    wsr.org_uid AS ""OrgUID"",
                                                     wsr.modified_time as ""ModifiedTime"",
                                                     wsr.created_time as ""RequestedTime"",
                                                     wsr.required_by_date as ""RequiredByDate"",
                                                     wsr.status as ""Status"",
-                                                    wsr.remarks as ""Remarks""
-                                                    -- case when wsr.remarks = 'Auto Generated' then 0 else 1 end as IsDeleteEnabled
-                                                from 
+                                                    wsr.remarks as ""Remarks"",
+                                                    wsr.stock_type as ""StockType"",
+                                                    wsr.year_month as ""YearMonth""
+                                                from
                                                     wh_stock_request wsr
-                                                left join 
-                                                    route r on r.uid = wsr.route_uid 
-                                                left join 
-                                                    org s on s.uid = wsr.source_wh_uid
-                                                left join 
-                                                    org t on t.uid = wsr.target_wh_uid 
+                                                left join
+                                                    route r on r.uid = wsr.route_uid
+                                                left join
+                                                    org SourceWH on SourceWH.uid = wsr.source_wh_uid
+                                                left join
+                                                    org SourceOrg on SourceOrg.uid = wsr.source_org_uid
+                                                left join
+                                                    org SourceWHParent on SourceWHParent.uid = SourceWH.parent_uid
+                                                left join
+                                                    org TargetWH on TargetWH.uid = wsr.target_wh_uid
+                                                left join
+                                                    org TargetOrg on TargetOrg.uid = wsr.target_org_uid
+                                                left join
+                                                    org TargetWHParent on TargetWHParent.uid = TargetWH.parent_uid
                                                 where
                                                     (@StockType = 'all' OR wsr.status = @StockType)
                                             ) as subquery
@@ -511,7 +547,7 @@ namespace Winit.Modules.WHStock.DL.Classes
                 {
                     { "UID", UID },
                 };
-                var whStockSql = new StringBuilder(@"select 
+                var whStockSql = new StringBuilder(@"select
                                             WSR.uid AS UID,
                                             WSR.source_org_uid AS SourceOrgUID,
                                             WSR.target_org_uid  AS TargetOrgUID ,
@@ -521,10 +557,18 @@ namespace Winit.Modules.WHStock.DL.Classes
                                             R.uid AS RouteUID,
                                             R.code AS RouteCode,
                                             R.name AS RouteName,
-                                            S.code AS SourceCode,
-                                            S.name AS SourceName,
-                                            T.code AS TargetCode,
-                                            T.name AS TargetName,
+                                            COALESCE(SourceOrg.code, SourceWHParent.code) AS SourceOrgCode,
+                                            COALESCE(SourceOrg.name, SourceWHParent.name) AS SourceOrgName,
+                                            SourceWH.code AS SourceWHCode,
+                                            SourceWH.name AS SourceWHName,
+                                            COALESCE(TargetOrg.code, TargetWHParent.code) AS TargetOrgCode,
+                                            COALESCE(TargetOrg.name, TargetWHParent.name) AS TargetOrgName,
+                                            TargetWH.code AS TargetWHCode,
+                                            TargetWH.name AS TargetWHName,
+                                            SourceWH.code AS SourceCode,
+                                            SourceWH.name AS SourceName,
+                                            TargetWH.code AS TargetCode,
+                                            TargetWH.name AS TargetName,
                                             WSR.code AS RequestCode,
                                             WSR.request_type AS RequestType,
                                             WSR.required_by_date AS RequiredByDate,
@@ -536,15 +580,23 @@ namespace Winit.Modules.WHStock.DL.Classes
                                             WSR.year_month AS YearMonth,
                                             WSR.created_time AS RequestedTime,
                                             WSR.modified_time AS ModifiedTime
-                                        FROM 
+                                        FROM
                                         wh_stock_request WSR
-                                        LEFT JOIN 
-                                        Route R ON R.uid = WSR.route_uid 
-                                        LEFT JOIN 
-                                        Org S ON S.uid = WSR.source_wh_uid
-                                        LEFT JOIN 
-                                        Org T ON T.uid = WSR.target_wh_uid 
-                                        where 
+                                        LEFT JOIN
+                                        Route R ON R.uid = WSR.route_uid
+                                        LEFT JOIN
+                                        Org SourceWH ON SourceWH.uid = WSR.source_wh_uid
+                                        LEFT JOIN
+                                        Org SourceOrg ON SourceOrg.uid = WSR.source_org_uid
+                                        LEFT JOIN
+                                        Org SourceWHParent ON SourceWHParent.uid = SourceWH.parent_uid
+                                        LEFT JOIN
+                                        Org TargetWH ON TargetWH.uid = WSR.target_wh_uid
+                                        LEFT JOIN
+                                        Org TargetOrg ON TargetOrg.uid = WSR.target_org_uid
+                                        LEFT JOIN
+                                        Org TargetWHParent ON TargetWHParent.uid = TargetWH.parent_uid
+                                        where
                                             WSR.uid = @uid
                                         ");
                 Type whStockType = _serviceProvider.GetRequiredService<Model.Interfaces.IWHStockRequestItemView>().GetType();

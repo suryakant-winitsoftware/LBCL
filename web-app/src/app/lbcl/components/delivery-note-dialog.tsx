@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Package, Printer, Download } from "lucide-react"
+import { openDeliveryNotePDFInNewTab } from "@/utils/deliveryNotePDF"
 
 interface DeliveryNoteDialogProps {
   open: boolean
@@ -37,11 +38,11 @@ export function DeliveryNoteDialog({ open, onOpenChange, orderLines = [], purcha
   };
 
   const handlePrint = () => {
-    window.print();
+    openDeliveryNotePDFInNewTab(purchaseOrder, orderLines);
   };
 
   const handleDownloadPDF = () => {
-    window.print();
+    openDeliveryNotePDFInNewTab(purchaseOrder, orderLines);
   };
 
   if (!open) return null;

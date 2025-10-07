@@ -23,10 +23,10 @@ public class DeliveryLoadingTrackingController : WINITBaseController
     }
 
     /// <summary>
-    /// Get all Delivery Loading Tracking records by Purchase Order Status
+    /// Get all Delivery Loading Tracking records by Status
     /// </summary>
-    /// <param name="status">Purchase Order Status (SHIPPED or RECEIVED)</param>
-    /// <returns>List of Delivery Loading Tracking data with Purchase Order details</returns>
+    /// <param name="status">Status (SHIPPED or RECEIVED)</param>
+    /// <returns>List of Delivery Loading Tracking data with WH Stock Request details</returns>
     [HttpGet("GetByStatus/{status}")]
     public async Task<ActionResult> GetByStatus(string status)
     {
@@ -48,21 +48,21 @@ public class DeliveryLoadingTrackingController : WINITBaseController
     }
 
     /// <summary>
-    /// Get Delivery Loading Tracking by Purchase Order UID
+    /// Get Delivery Loading Tracking by WH Stock Request UID
     /// </summary>
-    /// <param name="purchaseOrderUID">Purchase Order UID</param>
+    /// <param name="whStockRequestUID">WH Stock Request UID</param>
     /// <returns>Delivery Loading Tracking data</returns>
-    [HttpGet("GetByPurchaseOrderUID/{purchaseOrderUID}")]
-    public async Task<ActionResult> GetByPurchaseOrderUID(string purchaseOrderUID)
+    [HttpGet("GetByWHStockRequestUID/{whStockRequestUID}")]
+    public async Task<ActionResult> GetByWHStockRequestUID(string whStockRequestUID)
     {
         try
         {
-            if (string.IsNullOrEmpty(purchaseOrderUID))
+            if (string.IsNullOrEmpty(whStockRequestUID))
             {
-                return BadRequest("Purchase Order UID is required");
+                return BadRequest("WH Stock Request UID is required");
             }
 
-            var result = await _deliveryLoadingTrackingDL.GetByPurchaseOrderUIDAsync(purchaseOrderUID);
+            var result = await _deliveryLoadingTrackingDL.GetByWHStockRequestUIDAsync(whStockRequestUID);
 
             if (result == null)
             {
@@ -92,13 +92,13 @@ public class DeliveryLoadingTrackingController : WINITBaseController
                 return BadRequest("Invalid request data");
             }
 
-            if (string.IsNullOrEmpty(deliveryLoadingTracking.PurchaseOrderUID))
+            if (string.IsNullOrEmpty(deliveryLoadingTracking.WHStockRequestUID))
             {
-                return BadRequest("Purchase Order UID is required");
+                return BadRequest("WH Stock Request UID is required");
             }
 
-            // Check if record already exists for this purchase order
-            var existing = await _deliveryLoadingTrackingDL.GetByPurchaseOrderUIDAsync(deliveryLoadingTracking.PurchaseOrderUID);
+            // Check if record already exists for this WH stock request
+            var existing = await _deliveryLoadingTrackingDL.GetByWHStockRequestUIDAsync(deliveryLoadingTracking.WHStockRequestUID);
 
             bool success;
             string message;
@@ -122,16 +122,22 @@ public class DeliveryLoadingTrackingController : WINITBaseController
 
             if (success)
             {
-                // Update purchase order status to SHIPPED
                 try
                 {
-                    await _deliveryLoadingTrackingDL.UpdatePurchaseOrderStatusAsync(deliveryLoadingTracking.PurchaseOrderUID, "SHIPPED");
-                    Console.WriteLine($"✅ Purchase order {deliveryLoadingTracking.PurchaseOrderUID} status updated to SHIPPED");
+                    if (!string.IsNullOrWhiteSpace(deliveryLoadingTracking.SecurityOfficerUID))
+                    {
+                        await _deliveryLoadingTrackingDL.UpdateWHStockRequestStatusAsync(deliveryLoadingTracking.WHStockRequestUID, "SHIPPED");
+                        Console.WriteLine($"✅ WH Stock Request {deliveryLoadingTracking.WHStockRequestUID} status updated to SHIPPED");
+                    }
+                    else
+                    {
+                        await _deliveryLoadingTrackingDL.UpdateWHStockRequestStatusAsync(deliveryLoadingTracking.WHStockRequestUID, "Approved");
+                        Console.WriteLine($"✅ WH Stock Request {deliveryLoadingTracking.WHStockRequestUID} status updated to Approved");
+                    }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"⚠️ Failed to update purchase order status: {ex.Message}");
-                    // Continue anyway since delivery loading tracking was saved
+                    Console.WriteLine($"⚠️ Failed to update WH stock request status: {ex.Message}");
                 }
 
                 return Ok(new { success = true, message });

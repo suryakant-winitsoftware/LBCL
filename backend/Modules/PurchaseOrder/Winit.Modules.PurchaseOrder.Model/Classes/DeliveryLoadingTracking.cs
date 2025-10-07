@@ -5,7 +5,7 @@ namespace Winit.Modules.PurchaseOrder.Model.Classes;
 
 public class DeliveryLoadingTracking : BaseModel, IDeliveryLoadingTracking
 {
-    public string PurchaseOrderUID { get; set; } = string.Empty;
+    public string WHStockRequestUID { get; set; } = string.Empty;
     public string? VehicleUID { get; set; }
     public string? DriverEmployeeUID { get; set; }
     public string? ForkLiftOperatorUID { get; set; }
@@ -22,9 +22,9 @@ public class DeliveryLoadingTracking : BaseModel, IDeliveryLoadingTracking
     public string? Status { get; set; }
     public bool IsActive { get; set; }
 
-    // Purchase Order fields (for joined queries)
-    public string? order_number { get; set; }
-    public DateTime? order_date { get; set; }
+    // WH Stock Request fields (for joined queries)
+    public string? request_code { get; set; }
+    public DateTime? created_time { get; set; }
     public string? warehouse_uid { get; set; }
     public string? status { get; set; }
     public string? OrgName { get; set; }

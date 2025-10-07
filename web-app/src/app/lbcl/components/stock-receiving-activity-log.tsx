@@ -21,12 +21,13 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useRouter } from "next/navigation";
-import purchaseOrderService from "@/services/purchaseOrder";
+import { inventoryService } from "@/services/inventory/inventory.service";
 import { stockReceivingService } from "@/services/stockReceivingService";
 import { deliveryLoadingService } from "@/services/deliveryLoadingService";
 import { DeliveryNoteDialog } from "@/app/lbcl/components/delivery-note-dialog";
 import { roleService } from "@/services/admin/role.service";
 import { employeeService } from "@/services/admin/employee.service";
+import { openDeliveryNotePDFInNewTab } from "@/utils/deliveryNotePDF";
 import { SuccessDialog } from "@/components/dialogs/success-dialog";
 import { useAuth } from "@/providers/auth-provider";
 
@@ -346,43 +347,42 @@ export default function StockReceivingActivityLog({
       setLoading(true);
       setError("");
 
-      // Fetch both purchase order and delivery loading tracking in parallel
-      const [poResponse, dlResponse] = await Promise.all([
-        purchaseOrderService.getPurchaseOrderMasterByUID(deliveryId),
-        deliveryLoadingService.getByPurchaseOrderUID(deliveryId)
+      // Fetch both WH stock request and delivery loading tracking in parallel
+      const [whResponse, dlResponse] = await Promise.all([
+        inventoryService.selectLoadRequestDataByUID(deliveryId),
+        deliveryLoadingService.getByWHStockRequestUID(deliveryId)
       ]);
 
-      console.log("🔍 Purchase Order Response:", poResponse);
+      console.log("🔍 WH Stock Request Response:", whResponse);
       console.log("🔍 Delivery Loading Response:", dlResponse);
 
-      if (poResponse.success && poResponse.data) {
-        console.log("📦 Purchase Order Data:", poResponse.data);
-        console.log("📦 PO Keys:", Object.keys(poResponse.data));
+      if (whResponse) {
+        const header = whResponse.WHStockRequest;
+        const lines = whResponse.WHStockRequestLines || [];
 
-        // Extract the header from nested structure
-        const poData = poResponse.data;
-        const header = poData.PurchaseOrderHeader || poData;
-        console.log("📦 Extracted Header:", header);
-        console.log("📦 Header Keys:", Object.keys(header));
+        console.log("📦 WH Stock Request Header:", header);
+        console.log("📦 WH Stock Request Lines:", lines);
 
-        setPurchaseOrder(header);
+        // Transform to match expected format
+        const transformedHeader = {
+          UID: header.UID,
+          Code: header.Code,
+          OrderNumber: header.Code,
+          OrgUID: header.TargetOrgUID,
+          orgUID: header.TargetOrgUID,
+          WarehouseName: header.TargetWHName,
+          TargetOrgName: header.TargetOrgName,
+          TargetWHName: header.TargetWHName,
+          RequiredByDate: header.RequiredByDate,
+          RequestedTime: header.RequestedTime
+        };
 
-        // Extract order lines for delivery note dialog
-        const lines =
-          poData.PurchaseOrderLines ||
-          poData.purchaseOrderLines ||
-          poData.Lines ||
-          poData.lines ||
-          [];
+        setPurchaseOrder(transformedHeader);
         setOrderLines(lines);
 
-        // Log org UID for debugging
-        console.log(
-          "🏢 Purchase Order OrgUID:",
-          header.OrgUID || header.org_uid || header.orgUID
-        );
+        console.log("🏢 WH Stock Request TargetOrgUID:", header.TargetOrgUID);
       } else {
-        setError("Failed to load purchase order");
+        setError("Failed to load WH stock request");
       }
 
       // Delivery loading might not exist yet (it's created during delivery loading activity log)
@@ -392,9 +392,6 @@ export default function StockReceivingActivityLog({
           "🚚 DL Keys:",
           dlResponse ? Object.keys(dlResponse) : "null"
         );
-        console.log("🚚 DL org_name:", dlResponse?.org_name);
-        console.log("🚚 DL OrgName:", dlResponse?.OrgName);
-        console.log("🚚 DL orgName:", dlResponse?.orgName);
         setDeliveryLoading(dlResponse);
       } else {
         console.log(
@@ -479,11 +476,11 @@ export default function StockReceivingActivityLog({
           : null;
 
       const stockReceivingData = {
-        PurchaseOrderUID: deliveryId,
+        WHStockRequestUID: deliveryId,
         ReceiverName: null,
         ReceiverEmployeeCode: securityOfficer || null,
         ForkLiftOperatorUID: forkLiftOperator || null,
-        LoadEmptyStockEmployeeUID: forkLiftOperator || null, // Using same fork lift operator for loading empties
+        LoadEmptyStockEmployeeUID: forkLiftOperator || null,
         GetpassEmployeeUID: getpassEmployee || null,
         ArrivalTime: arrivalTime,
         UnloadingStartTime: unloadingStartTime,
@@ -673,7 +670,7 @@ export default function StockReceivingActivityLog({
           {/* Step 1: View Delivery Note */}
           <div className="bg-white border border-gray-200 rounded-lg p-4">
             <button
-              onClick={() => setShowDeliveryNote(true)}
+              onClick={() => openDeliveryNotePDFInNewTab(purchaseOrder, orderLines)}
               className="flex items-center justify-between w-full"
             >
               <div className="flex items-center gap-3">

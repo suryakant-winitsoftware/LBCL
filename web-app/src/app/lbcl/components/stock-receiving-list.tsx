@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { ChevronRight, FileText, ClipboardList, RefreshCw } from "lucide-react"
 import { deliveryLoadingService } from "@/services/deliveryLoadingService"
+import { stockReceivingService } from "@/services/stockReceivingService"
 import { useAuth } from "@/providers/auth-provider"
 import { inventoryService } from "@/services/inventory/inventory.service"
 
@@ -31,19 +32,16 @@ export default function StockReceivingList() {
         return
       }
 
-      // For pending tab: fetch SHIPPED deliveries (ready to receive)
-      // For completed tab: fetch RECEIVED deliveries
-      const status = activeTab === "pending" ? "SHIPPED" : "RECEIVED"
-
-      console.log("🔍 Fetching delivery loading tracking with status:", status)
+      // Fetch SHIPPED deliveries (ready to receive)
+      console.log("🔍 Fetching SHIPPED deliveries")
       console.log("🏢 User CompanyUID:", user.companyUID)
 
-      const data = await deliveryLoadingService.getByStatus(status)
+      const shippedDeliveries = await deliveryLoadingService.getByStatus("SHIPPED")
 
-      console.log("📦 Delivery Loading Tracking Data (before filter):", data)
+      console.log("📦 SHIPPED Deliveries (before filter):", shippedDeliveries)
 
-      // Filter deliveries to only show those matching the user's organization
-      const filteredDeliveries = await filterDeliveriesByOrganization(data, user.companyUID)
+      // Filter deliveries to only show those matching the user's organization and activeTab
+      const filteredDeliveries = await filterDeliveriesByOrganization(shippedDeliveries, user.companyUID)
 
       console.log("✅ Filtered Delivery Data (after filter):", filteredDeliveries)
 
@@ -69,6 +67,7 @@ export default function StockReceivingList() {
         const whStockRequestUID = delivery.WHStockRequestUID || delivery.whStockRequestUID
         if (!whStockRequestUID) continue
 
+        // Fetch WH Stock Request details
         const whStockRequest = await inventoryService.selectLoadRequestDataByUID(whStockRequestUID)
 
         if (whStockRequest) {
@@ -79,13 +78,28 @@ export default function StockReceivingList() {
           console.log(`🔍 WH Stock Request ${whStockRequestUID}: TargetOrgUID = ${targetOrgUID}, TargetWHUID = ${targetWHUID}, User CompanyUID = ${companyUID}`)
 
           if (targetOrgUID === companyUID || targetWHUID === companyUID) {
-            filtered.push({
-              ...delivery,
-              request_code: header?.Code || header?.RequestCode,
-              created_time: header?.RequestedTime || header?.CreatedTime,
-              warehouse_uid: targetWHUID,
-              OrgName: header?.TargetOrgName
-            })
+            // Fetch StockReceivingTracking to get the status
+            const stockReceiving = await stockReceivingService.getByWHStockRequestUID(whStockRequestUID)
+            const receivingStatus = stockReceiving?.Status || null
+
+            console.log(`📋 Stock Receiving Status for ${whStockRequestUID}: ${receivingStatus}`)
+
+            // Filter based on active tab and receiving status
+            const isPending = !receivingStatus || receivingStatus === "PENDING" || receivingStatus === "GATE_ENTRY" || receivingStatus === "UNLOADING" || receivingStatus === "LOAD_EMPTY"
+            const isCompleted = receivingStatus === "COMPLETED"
+
+            const shouldInclude = (activeTab === "pending" && isPending) || (activeTab === "completed" && isCompleted)
+
+            if (shouldInclude) {
+              filtered.push({
+                ...delivery,
+                request_code: header?.Code || header?.RequestCode,
+                created_time: header?.RequestedTime || header?.CreatedTime,
+                warehouse_uid: targetWHUID,
+                OrgName: header?.TargetOrgName,
+                receivingStatus
+              })
+            }
           }
         }
       } catch (error) {
@@ -93,7 +107,7 @@ export default function StockReceivingList() {
       }
     }
 
-    console.log(`✅ Filtered ${filtered.length} out of ${deliveries.length} deliveries`)
+    console.log(`✅ Filtered ${filtered.length} out of ${deliveries.length} deliveries for ${activeTab} tab`)
     return filtered
   }
 

@@ -41,21 +41,21 @@ public class StockReceivingTrackingController : WINITBaseController
     }
 
     /// <summary>
-    /// Get Stock Receiving Tracking by Purchase Order UID
+    /// Get Stock Receiving Tracking by WH Stock Request UID
     /// </summary>
-    /// <param name="purchaseOrderUID">Purchase Order UID</param>
+    /// <param name="whStockRequestUID">WH Stock Request UID</param>
     /// <returns>Stock Receiving Tracking data</returns>
-    [HttpGet("GetByPurchaseOrderUID/{purchaseOrderUID}")]
-    public async Task<ActionResult> GetByPurchaseOrderUID(string purchaseOrderUID)
+    [HttpGet("GetByWHStockRequestUID/{whStockRequestUID}")]
+    public async Task<ActionResult> GetByWHStockRequestUID(string whStockRequestUID)
     {
         try
         {
-            if (string.IsNullOrEmpty(purchaseOrderUID))
+            if (string.IsNullOrEmpty(whStockRequestUID))
             {
-                return BadRequest("Purchase Order UID is required");
+                return BadRequest("WH Stock Request UID is required");
             }
 
-            var result = await _stockReceivingTrackingDL.GetByPurchaseOrderUIDAsync(purchaseOrderUID);
+            var result = await _stockReceivingTrackingDL.GetByWHStockRequestUIDAsync(whStockRequestUID);
 
             if (result == null)
             {
@@ -68,6 +68,17 @@ public class StockReceivingTrackingController : WINITBaseController
         {
             return StatusCode(500, new { success = false, error = ex.Message });
         }
+    }
+
+    /// <summary>
+    /// Get Stock Receiving Tracking by Purchase Order UID (Backward compatibility)
+    /// </summary>
+    /// <param name="purchaseOrderUID">Purchase Order UID</param>
+    /// <returns>Stock Receiving Tracking data</returns>
+    [HttpGet("GetByPurchaseOrderUID/{purchaseOrderUID}")]
+    public async Task<ActionResult> GetByPurchaseOrderUID(string purchaseOrderUID)
+    {
+        return await GetByWHStockRequestUID(purchaseOrderUID);
     }
 
     /// <summary>
@@ -85,13 +96,13 @@ public class StockReceivingTrackingController : WINITBaseController
                 return BadRequest("Invalid request data");
             }
 
-            if (string.IsNullOrEmpty(stockReceivingTracking.PurchaseOrderUID))
+            if (string.IsNullOrEmpty(stockReceivingTracking.WHStockRequestUID))
             {
-                return BadRequest("Purchase Order UID is required");
+                return BadRequest("WH Stock Request UID is required");
             }
 
-            // Check if record already exists for this purchase order
-            var existing = await _stockReceivingTrackingDL.GetByPurchaseOrderUIDAsync(stockReceivingTracking.PurchaseOrderUID);
+            // Check if record already exists for this WH stock request
+            var existing = await _stockReceivingTrackingDL.GetByWHStockRequestUIDAsync(stockReceivingTracking.WHStockRequestUID);
 
             bool success;
             string message;
@@ -115,15 +126,15 @@ public class StockReceivingTrackingController : WINITBaseController
 
             if (success)
             {
-                // Update purchase order status to RECEIVED
+                // Update WH stock request status to RECEIVED
                 try
                 {
-                    await _stockReceivingTrackingDL.UpdatePurchaseOrderStatusAsync(stockReceivingTracking.PurchaseOrderUID, "RECEIVED");
-                    Console.WriteLine($"✅ Purchase order {stockReceivingTracking.PurchaseOrderUID} status updated to RECEIVED");
+                    await _stockReceivingTrackingDL.UpdateWHStockRequestStatusAsync(stockReceivingTracking.WHStockRequestUID, "RECEIVED");
+                    Console.WriteLine($"✅ WH Stock Request {stockReceivingTracking.WHStockRequestUID} status updated to RECEIVED");
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"⚠️ Failed to update purchase order status: {ex.Message}");
+                    Console.WriteLine($"⚠️ Failed to update WH stock request status: {ex.Message}");
                     // Continue anyway since stock receiving tracking was saved
                 }
 

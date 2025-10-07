@@ -7,7 +7,8 @@ import {
   Clock,
   Bell,
   RefreshCw,
-  FileText
+  FileText,
+  CheckCircle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,21 +43,24 @@ export default function StockReceivingActivityLog({
   const { user } = useAuth();
 
   // Check user roles for field visibility
-  const isSecurityOfficer = user?.roles?.some(role =>
-    role.roleNameEn?.toUpperCase().includes("SECURITY") ||
-    role.code?.toUpperCase().includes("SECURITY") ||
-    role.uid?.toUpperCase() === "SECURITYOFFICER" ||
-    role.code?.toUpperCase() === "SECURITYOFFICER"
+  const isSecurityOfficer = user?.roles?.some(
+    (role) =>
+      role.roleNameEn?.toUpperCase().includes("SECURITY") ||
+      role.code?.toUpperCase().includes("SECURITY") ||
+      role.uid?.toUpperCase() === "SECURITYOFFICER" ||
+      role.code?.toUpperCase() === "SECURITYOFFICER"
   );
 
-  const isOperator = user?.roles?.some(role =>
-    role.roleNameEn?.toUpperCase().includes("OPERATOR") ||
-    role.code?.toUpperCase().includes("OPERATOR")
+  const isOperator = user?.roles?.some(
+    (role) =>
+      role.roleNameEn?.toUpperCase().includes("OPERATOR") ||
+      role.code?.toUpperCase().includes("OPERATOR")
   );
 
-  const isAgent = user?.roles?.some(role =>
-    role.roleNameEn?.toUpperCase().includes("AGENT") ||
-    role.code?.toUpperCase().includes("AGENT")
+  const isAgent = user?.roles?.some(
+    (role) =>
+      role.roleNameEn?.toUpperCase().includes("AGENT") ||
+      role.code?.toUpperCase().includes("AGENT")
   );
 
   console.log("🔐 Stock Receiving Activity Log - User Role Check:");
@@ -68,11 +72,13 @@ export default function StockReceivingActivityLog({
   >({
     2: true,
     4: true,
+    5: true,
     6: true
   });
   const [showDeliveryNote, setShowDeliveryNote] = useState(false);
   const [purchaseOrder, setPurchaseOrder] = useState<any>(null);
   const [deliveryLoading, setDeliveryLoading] = useState<any>(null);
+  const [stockReceivingData, setStockReceivingData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [orderLines, setOrderLines] = useState<any[]>([]);
@@ -347,14 +353,16 @@ export default function StockReceivingActivityLog({
       setLoading(true);
       setError("");
 
-      // Fetch both WH stock request and delivery loading tracking in parallel
-      const [whResponse, dlResponse] = await Promise.all([
+      // Fetch WH stock request, delivery loading tracking, and stock receiving tracking in parallel
+      const [whResponse, dlResponse, srResponse] = await Promise.all([
         inventoryService.selectLoadRequestDataByUID(deliveryId),
-        deliveryLoadingService.getByWHStockRequestUID(deliveryId)
+        deliveryLoadingService.getByWHStockRequestUID(deliveryId),
+        stockReceivingService.getByWHStockRequestUID(deliveryId)
       ]);
 
       console.log("🔍 WH Stock Request Response:", whResponse);
       console.log("🔍 Delivery Loading Response:", dlResponse);
+      console.log("🔍 Stock Receiving Response:", srResponse);
 
       if (whResponse) {
         const header = whResponse.WHStockRequest;
@@ -398,6 +406,52 @@ export default function StockReceivingActivityLog({
           "⚠️ No delivery loading data found - this is normal if delivery hasn't been loaded yet"
         );
       }
+
+      // Load existing stock receiving tracking data if it exists
+      if (srResponse) {
+        console.log("📋 Stock Receiving Data:", srResponse);
+        setStockReceivingData(srResponse);
+
+        // Populate form fields with existing data
+        if (srResponse.ReceiverEmployeeCode) {
+          setSecurityOfficer(srResponse.ReceiverEmployeeCode);
+        }
+        if (srResponse.ForkLiftOperatorUID) {
+          setForkLiftOperator(srResponse.ForkLiftOperatorUID);
+        }
+        if (srResponse.GetpassEmployeeUID) {
+          setGetpassEmployee(srResponse.GetpassEmployeeUID);
+        }
+
+        // Parse and set time fields
+        if (srResponse.ArrivalTime) {
+          const arrivalDate = new Date(srResponse.ArrivalTime);
+          setArrivalHour(arrivalDate.getHours().toString().padStart(2, "0"));
+          setArrivalMin(arrivalDate.getMinutes().toString().padStart(2, "0"));
+        }
+        if (srResponse.UnloadingStartTime) {
+          const unloadStartDate = new Date(srResponse.UnloadingStartTime);
+          setUnloadStartHour(unloadStartDate.getHours().toString().padStart(2, "0"));
+          setUnloadStartMin(unloadStartDate.getMinutes().toString().padStart(2, "0"));
+        }
+        if (srResponse.UnloadingEndTime) {
+          const unloadEndDate = new Date(srResponse.UnloadingEndTime);
+          setUnloadEndHour(unloadEndDate.getHours().toString().padStart(2, "0"));
+          setUnloadEndMin(unloadEndDate.getMinutes().toString().padStart(2, "0"));
+        }
+        if (srResponse.LoadEmptyStockTime) {
+          const loadEmptyDate = new Date(srResponse.LoadEmptyStockTime);
+          setLoadEmptyStartHour(loadEmptyDate.getHours().toString().padStart(2, "0"));
+          setLoadEmptyStartMin(loadEmptyDate.getMinutes().toString().padStart(2, "0"));
+        }
+        if (srResponse.GetpassTime) {
+          const getpassDate = new Date(srResponse.GetpassTime);
+          setGetpassHour(getpassDate.getHours().toString().padStart(2, "0"));
+          setGetpassMin(getpassDate.getMinutes().toString().padStart(2, "0"));
+        }
+      } else {
+        console.log("⚠️ No stock receiving data found - this is a new stock receiving activity");
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
       setError("Failed to load data");
@@ -428,6 +482,46 @@ export default function StockReceivingActivityLog({
         hour12: false
       }) + " HRS"
     );
+  };
+
+  // Determine next status based on current user role and fields filled
+  const determineNextStatus = (
+    currentStatus: string | null | undefined,
+    arrivalTime: string | null,
+    unloadingEndTime: string | null,
+    loadEmptyStockTime: string | null,
+    getpassTime: string | null
+  ): string => {
+    // If no current status, check what's being filled
+    if (!currentStatus || currentStatus === "PENDING") {
+      if (arrivalTime && isSecurityOfficer) {
+        return "GATE_ENTRY";
+      }
+    }
+
+    // If status is GATE_ENTRY, check if operator is filling unloading
+    if (currentStatus === "GATE_ENTRY") {
+      if (unloadingEndTime && isOperator) {
+        return "UNLOADING";
+      }
+    }
+
+    // If status is UNLOADING, check if operator is filling load empty
+    if (currentStatus === "UNLOADING") {
+      if (loadEmptyStockTime && isOperator) {
+        return "LOAD_EMPTY";
+      }
+    }
+
+    // If status is LOAD_EMPTY, check if security officer is filling getpass
+    if (currentStatus === "LOAD_EMPTY") {
+      if (getpassTime && isSecurityOfficer) {
+        return "COMPLETED";
+      }
+    }
+
+    // Default: keep current status or set to PENDING
+    return currentStatus || "PENDING";
   };
 
   const handleSubmit = async () => {
@@ -475,7 +569,27 @@ export default function StockReceivingActivityLog({
             )}:00`
           : null;
 
-      const stockReceivingData = {
+      // Determine status based on current status and fields filled
+      const currentStatus = stockReceivingData?.Status;
+      const status = determineNextStatus(
+        currentStatus,
+        arrivalTime,
+        unloadingEndTime,
+        loadEmptyStockTime,
+        getpassTime
+      );
+
+      console.log("📊 Status Transition:", {
+        currentStatus,
+        newStatus: status,
+        userRole: isSecurityOfficer
+          ? "Security Officer"
+          : isOperator
+          ? "Operator"
+          : "Other",
+      });
+
+      const dataToSave = {
         WHStockRequestUID: deliveryId,
         ReceiverName: null,
         ReceiverEmployeeCode: securityOfficer || null,
@@ -491,36 +605,20 @@ export default function StockReceivingActivityLog({
         PhysicalCountEndTime: null,
         ReceiverSignature: null,
         Notes: null,
-        Status: "COMPLETED",
+        Status: status,
         IsActive: true
       };
 
-      console.log("💾 Saving stock receiving data:", stockReceivingData);
+      console.log("💾 Saving stock receiving data:", dataToSave);
 
       await stockReceivingService.saveStockReceivingTracking(
-        stockReceivingData
+        dataToSave
       );
 
-      // Calculate completion time
-      let completionTime = "N/A";
-      if (unloadingStartTime && unloadingEndTime) {
-        const start = new Date(unloadingStartTime);
-        const end = new Date(unloadingEndTime);
-        const diffMs = end.getTime() - start.getTime();
-        const diffMins = Math.round(diffMs / 60000);
-        completionTime = `${diffMins} Min`;
-      }
+      console.log("✅ Stock receiving data saved successfully with status:", status);
 
-      // Format times for display
-      const formatTime = (timeStr: string | null) => {
-        if (!timeStr) return "N/A";
-        const date = new Date(timeStr);
-        return date.toLocaleTimeString("en-US", {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: true
-        });
-      };
+      // Refresh data to show updated information
+      await fetchData();
 
       // Show success dialog
       setShowSuccessDialog(true);
@@ -571,29 +669,96 @@ export default function StockReceivingActivityLog({
   console.log("🎨 OrderNumber:", purchaseOrder?.OrderNumber);
   console.log("🎨 order_date:", purchaseOrder?.order_date);
 
+  // Get status badge color
+  const getStatusBadgeColor = (status: string | null | undefined) => {
+    switch (status) {
+      case "PENDING":
+        return "bg-gray-100 text-gray-800";
+      case "GATE_ENTRY":
+        return "bg-blue-100 text-blue-800";
+      case "UNLOADING":
+        return "bg-yellow-100 text-yellow-800";
+      case "LOAD_EMPTY":
+        return "bg-orange-100 text-orange-800";
+      case "COMPLETED":
+        return "bg-green-100 text-green-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const getStatusLabel = (status: string | null | undefined) => {
+    switch (status) {
+      case "PENDING":
+        return "Pending";
+      case "GATE_ENTRY":
+        return "Gate Entry Completed";
+      case "UNLOADING":
+        return "Unloading Completed";
+      case "LOAD_EMPTY":
+        return "Empty Stock Loaded";
+      case "COMPLETED":
+        return "Completed";
+      default:
+        return "Pending";
+    }
+  };
+
+  // Check if a step is completed based on status
+  const isStepCompleted = (step: string) => {
+    const status = stockReceivingData?.Status;
+    const statusOrder = ["PENDING", "GATE_ENTRY", "UNLOADING", "LOAD_EMPTY", "COMPLETED"];
+    const currentIndex = statusOrder.indexOf(status || "PENDING");
+
+    switch (step) {
+      case "GATE_ENTRY":
+        return currentIndex >= 1; // GATE_ENTRY or later
+      case "UNLOADING":
+        return currentIndex >= 2; // UNLOADING or later
+      case "LOAD_EMPTY":
+        return currentIndex >= 3; // LOAD_EMPTY or later
+      case "GETPASS":
+        return currentIndex >= 4; // COMPLETED
+      default:
+        return false;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center justify-between sticky top-0 z-10">
-        <h1 className="text-base sm:text-lg md:text-xl font-bold text-center flex-1 px-2">
-          Agent Stock Receiving Activity Log Report
-        </h1>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            className="border-[#A08B5C] text-[#A08B5C] bg-transparent"
-            onClick={() => router.back()}
-          >
-            Back
-          </Button>
-          {!readOnly && (
+      <header className="bg-white border-b border-gray-200 px-4 py-4 sticky top-0 z-10">
+        <div className="flex items-center justify-between mb-2">
+          <h1 className="text-base sm:text-lg md:text-xl font-bold text-center flex-1 px-2">
+            Agent Stock Receiving Activity Log Report
+          </h1>
+          <div className="flex gap-2">
             <Button
-              className="bg-[#A08B5C] hover:bg-[#8A7549] text-white"
-              onClick={handleSubmit}
+              variant="outline"
+              className="border-[#A08B5C] text-[#A08B5C] bg-transparent"
+              onClick={() => router.back()}
             >
-              Submit
+              Back
             </Button>
-          )}
+            {!readOnly && (
+              <Button
+                className="bg-[#A08B5C] hover:bg-[#8A7549] text-white"
+                onClick={handleSubmit}
+              >
+                Submit
+              </Button>
+            )}
+          </div>
+        </div>
+        {/* Status Badge */}
+        <div className="flex justify-center">
+          <span
+            className={`px-4 py-1 rounded-full text-sm font-semibold ${getStatusBadgeColor(
+              stockReceivingData?.Status
+            )}`}
+          >
+            Status: {getStatusLabel(stockReceivingData?.Status)}
+          </span>
         </div>
       </header>
 
@@ -670,7 +835,9 @@ export default function StockReceivingActivityLog({
           {/* Step 1: View Delivery Note */}
           <div className="bg-white border border-gray-200 rounded-lg p-4">
             <button
-              onClick={() => openDeliveryNotePDFInNewTab(purchaseOrder, orderLines)}
+              onClick={() =>
+                openDeliveryNotePDFInNewTab(purchaseOrder, orderLines)
+              }
               className="flex items-center justify-between w-full"
             >
               <div className="flex items-center gap-3">
@@ -693,10 +860,19 @@ export default function StockReceivingActivityLog({
               className="flex items-center justify-between w-full mb-4"
             >
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-[#F5E6D3] rounded-full flex items-center justify-center font-bold">
-                  2
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
+                  isStepCompleted("GATE_ENTRY") ? "bg-green-100" : "bg-[#F5E6D3]"
+                }`}>
+                  {isStepCompleted("GATE_ENTRY") ? (
+                    <CheckCircle className="w-6 h-6 text-green-600" />
+                  ) : (
+                    "2"
+                  )}
                 </div>
                 <span className="font-semibold">Gate Entry</span>
+                {isStepCompleted("GATE_ENTRY") && (
+                  <span className="text-sm text-green-600">(Completed)</span>
+                )}
               </div>
               {expandedSections[2] ? (
                 <ChevronDown className="w-5 h-5" />
@@ -715,9 +891,19 @@ export default function StockReceivingActivityLog({
                     <Select
                       value={securityOfficer}
                       onValueChange={setSecurityOfficer}
-                      disabled={loadingSecurityOfficers || readOnly || !isSecurityOfficer}
+                      disabled={
+                        loadingSecurityOfficers ||
+                        readOnly ||
+                        !isSecurityOfficer
+                      }
                     >
-                      <SelectTrigger className={`${(readOnly || !isSecurityOfficer) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}>
+                      <SelectTrigger
+                        className={`${
+                          readOnly || !isSecurityOfficer
+                            ? "bg-gray-50 text-gray-900 font-medium cursor-default opacity-100"
+                            : ""
+                        }`}
+                      >
                         <SelectValue
                           placeholder={
                             loadingSecurityOfficers
@@ -743,7 +929,11 @@ export default function StockReceivingActivityLog({
                       <Input
                         type="number"
                         placeholder="15"
-                        className={`w-20 ${(readOnly || !isSecurityOfficer) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
+                        className={`w-20 ${
+                          readOnly || !isSecurityOfficer
+                            ? "bg-gray-50 text-gray-900 font-medium cursor-default opacity-100"
+                            : ""
+                        }`}
                         value={arrivalHour}
                         onChange={(e) => setArrivalHour(e.target.value)}
                         disabled={readOnly || !isSecurityOfficer}
@@ -752,7 +942,11 @@ export default function StockReceivingActivityLog({
                       <Input
                         type="number"
                         placeholder="00"
-                        className={`w-20 ${(readOnly || !isSecurityOfficer) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
+                        className={`w-20 ${
+                          readOnly || !isSecurityOfficer
+                            ? "bg-gray-50 text-gray-900 font-medium cursor-default opacity-100"
+                            : ""
+                        }`}
                         value={arrivalMin}
                         onChange={(e) => setArrivalMin(e.target.value)}
                         disabled={readOnly || !isSecurityOfficer}
@@ -806,10 +1000,19 @@ export default function StockReceivingActivityLog({
               className="flex items-center justify-between w-full mb-4"
             >
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-[#F5E6D3] rounded-full flex items-center justify-center font-bold">
-                  4
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
+                  isStepCompleted("UNLOADING") ? "bg-green-100" : "bg-[#F5E6D3]"
+                }`}>
+                  {isStepCompleted("UNLOADING") ? (
+                    <CheckCircle className="w-6 h-6 text-green-600" />
+                  ) : (
+                    "4"
+                  )}
                 </div>
                 <span className="font-semibold">Unloading</span>
+                {isStepCompleted("UNLOADING") && (
+                  <span className="text-sm text-green-600">(Completed)</span>
+                )}
               </div>
               {expandedSections[4] ? (
                 <ChevronDown className="w-5 h-5" />
@@ -827,9 +1030,17 @@ export default function StockReceivingActivityLog({
                   <Select
                     value={forkLiftOperator}
                     onValueChange={setForkLiftOperator}
-                    disabled={loadingForkLiftOperators || readOnly || !isOperator}
+                    disabled={
+                      loadingForkLiftOperators || readOnly || !isOperator
+                    }
                   >
-                    <SelectTrigger className={`${(readOnly || !isOperator) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}>
+                    <SelectTrigger
+                      className={`${
+                        readOnly || !isOperator
+                          ? "bg-gray-50 text-gray-900 font-medium cursor-default opacity-100"
+                          : ""
+                      }`}
+                    >
                       <SelectValue
                         placeholder={
                           loadingForkLiftOperators
@@ -856,7 +1067,11 @@ export default function StockReceivingActivityLog({
                       <Input
                         type="number"
                         placeholder="16"
-                        className={`w-16 ${(readOnly || !isOperator) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
+                        className={`w-16 ${
+                          readOnly || !isOperator
+                            ? "bg-gray-50 text-gray-900 font-medium cursor-default opacity-100"
+                            : ""
+                        }`}
                         value={unloadStartHour}
                         onChange={(e) => setUnloadStartHour(e.target.value)}
                         disabled={readOnly || !isOperator}
@@ -867,7 +1082,11 @@ export default function StockReceivingActivityLog({
                       <Input
                         type="number"
                         placeholder="02"
-                        className={`w-16 ${(readOnly || !isOperator) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
+                        className={`w-16 ${
+                          readOnly || !isOperator
+                            ? "bg-gray-50 text-gray-900 font-medium cursor-default opacity-100"
+                            : ""
+                        }`}
                         value={unloadStartMin}
                         onChange={(e) => setUnloadStartMin(e.target.value)}
                         disabled={readOnly || !isOperator}
@@ -885,7 +1104,11 @@ export default function StockReceivingActivityLog({
                       <Input
                         type="number"
                         placeholder="16"
-                        className={`w-16 ${(readOnly || !isOperator) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
+                        className={`w-16 ${
+                          readOnly || !isOperator
+                            ? "bg-gray-50 text-gray-900 font-medium cursor-default opacity-100"
+                            : ""
+                        }`}
                         value={unloadEndHour}
                         onChange={(e) => setUnloadEndHour(e.target.value)}
                         disabled={readOnly || !isOperator}
@@ -896,7 +1119,11 @@ export default function StockReceivingActivityLog({
                       <Input
                         type="number"
                         placeholder="58"
-                        className={`w-16 ${(readOnly || !isOperator) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
+                        className={`w-16 ${
+                          readOnly || !isOperator
+                            ? "bg-gray-50 text-gray-900 font-medium cursor-default opacity-100"
+                            : ""
+                        }`}
                         value={unloadEndMin}
                         onChange={(e) => setUnloadEndMin(e.target.value)}
                         disabled={readOnly || !isOperator}
@@ -913,113 +1140,153 @@ export default function StockReceivingActivityLog({
 
           {/* Step 5: Load Empty Stock */}
           <div className="bg-white border border-gray-200 rounded-lg p-4">
-            <button className="flex items-center justify-between w-full mb-4">
+            <button
+              onClick={() => toggleSection(5)}
+              className="flex items-center justify-between w-full mb-4"
+            >
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-[#F5E6D3] rounded-full flex items-center justify-center font-bold">
-                  5
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
+                  isStepCompleted("LOAD_EMPTY") ? "bg-green-100" : "bg-[#F5E6D3]"
+                }`}>
+                  {isStepCompleted("LOAD_EMPTY") ? (
+                    <CheckCircle className="w-6 h-6 text-green-600" />
+                  ) : (
+                    "5"
+                  )}
                 </div>
                 <span className="font-semibold">Load Empty Stock</span>
+                {isStepCompleted("LOAD_EMPTY") && (
+                  <span className="text-sm text-green-600">(Completed)</span>
+                )}
               </div>
-              <ChevronRight className="w-5 h-5" />
+              {expandedSections[5] ? (
+                <ChevronDown className="w-5 h-5" />
+              ) : (
+                <ChevronRight className="w-5 h-5" />
+              )}
             </button>
 
-            <div className="space-y-4 pl-13">
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Agent Fork Lift Operator
-                </label>
-                <Select
-                  value={forkLiftOperator}
-                  onValueChange={setForkLiftOperator}
-                  disabled={loadingForkLiftOperators || readOnly || !isOperator}
-                >
-                  <SelectTrigger className={`${(readOnly || !isOperator) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}>
-                    <SelectValue
-                      placeholder={
-                        loadingForkLiftOperators
-                          ? "Loading operators..."
-                          : "Select fork lift operator"
-                      }
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {forkLiftOperators.map((operator) => (
-                      <SelectItem key={operator.UID} value={operator.UID}>
-                        {operator.Name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
+            {expandedSections[5] && (
+              <div className="space-y-4 pl-13">
                 <div>
                   <label className="text-sm font-medium mb-2 block">
-                    Load Start Time
+                    Agent Fork Lift Operator
                   </label>
-                  <div className="flex gap-2">
-                    <Input
-                      type="number"
-                      placeholder="17"
-                      className={`w-16 ${(readOnly || !isOperator) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
-                      value={loadEmptyStartHour}
-                      onChange={(e) => setLoadEmptyStartHour(e.target.value)}
-                      min="0"
-                      max="23"
-                      disabled={readOnly || !isOperator}
-                    />
-                    <span className="text-gray-400 self-center text-xs">
-                      HH
-                    </span>
-                    <Input
-                      type="number"
-                      placeholder="25"
-                      className={`w-16 ${(readOnly || !isOperator) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
-                      value={loadEmptyStartMin}
-                      onChange={(e) => setLoadEmptyStartMin(e.target.value)}
-                      min="0"
-                      max="59"
-                      disabled={readOnly || !isOperator}
-                    />
-                    <span className="text-gray-400 self-center text-xs">
-                      Min
-                    </span>
-                  </div>
+                  <Select
+                    value={forkLiftOperator}
+                    onValueChange={setForkLiftOperator}
+                    disabled={loadingForkLiftOperators || readOnly || !isOperator}
+                  >
+                    <SelectTrigger
+                      className={`${
+                        readOnly || !isOperator
+                          ? "bg-gray-50 text-gray-900 font-medium cursor-default opacity-100"
+                          : ""
+                      }`}
+                    >
+                      <SelectValue
+                        placeholder={
+                          loadingForkLiftOperators
+                            ? "Loading operators..."
+                            : "Select fork lift operator"
+                        }
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {forkLiftOperators.map((operator) => (
+                        <SelectItem key={operator.UID} value={operator.UID}>
+                          {operator.Name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
-                <div>
-                  <label className="text-sm font-medium mb-2 block">
-                    Load End Time
-                  </label>
-                  <div className="flex gap-2">
-                    <Input
-                      type="number"
-                      placeholder="18"
-                      className={`w-16 ${(readOnly || !isOperator) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
-                      value={loadEmptyEndHour}
-                      onChange={(e) => setLoadEmptyEndHour(e.target.value)}
-                      min="0"
-                      max="23"
-                      disabled={readOnly || !isOperator}
-                    />
-                    <span className="text-gray-400 self-center text-xs">
-                      HH
-                    </span>
-                    <Input
-                      type="number"
-                      placeholder="08"
-                      className={`w-16 ${(readOnly || !isOperator) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
-                      value={loadEmptyEndMin}
-                      onChange={(e) => setLoadEmptyEndMin(e.target.value)}
-                      min="0"
-                      max="59"
-                      disabled={readOnly || !isOperator}
-                    />
-                    <span className="text-gray-400 self-center text-xs">
-                      Min
-                    </span>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">
+                      Load Start Time
+                    </label>
+                    <div className="flex gap-2">
+                      <Input
+                        type="number"
+                        placeholder="17"
+                        className={`w-16 ${
+                          readOnly || !isOperator
+                            ? "bg-gray-50 text-gray-900 font-medium cursor-default opacity-100"
+                            : ""
+                        }`}
+                        value={loadEmptyStartHour}
+                        onChange={(e) => setLoadEmptyStartHour(e.target.value)}
+                        min="0"
+                        max="23"
+                        disabled={readOnly || !isOperator}
+                      />
+                      <span className="text-gray-400 self-center text-xs">
+                        HH
+                      </span>
+                      <Input
+                        type="number"
+                        placeholder="25"
+                        className={`w-16 ${
+                          readOnly || !isOperator
+                            ? "bg-gray-50 text-gray-900 font-medium cursor-default opacity-100"
+                            : ""
+                        }`}
+                        value={loadEmptyStartMin}
+                        onChange={(e) => setLoadEmptyStartMin(e.target.value)}
+                        min="0"
+                        max="59"
+                        disabled={readOnly || !isOperator}
+                      />
+                      <span className="text-gray-400 self-center text-xs">
+                        Min
+                      </span>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">
+                      Load End Time
+                    </label>
+                    <div className="flex gap-2">
+                      <Input
+                        type="number"
+                        placeholder="18"
+                        className={`w-16 ${
+                          readOnly || !isOperator
+                            ? "bg-gray-50 text-gray-900 font-medium cursor-default opacity-100"
+                            : ""
+                        }`}
+                        value={loadEmptyEndHour}
+                        onChange={(e) => setLoadEmptyEndHour(e.target.value)}
+                        min="0"
+                        max="23"
+                        disabled={readOnly || !isOperator}
+                      />
+                      <span className="text-gray-400 self-center text-xs">
+                        HH
+                      </span>
+                      <Input
+                        type="number"
+                        placeholder="08"
+                        className={`w-16 ${
+                          readOnly || !isOperator
+                            ? "bg-gray-50 text-gray-900 font-medium cursor-default opacity-100"
+                            : ""
+                        }`}
+                        value={loadEmptyEndMin}
+                        onChange={(e) => setLoadEmptyEndMin(e.target.value)}
+                        min="0"
+                        max="59"
+                        disabled={readOnly || !isOperator}
+                      />
+                      <span className="text-gray-400 self-center text-xs">
+                        Min
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Step 6: Gate Pass */}
@@ -1029,10 +1296,19 @@ export default function StockReceivingActivityLog({
               className="flex items-center justify-between w-full mb-4"
             >
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-[#F5E6D3] rounded-full flex items-center justify-center font-bold">
-                  6
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
+                  isStepCompleted("GETPASS") ? "bg-green-100" : "bg-[#F5E6D3]"
+                }`}>
+                  {isStepCompleted("GETPASS") ? (
+                    <CheckCircle className="w-6 h-6 text-green-600" />
+                  ) : (
+                    "6"
+                  )}
                 </div>
                 <span className="font-semibold">Gate Pass (Empties)</span>
+                {isStepCompleted("GETPASS") && (
+                  <span className="text-sm text-green-600">(Completed)</span>
+                )}
               </div>
               {expandedSections[6] ? (
                 <ChevronDown className="w-5 h-5" />
@@ -1050,9 +1326,17 @@ export default function StockReceivingActivityLog({
                   <Select
                     value={getpassEmployee}
                     onValueChange={setGetpassEmployee}
-                    disabled={loadingSecurityOfficers || readOnly || !isSecurityOfficer}
+                    disabled={
+                      loadingSecurityOfficers || readOnly || !isSecurityOfficer
+                    }
                   >
-                    <SelectTrigger className={`${(readOnly || !isSecurityOfficer) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}>
+                    <SelectTrigger
+                      className={`${
+                        readOnly || !isSecurityOfficer
+                          ? "bg-gray-50 text-gray-900 font-medium cursor-default opacity-100"
+                          : ""
+                      }`}
+                    >
                       <SelectValue
                         placeholder={
                           loadingSecurityOfficers
@@ -1078,7 +1362,11 @@ export default function StockReceivingActivityLog({
                     <Input
                       type="number"
                       placeholder="18"
-                      className={`w-20 ${(readOnly || !isSecurityOfficer) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
+                      className={`w-20 ${
+                        readOnly || !isSecurityOfficer
+                          ? "bg-gray-50 text-gray-900 font-medium cursor-default opacity-100"
+                          : ""
+                      }`}
                       value={getpassHour}
                       onChange={(e) => setGetpassHour(e.target.value)}
                       min="0"
@@ -1089,7 +1377,11 @@ export default function StockReceivingActivityLog({
                     <Input
                       type="number"
                       placeholder="14"
-                      className={`w-20 ${(readOnly || !isSecurityOfficer) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
+                      className={`w-20 ${
+                        readOnly || !isSecurityOfficer
+                          ? "bg-gray-50 text-gray-900 font-medium cursor-default opacity-100"
+                          : ""
+                      }`}
                       value={getpassMin}
                       onChange={(e) => setGetpassMin(e.target.value)}
                       min="0"
@@ -1100,7 +1392,11 @@ export default function StockReceivingActivityLog({
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Checkbox id="notify-lbcl-2" defaultChecked disabled={readOnly || !isSecurityOfficer} />
+                  <Checkbox
+                    id="notify-lbcl-2"
+                    defaultChecked
+                    disabled={readOnly || !isSecurityOfficer}
+                  />
                   <label
                     htmlFor="notify-lbcl-2"
                     className="text-sm font-medium"

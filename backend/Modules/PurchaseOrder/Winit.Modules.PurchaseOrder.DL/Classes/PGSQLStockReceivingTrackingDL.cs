@@ -15,14 +15,14 @@ public class PGSQLStockReceivingTrackingDL : Winit.Modules.Base.DL.DBManager.Pos
     {
     }
 
-    public async Task<IStockReceivingTracking?> GetByPurchaseOrderUIDAsync(string purchaseOrderUID)
+    public async Task<IStockReceivingTracking?> GetByWHStockRequestUIDAsync(string whStockRequestUID)
     {
         try
         {
             string sql = @"
                 SELECT
                     ""UID""::text as ""UID"",
-                    ""PurchaseOrderUID""::text as ""PurchaseOrderUID"",
+                    ""WHStockRequestUID"" as ""WHStockRequestUID"",
                     ""ReceiverName"",
                     ""ReceiverEmployeeCode"",
                     ""ForkLiftOperatorUID"",
@@ -44,14 +44,14 @@ public class PGSQLStockReceivingTrackingDL : Winit.Modules.Base.DL.DBManager.Pos
                     ""ModifiedDate"",
                     ""ModifiedBy""::text as ""ModifiedBy""
                 FROM public.""StockReceivingTracking""
-                WHERE ""PurchaseOrderUID"" = @PurchaseOrderUID
+                WHERE ""WHStockRequestUID"" = @WHStockRequestUID
                 AND ""IsActive"" = true
                 ORDER BY ""CreatedDate"" DESC
                 LIMIT 1";
 
             var parameters = new
             {
-                PurchaseOrderUID = purchaseOrderUID
+                WHStockRequestUID = whStockRequestUID
             };
 
             using var connection = new NpgsqlConnection(_connectionString);
@@ -60,9 +60,15 @@ public class PGSQLStockReceivingTrackingDL : Winit.Modules.Base.DL.DBManager.Pos
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error in GetByPurchaseOrderUIDAsync: {ex.Message}");
+            Console.WriteLine($"Error in GetByWHStockRequestUIDAsync: {ex.Message}");
             throw;
         }
+    }
+
+    // Keep old method for backward compatibility
+    public async Task<IStockReceivingTracking?> GetByPurchaseOrderUIDAsync(string purchaseOrderUID)
+    {
+        return await GetByWHStockRequestUIDAsync(purchaseOrderUID);
     }
 
     public async Task<IEnumerable<IStockReceivingTracking>> GetAllAsync()
@@ -72,7 +78,7 @@ public class PGSQLStockReceivingTrackingDL : Winit.Modules.Base.DL.DBManager.Pos
             string sql = @"
                 SELECT
                     srt.""UID""::text as ""UID"",
-                    srt.""PurchaseOrderUID""::text as ""PurchaseOrderUID"",
+                    srt.""WHStockRequestUID"" as ""WHStockRequestUID"",
                     srt.""ReceiverName"",
                     srt.""ReceiverEmployeeCode"",
                     srt.""ForkLiftOperatorUID"",
@@ -94,11 +100,11 @@ public class PGSQLStockReceivingTrackingDL : Winit.Modules.Base.DL.DBManager.Pos
                     srt.""ModifiedDate"",
                     srt.""ModifiedBy""::text as ""ModifiedBy"",
                     dlt.""DeliveryNoteNumber"" as ""DeliveryNoteNumber"",
-                    poh.order_number,
-                    poh.order_date
+                    wsr.code as request_code,
+                    wsr.created_time
                 FROM public.""StockReceivingTracking"" srt
-                LEFT JOIN public.""DeliveryLoadingTracking"" dlt ON dlt.""PurchaseOrderUID""::text = srt.""PurchaseOrderUID""
-                LEFT JOIN purchase_order_header poh ON poh.uid::text = srt.""PurchaseOrderUID""
+                LEFT JOIN public.""DeliveryLoadingTracking"" dlt ON dlt.""WHStockRequestUID"" = srt.""WHStockRequestUID""
+                LEFT JOIN wh_stock_request wsr ON wsr.uid = srt.""WHStockRequestUID""
                 WHERE srt.""IsActive"" = true
                 ORDER BY srt.""CreatedDate"" DESC";
 
@@ -121,7 +127,7 @@ public class PGSQLStockReceivingTrackingDL : Winit.Modules.Base.DL.DBManager.Pos
                 INSERT INTO public.""StockReceivingTracking""
                 (
                     ""UID"",
-                    ""PurchaseOrderUID"",
+                    ""WHStockRequestUID"",
                     ""ReceiverName"",
                     ""ReceiverEmployeeCode"",
                     ""ForkLiftOperatorUID"",
@@ -144,7 +150,7 @@ public class PGSQLStockReceivingTrackingDL : Winit.Modules.Base.DL.DBManager.Pos
                 VALUES
                 (
                     @UID,
-                    @PurchaseOrderUID,
+                    @WHStockRequestUID,
                     @ReceiverName,
                     @ReceiverEmployeeCode,
                     @ForkLiftOperatorUID,
@@ -170,7 +176,7 @@ public class PGSQLStockReceivingTrackingDL : Winit.Modules.Base.DL.DBManager.Pos
             var parameters = new
             {
                 UID = uid,
-                PurchaseOrderUID = stockReceivingTracking.PurchaseOrderUID,
+                WHStockRequestUID = stockReceivingTracking.WHStockRequestUID,
                 ReceiverName = stockReceivingTracking.ReceiverName,
                 ReceiverEmployeeCode = stockReceivingTracking.ReceiverEmployeeCode,
                 ForkLiftOperatorUID = stockReceivingTracking.ForkLiftOperatorUID,
@@ -259,18 +265,18 @@ public class PGSQLStockReceivingTrackingDL : Winit.Modules.Base.DL.DBManager.Pos
         }
     }
 
-    public async Task<bool> UpdatePurchaseOrderStatusAsync(string purchaseOrderUID, string status)
+    public async Task<bool> UpdateWHStockRequestStatusAsync(string whStockRequestUID, string status)
     {
         try
         {
             string sql = @"
-                UPDATE purchase_order_header
+                UPDATE wh_stock_request
                 SET status = @Status
                 WHERE uid = @UID";
 
             var parameters = new
             {
-                UID = purchaseOrderUID,
+                UID = whStockRequestUID,
                 Status = status
             };
 
@@ -279,8 +285,14 @@ public class PGSQLStockReceivingTrackingDL : Winit.Modules.Base.DL.DBManager.Pos
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error in UpdatePurchaseOrderStatusAsync: {ex.Message}");
+            Console.WriteLine($"Error in UpdateWHStockRequestStatusAsync: {ex.Message}");
             throw;
         }
+    }
+
+    // Keep old method for backward compatibility
+    public async Task<bool> UpdatePurchaseOrderStatusAsync(string purchaseOrderUID, string status)
+    {
+        return await UpdateWHStockRequestStatusAsync(purchaseOrderUID, status);
     }
 }

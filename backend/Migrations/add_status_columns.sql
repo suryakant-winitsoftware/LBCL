@@ -19,7 +19,7 @@ ALTER TABLE public."StockReceivingTracking"
 ADD COLUMN IF NOT EXISTS "Status" VARCHAR(50) DEFAULT 'PENDING';
 
 -- Add comment to describe the column
-COMMENT ON COLUMN public."StockReceivingTracking"."Status" IS 'Stock receiving workflow status: PENDING, COMPLETED';
+COMMENT ON COLUMN public."StockReceivingTracking"."Status" IS 'Stock receiving workflow status: PENDING, GATE_ENTRY, UNLOADING, LOAD_EMPTY, COMPLETED';
 
 -- Update existing records to have default status
 UPDATE public."StockReceivingTracking"

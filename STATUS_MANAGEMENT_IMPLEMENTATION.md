@@ -20,9 +20,12 @@ Implemented separate status tracking for delivery loading and stock receiving wo
 
 **Valid Status Values:**
 - `PENDING` - Initial state when stock receiving starts
-- `COMPLETED` - When stock receiving is complete
+- `GATE_ENTRY` - When Security Officer completes gate entry (Step 2)
+- `UNLOADING` - When Operator completes unloading (Step 4)
+- `LOAD_EMPTY` - When Operator completes loading empty stock (Step 5)
+- `COMPLETED` - When Security Officer completes get pass (Step 6)
 
-**Purpose:** Track the stock receiving workflow stages independently
+**Purpose:** Track the stock receiving workflow stages independently with step-by-step progression
 
 ## Migration Script
 **Location:** `/backend/migrations/add_status_columns.sql`
@@ -98,8 +101,16 @@ PENDING → APPROVED_FOR_SHIPMENT → SHIPPED
 
 ### Stock Receiving Workflow:
 ```
-PENDING → COMPLETED
+PENDING → GATE_ENTRY → UNLOADING → LOAD_EMPTY → COMPLETED
 ```
+
+**Step-by-Step Process:**
+1. **Step 2 - Gate Entry (Security Officer):** ArrivalTime → Status: GATE_ENTRY
+2. **Step 4 - Unloading (Operator):** UnloadingStartTime, UnloadingEndTime → Status: UNLOADING
+3. **Step 5 - Load Empty Stock (Operator):** LoadEmptyStockTime → Status: LOAD_EMPTY
+4. **Step 6 - Get Pass (Security Officer):** GetpassTime → Status: COMPLETED
+
+Each user can only fill their specific step. All users can view saved data from previous steps for verification.
 
 ## Benefits
 

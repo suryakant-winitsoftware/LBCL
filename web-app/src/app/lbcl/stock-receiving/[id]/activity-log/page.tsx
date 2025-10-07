@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { use } from "react"
 import StockReceivingActivityLog from "@/app/lbcl/components/stock-receiving-activity-log"
-import { deliveryLoadingService } from "@/services/deliveryLoadingService"
+import { stockReceivingService } from "@/services/stockReceivingService"
 
 export default function ActivityLogPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
@@ -13,12 +13,12 @@ export default function ActivityLogPage({ params }: { params: Promise<{ id: stri
   useEffect(() => {
     const checkStatus = async () => {
       try {
-        const delivery = await deliveryLoadingService.getByWHStockRequestUID(id)
-        if (delivery && delivery.status === "RECEIVED") {
+        const stockReceiving = await stockReceivingService.getByWHStockRequestUID(id)
+        if (stockReceiving && stockReceiving.Status === "RECEIVED") {
           setIsReadOnly(true)
         }
       } catch (error) {
-        console.error("Error checking delivery status:", error)
+        console.error("Error checking stock receiving status:", error)
       } finally {
         setLoading(false)
       }

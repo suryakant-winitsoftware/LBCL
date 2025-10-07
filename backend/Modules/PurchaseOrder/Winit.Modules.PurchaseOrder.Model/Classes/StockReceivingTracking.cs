@@ -5,7 +5,7 @@ namespace Winit.Modules.PurchaseOrder.Model.Classes;
 
 public class StockReceivingTracking : BaseModel, IStockReceivingTracking
 {
-    public string PurchaseOrderUID { get; set; } = string.Empty;
+    public string WHStockRequestUID { get; set; } = string.Empty;
     public string? ReceiverName { get; set; }
     public string? ReceiverEmployeeCode { get; set; }
     public string? ForkLiftOperatorUID { get; set; }
@@ -25,6 +25,6 @@ public class StockReceivingTracking : BaseModel, IStockReceivingTracking
 
     // Additional fields from JOIN queries
     public string? DeliveryNoteNumber { get; set; }
-    public string? order_number { get; set; }
-    public DateTime? order_date { get; set; }
+    public string? request_code { get; set; }
+    public DateTime? created_time { get; set; }
 }

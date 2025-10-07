@@ -2,7 +2,7 @@ import { ApiResponse } from "@/types/common.types";
 
 export interface StockReceivingTracking {
   UID?: string;
-  PurchaseOrderUID: string;
+  WHStockRequestUID: string;
   ReceiverName?: string | null;
   ReceiverEmployeeCode?: string | null;
   ForkLiftOperatorUID?: string | null;
@@ -25,8 +25,8 @@ export interface StockReceivingTracking {
   ModifiedDate?: string;
   // Additional fields from JOIN queries
   DeliveryNoteNumber?: string | null;
-  order_number?: string | null;
-  order_date?: string | null;
+  request_code?: string | null;
+  created_time?: string | null;
 }
 
 const API_BASE_URL =
@@ -101,12 +101,12 @@ class StockReceivingService {
     return response.data || [];
   }
 
-  // Get stock receiving tracking by Purchase Order UID
-  async getByPurchaseOrderUID(
-    purchaseOrderUID: string
+  // Get stock receiving tracking by WH Stock Request UID
+  async getByWHStockRequestUID(
+    whStockRequestUID: string
   ): Promise<StockReceivingTracking | null> {
     const response = await this.apiCall<StockReceivingTracking>(
-      `/StockReceivingTracking/GetByPurchaseOrderUID/${purchaseOrderUID}`,
+      `/StockReceivingTracking/GetByWHStockRequestUID/${whStockRequestUID}`,
       {
         method: "GET",
       }
@@ -120,6 +120,13 @@ class StockReceivingService {
     }
 
     return response.data || null;
+  }
+
+  // Keep old method for backward compatibility
+  async getByPurchaseOrderUID(
+    purchaseOrderUID: string
+  ): Promise<StockReceivingTracking | null> {
+    return this.getByWHStockRequestUID(purchaseOrderUID);
   }
 
   // Save stock receiving tracking

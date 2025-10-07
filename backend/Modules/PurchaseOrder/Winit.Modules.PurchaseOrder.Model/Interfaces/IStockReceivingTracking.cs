@@ -4,7 +4,7 @@ namespace Winit.Modules.PurchaseOrder.Model.Interfaces;
 
 public interface IStockReceivingTracking : IBaseModel
 {
-    public string PurchaseOrderUID { get; set; }
+    public string WHStockRequestUID { get; set; }
     public string? ReceiverName { get; set; }
     public string? ReceiverEmployeeCode { get; set; }
     public string? ForkLiftOperatorUID { get; set; }

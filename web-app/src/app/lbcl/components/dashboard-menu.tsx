@@ -10,7 +10,8 @@ import {
   ClipboardCheck,
   Bell,
   User,
-  PackageOpen
+  PackageOpen,
+  Calendar
 } from "lucide-react";
 import Image from "next/image";
 import { NavigationMenu } from "@/app/lbcl/components/navigation-menu";
@@ -19,6 +20,12 @@ export function DashboardMenu() {
   const router = useRouter();
 
   const menuOptions = [
+    {
+      title: "Sales Itinerary Planning",
+      icon: Calendar,
+      path: "/sales-itinerary",
+      description: "Plan and manage sales itineraries, track coverage, and expenses"
+    },
     {
       title: "Manage Agent Stock Receiving",
       icon: Package,

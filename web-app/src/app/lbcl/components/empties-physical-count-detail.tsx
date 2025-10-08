@@ -1,0 +1,385 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Clock, Check, ImageIcon, FileText } from "lucide-react";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { SignatureDialog } from "@/app/lbcl/components/signature-dialog";
+
+type Product = {
+  id: string;
+  code: string;
+  name: string;
+  image: string;
+  goodCollected: number;
+  sampleGood: number;
+  damageCollected: number;
+  damage: number;
+  missing: number;
+};
+
+export function EmptiesPhysicalCountDetail() {
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState<
+    "ALL" | "LION SCOUT" | "LION LAGER" | "CALSBURG" | "LUXURY BRAND"
+  >("ALL");
+  const [showSignatureDialog, setShowSignatureDialog] = useState(false);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [agentSignature, setAgentSignature] = useState("");
+  const [driverSignature, setDriverSignature] = useState("");
+  const [notes, setNotes] = useState("");
+  const [productData, setProductData] = useState<Record<string, { sampleGood: number | ''; damage: number | ''; missing: number | '' }>>({});
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [currentDate, setCurrentDate] = useState("");
+
+  useEffect(() => {
+    // Set current date
+    const date = new Date();
+    const formatted = date.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    }).toUpperCase();
+    setCurrentDate(formatted);
+
+    // Timer interval
+    const timer = setInterval(() => {
+      setElapsedTime(prev => prev + 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')} Min`;
+  };
+
+  const products: Product[] = [
+    {
+      id: "1",
+      code: "5213",
+      name: "Short Quarter Keg 7.75 Galon Beers",
+      image: "/amber-beer-bottle.png",
+      goodCollected: 25,
+      sampleGood: 0,
+      damageCollected: 25,
+      damage: 0,
+      missing: 0
+    },
+    {
+      id: "2",
+      code: "5214",
+      name: "Slim Quarter Keg 7.75 Galon",
+      image: "/amber-beer-bottle.png",
+      goodCollected: 10,
+      sampleGood: 0,
+      damageCollected: 10,
+      damage: 0,
+      missing: 0
+    },
+    {
+      id: "3",
+      code: "5216",
+      name: "Lion Large Beer bottle 625ml",
+      image: "/amber-beer-bottle.png",
+      goodCollected: 20,
+      sampleGood: 0,
+      damageCollected: 20,
+      damage: 0,
+      missing: 0
+    },
+    {
+      id: "4",
+      code: "5210",
+      name: "Lion Large Beer bottle 330ml",
+      image: "/amber-beer-bottle.png",
+      goodCollected: 5,
+      sampleGood: 0,
+      damageCollected: 5,
+      damage: 0,
+      missing: 0
+    }
+  ];
+
+  const getValue = (productId: string, field: 'sampleGood' | 'damage' | 'missing', defaultValue: number) => {
+    return productData[productId]?.[field] ?? defaultValue;
+  };
+
+  const handleValueChange = (productId: string, field: 'sampleGood' | 'damage' | 'missing', value: string, maxValue: number) => {
+    // Allow empty string
+    if (value === '') {
+      setProductData(prev => ({
+        ...prev,
+        [productId]: {
+          ...prev[productId],
+          [field]: '' as any
+        }
+      }));
+      return;
+    }
+
+    const numValue = parseInt(value) || 0;
+    const clampedValue = Math.min(Math.max(0, numValue), maxValue);
+
+    setProductData(prev => ({
+      ...prev,
+      [productId]: {
+        ...prev[productId],
+        [field]: clampedValue as any
+      }
+    }));
+  };
+
+  const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (e.target.value === '0') {
+      e.target.value = '';
+    }
+  };
+
+  const handleBlur = (productId: string, field: 'sampleGood' | 'damage' | 'missing') => {
+    const currentData = productData[productId];
+    if (currentData && currentData[field] === '') {
+      setProductData(prev => ({
+        ...prev,
+        [productId]: {
+          ...prev[productId],
+          [field]: 0 as any
+        }
+      }));
+    }
+  };
+
+  const handleSubmit = () => {
+    setShowSignatureDialog(true);
+  };
+
+  const handleSignatureSave = (logisticSig: string, driverSig: string, signatureNotes: string) => {
+    setAgentSignature(logisticSig);
+    setDriverSignature(driverSig);
+    setNotes(signatureNotes);
+    setShowSuccessDialog(true);
+  };
+
+  const handleSuccessDone = () => {
+    setShowSuccessDialog(false);
+    router.push("/lbcl/empties-receiving/activity-log");
+  };
+
+  return (
+    <div className="min-h-screen bg-white">
+      {/* Header with Timer */}
+      <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center justify-end sticky top-0 z-30">
+        <div className="flex items-center gap-2 bg-[#D4A853] text-white px-4 py-2 rounded-lg">
+          <Clock className="w-5 h-5" />
+          <span className="font-mono font-bold text-lg">{formatTime(elapsedTime)}</span>
+        </div>
+      </header>
+
+      {/* Info Section */}
+      <div className="bg-gray-50 p-4 border-b border-gray-200">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
+          <div>
+            <div className="text-xs text-gray-600 mb-1">Agent Name</div>
+            <div className="font-bold text-sm">R.T DISTRIBUTORS</div>
+          </div>
+          <div>
+            <div className="text-xs text-gray-600 mb-1">Empties Delivery No</div>
+            <div className="font-bold text-sm">EMT85444127121</div>
+          </div>
+          <div>
+            <div className="text-xs text-gray-600 mb-1">Prime Mover</div>
+            <div className="font-bold text-sm">LK1673 (U KUMAR)</div>
+          </div>
+          <div>
+            <div className="text-xs text-gray-600 mb-1">Date</div>
+            <div className="font-bold text-sm">{currentDate}</div>
+          </div>
+        </div>
+        <button
+          onClick={handleSubmit}
+          className="w-full sm:w-auto bg-[#A08B5C] hover:bg-[#8A7549] text-white px-6 py-2 rounded-lg font-medium transition-colors"
+        >
+          Submit
+        </button>
+      </div>
+
+      {/* Tabs */}
+      <div className="bg-gray-50 border-b border-gray-200 mb-4">
+        <div className="flex overflow-x-auto">
+          {(
+            [
+              "ALL",
+              "LION SCOUT",
+              "LION LAGER",
+              "CALSBURG",
+              "LUXURY BRAND"
+            ] as const
+          ).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-6 py-4 text-sm font-semibold whitespace-nowrap transition-colors relative ${
+                activeTab === tab
+                  ? "text-[#A08B5C]"
+                  : "text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              {tab}
+              {activeTab === tab && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#A08B5C]" />
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Products Table */}
+      <div className="overflow-x-auto px-4 pb-8">
+        <table className="w-full">
+          <thead className="bg-[#F5E6D3] sticky top-0 z-20">
+            <tr>
+              <th className="text-left p-3 font-semibold text-sm">
+                Product Code/Description
+              </th>
+              <th className="text-center p-3 font-semibold text-sm">
+                Good Empties<br />Collected Qty
+              </th>
+              <th className="text-center p-3 font-semibold text-sm">
+                Sample<br />Good Qty
+              </th>
+              <th className="text-center p-3 font-semibold text-sm">
+                Damage Empties<br />Collected Qty
+              </th>
+              <th className="text-center p-3 font-semibold text-sm">
+                Damage<br />Qty
+              </th>
+              <th className="text-center p-3 font-semibold text-sm">
+                Missing
+              </th>
+              <th className="text-center p-3 font-semibold text-sm">
+                Image
+              </th>
+              <th className="text-center p-3 font-semibold text-sm">
+                Notes
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {products.map((product) => (
+              <tr key={product.id} className="border-b border-gray-200">
+                <td className="p-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-gray-200 rounded flex items-center justify-center">
+                      <span className="text-2xl">🍺</span>
+                    </div>
+                    <div>
+                      <div className="font-semibold">{product.name}</div>
+                      <div className="text-sm text-gray-600">{product.code}</div>
+                    </div>
+                  </div>
+                </td>
+                <td className="text-center p-3">
+                  <div className="font-medium">{product.goodCollected}</div>
+                </td>
+                <td className="text-center p-3">
+                  <input
+                    type="number"
+                    min="0"
+                    max={product.goodCollected}
+                    value={getValue(product.id, 'sampleGood', product.sampleGood)}
+                    onChange={(e) => handleValueChange(product.id, 'sampleGood', e.target.value, product.goodCollected)}
+                    onFocus={handleFocus}
+                    onBlur={() => handleBlur(product.id, 'sampleGood')}
+                    className="w-24 mx-auto text-center px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#A08B5C]"
+                  />
+                </td>
+                <td className="text-center p-3">
+                  <div className="font-medium">{product.damageCollected}</div>
+                </td>
+                <td className="text-center p-3">
+                  <input
+                    type="number"
+                    min="0"
+                    max={product.damageCollected}
+                    value={getValue(product.id, 'damage', product.damage)}
+                    onChange={(e) => handleValueChange(product.id, 'damage', e.target.value, product.damageCollected)}
+                    onFocus={handleFocus}
+                    onBlur={() => handleBlur(product.id, 'damage')}
+                    className="w-24 mx-auto text-center px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#A08B5C]"
+                  />
+                </td>
+                <td className="text-center p-3">
+                  <input
+                    type="number"
+                    min="0"
+                    value={getValue(product.id, 'missing', product.missing)}
+                    onChange={(e) => handleValueChange(product.id, 'missing', e.target.value, 100)}
+                    onFocus={handleFocus}
+                    onBlur={() => handleBlur(product.id, 'missing')}
+                    className="w-24 mx-auto text-center px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#A08B5C]"
+                  />
+                </td>
+                <td className="text-center p-3">
+                  <button className="mx-auto flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-100 transition-colors">
+                    <ImageIcon className="w-5 h-5 text-gray-400" />
+                  </button>
+                </td>
+                <td className="text-center p-3">
+                  <button className="mx-auto flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-100 transition-colors">
+                    <FileText className="w-5 h-5 text-gray-400" />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Signature Dialog */}
+      <SignatureDialog
+        open={showSignatureDialog}
+        onOpenChange={setShowSignatureDialog}
+        selectedDriverName="R.M.K.P. Rathnayake (U KUMAR)"
+        organizationName="R.T DISTRIBUTORS"
+        onSave={handleSignatureSave}
+      />
+
+      {/* Success Dialog */}
+      <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+        <DialogContent className="max-w-xl">
+          <DialogTitle className="text-2xl font-bold text-gray-900 text-center">Success</DialogTitle>
+          <div className="p-6 pt-0 text-center">
+
+            <div className="flex justify-center mb-6">
+              <div className="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center">
+                <Check className="w-12 h-12 text-white" strokeWidth={3} />
+              </div>
+            </div>
+
+            <h3 className="text-xl font-bold text-gray-900 mb-2">
+              Physical Count & Audit Empties Successfully Completed
+            </h3>
+            <p className="text-gray-600 mb-8">
+              Empties Stock has completed in{" "}
+              <span className="font-bold">{formatTime(elapsedTime)}</span>
+            </p>
+
+            <div className="grid grid-cols-2 gap-4">
+              <button className="py-4 bg-gray-400 text-white font-medium rounded-lg hover:bg-gray-500 transition-colors">
+                PRINT
+              </button>
+              <button
+                onClick={handleSuccessDone}
+                className="py-4 bg-[#A08B5C] text-white font-medium rounded-lg hover:bg-[#8F7A4D] transition-colors"
+              >
+                DONE
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}

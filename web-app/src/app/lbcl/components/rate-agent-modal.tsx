@@ -43,24 +43,24 @@ export function RateAgentModal({ onClose }: RateAgentModalProps) {
           {/* Rating */}
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Rank agents</h3>
-            <div className="flex gap-3">
+            <div className="flex gap-2 flex-wrap">
               {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((rating) => (
                 <button
                   key={rating}
                   onClick={() => setSelectedRating(rating)}
                   className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg transition-all ${
-                    rating <= 7
-                      ? selectedRating === rating
-                        ? "bg-[#D4A574] text-white scale-110"
-                        : "bg-[#F5C563] text-white hover:bg-[#D4A574]"
-                      : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                    selectedRating !== null && rating <= selectedRating
+                      ? "bg-[#D4A574] text-white"
+                      : "bg-gray-200 text-gray-600 hover:bg-[#F5C563] hover:text-white"
                   }`}
-                  disabled={rating > 7}
                 >
                   {rating}
                 </button>
               ))}
             </div>
+            {selectedRating !== null && (
+              <p className="text-sm text-gray-600 mt-3">Selected rating: <span className="font-bold text-[#A08B5C]">{selectedRating}/10</span></p>
+            )}
           </div>
 
           {/* Notes */}

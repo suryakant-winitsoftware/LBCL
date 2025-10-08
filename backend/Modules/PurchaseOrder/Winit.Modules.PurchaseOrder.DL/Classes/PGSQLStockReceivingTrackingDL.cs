@@ -43,7 +43,7 @@ public class PGSQLStockReceivingTrackingDL : Winit.Modules.Base.DL.DBManager.Pos
                     ""CreatedBy""::text as ""CreatedBy"",
                     ""ModifiedDate"",
                     ""ModifiedBy""::text as ""ModifiedBy""
-                FROM public.""StockReceivingTracking""
+                FROM public.stock_receiving_tracking
                 WHERE ""WHStockRequestUID"" = @WHStockRequestUID
                 AND ""IsActive"" = true
                 ORDER BY ""CreatedDate"" DESC
@@ -102,7 +102,7 @@ public class PGSQLStockReceivingTrackingDL : Winit.Modules.Base.DL.DBManager.Pos
                     dlt.""DeliveryNoteNumber"" as ""DeliveryNoteNumber"",
                     wsr.code as request_code,
                     wsr.created_time
-                FROM public.""StockReceivingTracking"" srt
+                FROM public.stock_receiving_tracking srt
                 LEFT JOIN public.""DeliveryLoadingTracking"" dlt ON dlt.""WHStockRequestUID"" = srt.""WHStockRequestUID""
                 LEFT JOIN wh_stock_request wsr ON wsr.uid = srt.""WHStockRequestUID""
                 WHERE srt.""IsActive"" = true
@@ -124,7 +124,7 @@ public class PGSQLStockReceivingTrackingDL : Winit.Modules.Base.DL.DBManager.Pos
         try
         {
             string sql = @"
-                INSERT INTO public.""StockReceivingTracking""
+                INSERT INTO public.stock_receiving_tracking
                 (
                     ""UID"",
                     ""WHStockRequestUID"",
@@ -212,7 +212,7 @@ public class PGSQLStockReceivingTrackingDL : Winit.Modules.Base.DL.DBManager.Pos
         try
         {
             string sql = @"
-                UPDATE public.""StockReceivingTracking""
+                UPDATE public.stock_receiving_tracking
                 SET
                     ""ReceiverName"" = @ReceiverName,
                     ""ReceiverEmployeeCode"" = @ReceiverEmployeeCode,

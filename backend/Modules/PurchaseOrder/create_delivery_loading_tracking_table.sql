@@ -1,6 +1,6 @@
 -- PostgreSQL Script to create DeliveryLoadingTracking table
 
-CREATE TABLE IF NOT EXISTS public."DeliveryLoadingTracking"
+CREATE TABLE IF NOT EXISTS public.delivery_loading_tracking
 (
     "UID" uuid NOT NULL DEFAULT gen_random_uuid(),
     "PurchaseOrderUID" uuid NOT NULL,

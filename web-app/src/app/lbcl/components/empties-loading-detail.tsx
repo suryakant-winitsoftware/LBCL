@@ -30,7 +30,6 @@ export function EmptiesLoadingDetail() {
   const [driverSignature, setDriverSignature] = useState("");
   const [notes, setNotes] = useState("");
   const [productReturns, setProductReturns] = useState<Record<string, { good: number | ''; defect: number | '' }>>({});
-  const [productRequirements, setProductRequirements] = useState<Record<string, number | ''>>({});
   const [elapsedTime, setElapsedTime] = useState(0);
   const [currentDate, setCurrentDate] = useState("");
 
@@ -67,7 +66,7 @@ export function EmptiesLoadingDetail() {
       stockInHand: 50,
       previousDepositQty: 80,
       previousEmptyTrust: 10,
-      requirementForCurrentShipment: 0,
+      requirementForCurrentShipment: 100,
       emptiesGoodReturn: 0,
       emptiesDefectReturn: 0
     },
@@ -79,7 +78,7 @@ export function EmptiesLoadingDetail() {
       stockInHand: 20,
       previousDepositQty: 20,
       previousEmptyTrust: 20,
-      requirementForCurrentShipment: 0,
+      requirementForCurrentShipment: 50,
       emptiesGoodReturn: 0,
       emptiesDefectReturn: 0
     },
@@ -91,7 +90,7 @@ export function EmptiesLoadingDetail() {
       stockInHand: 30,
       previousDepositQty: 30,
       previousEmptyTrust: 30,
-      requirementForCurrentShipment: 0,
+      requirementForCurrentShipment: 60,
       emptiesGoodReturn: 0,
       emptiesDefectReturn: 0
     },
@@ -103,7 +102,7 @@ export function EmptiesLoadingDetail() {
       stockInHand: 10,
       previousDepositQty: 10,
       previousEmptyTrust: 10,
-      requirementForCurrentShipment: 0,
+      requirementForCurrentShipment: 30,
       emptiesGoodReturn: 0,
       emptiesDefectReturn: 0
     }
@@ -113,11 +112,7 @@ export function EmptiesLoadingDetail() {
     return productReturns[productId]?.[type] ?? defaultValue;
   };
 
-  const getRequirementValue = (productId: string, defaultValue: number) => {
-    return productRequirements[productId] ?? defaultValue;
-  };
-
-  const handleReturnChange = (productId: string, type: 'good' | 'defect', value: string, stockInHand: number, requirement: number | '') => {
+  const handleReturnChange = (productId: string, type: 'good' | 'defect', value: string, requirement: number) => {
     // Allow empty string
     if (value === '') {
       setProductReturns(prev => ({
@@ -137,9 +132,8 @@ export function EmptiesLoadingDetail() {
     const currentReturns = productReturns[productId] || { good: 0, defect: 0 };
     const otherValue = type === 'good' ? (typeof currentReturns.defect === 'number' ? currentReturns.defect : 0) : (typeof currentReturns.good === 'number' ? currentReturns.good : 0);
 
-    // The maximum allowed sum is the minimum of requirement and stockInHand
-    const reqValue = typeof requirement === 'number' ? requirement : 0;
-    const maxAllowedSum = Math.min(reqValue, stockInHand);
+    // The maximum allowed sum is the requirement
+    const maxAllowedSum = requirement;
 
     // Clamp the value to ensure sum doesn't exceed the max allowed
     let clampedValue = Math.max(0, numValue);
@@ -157,82 +151,33 @@ export function EmptiesLoadingDetail() {
     }));
   };
 
-  const handleRequirementChange = (productId: string, value: string, stockInHand: number) => {
-    // Allow empty string
-    if (value === '') {
-      setProductRequirements(prev => ({
-        ...prev,
-        [productId]: ''
-      }));
-      return;
-    }
-
-    const numValue = parseInt(value) || 0;
-    // Limit requirement to stockInHand
-    const clampedValue = Math.min(Math.max(0, numValue), stockInHand);
-
-    setProductRequirements(prev => ({
-      ...prev,
-      [productId]: clampedValue
-    }));
-
-    // Adjust returns if they exceed the new max allowed (min of requirement and stockInHand)
-    const currentReturns = productReturns[productId];
-    if (currentReturns) {
-      const good = typeof currentReturns.good === 'number' ? currentReturns.good : 0;
-      const defect = typeof currentReturns.defect === 'number' ? currentReturns.defect : 0;
-      const totalReturns = good + defect;
-      const maxAllowedSum = Math.min(clampedValue, stockInHand);
-
-      if (totalReturns > maxAllowedSum) {
-        setProductReturns(prev => ({
-          ...prev,
-          [productId]: {
-            good: Math.min(good, maxAllowedSum),
-            defect: 0
-          }
-        }));
-      }
-    }
-  };
-
   const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     if (e.target.value === '0') {
       e.target.value = '';
     }
   };
 
-  const handleBlur = (productId: string, type: 'good' | 'defect' | 'requirement') => {
-    if (type === 'requirement') {
-      const currentValue = productRequirements[productId];
-      if (currentValue === '') {
-        setProductRequirements(prev => ({
+  const handleBlur = (productId: string, type: 'good' | 'defect') => {
+    const currentReturns = productReturns[productId];
+    if (currentReturns) {
+      if (type === 'good' && currentReturns.good === '') {
+        setProductReturns(prev => ({
           ...prev,
-          [productId]: 0
+          [productId]: {
+            ...prev[productId],
+            good: 0,
+            defect: prev[productId]?.defect ?? 0
+          }
         }));
-      }
-    } else {
-      const currentReturns = productReturns[productId];
-      if (currentReturns) {
-        if (type === 'good' && currentReturns.good === '') {
-          setProductReturns(prev => ({
-            ...prev,
-            [productId]: {
-              ...prev[productId],
-              good: 0,
-              defect: prev[productId]?.defect ?? 0
-            }
-          }));
-        } else if (type === 'defect' && currentReturns.defect === '') {
-          setProductReturns(prev => ({
-            ...prev,
-            [productId]: {
-              ...prev[productId],
-              good: prev[productId]?.good ?? 0,
-              defect: 0
-            }
-          }));
-        }
+      } else if (type === 'defect' && currentReturns.defect === '') {
+        setProductReturns(prev => ({
+          ...prev,
+          [productId]: {
+            ...prev[productId],
+            good: prev[productId]?.good ?? 0,
+            defect: 0
+          }
+        }));
       }
     }
   };
@@ -373,23 +318,14 @@ export function EmptiesLoadingDetail() {
                   <div className="font-medium">{product.previousEmptyTrust}</div>
                 </td>
                 <td className="text-center p-3">
-                  <input
-                    type="number"
-                    min="0"
-                    max={product.stockInHand}
-                    value={getRequirementValue(product.id, product.requirementForCurrentShipment)}
-                    onChange={(e) => handleRequirementChange(product.id, e.target.value, product.stockInHand)}
-                    onFocus={handleFocus}
-                    onBlur={() => handleBlur(product.id, 'requirement')}
-                    className="w-24 mx-auto text-center px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#A08B5C]"
-                  />
+                  <div className="font-medium">{product.requirementForCurrentShipment}</div>
                 </td>
                 <td className="text-center p-3">
                   <input
                     type="number"
                     min="0"
                     value={getReturnValue(product.id, 'good', product.emptiesGoodReturn)}
-                    onChange={(e) => handleReturnChange(product.id, 'good', e.target.value, product.stockInHand, getRequirementValue(product.id, product.requirementForCurrentShipment))}
+                    onChange={(e) => handleReturnChange(product.id, 'good', e.target.value, product.requirementForCurrentShipment)}
                     onFocus={handleFocus}
                     onBlur={() => handleBlur(product.id, 'good')}
                     className="w-24 mx-auto text-center px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#A08B5C]"
@@ -400,7 +336,7 @@ export function EmptiesLoadingDetail() {
                     type="number"
                     min="0"
                     value={getReturnValue(product.id, 'defect', product.emptiesDefectReturn)}
-                    onChange={(e) => handleReturnChange(product.id, 'defect', e.target.value, product.stockInHand, getRequirementValue(product.id, product.requirementForCurrentShipment))}
+                    onChange={(e) => handleReturnChange(product.id, 'defect', e.target.value, product.requirementForCurrentShipment)}
                     onFocus={handleFocus}
                     onBlur={() => handleBlur(product.id, 'defect')}
                     className="w-24 mx-auto text-center px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#A08B5C]"

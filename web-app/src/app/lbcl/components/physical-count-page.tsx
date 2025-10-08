@@ -110,9 +110,9 @@ export default function PhysicalCountPage({ deliveryId, readOnly = false }: { de
           name: line.SKUName || line.sku_name || line.SKUCode || line.sku_code || 'Unknown Product',
           deliveryQty: line.ApprovedQty || line.RequestedQty || line.approved_qty || line.requested_qty || 0,
           shippedQty: line.ApprovedQty || line.RequestedQty || line.approved_qty || line.requested_qty || 0,
-          receivedQty: line.ApprovedQty || line.RequestedQty || line.approved_qty || line.requested_qty || 0,
+          receivedQty: 0,  // Default to 0
           adjustmentReason: "Not Applicable",
-          adjustmentQty: 0,
+          adjustmentQty: 0,  // Default to 0
           lineUID: line.UID || line.uid || `line-${index}`,
           imageUrl: null
         }))
@@ -421,9 +421,9 @@ export default function PhysicalCountPage({ deliveryId, readOnly = false }: { de
         SKUCode: product.id,
         SKUName: product.name,
         OrderedQty: product.deliveryQty,
-        ReceivedQty: product.receivedQty,
+        ReceivedQty: product.receivedQty === '' ? 0 : product.receivedQty,
         AdjustmentReason: product.adjustmentReason,
-        AdjustmentQty: product.adjustmentQty,
+        AdjustmentQty: product.adjustmentQty === '' ? 0 : product.adjustmentQty,
         ImageURL: imageUrls[productData.indexOf(product)]?.join(',') || null,
         IsActive: true
       }))
@@ -582,13 +582,45 @@ export default function PhysicalCountPage({ deliveryId, readOnly = false }: { de
                   <Input
                     type="number"
                     value={product.receivedQty}
+                    onFocus={(e) => e.target.select()}
+                    onKeyDown={(e) => {
+                      // Allow: Backspace, Delete, Tab, Arrow keys, Home, End
+                      const allowedKeys = ['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End']
+
+                      // Allow: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X (for copy/paste/select all)
+                      if (e.ctrlKey || e.metaKey) {
+                        return
+                      }
+
+                      // Allow navigation and editing keys
+                      if (allowedKeys.includes(e.key)) {
+                        return
+                      }
+
+                      // Block alphabetic characters and special characters except numbers
+                      if (
+                        /[a-zA-Z]/.test(e.key) || // Block all letters
+                        (e.key === '-' || e.key === '+' || e.key === 'e' || e.key === 'E') // Block minus, plus, e/E
+                      ) {
+                        e.preventDefault()
+                      }
+                    }}
                     onChange={(e) => {
                       const newData = [...productData]
-                      newData[index].receivedQty = Number.parseInt(e.target.value) || 0
+                      const receivedQty = e.target.value === '' ? '' : Number.parseInt(e.target.value)
+
+                      // Prevent negative values
+                      if (receivedQty !== '' && receivedQty < 0) {
+                        return
+                      }
+
+                      newData[index].receivedQty = receivedQty
                       setProductData(newData)
                     }}
                     className={`w-24 mx-auto text-center ${readOnly ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
                     disabled={readOnly}
+                    min="0"
+                    inputMode="numeric"
                   />
                 </td>
                 <td className="text-center p-3">
@@ -613,17 +645,63 @@ export default function PhysicalCountPage({ deliveryId, readOnly = false }: { de
                   </Select>
                 </td>
                 <td className="text-center p-3">
-                  <Input
-                    type="number"
-                    value={product.adjustmentQty}
-                    onChange={(e) => {
-                      const newData = [...productData]
-                      newData[index].adjustmentQty = Number.parseInt(e.target.value) || 0
-                      setProductData(newData)
-                    }}
-                    className={`w-20 mx-auto text-center ${readOnly ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
-                    disabled={readOnly}
-                  />
+                  <div className="flex flex-col items-center">
+                    <Input
+                      type="number"
+                      value={product.adjustmentQty}
+                      onFocus={(e) => e.target.select()}
+                      onKeyDown={(e) => {
+                        // Allow: Backspace, Delete, Tab, Arrow keys, Home, End
+                        const allowedKeys = ['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End']
+
+                        // Allow: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X (for copy/paste/select all)
+                        if (e.ctrlKey || e.metaKey) {
+                          return
+                        }
+
+                        // Allow navigation and editing keys
+                        if (allowedKeys.includes(e.key)) {
+                          return
+                        }
+
+                        // Block alphabetic characters and special characters except numbers
+                        if (
+                          /[a-zA-Z]/.test(e.key) || // Block all letters
+                          (e.key === '-' || e.key === '+' || e.key === 'e' || e.key === 'E') // Block minus, plus, e/E
+                        ) {
+                          e.preventDefault()
+                        }
+                      }}
+                      onChange={(e) => {
+                        const newData = [...productData]
+                        const adjustmentQty = e.target.value === '' ? '' : Number.parseInt(e.target.value)
+
+                        // Prevent negative values
+                        if (adjustmentQty !== '' && adjustmentQty < 0) {
+                          return
+                        }
+
+                        // Block if Adjustment Qty exceeds Received Qty
+                        const receivedQty = typeof product.receivedQty === 'number' ? product.receivedQty : (product.receivedQty === '' ? 0 : Number.parseInt(product.receivedQty))
+                        if (adjustmentQty !== '' && adjustmentQty > receivedQty) {
+                          // Don't allow the change - show toast
+                          toast({
+                            title: "Invalid Input",
+                            description: "Adjustment Qty cannot exceed Received Qty",
+                            variant: "destructive",
+                          })
+                          return
+                        }
+
+                        newData[index].adjustmentQty = adjustmentQty
+                        setProductData(newData)
+                      }}
+                      className={`w-20 mx-auto text-center ${readOnly ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
+                      disabled={readOnly}
+                      min="0"
+                      inputMode="numeric"
+                    />
+                  </div>
                 </td>
                 <td className="text-center p-3">
                   <input
@@ -738,13 +816,45 @@ export default function PhysicalCountPage({ deliveryId, readOnly = false }: { de
                 <Input
                   type="number"
                   value={product.receivedQty}
+                  onFocus={(e) => e.target.select()}
+                  onKeyDown={(e) => {
+                    // Allow: Backspace, Delete, Tab, Arrow keys, Home, End
+                    const allowedKeys = ['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End']
+
+                    // Allow: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X (for copy/paste/select all)
+                    if (e.ctrlKey || e.metaKey) {
+                      return
+                    }
+
+                    // Allow navigation and editing keys
+                    if (allowedKeys.includes(e.key)) {
+                      return
+                    }
+
+                    // Block alphabetic characters and special characters except numbers
+                    if (
+                      /[a-zA-Z]/.test(e.key) || // Block all letters
+                      (e.key === '-' || e.key === '+' || e.key === 'e' || e.key === 'E') // Block minus, plus, e/E
+                    ) {
+                      e.preventDefault()
+                    }
+                  }}
                   onChange={(e) => {
                     const newData = [...productData]
-                    newData[index].receivedQty = Number.parseInt(e.target.value) || 0
+                    const receivedQty = e.target.value === '' ? '' : Number.parseInt(e.target.value)
+
+                    // Prevent negative values
+                    if (receivedQty !== '' && receivedQty < 0) {
+                      return
+                    }
+
+                    newData[index].receivedQty = receivedQty
                     setProductData(newData)
                   }}
                   className={`h-8 text-center ${readOnly ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
                   disabled={readOnly}
+                  min="0"
+                  inputMode="numeric"
                 />
               </div>
             </div>
@@ -770,20 +880,65 @@ export default function PhysicalCountPage({ deliveryId, readOnly = false }: { de
                 </SelectContent>
               </Select>
 
-              <div className="flex items-center gap-2">
-                <Input
-                  type="number"
-                  value={product.adjustmentQty}
-                  onChange={(e) => {
-                    const newData = [...productData]
-                    newData[index].adjustmentQty = Number.parseInt(e.target.value) || 0
-                    setProductData(newData)
-                  }}
-                  placeholder="Qty"
-                  className={`flex-1 ${readOnly ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
-                  disabled={readOnly}
-                />
-                <div className="flex items-center gap-1 flex-wrap">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    value={product.adjustmentQty}
+                    onFocus={(e) => e.target.select()}
+                    onKeyDown={(e) => {
+                      // Allow editing keys
+                      const allowedKeys = ['Backspace', 'Delete', 'Tab', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End']
+
+                      // Allow Ctrl/Cmd combinations (for copy, paste, select all, etc.)
+                      if (e.ctrlKey || e.metaKey) {
+                        return
+                      }
+
+                      // Allow editing keys
+                      if (allowedKeys.includes(e.key)) {
+                        return
+                      }
+
+                      // Block alphabetic characters and special characters except numbers
+                      if (
+                        /[a-zA-Z]/.test(e.key) || // Block all letters
+                        (e.key === '-' || e.key === '+' || e.key === 'e' || e.key === 'E') // Block minus, plus, e/E
+                      ) {
+                        e.preventDefault()
+                      }
+                    }}
+                    onChange={(e) => {
+                      const newData = [...productData]
+                      const adjustmentQty = e.target.value === '' ? '' : Number.parseInt(e.target.value)
+
+                      // Prevent negative values
+                      if (adjustmentQty !== '' && adjustmentQty < 0) {
+                        return
+                      }
+
+                      // Block if Adjustment Qty exceeds Received Qty
+                      const receivedQty = typeof product.receivedQty === 'number' ? product.receivedQty : (product.receivedQty === '' ? 0 : Number.parseInt(product.receivedQty))
+                      if (adjustmentQty !== '' && adjustmentQty > receivedQty) {
+                        // Don't allow the change - show toast
+                        toast({
+                          title: "Invalid Input",
+                          description: "Adjustment Qty cannot exceed Received Qty",
+                          variant: "destructive",
+                        })
+                        return
+                      }
+
+                      newData[index].adjustmentQty = adjustmentQty
+                      setProductData(newData)
+                    }}
+                    placeholder="Qty"
+                    className={`flex-1 ${readOnly ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
+                    disabled={readOnly}
+                    min="0"
+                    inputMode="numeric"
+                  />
+                  <div className="flex items-center gap-1 flex-wrap">
                   {uploadingImages[index] ? (
                     <div className="h-10 w-10 rounded-md border-2 border-dashed border-gray-300 bg-gray-50 flex items-center justify-center">
                       <RefreshCw className="h-4 w-4 text-gray-400 animate-spin" />
@@ -846,6 +1001,7 @@ export default function PhysicalCountPage({ deliveryId, readOnly = false }: { de
                     </button>
                   )}
                 </div>
+                </div>
               </div>
             </div>
           </div>
@@ -875,8 +1031,8 @@ export default function PhysicalCountPage({ deliveryId, readOnly = false }: { de
       {/* Success Dialog */}
       <Dialog open={showSuccess} onOpenChange={setShowSuccess}>
         <DialogContent className="max-w-md">
-          <DialogTitle className="flex items-start justify-between mb-6">
-            <h2 className="text-2xl font-bold">Success</h2>
+          <DialogTitle className="text-2xl font-bold flex items-start justify-between mb-6">
+            <span>Success</span>
             <button onClick={() => setShowSuccess(false)} className="text-2xl">
               ×
             </button>

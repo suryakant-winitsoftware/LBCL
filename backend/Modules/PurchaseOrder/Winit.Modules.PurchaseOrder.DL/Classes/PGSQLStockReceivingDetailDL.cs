@@ -36,7 +36,7 @@ public class PGSQLStockReceivingDetailDL : Winit.Modules.Base.DL.DBManager.Postg
                     ""CreatedBy""::text as ""CreatedBy"",
                     ""ModifiedDate"",
                     ""ModifiedBy""::text as ""ModifiedBy""
-                FROM public.""StockReceivingDetail""
+                FROM public.stock_receiving_detail
                 WHERE ""WHStockRequestUID"" = @WHStockRequestUID
                 AND ""IsActive"" = true
                 ORDER BY ""CreatedDate"" ASC";
@@ -70,7 +70,7 @@ public class PGSQLStockReceivingDetailDL : Winit.Modules.Base.DL.DBManager.Postg
                 foreach (var detail in details)
                 {
                     string sql = @"
-                        INSERT INTO public.""StockReceivingDetail""
+                        INSERT INTO public.stock_receiving_detail
                         (
                             ""UID"",
                             ""WHStockRequestUID"",
@@ -146,7 +146,7 @@ public class PGSQLStockReceivingDetailDL : Winit.Modules.Base.DL.DBManager.Postg
         try
         {
             string sql = @"
-                UPDATE public.""StockReceivingDetail""
+                UPDATE public.stock_receiving_detail
                 SET ""IsActive"" = false,
                     ""ModifiedDate"" = @ModifiedDate
                 WHERE ""WHStockRequestUID"" = @WHStockRequestUID";

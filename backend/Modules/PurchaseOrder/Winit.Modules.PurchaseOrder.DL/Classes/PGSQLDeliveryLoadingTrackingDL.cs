@@ -47,7 +47,7 @@ public class PGSQLDeliveryLoadingTrackingDL : Winit.Modules.Base.DL.DBManager.Po
                     wsr.warehouse_uid,
                     wsr.status,
                     COALESCE(TargetOrg.name, TargetWH.name) as OrgName
-                FROM public.""DeliveryLoadingTracking"" dlt
+                FROM public.delivery_loading_tracking dlt
                 INNER JOIN public.wh_stock_request wsr ON dlt.""WHStockRequestUID"" = wsr.uid
                 LEFT JOIN public.org TargetWH ON wsr.target_wh_uid = TargetWH.uid
                 LEFT JOIN public.org TargetOrg ON wsr.target_org_uid = TargetOrg.uid
@@ -100,7 +100,7 @@ public class PGSQLDeliveryLoadingTrackingDL : Winit.Modules.Base.DL.DBManager.Po
                     wsr.warehouse_uid,
                     wsr.status,
                     COALESCE(TargetOrg.name, TargetWH.name) as OrgName
-                FROM public.""DeliveryLoadingTracking"" dlt
+                FROM public.delivery_loading_tracking dlt
                 INNER JOIN public.wh_stock_request wsr ON dlt.""WHStockRequestUID"" = wsr.uid
                 LEFT JOIN public.org TargetWH ON wsr.target_wh_uid = TargetWH.uid
                 LEFT JOIN public.org TargetOrg ON wsr.target_org_uid = TargetOrg.uid
@@ -131,7 +131,7 @@ public class PGSQLDeliveryLoadingTrackingDL : Winit.Modules.Base.DL.DBManager.Po
         try
         {
             string sql = @"
-                INSERT INTO public.""DeliveryLoadingTracking""
+                INSERT INTO public.delivery_loading_tracking
                 (
                     ""UID"",
                     ""WHStockRequestUID"",
@@ -216,7 +216,7 @@ public class PGSQLDeliveryLoadingTrackingDL : Winit.Modules.Base.DL.DBManager.Po
         try
         {
             string sql = @"
-                UPDATE public.""DeliveryLoadingTracking""
+                UPDATE public.delivery_loading_tracking
                 SET
                     ""VehicleUID"" = @VehicleUID,
                     ""DriverEmployeeUID"" = @DriverEmployeeUID,

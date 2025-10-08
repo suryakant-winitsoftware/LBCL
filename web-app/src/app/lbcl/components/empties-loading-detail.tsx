@@ -275,6 +275,9 @@ export function EmptiesLoadingDetail() {
                 Product Code/Description
               </th>
               <th className="text-center p-3 font-semibold text-sm">
+                Total in Hand
+              </th>
+              <th className="text-center p-3 font-semibold text-sm">
                 Stock in Hand<br />at Agency
               </th>
               <th className="text-center p-3 font-semibold text-sm">
@@ -307,6 +310,9 @@ export function EmptiesLoadingDetail() {
                       <div className="text-sm text-gray-600">{product.code}</div>
                     </div>
                   </div>
+                </td>
+                <td className="text-center p-3">
+                  <div className="font-medium">{product.stockInHand + product.previousDepositQty + product.previousEmptyTrust}</div>
                 </td>
                 <td className="text-center p-3">
                   <div className="font-medium">{product.stockInHand}</div>

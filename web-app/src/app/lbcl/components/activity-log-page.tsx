@@ -230,6 +230,7 @@ export function ActivityLogPage({ deliveryPlanId, readOnly = false }: ActivityLo
   // Data states
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [validationError, setValidationError] = useState("");
   const [purchaseOrder, setPurchaseOrder] = useState<any>(null);
   const [orderLines, setOrderLines] = useState<any[]>([]);
 
@@ -255,12 +256,12 @@ export function ActivityLogPage({ deliveryPlanId, readOnly = false }: ActivityLo
 
   // Time tracking states
   const [arrivalTime, setArrivalTime] = useState<string>("");
-  const [loadingStartHour, setLoadingStartHour] = useState<string>("11");
-  const [loadingStartMin, setLoadingStartMin] = useState<string>("14");
-  const [loadingEndHour, setLoadingEndHour] = useState<string>("12");
-  const [loadingEndMin, setLoadingEndMin] = useState<string>("25");
-  const [departureHour, setDepartureHour] = useState<string>("13");
-  const [departureMin, setDepartureMin] = useState<string>("26");
+  const [loadingStartHour, setLoadingStartHour] = useState<string>("");
+  const [loadingStartMin, setLoadingStartMin] = useState<string>("");
+  const [loadingEndHour, setLoadingEndHour] = useState<string>("");
+  const [loadingEndMin, setLoadingEndMin] = useState<string>("");
+  const [departureHour, setDepartureHour] = useState<string>("");
+  const [departureMin, setDepartureMin] = useState<string>("");
   const [notes, setNotes] = useState<string>("");
 
   // Signature states
@@ -294,8 +295,7 @@ export function ActivityLogPage({ deliveryPlanId, readOnly = false }: ActivityLo
           console.log("🚗 First vehicle from API:", result.data[0]);
           console.log("🔑 Vehicle UID being set:", result.data[0].UID);
           setVehicles(result.data);
-          // Auto-select the first vehicle
-          setSelectedVehicle(result.data[0].UID);
+          // Don't auto-select - let user choose
         }
       }
     } catch (error) {
@@ -380,8 +380,7 @@ export function ActivityLogPage({ deliveryPlanId, readOnly = false }: ActivityLo
           console.log(`🔑 ${roleName} UID being set:`, mappedEmployees[0].UID);
 
           setEmployees(mappedEmployees);
-          // Auto-select the first employee
-          setSelected(mappedEmployees[0].UID);
+          // Don't auto-select - let user choose
         } else {
           console.log(`⚠️ No ${roleName} employees found`);
         }
@@ -586,6 +585,91 @@ export function ActivityLogPage({ deliveryPlanId, readOnly = false }: ActivityLo
     );
   };
 
+  // Validate time input
+  const validateAndSetHour = (value: string, setter: (val: string) => void) => {
+    if (value === "") {
+      setter("");
+      return;
+    }
+    const numValue = parseInt(value);
+    if (isNaN(numValue) || numValue < 0) {
+      setter("0");
+    } else if (numValue > 23) {
+      setter("23");
+    } else {
+      setter(value);
+    }
+  };
+
+  const validateAndSetMinute = (value: string, setter: (val: string) => void) => {
+    if (value === "") {
+      setter("");
+      return;
+    }
+    const numValue = parseInt(value);
+    if (isNaN(numValue) || numValue < 0) {
+      setter("0");
+    } else if (numValue > 59) {
+      setter("59");
+    } else {
+      setter(value);
+    }
+  };
+
+  // Validate Load End Time is not less than Load Start Time
+  const validateLoadEndTime = (endHour: string, endMin: string) => {
+    if (loadingStartHour === "" || loadingStartMin === "" || endHour === "" || endMin === "") {
+      setValidationError("");
+      return true; // Skip validation if any field is empty
+    }
+
+    const startTime = parseInt(loadingStartHour) * 60 + parseInt(loadingStartMin);
+    const endTime = parseInt(endHour) * 60 + parseInt(endMin);
+
+    if (endTime < startTime) {
+      setValidationError("Load End Time cannot be less than Load Start Time");
+      return false;
+    } else {
+      setValidationError("");
+      return true;
+    }
+  };
+
+  // Validate Prime Mover Departure is not less than Load End Time
+  const validateDepartureTime = (depHour: string, depMin: string) => {
+    if (loadingEndHour === "" || loadingEndMin === "" || depHour === "" || depMin === "") {
+      setValidationError("");
+      return true; // Skip validation if any field is empty
+    }
+
+    const endTime = parseInt(loadingEndHour) * 60 + parseInt(loadingEndMin);
+    const departureTime = parseInt(depHour) * 60 + parseInt(depMin);
+
+    if (departureTime < endTime) {
+      setValidationError("Prime Mover Departure cannot be less than Load End Time");
+      return false;
+    } else {
+      setValidationError("");
+      return true;
+    }
+  };
+
+  // Check if Vehicle and Driver are selected (prerequisite for Fork Lift Operator)
+  const isVehicleAndDriverSelected = () => {
+    return selectedVehicle !== "" && selectedDriver !== "";
+  };
+
+  // Check if Step 3 (Loading) is completed
+  const isLoadingStepCompleted = () => {
+    return (
+      selectedOperator !== "" &&
+      loadingStartHour !== "" &&
+      loadingStartMin !== "" &&
+      loadingEndHour !== "" &&
+      loadingEndMin !== ""
+    );
+  };
+
   const formatDate = (dateString: string) => {
     if (!dateString) return "N/A";
     const date = new Date(dateString);
@@ -638,6 +722,20 @@ export function ActivityLogPage({ deliveryPlanId, readOnly = false }: ActivityLo
           {!readOnly && (
             <Button
               onClick={() => {
+                // Validate Load End Time before submission
+                if (loadingStartHour !== "" && loadingStartMin !== "" && loadingEndHour !== "" && loadingEndMin !== "") {
+                  if (!validateLoadEndTime(loadingEndHour, loadingEndMin)) {
+                    return; // Stop submission if validation fails
+                  }
+                }
+
+                // Validate Prime Mover Departure before submission
+                if (loadingEndHour !== "" && loadingEndMin !== "" && departureHour !== "" && departureMin !== "") {
+                  if (!validateDepartureTime(departureHour, departureMin)) {
+                    return; // Stop submission if validation fails
+                  }
+                }
+
                 // Show signature dialog only when current user is a Security Officer
                 console.log("🔍 Submit button clicked:");
                 console.log("   - Is Security Officer:", isSecurityOfficer);
@@ -795,10 +893,10 @@ export function ActivityLogPage({ deliveryPlanId, readOnly = false }: ActivityLo
                     <Select
                       value={selectedOperator}
                       onValueChange={setSelectedOperator}
-                      disabled={loadingOperators || readOnly || (isPrincipalUser && !isOperator)}
+                      disabled={!isVehicleAndDriverSelected() || loadingOperators || readOnly || (isPrincipalUser && !isOperator)}
                     >
-                      <SelectTrigger className={readOnly || (isPrincipalUser && !isOperator) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}>
-                        <SelectValue placeholder={loadingOperators ? "Loading operators..." : "Select operator"} />
+                      <SelectTrigger className={readOnly || (isPrincipalUser && !isOperator) || !isVehicleAndDriverSelected() ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}>
+                        <SelectValue placeholder={loadingOperators ? "Loading operators..." : !isVehicleAndDriverSelected() ? "Select vehicle and driver first" : "Select operator"} />
                       </SelectTrigger>
                       <SelectContent>
                         {operators.map((operator) => (
@@ -816,19 +914,41 @@ export function ActivityLogPage({ deliveryPlanId, readOnly = false }: ActivityLo
                       </label>
                       <div className="flex gap-2">
                         <Input
+                          type="number"
                           value={loadingStartHour}
-                          onChange={(e) => setLoadingStartHour(e.target.value)}
-                          className={`text-center ${readOnly || (isPrincipalUser && !isOperator) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
-                          disabled={readOnly || (isPrincipalUser && !isOperator)}
+                          onChange={(e) => {
+                            setValidationError(""); // Clear validation error when user changes start time
+                            validateAndSetHour(e.target.value, setLoadingStartHour);
+                            // Re-validate end time when start time changes
+                            if (loadingEndHour !== "" && loadingEndMin !== "") {
+                              validateLoadEndTime(loadingEndHour, loadingEndMin);
+                            }
+                          }}
+                          placeholder="HH"
+                          min="0"
+                          max="23"
+                          className={`text-center ${readOnly || (isPrincipalUser && !isOperator) || !isVehicleAndDriverSelected() ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
+                          disabled={!isVehicleAndDriverSelected() || readOnly || (isPrincipalUser && !isOperator)}
                         />
                         <span className="text-xs text-gray-500 self-center">
                           HH
                         </span>
                         <Input
+                          type="number"
                           value={loadingStartMin}
-                          onChange={(e) => setLoadingStartMin(e.target.value)}
-                          className={`text-center ${readOnly || (isPrincipalUser && !isOperator) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
-                          disabled={readOnly || (isPrincipalUser && !isOperator)}
+                          onChange={(e) => {
+                            setValidationError(""); // Clear validation error when user changes start time
+                            validateAndSetMinute(e.target.value, setLoadingStartMin);
+                            // Re-validate end time when start time changes
+                            if (loadingEndHour !== "" && loadingEndMin !== "") {
+                              validateLoadEndTime(loadingEndHour, loadingEndMin);
+                            }
+                          }}
+                          placeholder="MM"
+                          min="0"
+                          max="59"
+                          className={`text-center ${readOnly || (isPrincipalUser && !isOperator) || !isVehicleAndDriverSelected() ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
+                          disabled={!isVehicleAndDriverSelected() || readOnly || (isPrincipalUser && !isOperator)}
                         />
                         <span className="text-xs text-gray-500 self-center">
                           Min
@@ -841,24 +961,58 @@ export function ActivityLogPage({ deliveryPlanId, readOnly = false }: ActivityLo
                       </label>
                       <div className="flex gap-2">
                         <Input
+                          type="number"
                           value={loadingEndHour}
-                          onChange={(e) => setLoadingEndHour(e.target.value)}
-                          className={`text-center ${readOnly || (isPrincipalUser && !isOperator) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
-                          disabled={readOnly || (isPrincipalUser && !isOperator)}
+                          onChange={(e) => {
+                            setValidationError(""); // Clear validation error when user changes end time
+                            validateAndSetHour(e.target.value, (val) => {
+                              setLoadingEndHour(val);
+                              validateLoadEndTime(val, loadingEndMin);
+                              // Re-validate departure time when end time changes
+                              if (departureHour !== "" && departureMin !== "") {
+                                validateDepartureTime(departureHour, departureMin);
+                              }
+                            });
+                          }}
+                          placeholder="HH"
+                          min="0"
+                          max="23"
+                          className={`text-center ${readOnly || (isPrincipalUser && !isOperator) || !isVehicleAndDriverSelected() ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
+                          disabled={!isVehicleAndDriverSelected() || readOnly || (isPrincipalUser && !isOperator)}
                         />
                         <span className="text-xs text-gray-500 self-center">
                           HH
                         </span>
                         <Input
+                          type="number"
                           value={loadingEndMin}
-                          onChange={(e) => setLoadingEndMin(e.target.value)}
-                          className={`text-center ${readOnly || (isPrincipalUser && !isOperator) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
-                          disabled={readOnly || (isPrincipalUser && !isOperator)}
+                          onChange={(e) => {
+                            setValidationError(""); // Clear validation error when user changes end time
+                            validateAndSetMinute(e.target.value, (val) => {
+                              setLoadingEndMin(val);
+                              validateLoadEndTime(loadingEndHour, val);
+                              // Re-validate departure time when end time changes
+                              if (departureHour !== "" && departureMin !== "") {
+                                validateDepartureTime(departureHour, departureMin);
+                              }
+                            });
+                          }}
+                          placeholder="MM"
+                          min="0"
+                          max="59"
+                          className={`text-center ${readOnly || (isPrincipalUser && !isOperator) || !isVehicleAndDriverSelected() ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
+                          disabled={!isVehicleAndDriverSelected() || readOnly || (isPrincipalUser && !isOperator)}
                         />
                         <span className="text-xs text-gray-500 self-center">
                           Min
                         </span>
                       </div>
+                      {validationError && validationError.includes("Load End Time") && (
+                        <div className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                          <span>⚠️</span>
+                          <span>{validationError}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -903,27 +1057,23 @@ export function ActivityLogPage({ deliveryPlanId, readOnly = false }: ActivityLo
 
           {/* Step 6: Gate Pass */}
           <div className="bg-white rounded-lg p-4 sm:p-6 shadow-sm lg:col-span-2">
-            <button
-              onClick={() => toggleSection(6)}
-              className="flex items-center gap-3 sm:gap-4 w-full"
-            >
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#F5E6C8] flex items-center justify-center flex-shrink-0">
-                <span className="font-bold text-sm sm:text-base">6</span>
+            <div className="flex items-center gap-3 sm:gap-4 w-full mb-4">
+              <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+                isLoadingStepCompleted() ? 'bg-[#F5E6C8]' : 'bg-gray-200'
+              }`}>
+                <span className={`font-bold text-sm sm:text-base ${!isLoadingStepCompleted() ? 'text-gray-400' : ''}`}>6</span>
               </div>
-              <span className="text-sm sm:text-base font-medium flex-1 text-left">
+              <span className={`text-sm sm:text-base font-medium flex-1 text-left ${!isLoadingStepCompleted() ? 'text-gray-400' : ''}`}>
                 Gate Pass
               </span>
-              <ChevronDown
-                className={`w-5 h-5 text-gray-400 transition-transform flex-shrink-0 ${
-                  expandedSections.includes(6) ? "rotate-180" : ""
-                }`}
-              />
-            </button>
+              {!isLoadingStepCompleted() && (
+                <span className="text-xs text-red-600 mr-2">Complete Step 3 first</span>
+              )}
+            </div>
 
-            {expandedSections.includes(6) && (
-              <div className="mt-4 sm:mt-6 space-y-4">
-                {/* Enable Security Officer and Prime Mover Departure for SECURITY OFFICER role */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-4">
+              {/* Enable Security Officer and Prime Mover Departure for SECURITY OFFICER role */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="text-xs sm:text-sm font-medium mb-2 block">
                       Getpass Employee (Security Officer)
@@ -931,7 +1081,7 @@ export function ActivityLogPage({ deliveryPlanId, readOnly = false }: ActivityLo
                     <Select
                       value={selectedSecurityOfficer}
                       onValueChange={setSelectedSecurityOfficer}
-                      disabled={loadingSecurityOfficers || readOnly || (isOperator && isPrincipalUser) || (isPrincipalUser && !isSecurityOfficer)}
+                      disabled={!isLoadingStepCompleted() || loadingSecurityOfficers || readOnly || (isOperator && isPrincipalUser) || (isPrincipalUser && !isSecurityOfficer)}
                     >
                       <SelectTrigger className={`${(readOnly || (isOperator && isPrincipalUser) || (isPrincipalUser && !isSecurityOfficer)) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}>
                         <SelectValue placeholder={loadingSecurityOfficers ? "Loading security officers..." : "Select security officer"} />
@@ -951,33 +1101,58 @@ export function ActivityLogPage({ deliveryPlanId, readOnly = false }: ActivityLo
                     </label>
                     <div className="flex gap-2">
                       <Input
+                        type="number"
                         value={departureHour}
-                        onChange={(e) => setDepartureHour(e.target.value)}
-                        className={`text-center flex-1 ${readOnly || (isPrincipalUser && !isSecurityOfficer) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
-                        disabled={readOnly || (isPrincipalUser && !isSecurityOfficer)}
+                        onChange={(e) => {
+                          setValidationError(""); // Clear validation error when user changes departure time
+                          validateAndSetHour(e.target.value, (val) => {
+                            setDepartureHour(val);
+                            validateDepartureTime(val, departureMin);
+                          });
+                        }}
+                        placeholder="HH"
+                        min="0"
+                        max="23"
+                        className={`text-center flex-1 ${readOnly || (isPrincipalUser && !isSecurityOfficer) || !isLoadingStepCompleted() ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
+                        disabled={!isLoadingStepCompleted() || readOnly || (isPrincipalUser && !isSecurityOfficer)}
                       />
                       <span className="text-xs text-gray-500 self-center">
                         HH
                       </span>
                       <Input
+                        type="number"
                         value={departureMin}
-                        onChange={(e) => setDepartureMin(e.target.value)}
-                        className={`text-center flex-1 ${readOnly || (isPrincipalUser && !isSecurityOfficer) ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
-                        disabled={readOnly || (isPrincipalUser && !isSecurityOfficer)}
+                        onChange={(e) => {
+                          setValidationError(""); // Clear validation error when user changes departure time
+                          validateAndSetMinute(e.target.value, (val) => {
+                            setDepartureMin(val);
+                            validateDepartureTime(departureHour, val);
+                          });
+                        }}
+                        placeholder="MM"
+                        min="0"
+                        max="59"
+                        className={`text-center flex-1 ${readOnly || (isPrincipalUser && !isSecurityOfficer) || !isLoadingStepCompleted() ? 'bg-gray-50 text-gray-900 font-medium cursor-default opacity-100' : ''}`}
+                        disabled={!isLoadingStepCompleted() || readOnly || (isPrincipalUser && !isSecurityOfficer)}
                       />
                       <span className="text-xs text-gray-500 self-center">
                         Min
                       </span>
                     </div>
+                    {validationError && validationError.includes("Prime Mover Departure") && (
+                      <div className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                        <span>⚠️</span>
+                        <span>{validationError}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <Check className="w-5 h-5 text-green-600" />
-                  <span className="text-sm text-gray-700">Notify Agency</span>
-                </div>
+              <div className={`flex items-center gap-2 ${!isLoadingStepCompleted() ? 'opacity-50' : ''}`}>
+                <Check className="w-5 h-5 text-green-600" />
+                <span className="text-sm text-gray-700">Notify Agency</span>
               </div>
-            )}
+            </div>
           </div>
         </div>
 

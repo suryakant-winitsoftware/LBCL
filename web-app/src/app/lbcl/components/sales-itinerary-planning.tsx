@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/lbcl/components/ui/tabs";
 import { SalesItineraryDashboard } from "./sales-itinerary-dashboard";
-import { SalesItineraryDataDashboard } from "./sales-itinerary-data-dashboard";
 import { SalesItineraryCalendar } from "./sales-itinerary-calendar";
 import { SalesItineraryConfiguration } from "./sales-itinerary-configuration";
 import { SalesItineraryExpenses } from "./sales-itinerary-expenses";
@@ -48,13 +47,6 @@ export function SalesItineraryPlanning() {
                 <span>TEMPLATE</span>
               </TabsTrigger>
               <TabsTrigger
-                value="data"
-                className="flex items-center gap-1.5 px-4 md:px-5 py-2.5 rounded-none border-b-3 border-transparent data-[state=active]:border-[#A08B5C] data-[state=active]:bg-[#A08B5C]/5 data-[state=active]:text-[#A08B5C] hover:bg-gray-50 transition-all duration-200 font-semibold text-xs md:text-sm"
-              >
-                <span className="text-sm md:text-base">📈</span>
-                <span>DATA ANALYSIS</span>
-              </TabsTrigger>
-              <TabsTrigger
                 value="configuration"
                 className="flex items-center gap-1.5 px-4 md:px-5 py-2.5 rounded-none border-b-3 border-transparent data-[state=active]:border-[#A08B5C] data-[state=active]:bg-[#A08B5C]/5 data-[state=active]:text-[#A08B5C] hover:bg-gray-50 transition-all duration-200 font-semibold text-xs md:text-sm"
               >
@@ -78,9 +70,6 @@ export function SalesItineraryPlanning() {
           </TabsContent>
           <TabsContent value="template" className="mt-0">
             <SalesItineraryTemplate />
-          </TabsContent>
-          <TabsContent value="data" className="mt-0">
-            <SalesItineraryDataDashboard />
           </TabsContent>
           <TabsContent value="configuration" className="mt-0">
             <SalesItineraryConfiguration />

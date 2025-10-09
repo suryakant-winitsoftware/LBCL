@@ -5,15 +5,15 @@ import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/app/lbcl/components/ui/card";
 import { Button } from "@/app/lbcl/components/ui/button";
 import { Badge } from "@/app/lbcl/components/ui/badge";
-import { Plus, Edit, Trash2, Download, Upload, RefreshCw, Eye } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/app/lbcl/components/ui/dialog";
+import { Plus, Trash2, Download, Upload, RefreshCw, Eye, CalendarIcon } from "lucide-react";
 import * as XLSX from "xlsx";
+import { Calendar } from "@/app/lbcl/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/app/lbcl/components/ui/popover";
+import { cn } from "@/lib/utils";
 import {
   Table,
   TableBody,
@@ -25,14 +25,48 @@ import {
 import {
   ItineraryEntry,
   MOCK_ITINERARY_DATA,
-  ACTIVITY_SUMMARY,
+  ACTIVITY_TYPES,
+  MARKETS,
 } from "./itinerary-mock-data";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/app/lbcl/components/ui/select";
+import { Input } from "@/app/lbcl/components/ui/input";
 
 export function SalesItineraryTemplate() {
   const router = useRouter();
   const [entries, setEntries] = useState<ItineraryEntry[]>([]);
-  const [selectedEntry, setSelectedEntry] = useState<ItineraryEntry | null>(null);
-  const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [filteredEntries, setFilteredEntries] = useState<ItineraryEntry[]>([]);
+
+  // Filter states
+  const [filterType, setFilterType] = useState<string>("all");
+  const [filterMarket, setFilterMarket] = useState<string>("all");
+  const [filterSearch, setFilterSearch] = useState<string>("");
+  const [filterDateFrom, setFilterDateFrom] = useState<Date | undefined>(undefined);
+  const [filterDateTo, setFilterDateTo] = useState<Date | undefined>(undefined);
+
+  // Helper function to convert DD/MM/YY to Date
+  const parseDateString = (dateStr: string): Date | null => {
+    if (!dateStr) return null;
+    const parts = dateStr.split('/');
+    if (parts.length !== 3) return null;
+    const day = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1; // Month is 0-indexed
+    const year = parseInt(parts[2], 10) + 2000; // Convert YY to YYYY
+    return new Date(year, month, day);
+  };
+
+  // Helper function to format Date to DD/MM/YY
+  const formatDateString = (date: Date): string => {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = String(date.getFullYear()).slice(-2);
+    return `${day}/${month}/${year}`;
+  };
 
   // Function to load entries from localStorage
   const loadEntries = () => {
@@ -46,6 +80,59 @@ export function SalesItineraryTemplate() {
       setEntries(MOCK_ITINERARY_DATA);
       console.log("ℹ️ No saved entries, using mock data");
     }
+  };
+
+  // Apply filters whenever entries or filter values change
+  useEffect(() => {
+    let filtered = [...entries];
+
+    // Filter by Activity Type
+    if (filterType !== "all") {
+      filtered = filtered.filter(entry => entry.type === filterType);
+    }
+
+    // Filter by Market
+    if (filterMarket !== "all") {
+      filtered = filtered.filter(entry => entry.market === filterMarket);
+    }
+
+    // Filter by Search (searches in focusArea, kraPlan, accompaniedBy)
+    if (filterSearch.trim() !== "") {
+      const searchLower = filterSearch.toLowerCase();
+      filtered = filtered.filter(entry =>
+        entry.focusArea.toLowerCase().includes(searchLower) ||
+        entry.kraPlan.toLowerCase().includes(searchLower) ||
+        entry.accompaniedBy.toLowerCase().includes(searchLower) ||
+        entry.market.toLowerCase().includes(searchLower)
+      );
+    }
+
+    // Filter by Date Range
+    if (filterDateFrom || filterDateTo) {
+      filtered = filtered.filter(entry => {
+        const entryDate = parseDateString(entry.date);
+        if (!entryDate) return true;
+
+        if (filterDateFrom && filterDateTo) {
+          return entryDate >= filterDateFrom && entryDate <= filterDateTo;
+        } else if (filterDateFrom) {
+          return entryDate >= filterDateFrom;
+        } else if (filterDateTo) {
+          return entryDate <= filterDateTo;
+        }
+        return true;
+      });
+    }
+
+    setFilteredEntries(filtered);
+  }, [entries, filterType, filterMarket, filterSearch, filterDateFrom, filterDateTo]);
+
+  const handleClearFilters = () => {
+    setFilterType("all");
+    setFilterMarket("all");
+    setFilterSearch("");
+    setFilterDateFrom(undefined);
+    setFilterDateTo(undefined);
   };
 
   // Load entries on component mount
@@ -87,9 +174,8 @@ export function SalesItineraryTemplate() {
     console.log("🗑️ Entry deleted, localStorage updated");
   };
 
-  const handleViewDetails = (entry: ItineraryEntry) => {
-    setSelectedEntry(entry);
-    setIsDetailOpen(true);
+  const handleViewDetails = (id: number) => {
+    router.push(`/lbcl/sales-itinerary/view?id=${id}`);
   };
 
   const handleExportToExcel = () => {
@@ -157,54 +243,144 @@ export function SalesItineraryTemplate() {
     console.log(`✅ Exported ${entries.length} entries to ${filename}`);
   };
 
-  // Calculate summary statistics
-  const totalEntries = entries.length;
-  const totalMileage = entries.reduce((sum, entry) => sum + (entry.plannedMileage || 0), 0);
-  const totalDays = entries.reduce((sum, entry) => sum + (entry.noOfDays || 0), 0);
-
   return (
     <div className="space-y-4">
-      {/* Header with Summary Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-        <Card className="border-[#A08B5C] border-2">
-          <CardContent className="p-3 text-center">
-            <h3 className="text-xs text-gray-600 mb-1">Total Entries</h3>
-            <div className="text-2xl font-bold text-[#A08B5C]">{totalEntries}</div>
-          </CardContent>
-        </Card>
-        <Card className="border-[#A08B5C] border-2">
-          <CardContent className="p-3 text-center">
-            <h3 className="text-xs text-gray-600 mb-1">Total Days</h3>
-            <div className="text-2xl font-bold text-[#A08B5C]">{totalDays}</div>
-          </CardContent>
-        </Card>
-        <Card className="border-[#A08B5C] border-2">
-          <CardContent className="p-3 text-center">
-            <h3 className="text-xs text-gray-600 mb-1">Planned Mileage</h3>
-            <div className="text-2xl font-bold text-[#A08B5C]">{totalMileage} km</div>
-          </CardContent>
-        </Card>
-        <Card className="border-[#A08B5C] border-2">
-          <CardContent className="p-3 text-center">
-            <h3 className="text-xs text-gray-600 mb-1">Completion</h3>
-            <div className="text-2xl font-bold text-[#A08B5C]">100%</div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Activity Summary */}
+      {/* Filters Section */}
       <Card>
-        <CardHeader className="py-3">
-          <CardTitle className="text-base">Activity Summary</CardTitle>
+        <CardHeader className="py-3 bg-gray-50">
+          <CardTitle className="text-base">Filter Entries</CardTitle>
         </CardHeader>
         <CardContent className="p-4">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-            {Object.entries(ACTIVITY_SUMMARY).map(([activity, count]) => (
-              <div key={activity} className="text-center p-2 bg-gray-50 rounded">
-                <div className="text-xl font-bold text-[#A08B5C]">{count}</div>
-                <div className="text-xs text-gray-600">{activity}</div>
-              </div>
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
+            {/* Activity Type Filter */}
+            <div>
+              <label className="block text-xs font-medium text-gray-700 mb-1.5">
+                Activity Type
+              </label>
+              <Select value={filterType} onValueChange={setFilterType}>
+                <SelectTrigger className="h-9 text-xs">
+                  <SelectValue placeholder="All Types" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all" className="text-xs">All Types</SelectItem>
+                  {ACTIVITY_TYPES.map((type) => (
+                    <SelectItem key={type} value={type} className="text-xs">
+                      {type}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Market Filter */}
+            <div>
+              <label className="block text-xs font-medium text-gray-700 mb-1.5">
+                Market
+              </label>
+              <Select value={filterMarket} onValueChange={setFilterMarket}>
+                <SelectTrigger className="h-9 text-xs">
+                  <SelectValue placeholder="All Markets" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all" className="text-xs">All Markets</SelectItem>
+                  {MARKETS.map((market) => (
+                    <SelectItem key={market} value={market} className="text-xs">
+                      {market}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Date From */}
+            <div>
+              <label className="block text-xs font-medium text-gray-700 mb-1.5">
+                Date From
+              </label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full h-9 justify-start text-left font-normal text-xs",
+                      !filterDateFrom && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-3.5 w-3.5" />
+                    {filterDateFrom ? formatDateString(filterDateFrom) : <span>Pick a date</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={filterDateFrom}
+                    onSelect={setFilterDateFrom}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+
+            {/* Date To */}
+            <div>
+              <label className="block text-xs font-medium text-gray-700 mb-1.5">
+                Date To
+              </label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full h-9 justify-start text-left font-normal text-xs",
+                      !filterDateTo && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-3.5 w-3.5" />
+                    {filterDateTo ? formatDateString(filterDateTo) : <span>Pick a date</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={filterDateTo}
+                    onSelect={setFilterDateTo}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+
+            {/* Search */}
+            <div>
+              <label className="block text-xs font-medium text-gray-700 mb-1.5">
+                Search
+              </label>
+              <Input
+                type="text"
+                placeholder="Search..."
+                value={filterSearch}
+                onChange={(e) => setFilterSearch(e.target.value)}
+                className="h-9 text-xs"
+              />
+            </div>
+          </div>
+
+          {/* Filter Summary and Clear Button */}
+          <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-200">
+            <div className="text-xs text-gray-600">
+              Showing <strong>{filteredEntries.length}</strong> of <strong>{entries.length}</strong> entries
+              {(filterType !== "all" || filterMarket !== "all" || filterSearch || filterDateFrom || filterDateTo) && (
+                <span className="ml-2 text-[#A08B5C]">(filtered)</span>
+              )}
+            </div>
+            <Button
+              size="sm"
+              variant="outline"
+              className="text-xs h-8"
+              onClick={handleClearFilters}
+            >
+              Clear Filters
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -225,7 +401,12 @@ export function SalesItineraryTemplate() {
                 <RefreshCw className="w-3 h-3 mr-1.5" />
                 Refresh
               </Button>
-              <Button size="sm" variant="outline" className="text-xs h-8">
+              <Button
+                size="sm"
+                variant="outline"
+                className="text-xs h-8"
+                onClick={handleExportToExcel}
+              >
                 <Download className="w-3 h-3 mr-1.5" />
                 Export
               </Button>
@@ -250,51 +431,82 @@ export function SalesItineraryTemplate() {
               <TableHeader>
                 <TableRow>
                   <TableHead className="text-xs py-2 w-8">#</TableHead>
-                  <TableHead className="text-xs py-2">Type</TableHead>
-                  <TableHead className="text-xs py-2">Focus Area</TableHead>
-                  <TableHead className="text-xs py-2">Date</TableHead>
-                  <TableHead className="text-xs py-2">Day</TableHead>
-                  <TableHead className="text-xs py-2">KRA Plan</TableHead>
-                  <TableHead className="text-xs py-2">Time</TableHead>
-                  <TableHead className="text-xs py-2">Market</TableHead>
-                  <TableHead className="text-xs py-2">Accompanied By</TableHead>
-                  <TableHead className="text-xs py-2">Mileage</TableHead>
-                  <TableHead className="text-xs py-2 w-20">Actions</TableHead>
+                  <TableHead className="text-xs py-2 min-w-[150px]">Activity Type</TableHead>
+                  <TableHead className="text-xs py-2 min-w-[180px]">Focus Area</TableHead>
+                  <TableHead className="text-xs py-2 min-w-[100px]">Date</TableHead>
+                  <TableHead className="text-xs py-2 min-w-[60px]">Day</TableHead>
+                  <TableHead className="text-xs py-2 min-w-[250px]">KRA Plan</TableHead>
+                  <TableHead className="text-xs py-2 min-w-[120px]">Morning Meeting</TableHead>
+                  <TableHead className="text-xs py-2 min-w-[90px]">Time From</TableHead>
+                  <TableHead className="text-xs py-2 min-w-[90px]">Time To</TableHead>
+                  <TableHead className="text-xs py-2 min-w-[120px]">Market</TableHead>
+                  <TableHead className="text-xs py-2 min-w-[120px]">Channel</TableHead>
+                  <TableHead className="text-xs py-2 min-w-[100px]">Route No.</TableHead>
+                  <TableHead className="text-xs py-2 min-w-[100px]">Outlet No.</TableHead>
+                  <TableHead className="text-xs py-2 min-w-[150px]">Accompanied By</TableHead>
+                  <TableHead className="text-xs py-2 min-w-[120px]">Night Out</TableHead>
+                  <TableHead className="text-xs py-2 min-w-[90px]">No. of Days</TableHead>
+                  <TableHead className="text-xs py-2 min-w-[100px]">Planned Mileage</TableHead>
+                  <TableHead className="text-xs py-2 min-w-[200px]">KRA Review</TableHead>
+                  <TableHead className="text-xs py-2 min-w-[200px]">Comments</TableHead>
+                  <TableHead className="text-xs py-2 w-28 sticky right-0 bg-white">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {entries.length === 0 ? (
+                {filteredEntries.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={11} className="text-center py-8 text-gray-500">
+                    <TableCell colSpan={20} className="text-center py-8 text-gray-500">
                       <div className="flex flex-col items-center gap-2">
-                        <p className="text-sm">No itinerary entries found</p>
-                        <p className="text-xs">Click "Add Entry" to create your first itinerary entry</p>
+                        {entries.length === 0 ? (
+                          <>
+                            <p className="text-sm">No itinerary entries found</p>
+                            <p className="text-xs">Click "Add Entry" to create your first itinerary entry</p>
+                          </>
+                        ) : (
+                          <>
+                            <p className="text-sm">No entries match the current filters</p>
+                            <p className="text-xs">Try adjusting or clearing the filters</p>
+                          </>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>
                 ) : (
-                  entries.map((entry, index) => (
+                  filteredEntries.map((entry, index) => (
                     <TableRow key={entry.id}>
                       <TableCell className="text-xs py-2">{index + 1}</TableCell>
                       <TableCell className="text-xs py-2">
-                        <Badge className="text-xs" variant="outline">{entry.type}</Badge>
+                        <Badge className="text-xs whitespace-normal" variant="outline">{entry.type}</Badge>
                       </TableCell>
                       <TableCell className="text-xs py-2 font-medium">{entry.focusArea}</TableCell>
                       <TableCell className="text-xs py-2">{entry.date}</TableCell>
                       <TableCell className="text-xs py-2">{entry.day}</TableCell>
-                      <TableCell className="text-xs py-2 max-w-xs truncate" title={entry.kraPlan}>
+                      <TableCell className="text-xs py-2" title={entry.kraPlan}>
                         {entry.kraPlan}
                       </TableCell>
-                      <TableCell className="text-xs py-2 whitespace-nowrap">
-                        {entry.timeFrom} - {entry.timeTo}
-                      </TableCell>
+                      <TableCell className="text-xs py-2">{entry.morningMeeting || "NA"}</TableCell>
+                      <TableCell className="text-xs py-2 whitespace-nowrap">{entry.timeFrom}</TableCell>
+                      <TableCell className="text-xs py-2 whitespace-nowrap">{entry.timeTo}</TableCell>
                       <TableCell className="text-xs py-2">{entry.market}</TableCell>
+                      <TableCell className="text-xs py-2">{entry.channel || "NA"}</TableCell>
+                      <TableCell className="text-xs py-2">{entry.routeNo || "NA"}</TableCell>
+                      <TableCell className="text-xs py-2">{entry.outletNo || "NA"}</TableCell>
                       <TableCell className="text-xs py-2">{entry.accompaniedBy}</TableCell>
-                      <TableCell className="text-xs py-2">{entry.plannedMileage} km</TableCell>
-                      <TableCell className="py-2">
+                      <TableCell className="text-xs py-2">{entry.nightOut}</TableCell>
+                      <TableCell className="text-xs py-2 text-center">{entry.noOfDays}</TableCell>
+                      <TableCell className="text-xs py-2 text-right">{entry.plannedMileage} km</TableCell>
+                      <TableCell className="text-xs py-2">{entry.kraReview || "-"}</TableCell>
+                      <TableCell className="text-xs py-2">{entry.comments || "-"}</TableCell>
+                      <TableCell className="py-2 sticky right-0 bg-white">
                         <div className="flex gap-1">
-                          <Button size="icon" variant="ghost" className="h-7 w-7">
-                            <Edit className="w-3 h-3 text-blue-600" />
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-7 w-7"
+                            onClick={() => handleViewDetails(entry.id)}
+                            title="View Details"
+                          >
+                            <Eye className="w-3 h-3 text-green-600" />
                           </Button>
                           <Button
                             size="icon"

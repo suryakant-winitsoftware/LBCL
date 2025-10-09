@@ -28,6 +28,7 @@ export function DeliveryLayout({ children }: DeliveryLayoutProps) {
   // Get page title based on pathname
   const getPageTitle = () => {
     if (pathname?.includes("/dashboard")) return "Dashboard";
+    if (pathname?.includes("/sales-itinerary")) return "Itinerary Planning";
     if (pathname?.includes("/delivery-plans")) return "Delivery Plans";
     if (pathname?.includes("/stock-receiving/history")) return "Stock History";
     if (pathname?.includes("/stock-receiving/timeline"))

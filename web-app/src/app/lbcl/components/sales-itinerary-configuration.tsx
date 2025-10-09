@@ -14,6 +14,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/app/lbcl/components/ui/table";
+import { ImportExcelData } from "./import-excel-data";
+import { ACTIVITY_TYPES, TYPE_FOCUS_AREA_MAPPING } from "./itinerary-mock-data";
 
 interface Holiday {
   sNo: number;
@@ -98,6 +100,50 @@ export function SalesItineraryConfiguration() {
 
   return (
     <div className="space-y-4">
+      {/* Import Excel Data Section */}
+      <ImportExcelData />
+
+      {/* Activity Types Reference */}
+      <Card>
+        <CardHeader className="py-3 bg-gradient-to-r from-[#A08B5C]/10 to-transparent border-b">
+          <CardTitle className="text-base">Activity Types & Focus Areas Reference</CardTitle>
+        </CardHeader>
+        <CardContent className="p-4">
+          <p className="text-xs text-gray-600 mb-4">
+            Below are all available activity types and their associated focus areas that can be used when creating itinerary entries.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {ACTIVITY_TYPES.map((activityType, index) => (
+              <div key={index} className="border border-gray-200 rounded-lg p-3 bg-gray-50">
+                <div className="flex items-start gap-2 mb-2">
+                  <Badge className="bg-[#A08B5C] text-white text-xs px-2 py-1">
+                    {index + 1}
+                  </Badge>
+                  <h3 className="font-semibold text-sm text-[#A08B5C] leading-tight flex-1">
+                    {activityType}
+                  </h3>
+                </div>
+                <div className="mt-2 pl-2">
+                  <p className="text-xs font-medium text-gray-700 mb-1.5">Focus Areas:</p>
+                  {TYPE_FOCUS_AREA_MAPPING[activityType] && TYPE_FOCUS_AREA_MAPPING[activityType].length > 0 ? (
+                    <ul className="space-y-1">
+                      {TYPE_FOCUS_AREA_MAPPING[activityType].map((focusArea, idx) => (
+                        <li key={idx} className="text-xs text-gray-600 flex items-start gap-1.5">
+                          <span className="text-[#A08B5C] mt-0.5">•</span>
+                          <span>{focusArea}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-xs text-gray-400 italic">No predefined focus areas</p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader className="py-3">
           <CardTitle className="text-base">Sales Itinerary Configuration</CardTitle>

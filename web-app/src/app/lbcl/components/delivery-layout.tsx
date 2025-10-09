@@ -42,6 +42,10 @@ export function DeliveryLayout({ children }: DeliveryLayoutProps) {
     if (pathname?.includes("/truck-loading")) return "Truck Loading";
     if (pathname?.includes("/empties-receiving/activity-log"))
       return "Empties Activity Log";
+    if (pathname?.includes("/empties-receiving/physical-count"))
+      return "Physical Count & Audit Empties";
+    if (pathname?.includes("/empties-receiving/damage-results"))
+      return "Empties Damage Results";
     if (pathname?.includes("/empties-receiving")) return "Empties Receiving";
     if (pathname?.includes("/empties-loading")) return "Empties Stock Loading";
     if (pathname?.includes("/damage-collection")) return "Damage Collection";

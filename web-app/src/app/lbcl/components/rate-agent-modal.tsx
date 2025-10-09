@@ -37,7 +37,9 @@ export function RateAgentModal({ onClose }: RateAgentModalProps) {
           <div>
             <div className="text-sm text-gray-600 mb-1">Agent</div>
             <div className="text-xl font-bold text-gray-900">R.T DISTRIBUTORS</div>
-            <div className="text-sm text-gray-500">23 Nov 2024</div>
+            <div className="text-sm text-gray-500">
+              {new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+            </div>
           </div>
 
           {/* Rating */}

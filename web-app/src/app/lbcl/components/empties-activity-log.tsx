@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronDown, ChevronRight, FileText, Check } from "lucide-react";
 import { RateAgentModal } from "@/app/lbcl/components/rate-agent-modal";
 import { SignatureDialog } from "@/app/lbcl/components/signature-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { openDeliveryNotePDFInNewTab } from "@/utils/deliveryNotePDF";
 
 interface ActivityStep {
   id: number;
@@ -20,6 +21,64 @@ export function EmptiesActivityLog() {
   const [showRateAgent, setShowRateAgent] = useState(false);
   const [showSignatureDialog, setShowSignatureDialog] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [purchaseOrder, setPurchaseOrder] = useState<any>(null);
+  const [orderLines, setOrderLines] = useState<any[]>([]);
+  const [deliveryLoading, setDeliveryLoading] = useState<any>(null);
+
+  // Initialize mock data for empties delivery
+  useEffect(() => {
+    // Get today's date
+    const today = new Date();
+    const todayISO = today.toISOString();
+
+    // Mock purchase order data
+    setPurchaseOrder({
+      UID: "EMT85444127121",
+      Code: "EMT85444127121",
+      OrderNumber: "EMT85444127121",
+      OrgUID: "DIST001",
+      WarehouseName: "Main Warehouse",
+      TargetOrgName: "R.T DISTRIBUTORS",
+      RequiredByDate: todayISO,
+      RequestedTime: todayISO,
+      OrderDate: todayISO,
+      DeliveryDate: todayISO
+    });
+
+    // Mock order lines
+    setOrderLines([
+      {
+        SKUCode: "5213",
+        SKUName: "Short Quarter Keg 7.75 Galon Beers",
+        RequestedQty: 25,
+        ApprovedQty: 25,
+        Unit: "Dozen"
+      },
+      {
+        SKUCode: "5214",
+        SKUName: "Slim Quarter Keg 7.75 Galon",
+        RequestedQty: 10,
+        ApprovedQty: 10,
+        Unit: "Dozen"
+      },
+      {
+        SKUCode: "5216",
+        SKUName: "Lion Large Beer bottle 625ml",
+        RequestedQty: 20,
+        ApprovedQty: 20,
+        Unit: "Dozen"
+      }
+    ]);
+
+    // Mock delivery loading data
+    setDeliveryLoading({
+      DeliveryNoteNumber: "EMT85444127121",
+      OrgName: "R.T DISTRIBUTORS",
+      VehicleUID: "LK1673",
+      DepartureTime: todayISO,
+      DeliveryDate: todayISO
+    });
+  }, []);
 
   const steps: ActivityStep[] = [
     { id: 1, title: "View Empties Delivery Note", completed: false },
@@ -35,9 +94,30 @@ export function EmptiesActivityLog() {
     }
   ];
 
+  // Handle delivery note view
+  const handleViewDeliveryNote = () => {
+    const deliveryNotePath = deliveryLoading?.DeliveryNoteFilePath;
+
+    if (deliveryNotePath) {
+      // Open saved PDF file
+      console.log("📄 Opening saved empties delivery note:", deliveryNotePath);
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+      const fileUrl = `${apiUrl.replace('/api', '')}/${deliveryNotePath}`;
+      window.open(fileUrl, "_blank");
+    } else {
+      // Generate PDF on-the-fly
+      console.log("📄 Generating empties delivery note PDF");
+      openDeliveryNotePDFInNewTab(purchaseOrder, orderLines);
+    }
+  };
+
   const handleStepClick = (stepId: number) => {
-    if (stepId === 3) {
+    if (stepId === 1) {
+      handleViewDeliveryNote();
+    } else if (stepId === 3) {
       router.push("/lbcl/empties-receiving/physical-count");
+    } else if (stepId === 4) {
+      router.push("/lbcl/empties-receiving/damage-results");
     } else if (stepId === 5) {
       setShowRateAgent(true);
     } else if (steps.find((s) => s.id === stepId)?.expandable) {
@@ -64,6 +144,28 @@ export function EmptiesActivityLog() {
   const leftColumnSteps = steps.slice(0, 4);
   const rightColumnSteps = steps.slice(4, 7);
 
+  // Format date function
+  const formatDate = (dateString: string) => {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    }).toUpperCase();
+  };
+
+  // Format time function
+  const formatTime = (dateString: string) => {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    }) + ' HRS';
+  };
+
   return (
     <>
       <div className="min-h-screen bg-gray-50">
@@ -84,17 +186,21 @@ export function EmptiesActivityLog() {
             </div>
             <div>
               <div className="text-xs text-gray-600 mb-2">Prime Mover</div>
-              <div className="font-bold text-base text-gray-900">LK1673</div>
+              <div className="font-bold text-base text-gray-900">{deliveryLoading?.VehicleUID || 'LK1673'}</div>
             </div>
             <div>
               <div className="text-xs text-gray-600 mb-2">Date</div>
-              <div className="font-bold text-base text-gray-900">20 MAY 2025</div>
+              <div className="font-bold text-base text-gray-900">
+                {deliveryLoading?.DepartureTime ? formatDate(deliveryLoading.DepartureTime) : formatDate(new Date().toISOString())}
+              </div>
             </div>
             <div>
               <div className="text-xs text-gray-600 mb-2">
                 Agent Departure Time
               </div>
-              <div className="font-bold text-base text-gray-900">18:14 HRS</div>
+              <div className="font-bold text-base text-gray-900">
+                {deliveryLoading?.DepartureTime ? formatTime(deliveryLoading.DepartureTime) : formatTime(new Date().toISOString())}
+              </div>
             </div>
           </div>
         </div>

@@ -11,6 +11,9 @@ export interface DeliveryLoadingTracking {
   LoadingStartTime?: string | null;
   LoadingEndTime?: string | null;
   DepartureTime?: string | null;
+  EmptyLoadingStartTime?: string | null; // Start time for empties loading
+  EmptyLoadingEndTime?: string | null; // End time for empties loading
+  EmptiesLoadingTime?: number | null; // Time in seconds for empties loading
   LogisticsSignature?: string | null;
   DriverSignature?: string | null;
   Notes?: string | null;
@@ -178,6 +181,43 @@ class DeliveryLoadingService {
     }
 
     return true;
+  }
+
+  // Update empties loading time
+  async updateEmptiesLoadingTime(
+    whStockRequestUID: string,
+    emptiesLoadingTime: number,
+    startTime: string,
+    endTime: string
+  ): Promise<boolean> {
+    try {
+      // Get existing delivery loading tracking
+      const existingData = await this.getByWHStockRequestUID(whStockRequestUID);
+
+      if (!existingData) {
+        console.error("No existing delivery loading tracking found");
+        return false;
+      }
+
+      // Update with empties loading time and timestamps
+      const updatedData: DeliveryLoadingTracking = {
+        ...existingData,
+        EmptiesLoadingTime: emptiesLoadingTime,
+        EmptyLoadingStartTime: startTime,
+        EmptyLoadingEndTime: endTime,
+      };
+
+      // Save the updated data
+      await this.saveDeliveryLoadingTracking(updatedData);
+
+      console.log("✅ Empties loading time saved:", emptiesLoadingTime, "seconds");
+      console.log("✅ Start time:", startTime);
+      console.log("✅ End time:", endTime);
+      return true;
+    } catch (error) {
+      console.error("Error updating empties loading time:", error);
+      return false;
+    }
   }
 }
 

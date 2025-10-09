@@ -38,6 +38,7 @@ export function EmptiesLoadingDetail({ deliveryId }: EmptiesLoadingDetailProps =
   const [productReturns, setProductReturns] = useState<Record<string, { good: number | ''; defect: number | '' }>>({});
   const [elapsedTime, setElapsedTime] = useState(0);
   const [currentDate, setCurrentDate] = useState("");
+  const [startTime, setStartTime] = useState<Date | null>(null);
 
   // Stock receiving data
   const [agentName, setAgentName] = useState("R.T DISTRIBUTORS");
@@ -86,7 +87,7 @@ export function EmptiesLoadingDetail({ deliveryId }: EmptiesLoadingDetailProps =
   ]);
 
   useEffect(() => {
-    // Set current date
+    // Set current date and start time
     const date = new Date();
     const formatted = date.toLocaleDateString('en-GB', {
       day: '2-digit',
@@ -94,6 +95,7 @@ export function EmptiesLoadingDetail({ deliveryId }: EmptiesLoadingDetailProps =
       year: 'numeric'
     }).toUpperCase();
     setCurrentDate(formatted);
+    setStartTime(date); // Record start time
 
     // Timer interval
     const timer = setInterval(() => {
@@ -284,10 +286,26 @@ export function EmptiesLoadingDetail({ deliveryId }: EmptiesLoadingDetailProps =
     setShowSignatureDialog(true);
   };
 
-  const handleSignatureSave = (logisticSig: string, driverSig: string, signatureNotes: string) => {
+  const handleSignatureSave = async (logisticSig: string, driverSig: string, signatureNotes: string) => {
     setAgentSignature(logisticSig);
     setDriverSignature(driverSig);
     setNotes(signatureNotes);
+
+    // Save empties loading completion time
+    if (deliveryId && startTime) {
+      try {
+        const endTime = new Date();
+        await deliveryLoadingService.updateEmptiesLoadingTime(
+          deliveryId,
+          elapsedTime,
+          startTime.toISOString(),
+          endTime.toISOString()
+        );
+      } catch (error) {
+        console.error("Error saving empties loading time:", error);
+      }
+    }
+
     setShowSuccessDialog(true);
   };
 
@@ -482,7 +500,7 @@ export function EmptiesLoadingDetail({ deliveryId }: EmptiesLoadingDetailProps =
             </h3>
             <p className="text-gray-600 mb-8">
               Empties Stock has completed in{" "}
-              <span className="font-bold">20 Min</span>
+              <span className="font-bold">{formatTime(elapsedTime)}</span>
             </p>
 
             <div className="grid grid-cols-2 gap-4">

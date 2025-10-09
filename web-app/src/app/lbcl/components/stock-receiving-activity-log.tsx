@@ -128,6 +128,7 @@ export default function StockReceivingActivityLog({
   const [getpassHour, setGetpassHour] = useState("");
   const [getpassMin, setGetpassMin] = useState("");
   const [notifyLBCL, setNotifyLBCL] = useState(true);
+  const [emptiesLoadingTime, setEmptiesLoadingTime] = useState<number | null>(null);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
 
   useEffect(() => {
@@ -444,6 +445,27 @@ export default function StockReceivingActivityLog({
         }
 
         setDeliveryLoading(dlResponse);
+
+        // Set empties loading time if available
+        if (dlResponse.EmptiesLoadingTime) {
+          setEmptiesLoadingTime(dlResponse.EmptiesLoadingTime);
+          console.log("⏱️ Empties Loading Time:", dlResponse.EmptiesLoadingTime, "seconds");
+        }
+
+        // Populate empties loading start and end times
+        if (dlResponse.EmptyLoadingStartTime) {
+          const startDate = new Date(dlResponse.EmptyLoadingStartTime);
+          setLoadEmptyStartHour(startDate.getHours().toString().padStart(2, '0'));
+          setLoadEmptyStartMin(startDate.getMinutes().toString().padStart(2, '0'));
+          console.log("🕐 Empty Loading Start:", dlResponse.EmptyLoadingStartTime);
+        }
+
+        if (dlResponse.EmptyLoadingEndTime) {
+          const endDate = new Date(dlResponse.EmptyLoadingEndTime);
+          setLoadEmptyEndHour(endDate.getHours().toString().padStart(2, '0'));
+          setLoadEmptyEndMin(endDate.getMinutes().toString().padStart(2, '0'));
+          console.log("🕐 Empty Loading End:", dlResponse.EmptyLoadingEndTime);
+        }
       } else {
         console.log(
           "⚠️ No delivery loading data found - this is normal if delivery hasn't been loaded yet"
@@ -1206,19 +1228,18 @@ export default function StockReceivingActivityLog({
           {/* Step 4: Physical Count */}
           <div className="bg-white border border-gray-200 rounded-lg p-4">
             <button
-              onClick={() => isDistributorManager && router.push(`/lbcl/stock-receiving/${deliveryId}`)}
+              onClick={() => router.push(`/lbcl/stock-receiving/${deliveryId}`)}
               className="flex items-center justify-between w-full"
-              disabled={!isDistributorManager}
             >
               <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${!isDistributorManager ? 'bg-gray-200' : 'bg-[#F5E6D3]'}`}>
-                  <span className={!isDistributorManager ? 'text-gray-400' : ''}>4</span>
+                <div className="w-10 h-10 rounded-full flex items-center justify-center font-bold bg-[#F5E6D3]">
+                  <span>4</span>
                 </div>
-                <span className={`font-semibold ${!isDistributorManager ? 'text-gray-400' : ''}`}>
+                <span className="font-semibold">
                   Physical Count & Perform Stock Receiving
                 </span>
               </div>
-              {isDistributorManager && <ChevronRight className="w-5 h-5" />}
+              <ChevronRight className="w-5 h-5" />
             </button>
           </div>
 
@@ -1383,6 +1404,21 @@ export default function StockReceivingActivityLog({
                     </div>
                   </div>
                 </div>
+
+                {/* Display Empties Loading Time if available */}
+                {emptiesLoadingTime !== null && (
+                  <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-green-800">
+                        Empties Loading Completed in:
+                      </span>
+                      <span className="text-sm font-bold text-green-900">
+                        {Math.floor(emptiesLoadingTime / 60).toString().padStart(2, '0')}:
+                        {(emptiesLoadingTime % 60).toString().padStart(2, '0')} Min
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>

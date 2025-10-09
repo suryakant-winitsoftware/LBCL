@@ -23,51 +23,21 @@ export default function StockReceivingDetailsPage({
   useEffect(() => {
     const checkAccess = async () => {
       try {
-        // Check user role
-        const isManager = user?.roles?.some(
-          (role) =>
-            role.roleNameEn?.toUpperCase().includes("MANAGER") ||
-            role.code?.toUpperCase().includes("MANAGER") ||
-            role.uid?.toUpperCase() === "MANAGER"
-        )
+        // Always grant access to physical count
+        setHasAccess(true)
 
-        // Get stock request data to verify organization
-        const whStockResponse = await inventoryService.selectLoadRequestDataByUID(id)
-        const purchaseOrgUID = whStockResponse?.WHStockRequest?.TargetOrgUID
-        const userOrgUID = user?.currentOrganization?.uid
-
-        // Check if user is Manager from the same organization
-        const isDistributorManager = isManager && userOrgUID && purchaseOrgUID && userOrgUID === purchaseOrgUID
-
-        console.log("🔐 Physical Count Access Check:")
-        console.log("   - Is Manager:", isManager)
-        console.log("   - User Org UID:", userOrgUID)
-        console.log("   - Purchase Org UID:", purchaseOrgUID)
-        console.log("   - Is Distributor Manager:", isDistributorManager)
-
-        // Grant access only if: Manager from same org
-        if (isDistributorManager) {
-          setHasAccess(true)
-
-          // Set read-only if physical count is already completed
-          const stockReceiving = await stockReceivingService.getByWHStockRequestUID(id)
-          if (stockReceiving && stockReceiving.PhysicalCountEndTime) {
-            console.log("🔒 Physical count already completed - setting to read-only")
-            setIsReadOnly(true)
-          } else {
-            console.log("✏️ Physical count not completed - allowing edit")
-            setIsReadOnly(false)
-          }
+        // Set read-only if physical count is already completed
+        const stockReceiving = await stockReceivingService.getByWHStockRequestUID(id)
+        if (stockReceiving && stockReceiving.PhysicalCountEndTime) {
+          console.log("🔒 Physical count already completed - setting to read-only")
+          setIsReadOnly(true)
         } else {
-          console.log("❌ Access denied - redirecting to activity log")
-          setHasAccess(false)
-          // Redirect to activity log
-          router.push(`/lbcl/stock-receiving/${id}/activity-log`)
+          console.log("✏️ Physical count not completed - allowing edit")
+          setIsReadOnly(false)
         }
       } catch (error) {
         console.error("Error checking access:", error)
-        setHasAccess(false)
-        router.push(`/lbcl/stock-receiving/${id}/activity-log`)
+        setHasAccess(true) // Still allow access even if there's an error
       } finally {
         setLoading(false)
       }

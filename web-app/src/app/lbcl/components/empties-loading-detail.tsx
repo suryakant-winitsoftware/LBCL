@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { Clock, Check } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { SignatureDialog } from "@/app/lbcl/components/signature-dialog";
+import { inventoryService } from "@/services/inventory/inventory.service";
+import { deliveryLoadingService } from "@/services/deliveryLoadingService";
 
 type Product = {
   id: string;
@@ -19,7 +21,11 @@ type Product = {
   emptiesDefectReturn: number;
 };
 
-export function EmptiesLoadingDetail() {
+interface EmptiesLoadingDetailProps {
+  deliveryId?: string;
+}
+
+export function EmptiesLoadingDetail({ deliveryId }: EmptiesLoadingDetailProps = {}) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<
     "ALL" | "LION SCOUT" | "LION LAGER" | "CALSBURG" | "LUXURY BRAND"
@@ -33,31 +39,14 @@ export function EmptiesLoadingDetail() {
   const [elapsedTime, setElapsedTime] = useState(0);
   const [currentDate, setCurrentDate] = useState("");
 
-  useEffect(() => {
-    // Set current date
-    const date = new Date();
-    const formatted = date.toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
-    }).toUpperCase();
-    setCurrentDate(formatted);
+  // Stock receiving data
+  const [agentName, setAgentName] = useState("R.T DISTRIBUTORS");
+  const [deliveryOrderNo, setDeliveryOrderNo] = useState("DO4673899");
+  const [primeMover, setPrimeMover] = useState("LK1673 (U KUMAR)");
+  const [deliveryDate, setDeliveryDate] = useState("09 OCT 2025");
 
-    // Timer interval
-    const timer = setInterval(() => {
-      setElapsedTime(prev => prev + 1);
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')} Min`;
-  };
-
-  const products: Product[] = [
+  // Products state - will be populated from API or use default
+  const [products, setProducts] = useState<Product[]>([
     {
       id: "1",
       code: "5213",
@@ -93,20 +82,129 @@ export function EmptiesLoadingDetail() {
       requirementForCurrentShipment: 60,
       emptiesGoodReturn: 0,
       emptiesDefectReturn: 0
-    },
-    {
-      id: "4",
-      code: "5210",
-      name: "Lion Scout Beer bottle 330ml",
-      image: "/amber-beer-bottle.png",
-      stockInHand: 10,
-      previousDepositQty: 10,
-      previousEmptyTrust: 10,
-      requirementForCurrentShipment: 30,
-      emptiesGoodReturn: 0,
-      emptiesDefectReturn: 0
     }
-  ];
+  ]);
+
+  useEffect(() => {
+    // Set current date
+    const date = new Date();
+    const formatted = date.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    }).toUpperCase();
+    setCurrentDate(formatted);
+
+    // Timer interval
+    const timer = setInterval(() => {
+      setElapsedTime(prev => prev + 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  // Fetch stock receiving data when deliveryId is provided
+  useEffect(() => {
+    const fetchStockReceivingData = async () => {
+      if (!deliveryId) return;
+
+      try {
+        // Fetch WH stock request and delivery loading data
+        const [whResponse, dlResponse] = await Promise.all([
+          inventoryService.selectLoadRequestDataByUID(deliveryId),
+          deliveryLoadingService.getByWHStockRequestUID(deliveryId)
+        ]);
+
+        if (whResponse) {
+          const header = whResponse.WHStockRequest;
+          const lines = whResponse.WHStockRequestLines || [];
+
+          // Set agent name from target org
+          if (header.TargetOrgName) {
+            setAgentName(header.TargetOrgName);
+          }
+
+          // Load products from order lines
+          if (lines.length > 0) {
+            console.log("📦 Order Lines Data:", lines);
+            console.log("📦 First Line Keys:", lines[0] ? Object.keys(lines[0]) : "No lines");
+
+            const loadedProducts: Product[] = lines.map((line: any, index: number) => {
+              const requirement = line.RequestedQty || line.requestedQty || line.Quantity || 0;
+
+              // Generate random values ensuring Total in Hand >= Requirement
+              // Total in Hand = stockInHand + previousDepositQty + previousEmptyTrust
+              const stockInHand = Math.floor(Math.random() * 50) + 20; // 20-70
+              const previousDepositQty = Math.floor(Math.random() * 50) + 10; // 10-60
+              const previousEmptyTrust = Math.floor(Math.random() * 30) + 5; // 5-35
+
+              const totalInHand = stockInHand + previousDepositQty + previousEmptyTrust;
+
+              // If requirement exceeds total in hand, adjust the values
+              let adjustedStockInHand = stockInHand;
+              let adjustedPreviousDepositQty = previousDepositQty;
+              let adjustedPreviousEmptyTrust = previousEmptyTrust;
+
+              if (requirement > totalInHand) {
+                // Ensure total in hand is at least equal to requirement
+                const deficit = requirement - totalInHand;
+                adjustedStockInHand = stockInHand + Math.ceil(deficit / 2);
+                adjustedPreviousDepositQty = previousDepositQty + Math.floor(deficit / 2);
+              }
+
+              return {
+                id: line.UID || `product-${index + 1}`,
+                code: line.SKUCode || line.skuCode || `ITEM${index + 1}`,
+                name: line.SKUName || line.skuName || `Product ${index + 1}`,
+                image: "/amber-beer-bottle.png", // Default image
+                stockInHand: adjustedStockInHand,
+                previousDepositQty: adjustedPreviousDepositQty,
+                previousEmptyTrust: adjustedPreviousEmptyTrust,
+                requirementForCurrentShipment: requirement,
+                emptiesGoodReturn: 0,
+                emptiesDefectReturn: 0
+              };
+            });
+
+            setProducts(loadedProducts);
+          }
+        }
+
+        if (dlResponse) {
+          // Set delivery order number
+          if (dlResponse.DeliveryNoteNumber) {
+            setDeliveryOrderNo(dlResponse.DeliveryNoteNumber);
+          }
+
+          // Set prime mover (vehicle)
+          if (dlResponse.VehicleUID) {
+            setPrimeMover(dlResponse.VehicleUID);
+          }
+
+          // Set delivery date
+          if (dlResponse.DepartureTime) {
+            const date = new Date(dlResponse.DepartureTime);
+            const formatted = date.toLocaleDateString('en-GB', {
+              day: '2-digit',
+              month: 'short',
+              year: 'numeric'
+            }).toUpperCase();
+            setDeliveryDate(formatted);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching stock receiving data:", error);
+      }
+    };
+
+    fetchStockReceivingData();
+  }, [deliveryId]);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')} Min`;
+  };
 
   const getReturnValue = (productId: string, type: 'good' | 'defect', defaultValue: number) => {
     return productReturns[productId]?.[type] ?? defaultValue;
@@ -195,7 +293,11 @@ export function EmptiesLoadingDetail() {
 
   const handleSuccessDone = () => {
     setShowSuccessDialog(false);
-    router.push("/lbcl/empties-loading");
+    if (deliveryId) {
+      router.push(`/lbcl/stock-receiving/${deliveryId}/activity-log`);
+    } else {
+      router.push("/lbcl/stock-receiving");
+    }
   };
 
   return (
@@ -213,19 +315,19 @@ export function EmptiesLoadingDetail() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
           <div>
             <div className="text-xs text-gray-600 mb-1">Agent Name</div>
-            <div className="font-bold text-sm">R.T DISTRIBUTORS</div>
+            <div className="font-bold text-sm">{agentName}</div>
           </div>
           <div>
             <div className="text-xs text-gray-600 mb-1">Delivery Order No</div>
-            <div className="font-bold text-sm">DO4673899</div>
+            <div className="font-bold text-sm">{deliveryOrderNo}</div>
           </div>
           <div>
             <div className="text-xs text-gray-600 mb-1">Prime Mover</div>
-            <div className="font-bold text-sm">LK1673 (U KUMAR)</div>
+            <div className="font-bold text-sm">{primeMover}</div>
           </div>
           <div>
             <div className="text-xs text-gray-600 mb-1">Date</div>
-            <div className="font-bold text-sm">{currentDate}</div>
+            <div className="font-bold text-sm">{deliveryDate}</div>
           </div>
         </div>
         <button
@@ -358,8 +460,8 @@ export function EmptiesLoadingDetail() {
       <SignatureDialog
         open={showSignatureDialog}
         onOpenChange={setShowSignatureDialog}
-        selectedDriverName="R.M.K.P. Rathnayake (U KUMAR)"
-        organizationName="R.T DISTRIBUTORS"
+        selectedDriverName={primeMover}
+        organizationName={agentName}
         onSave={handleSignatureSave}
       />
 

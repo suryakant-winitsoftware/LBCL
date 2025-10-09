@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { ChevronRight, FileText, ClipboardList, RefreshCw } from "lucide-react"
+import { ChevronRight, ClipboardList, RefreshCw } from "lucide-react"
 import { deliveryLoadingService } from "@/services/deliveryLoadingService"
 import { stockReceivingService } from "@/services/stockReceivingService"
 import { useAuth } from "@/providers/auth-provider"
@@ -245,14 +245,6 @@ export default function StockReceivingList() {
                   >
                     <ClipboardList className="w-6 h-6 mb-1" />
                     <span className="text-xs font-medium">Activity Log</span>
-                  </button>
-
-                  <button
-                    onClick={() => router.push(`/lbcl/stock-receiving/${delivery.WHStockRequestUID || delivery.whStockRequestUID}`)}
-                    className="flex flex-col items-center justify-center px-3 py-2 text-gray-600 hover:text-[#A08B5C] transition-colors"
-                  >
-                    <FileText className="w-6 h-6 mb-1" />
-                    <span className="text-xs font-medium">View Details</span>
                   </button>
 
                   <ChevronRight className="w-6 h-6 text-gray-400 ml-2" />

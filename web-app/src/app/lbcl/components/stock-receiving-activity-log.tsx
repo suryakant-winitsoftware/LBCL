@@ -42,6 +42,23 @@ export default function StockReceivingActivityLog({
   const router = useRouter();
   const { user } = useAuth();
 
+  // State declarations first
+  const [expandedSections, setExpandedSections] = useState<
+    Record<number, boolean>
+  >({
+    2: true,
+    3: true,
+    5: true,
+    6: true
+  });
+  const [showDeliveryNote, setShowDeliveryNote] = useState(false);
+  const [purchaseOrder, setPurchaseOrder] = useState<any>(null);
+  const [deliveryLoading, setDeliveryLoading] = useState<any>(null);
+  const [stockReceivingData, setStockReceivingData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [orderLines, setOrderLines] = useState<any[]>([]);
+
   // Check user roles for field visibility
   const isSecurityOfficer = user?.roles?.some(
     (role) =>
@@ -63,25 +80,27 @@ export default function StockReceivingActivityLog({
       role.code?.toUpperCase().includes("AGENT")
   );
 
+  const isManager = user?.roles?.some(
+    (role) =>
+      role.roleNameEn?.toUpperCase().includes("MANAGER") ||
+      role.code?.toUpperCase().includes("MANAGER") ||
+      role.uid?.toUpperCase() === "MANAGER" ||
+      role.code?.toUpperCase() === "MANAGER"
+  );
+
+  // Check if user's organization matches the distributor organization (only for Manager role)
+  const userOrgUID = user?.currentOrganization?.uid;
+  const purchaseOrgUID = purchaseOrder?.OrgUID || purchaseOrder?.orgUID;
+  const isDistributorManager = isManager && userOrgUID && purchaseOrgUID && userOrgUID === purchaseOrgUID;
+
   console.log("🔐 Stock Receiving Activity Log - User Role Check:");
   console.log("   - Is Security Officer:", isSecurityOfficer);
   console.log("   - Is Operator:", isOperator);
   console.log("   - Is Agent:", isAgent);
-  const [expandedSections, setExpandedSections] = useState<
-    Record<number, boolean>
-  >({
-    2: true,
-    4: true,
-    5: true,
-    6: true
-  });
-  const [showDeliveryNote, setShowDeliveryNote] = useState(false);
-  const [purchaseOrder, setPurchaseOrder] = useState<any>(null);
-  const [deliveryLoading, setDeliveryLoading] = useState<any>(null);
-  const [stockReceivingData, setStockReceivingData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [orderLines, setOrderLines] = useState<any[]>([]);
+  console.log("   - Is Manager:", isManager);
+  console.log("   - Is Distributor Manager:", isDistributorManager);
+  console.log("   - User Org UID:", userOrgUID);
+  console.log("   - Purchase Order Org UID:", purchaseOrgUID);
 
   // Security Officer states
   const [securityOfficers, setSecurityOfficers] = useState<any[]>([]);
@@ -765,6 +784,16 @@ export default function StockReceivingActivityLog({
     }
   };
 
+  // Check if Step 2 (Gate Entry) is completed to enable step 3
+  const isStep2Completed = () => {
+    return isStepCompleted("GATE_ENTRY");
+  };
+
+  // Check if Step 3 (Unloading) is completed to enable step 6
+  const isStep3Completed = () => {
+    return isStepCompleted("UNLOADING");
+  };
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
@@ -1024,31 +1053,10 @@ export default function StockReceivingActivityLog({
             )}
           </div>
 
-          {/* Step 3: Physical Count */}
+          {/* Step 3: Unloading */}
           <div className="bg-white border border-gray-200 rounded-lg p-4">
             <button
-              onClick={() => router.push(`/lbcl/stock-receiving/${deliveryId}`)}
-              className="flex items-center justify-between w-full"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-[#F5E6D3] rounded-full flex items-center justify-center font-bold">
-                  3
-                </div>
-                <span className="font-semibold">
-                  Physical Count & Perform Stock Receiving
-                </span>
-              </div>
-              <ChevronRight className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-
-        {/* Right Column */}
-        <div className="space-y-4">
-          {/* Step 4: Unloading */}
-          <div className="bg-white border border-gray-200 rounded-lg p-4">
-            <button
-              onClick={() => toggleSection(4)}
+              onClick={() => toggleSection(3)}
               className="flex items-center justify-between w-full mb-4"
             >
               <div className="flex items-center gap-3">
@@ -1058,7 +1066,7 @@ export default function StockReceivingActivityLog({
                   {isStepCompleted("UNLOADING") ? (
                     <CheckCircle className="w-6 h-6 text-green-600" />
                   ) : (
-                    "4"
+                    "3"
                   )}
                 </div>
                 <span className="font-semibold">Unloading</span>
@@ -1066,14 +1074,14 @@ export default function StockReceivingActivityLog({
                   <span className="text-sm text-green-600">(Completed)</span>
                 )}
               </div>
-              {expandedSections[4] ? (
+              {expandedSections[3] ? (
                 <ChevronDown className="w-5 h-5" />
               ) : (
                 <ChevronRight className="w-5 h-5" />
               )}
             </button>
 
-            {expandedSections[4] && (
+            {expandedSections[3] && (
               <div className="space-y-4 pl-13">
                 <div>
                   <label className="text-sm font-medium mb-2 block">
@@ -1083,19 +1091,21 @@ export default function StockReceivingActivityLog({
                     value={forkLiftOperator}
                     onValueChange={setForkLiftOperator}
                     disabled={
-                      loadingForkLiftOperators || readOnly || !isOperator
+                      !isStep2Completed() || loadingForkLiftOperators || readOnly || !isOperator
                     }
                   >
                     <SelectTrigger
                       className={`${
-                        readOnly || !isOperator
+                        !isStep2Completed() || readOnly || !isOperator
                           ? "bg-gray-50 text-gray-900 font-medium cursor-default opacity-100"
                           : ""
                       }`}
                     >
                       <SelectValue
                         placeholder={
-                          loadingForkLiftOperators
+                          !isStep2Completed()
+                            ? "Step 2 required"
+                            : loadingForkLiftOperators
                             ? "Loading operators..."
                             : "Select fork lift operator"
                         }
@@ -1120,13 +1130,13 @@ export default function StockReceivingActivityLog({
                         type="number"
                         placeholder="16"
                         className={`w-16 ${
-                          readOnly || !isOperator
+                          !isStep2Completed() || readOnly || !isOperator
                             ? "bg-gray-50 text-gray-900 font-medium cursor-default opacity-100"
                             : ""
                         }`}
                         value={unloadStartHour}
                         onChange={(e) => setUnloadStartHour(e.target.value)}
-                        disabled={readOnly || !isOperator}
+                        disabled={!isStep2Completed() || readOnly || !isOperator}
                       />
                       <span className="text-gray-400 self-center text-xs">
                         HH
@@ -1135,13 +1145,13 @@ export default function StockReceivingActivityLog({
                         type="number"
                         placeholder="02"
                         className={`w-16 ${
-                          readOnly || !isOperator
+                          !isStep2Completed() || readOnly || !isOperator
                             ? "bg-gray-50 text-gray-900 font-medium cursor-default opacity-100"
                             : ""
                         }`}
                         value={unloadStartMin}
                         onChange={(e) => setUnloadStartMin(e.target.value)}
-                        disabled={readOnly || !isOperator}
+                        disabled={!isStep2Completed() || readOnly || !isOperator}
                       />
                       <span className="text-gray-400 self-center text-xs">
                         Min
@@ -1157,13 +1167,13 @@ export default function StockReceivingActivityLog({
                         type="number"
                         placeholder="16"
                         className={`w-16 ${
-                          readOnly || !isOperator
+                          !isStep2Completed() || readOnly || !isOperator
                             ? "bg-gray-50 text-gray-900 font-medium cursor-default opacity-100"
                             : ""
                         }`}
                         value={unloadEndHour}
                         onChange={(e) => setUnloadEndHour(e.target.value)}
-                        disabled={readOnly || !isOperator}
+                        disabled={!isStep2Completed() || readOnly || !isOperator}
                       />
                       <span className="text-gray-400 self-center text-xs">
                         HH
@@ -1172,13 +1182,13 @@ export default function StockReceivingActivityLog({
                         type="number"
                         placeholder="58"
                         className={`w-16 ${
-                          readOnly || !isOperator
+                          !isStep2Completed() || readOnly || !isOperator
                             ? "bg-gray-50 text-gray-900 font-medium cursor-default opacity-100"
                             : ""
                         }`}
                         value={unloadEndMin}
                         onChange={(e) => setUnloadEndMin(e.target.value)}
-                        disabled={readOnly || !isOperator}
+                        disabled={!isStep2Completed() || readOnly || !isOperator}
                       />
                       <span className="text-gray-400 self-center text-xs">
                         Min
@@ -1188,6 +1198,28 @@ export default function StockReceivingActivityLog({
                 </div>
               </div>
             )}
+          </div>
+        </div>
+
+        {/* Right Column */}
+        <div className="space-y-4">
+          {/* Step 4: Physical Count */}
+          <div className="bg-white border border-gray-200 rounded-lg p-4">
+            <button
+              onClick={() => isDistributorManager && router.push(`/lbcl/stock-receiving/${deliveryId}`)}
+              className="flex items-center justify-between w-full"
+              disabled={!isDistributorManager}
+            >
+              <div className="flex items-center gap-3">
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${!isDistributorManager ? 'bg-gray-200' : 'bg-[#F5E6D3]'}`}>
+                  <span className={!isDistributorManager ? 'text-gray-400' : ''}>4</span>
+                </div>
+                <span className={`font-semibold ${!isDistributorManager ? 'text-gray-400' : ''}`}>
+                  Physical Count & Perform Stock Receiving
+                </span>
+              </div>
+              {isDistributorManager && <ChevronRight className="w-5 h-5" />}
+            </button>
           </div>
 
           {/* Step 5: Load Empty Stock */}
@@ -1220,6 +1252,18 @@ export default function StockReceivingActivityLog({
 
             {expandedSections[5] && (
               <div className="space-y-4 pl-13">
+                {/* Navigate to Empties Loading button */}
+                {isStepCompleted("UNLOADING") && (
+                  <div className="mb-4">
+                    <Button
+                      onClick={() => router.push(`/lbcl/empties-loading/${deliveryId}`)}
+                      className="bg-[#A08B5C] hover:bg-[#8A7548] text-white text-xs h-8 px-3"
+                    >
+                      Load Empties →
+                    </Button>
+                  </div>
+                )}
+
                 <div>
                   <label className="text-sm font-medium mb-2 block">
                     Agent Fork Lift Operator
@@ -1227,18 +1271,20 @@ export default function StockReceivingActivityLog({
                   <Select
                     value={forkLiftOperator}
                     onValueChange={setForkLiftOperator}
-                    disabled={loadingForkLiftOperators || readOnly || !isOperator}
+                    disabled={!isStep2Completed() || loadingForkLiftOperators || readOnly || !isOperator}
                   >
                     <SelectTrigger
                       className={`${
-                        readOnly || !isOperator
+                        !isStep2Completed() || readOnly || !isOperator
                           ? "bg-gray-50 text-gray-900 font-medium cursor-default opacity-100"
                           : ""
                       }`}
                     >
                       <SelectValue
                         placeholder={
-                          loadingForkLiftOperators
+                          !isStep2Completed()
+                            ? "Step 2 required"
+                            : loadingForkLiftOperators
                             ? "Loading operators..."
                             : "Select fork lift operator"
                         }
@@ -1263,7 +1309,7 @@ export default function StockReceivingActivityLog({
                         type="number"
                         placeholder="17"
                         className={`w-16 ${
-                          readOnly || !isOperator
+                          !isStep2Completed() || readOnly || !isOperator
                             ? "bg-gray-50 text-gray-900 font-medium cursor-default opacity-100"
                             : ""
                         }`}
@@ -1271,7 +1317,7 @@ export default function StockReceivingActivityLog({
                         onChange={(e) => setLoadEmptyStartHour(e.target.value)}
                         min="0"
                         max="23"
-                        disabled={readOnly || !isOperator}
+                        disabled={!isStep2Completed() || readOnly || !isOperator}
                       />
                       <span className="text-gray-400 self-center text-xs">
                         HH
@@ -1280,7 +1326,7 @@ export default function StockReceivingActivityLog({
                         type="number"
                         placeholder="25"
                         className={`w-16 ${
-                          readOnly || !isOperator
+                          !isStep2Completed() || readOnly || !isOperator
                             ? "bg-gray-50 text-gray-900 font-medium cursor-default opacity-100"
                             : ""
                         }`}
@@ -1288,7 +1334,7 @@ export default function StockReceivingActivityLog({
                         onChange={(e) => setLoadEmptyStartMin(e.target.value)}
                         min="0"
                         max="59"
-                        disabled={readOnly || !isOperator}
+                        disabled={!isStep2Completed() || readOnly || !isOperator}
                       />
                       <span className="text-gray-400 self-center text-xs">
                         Min
@@ -1304,7 +1350,7 @@ export default function StockReceivingActivityLog({
                         type="number"
                         placeholder="18"
                         className={`w-16 ${
-                          readOnly || !isOperator
+                          !isStep2Completed() || readOnly || !isOperator
                             ? "bg-gray-50 text-gray-900 font-medium cursor-default opacity-100"
                             : ""
                         }`}
@@ -1312,7 +1358,7 @@ export default function StockReceivingActivityLog({
                         onChange={(e) => setLoadEmptyEndHour(e.target.value)}
                         min="0"
                         max="23"
-                        disabled={readOnly || !isOperator}
+                        disabled={!isStep2Completed() || readOnly || !isOperator}
                       />
                       <span className="text-gray-400 self-center text-xs">
                         HH
@@ -1321,7 +1367,7 @@ export default function StockReceivingActivityLog({
                         type="number"
                         placeholder="08"
                         className={`w-16 ${
-                          readOnly || !isOperator
+                          !isStep2Completed() || readOnly || !isOperator
                             ? "bg-gray-50 text-gray-900 font-medium cursor-default opacity-100"
                             : ""
                         }`}
@@ -1329,7 +1375,7 @@ export default function StockReceivingActivityLog({
                         onChange={(e) => setLoadEmptyEndMin(e.target.value)}
                         min="0"
                         max="59"
-                        disabled={readOnly || !isOperator}
+                        disabled={!isStep2Completed() || readOnly || !isOperator}
                       />
                       <span className="text-gray-400 self-center text-xs">
                         Min
@@ -1379,19 +1425,21 @@ export default function StockReceivingActivityLog({
                     value={getpassEmployee}
                     onValueChange={setGetpassEmployee}
                     disabled={
-                      loadingSecurityOfficers || readOnly || !isSecurityOfficer
+                      !isStep3Completed() || loadingSecurityOfficers || readOnly || !isSecurityOfficer
                     }
                   >
                     <SelectTrigger
                       className={`${
-                        readOnly || !isSecurityOfficer
+                        !isStep3Completed() || readOnly || !isSecurityOfficer
                           ? "bg-gray-50 text-gray-900 font-medium cursor-default opacity-100"
                           : ""
                       }`}
                     >
                       <SelectValue
                         placeholder={
-                          loadingSecurityOfficers
+                          !isStep3Completed()
+                            ? "Step 3 required"
+                            : loadingSecurityOfficers
                             ? "Loading security officers..."
                             : "Select getpass employee"
                         }
@@ -1415,7 +1463,7 @@ export default function StockReceivingActivityLog({
                       type="number"
                       placeholder="18"
                       className={`w-20 ${
-                        readOnly || !isSecurityOfficer
+                        !isStep3Completed() || readOnly || !isSecurityOfficer
                           ? "bg-gray-50 text-gray-900 font-medium cursor-default opacity-100"
                           : ""
                       }`}
@@ -1423,14 +1471,14 @@ export default function StockReceivingActivityLog({
                       onChange={(e) => setGetpassHour(e.target.value)}
                       min="0"
                       max="23"
-                      disabled={readOnly || !isSecurityOfficer}
+                      disabled={!isStep3Completed() || readOnly || !isSecurityOfficer}
                     />
                     <span className="text-gray-400 self-center">HH</span>
                     <Input
                       type="number"
                       placeholder="14"
                       className={`w-20 ${
-                        readOnly || !isSecurityOfficer
+                        !isStep3Completed() || readOnly || !isSecurityOfficer
                           ? "bg-gray-50 text-gray-900 font-medium cursor-default opacity-100"
                           : ""
                       }`}
@@ -1438,7 +1486,7 @@ export default function StockReceivingActivityLog({
                       onChange={(e) => setGetpassMin(e.target.value)}
                       min="0"
                       max="59"
-                      disabled={readOnly || !isSecurityOfficer}
+                      disabled={!isStep3Completed() || readOnly || !isSecurityOfficer}
                     />
                     <span className="text-gray-400 self-center">Min</span>
                   </div>
@@ -1447,7 +1495,7 @@ export default function StockReceivingActivityLog({
                   <Checkbox
                     id="notify-lbcl-2"
                     defaultChecked
-                    disabled={readOnly || !isSecurityOfficer}
+                    disabled={!isStep3Completed() || readOnly || !isSecurityOfficer}
                   />
                   <label
                     htmlFor="notify-lbcl-2"

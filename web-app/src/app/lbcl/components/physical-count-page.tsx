@@ -1053,7 +1053,7 @@ export default function PhysicalCountPage({ deliveryId, readOnly = false }: { de
               className="w-full bg-[#A08B5C] hover:bg-[#8A7549] text-white"
               onClick={() => {
                 setShowSuccess(false)
-                router.push("/lbcl/stock-receiving")
+                router.push(`/lbcl/stock-receiving/${deliveryId}/activity-log`)
               }}
             >
               DONE

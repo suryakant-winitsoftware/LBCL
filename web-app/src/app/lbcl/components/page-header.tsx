@@ -3,6 +3,7 @@
 import type React from "react";
 
 import { Bell, User } from "lucide-react";
+import Image from "next/image";
 
 interface PageHeaderProps {
   title: string;
@@ -20,6 +21,19 @@ export function PageHeader({
   return (
     <header className="bg-white border-b border-gray-200 px-4 py-4 sticky top-0 z-50 shadow-sm">
       <div className="flex items-center justify-between gap-4 max-w-full">
+        {/* Left: Logo */}
+        <div className="flex items-center gap-4 flex-shrink-0">
+          <div className="relative w-16 h-8 sm:w-20 sm:h-10 md:w-24 md:h-12">
+            <Image
+              src="/images/lion-logo.png"
+              alt="LION Logo"
+              fill
+              className="object-contain"
+              priority
+            />
+          </div>
+        </div>
+
         {/* Center: Page Title */}
         <h1 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-900 flex-1 px-2 truncate">
           {title}

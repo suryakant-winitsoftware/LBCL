@@ -196,7 +196,7 @@ export function EmptiesDamageResults() {
 
       {/* Results Table */}
       <div className="p-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">Damage Empties Documentation</h2>
+        {/* <h2 className="text-xl font-bold text-gray-900 mb-4">Damage Empties Documentation</h2> */}
 
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">

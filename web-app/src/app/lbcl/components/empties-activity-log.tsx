@@ -105,9 +105,9 @@ export function EmptiesActivityLog() {
       const fileUrl = `${apiUrl.replace('/api', '')}/${deliveryNotePath}`;
       window.open(fileUrl, "_blank");
     } else {
-      // Generate PDF on-the-fly
+      // Generate PDF on-the-fly with empties delivery note format
       console.log("📄 Generating empties delivery note PDF");
-      openDeliveryNotePDFInNewTab(purchaseOrder, orderLines);
+      openDeliveryNotePDFInNewTab(purchaseOrder, orderLines, true);
     }
   };
 

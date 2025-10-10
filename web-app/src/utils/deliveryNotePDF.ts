@@ -31,7 +31,8 @@ interface PurchaseOrder {
 
 export const generateDeliveryNotePDF = (
   purchaseOrder: PurchaseOrder,
-  orderLines: OrderLine[]
+  orderLines: OrderLine[],
+  isEmptiesDelivery: boolean = false
 ) => {
   console.log("🚚 Delivery Note PDF - Order Lines:", orderLines);
   console.log("🏷️ Delivery Note PDF - First line SKUName:", orderLines[0]?.SKUName);
@@ -48,13 +49,15 @@ export const generateDeliveryNotePDF = (
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(24);
   doc.setFont("helvetica", "bold");
-  doc.text("DELIVERY NOTE", 105, 20, { align: "center" });
+  const title = isEmptiesDelivery ? "EMPTIES DELIVERY NOTE" : "DELIVERY NOTE";
+  doc.text(title, 105, 20, { align: "center" });
 
   // Generate Delivery Note Number
   const now = new Date();
   const orderNumber = purchaseOrder?.OrderNumber || purchaseOrder?.orderNumber || "PO";
   const timestamp = now.getTime().toString().slice(-6);
-  const deliveryNoteNumber = `DN-${orderNumber}-${timestamp}`;
+  const prefix = isEmptiesDelivery ? "EDN" : "DN";
+  const deliveryNoteNumber = `${prefix}-${orderNumber}-${timestamp}`;
 
   doc.setFontSize(12);
   doc.text(deliveryNoteNumber, 105, 32, { align: "center" });
@@ -184,9 +187,10 @@ export const generateDeliveryNotePDF = (
 
 export const openDeliveryNotePDFInNewTab = (
   purchaseOrder: PurchaseOrder,
-  orderLines: OrderLine[]
+  orderLines: OrderLine[],
+  isEmptiesDelivery: boolean = false
 ) => {
-  const doc = generateDeliveryNotePDF(purchaseOrder, orderLines);
+  const doc = generateDeliveryNotePDF(purchaseOrder, orderLines, isEmptiesDelivery);
   const pdfBlob = doc.output("blob");
   const url = URL.createObjectURL(pdfBlob);
   window.open(url, "_blank");
@@ -194,9 +198,10 @@ export const openDeliveryNotePDFInNewTab = (
 
 export const getDeliveryNotePDFBlob = (
   purchaseOrder: PurchaseOrder,
-  orderLines: OrderLine[]
+  orderLines: OrderLine[],
+  isEmptiesDelivery: boolean = false
 ): Blob => {
-  const doc = generateDeliveryNotePDF(purchaseOrder, orderLines);
+  const doc = generateDeliveryNotePDF(purchaseOrder, orderLines, isEmptiesDelivery);
   return doc.output("blob");
 };
 

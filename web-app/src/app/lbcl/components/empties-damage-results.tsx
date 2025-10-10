@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ChevronDown, ChevronUp, FileText } from "lucide-react";
 
 type DamageProduct = {
   id: string;
@@ -14,9 +14,19 @@ type DamageProduct = {
   totalInHand: number;
 };
 
+type DamageItem = {
+  damageIndex: number;
+  imageCount: number;
+  textNote: string;
+  documentCount: number;
+};
+
 export function EmptiesDamageResults() {
   const router = useRouter();
+
   const [currentDate, setCurrentDate] = useState("");
+  const [expandedProducts, setExpandedProducts] = useState<Set<string>>(new Set());
+  const [damageItems, setDamageItems] = useState<Record<string, DamageItem[]>>({});
 
   useEffect(() => {
     const date = new Date();
@@ -26,6 +36,76 @@ export function EmptiesDamageResults() {
       year: 'numeric'
     }).toUpperCase();
     setCurrentDate(formatted);
+
+    // Initialize damage items with dummy data
+    const initialDamageItems: Record<string, DamageItem[]> = {
+      "1": [
+        {
+          damageIndex: 1,
+          imageCount: 2,
+          textNote: "Severe crack on the top rim of the keg, extends approximately 3 inches. Metal is slightly bent near the handle area.",
+          documentCount: 2
+        },
+        {
+          damageIndex: 2,
+          imageCount: 1,
+          textNote: "Dent on the side panel, approximately 2 inches deep. No visible cracks but structural integrity may be compromised.",
+          documentCount: 1
+        },
+        {
+          damageIndex: 3,
+          imageCount: 2,
+          textNote: "Rust spots visible on bottom section, approximately 30% surface area affected. Requires immediate attention.",
+          documentCount: 0
+        }
+      ],
+      "2": [
+        {
+          damageIndex: 1,
+          imageCount: 1,
+          textNote: "Label completely torn off, container is intact but not suitable for distribution without relabeling.",
+          documentCount: 1
+        },
+        {
+          damageIndex: 2,
+          imageCount: 1,
+          textNote: "Minor crack on handle, still functional but needs replacement before next use.",
+          documentCount: 0
+        }
+      ],
+      "3": [
+        {
+          damageIndex: 1,
+          imageCount: 1,
+          textNote: "Broken glass bottle, shattered at neck. Contents leaked completely.",
+          documentCount: 1
+        },
+        {
+          damageIndex: 2,
+          imageCount: 1,
+          textNote: "Cracked bottle bottom, visible hairline fracture extending vertically.",
+          documentCount: 0
+        }
+      ],
+      "4": [
+        {
+          damageIndex: 1,
+          imageCount: 1,
+          textNote: "Bottle cap damaged and bent, seal broken. Product not suitable for sale.",
+          documentCount: 1
+        }
+      ]
+    };
+    setDamageItems(initialDamageItems);
+
+    // Auto-expand all products with damage
+    const expandedSet = new Set<string>();
+    damageProducts.forEach(product => {
+      if (product.damageCollected > 0) {
+        expandedSet.add(product.id);
+      }
+    });
+    setExpandedProducts(expandedSet);
   }, []);
 
   const damageProducts: DamageProduct[] = [
@@ -67,10 +147,21 @@ export function EmptiesDamageResults() {
     }
   ];
 
+  const toggleProductExpansion = (productId: string) => {
+    setExpandedProducts(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(productId)) {
+        newSet.delete(productId);
+      } else {
+        newSet.add(productId);
+      }
+      return newSet;
+    });
+  };
+
   const totalGoodCollected = damageProducts.reduce((sum, p) => sum + p.goodCollected, 0);
   const totalDamageCollected = damageProducts.reduce((sum, p) => sum + p.damageCollected, 0);
   const totalSampleGood = damageProducts.reduce((sum, p) => sum + p.sampleGood, 0);
-  const totalInHand = damageProducts.reduce((sum, p) => sum + p.totalInHand, 0);
 
   return (
     <div className="min-h-screen bg-white">
@@ -105,55 +196,162 @@ export function EmptiesDamageResults() {
 
       {/* Results Table */}
       <div className="p-6">
+        <h2 className="text-xl font-bold text-gray-900 mb-4">Damage Empties Documentation</h2>
+
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
-            <thead className="bg-[#F5E6D3]">
+            <thead className="bg-[#F5E6D3] sticky top-0 z-20">
               <tr>
-                <th className="text-left p-4 font-semibold text-sm border border-gray-300">
+                <th className="text-left p-3 font-semibold text-sm border border-gray-300">
                   Product Code/Description
                 </th>
-                <th className="text-center p-4 font-semibold text-sm border border-gray-300">
+                <th className="text-center p-3 font-semibold text-sm border border-gray-300">
                   Good Empties<br />Collected Qty
                 </th>
-                <th className="text-center p-4 font-semibold text-sm border border-gray-300">
+                <th className="text-center p-3 font-semibold text-sm border border-gray-300">
                   Damage Empties<br />Collected Qty
                 </th>
-                <th className="text-center p-4 font-semibold text-sm border border-gray-300">
+                <th className="text-center p-3 font-semibold text-sm border border-gray-300">
                   Sample<br />Good Qty
-                </th>
-                <th className="text-center p-4 font-semibold text-sm border border-gray-300">
-                  Total In Hand
                 </th>
               </tr>
             </thead>
             <tbody>
-              {damageProducts.map((product) => (
-                <tr key={product.id} className="hover:bg-gray-50">
-                  <td className="p-4 border border-gray-300">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 bg-gray-200 rounded flex items-center justify-center">
-                        <span className="text-2xl">🍺</span>
-                      </div>
-                      <div>
-                        <div className="font-semibold text-gray-900">{product.name}</div>
-                        <div className="text-sm text-gray-600">{product.code}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="text-center p-4 border border-gray-300">
-                    <div className="font-medium text-gray-900">{product.goodCollected}</div>
-                  </td>
-                  <td className="text-center p-4 border border-gray-300">
-                    <div className="font-medium text-red-600">{product.damageCollected}</div>
-                  </td>
-                  <td className="text-center p-4 border border-gray-300">
-                    <div className="font-medium text-blue-600">{product.sampleGood}</div>
-                  </td>
-                  <td className="text-center p-4 border border-gray-300">
-                    <div className="font-bold text-green-700">{product.totalInHand}</div>
-                  </td>
-                </tr>
-              ))}
+              {damageProducts.map((product) => {
+                const hasDamage = product.damageCollected > 0;
+                const isExpanded = expandedProducts.has(product.id);
+                const damages = damageItems[product.id] || [];
+
+                return (
+                  <Fragment key={product.id}>
+                    {/* Main Product Row */}
+                    <tr className="border-b border-gray-300 hover:bg-gray-50">
+                      <td className="p-3 border border-gray-300">
+                        <div className="flex items-center gap-3">
+                          {hasDamage && (
+                            <button
+                              onClick={() => toggleProductExpansion(product.id)}
+                              className="p-1 hover:bg-gray-200 rounded transition-colors"
+                            >
+                              {isExpanded ? (
+                                <ChevronUp className="h-4 w-4 text-gray-600" />
+                              ) : (
+                                <ChevronDown className="h-4 w-4 text-gray-600" />
+                              )}
+                            </button>
+                          )}
+                          <div className="w-12 h-12 bg-gray-200 rounded flex items-center justify-center flex-shrink-0">
+                            <span className="text-2xl">🍺</span>
+                          </div>
+                          <div>
+                            <div className="font-semibold text-sm">{product.name}</div>
+                            <div className="text-xs text-gray-600">{product.code}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="text-center p-3 border border-gray-300">
+                        <div className="font-medium">{product.goodCollected}</div>
+                      </td>
+                      <td className="text-center p-3 border border-gray-300">
+                        <div className="font-medium text-red-600">{product.damageCollected}</div>
+                      </td>
+                      <td className="text-center p-3 border border-gray-300">
+                        <div className="font-medium text-blue-600">{product.sampleGood}</div>
+                      </td>
+                    </tr>
+
+                    {/* Damage Item Child Rows */}
+                    {hasDamage && isExpanded && damages.map((damage) => {
+                      const key = `${product.id}-${damage.damageIndex}`;
+
+                      return (
+                        <tr key={key} className="bg-red-50 border-b border-gray-200">
+                          <td colSpan={4} className="p-4 border border-gray-300">
+                            <div className="bg-white rounded-lg p-4 shadow-sm">
+                              {/* Header */}
+                              <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-200">
+                                <div className="flex items-center gap-3">
+                                  <div className="bg-red-600 text-white px-3 py-1 rounded-md text-sm font-semibold">
+                                    Damage Item {damage.damageIndex}
+                                  </div>
+                                  <div className="text-sm text-gray-600">
+                                    <span className="font-medium">{product.code}</span> - {product.name}
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Content Grid */}
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                {/* Images Section */}
+                                <div className="space-y-2">
+                                  <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                                    🖼️ Images ({damage.imageCount})
+                                  </label>
+                                  <div className="flex flex-wrap gap-2">
+                                    {damage.imageCount > 0 ? (
+                                      Array.from({ length: damage.imageCount }).map((_, imgIndex) => (
+                                        <div
+                                          key={imgIndex}
+                                          className="h-24 w-24 rounded-md bg-gradient-to-br from-amber-100 to-amber-200 border-2 border-amber-300 flex items-center justify-center hover:border-red-600 transition-colors"
+                                        >
+                                          <div className="text-center">
+                                            <div className="text-3xl mb-1">🍺</div>
+                                            <div className="text-xs text-amber-700 font-semibold">IMG {imgIndex + 1}</div>
+                                          </div>
+                                        </div>
+                                      ))
+                                    ) : (
+                                      <div className="text-sm text-gray-500 italic">No images available</div>
+                                    )}
+                                  </div>
+                                </div>
+
+                                {/* Notes Section */}
+                                <div className="space-y-2">
+                                  <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                                    <FileText className="h-4 w-4" />
+                                    Damage Notes
+                                  </label>
+                                  <div className="bg-gray-50 rounded-md p-3 border border-gray-200 min-h-[96px]">
+                                    {damage.textNote ? (
+                                      <p className="text-sm text-gray-700 leading-relaxed">{damage.textNote}</p>
+                                    ) : (
+                                      <p className="text-sm text-gray-500 italic">No notes available</p>
+                                    )}
+                                  </div>
+                                </div>
+
+                                {/* Documents Section */}
+                                <div className="space-y-2">
+                                  <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                                    📄 Documents ({damage.documentCount})
+                                  </label>
+                                  <div className="flex flex-wrap gap-2">
+                                    {damage.documentCount > 0 ? (
+                                      Array.from({ length: damage.documentCount }).map((_, docIndex) => (
+                                        <div
+                                          key={docIndex}
+                                          className="h-24 w-24 px-2 rounded-md bg-blue-50 border-2 border-blue-200 flex flex-col items-center justify-center gap-1 hover:bg-blue-100 transition-colors"
+                                        >
+                                          <FileText className="h-6 w-6 text-blue-600" />
+                                          <span className="text-[9px] text-blue-600 font-bold">DOC {docIndex + 1}</span>
+                                        </div>
+                                      ))
+                                    ) : (
+                                      <div className="text-sm text-gray-500 italic">No documents available</div>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </Fragment>
+                );
+              })}
+
               {/* Total Row */}
               <tr className="bg-[#FFF8E7] font-bold">
                 <td className="p-4 border border-gray-300 text-right">
@@ -168,16 +366,13 @@ export function EmptiesDamageResults() {
                 <td className="text-center p-4 border border-gray-300">
                   <div className="font-bold text-blue-600">{totalSampleGood}</div>
                 </td>
-                <td className="text-center p-4 border border-gray-300">
-                  <div className="font-bold text-green-700">{totalInHand}</div>
-                </td>
               </tr>
             </tbody>
           </table>
         </div>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <div className="text-sm text-blue-700 font-medium mb-1">Good Empties</div>
             <div className="text-2xl font-bold text-blue-900">{totalGoodCollected}</div>
@@ -190,24 +385,6 @@ export function EmptiesDamageResults() {
             <div className="text-sm text-purple-700 font-medium mb-1">Sample Good</div>
             <div className="text-2xl font-bold text-purple-900">{totalSampleGood}</div>
           </div>
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-            <div className="text-sm text-green-700 font-medium mb-1">Total In Hand</div>
-            <div className="text-2xl font-bold text-green-900">{totalInHand}</div>
-          </div>
-        </div>
-
-        {/* Notes Section */}
-        <div className="mt-6 bg-amber-50 border border-amber-200 rounded-lg p-4">
-          <h3 className="font-semibold text-amber-900 mb-2 flex items-center gap-2">
-            <span className="text-lg">ℹ️</span>
-            Damage Analysis Notes
-          </h3>
-          <ul className="text-sm text-amber-800 space-y-1 ml-6 list-disc">
-            <li>Total of {totalDamageCollected} damaged empties were collected from this delivery</li>
-            <li>Damage rate: {((totalDamageCollected / (totalGoodCollected + totalDamageCollected)) * 100).toFixed(1)}% of total empties collected</li>
-            <li>Sample goods have been taken from both good and damaged empties for quality inspection</li>
-            <li>All damaged empties will be segregated and processed according to company policy</li>
-          </ul>
         </div>
       </div>
     </div>

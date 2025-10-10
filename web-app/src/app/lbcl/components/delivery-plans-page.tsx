@@ -1,9 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Calendar, RefreshCw, ChevronRight, RotateCcw } from "lucide-react"
+import { ChevronRight } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { inventoryService, type PagingRequest, type IWHStockRequestItemView } from "@/services/inventory/inventory.service"
 
@@ -117,20 +116,6 @@ export function DeliveryPlansPage() {
     }
   }
 
-  const handleRefresh = () => {
-    fetchDeliveryPlans()
-  }
-
-  const handleReset = () => {
-    const today = new Date()
-    const fifteenDaysAgo = new Date(today.getTime() - 15 * 24 * 60 * 60 * 1000)
-
-    setFromDate(fifteenDaysAgo.toISOString().split('T')[0])
-    setToDate(today.toISOString().split('T')[0])
-    setDateFilterType("order")
-    setActiveTab("pending")
-  }
-
   const formatDate = (dateString: string) => {
     if (!dateString) return "N/A"
     const date = new Date(dateString)
@@ -206,9 +191,8 @@ export function DeliveryPlansPage() {
                   type="date"
                   value={fromDate}
                   onChange={(e) => setFromDate(e.target.value)}
-                  className="w-full px-4 py-2.5 pr-10 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#A08B5C] text-sm"
+                  className="w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#A08B5C] text-sm"
                 />
-                <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 pointer-events-none" />
               </div>
             </div>
 
@@ -219,32 +203,9 @@ export function DeliveryPlansPage() {
                   type="date"
                   value={toDate}
                   onChange={(e) => setToDate(e.target.value)}
-                  className="w-full px-4 py-2.5 pr-10 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#A08B5C] text-sm"
+                  className="w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#A08B5C] text-sm"
                 />
-                <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 pointer-events-none" />
               </div>
-            </div>
-
-            <div className="flex gap-2">
-              <Button
-                onClick={handleRefresh}
-                variant="outline"
-                size="sm"
-                className="border-[#A08B5C] text-[#A08B5C] hover:bg-[#A08B5C] hover:text-white whitespace-nowrap"
-              >
-                <RefreshCw className="w-4 h-4 mr-2" />
-                Refresh
-              </Button>
-
-              <Button
-                onClick={handleReset}
-                variant="outline"
-                size="sm"
-                className="border-gray-300 text-gray-600 hover:bg-gray-100 whitespace-nowrap"
-              >
-                <RotateCcw className="w-4 h-4 mr-2" />
-                Reset
-              </Button>
             </div>
           </div>
         </div>
@@ -301,12 +262,6 @@ export function DeliveryPlansPage() {
         ) : error ? (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
             <p className="text-red-700">{error}</p>
-            <button
-              onClick={handleRefresh}
-              className="mt-2 text-sm text-red-600 hover:text-red-800 underline"
-            >
-              Try again
-            </button>
           </div>
         ) : deliveryPlans.length === 0 ? (
           <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/app/lbcl/components/ui/card";
 import { Button } from "@/app/lbcl/components/ui/button";
 import { Badge } from "@/app/lbcl/components/ui/badge";
-import { Plus, Trash2, Download, Upload, RefreshCw, Eye, CalendarIcon } from "lucide-react";
+import { Plus, Trash2, Download, Upload, RefreshCw, Eye, CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import * as XLSX from "xlsx";
 import { Calendar } from "@/app/lbcl/components/ui/calendar";
 import {
@@ -37,10 +37,70 @@ import {
 } from "@/app/lbcl/components/ui/select";
 import { Input } from "@/app/lbcl/components/ui/input";
 
+// Holiday interface
+interface Holiday {
+  date: string; // Format: DD/MM/YY
+  name: string;
+  type: "public" | "bank" | "optional";
+}
+
+// Mock holidays data for 2025
+const HOLIDAYS_2025: Record<string, Holiday[]> = {
+  "01": [ // January
+    { date: "01/01/25", name: "New Year's Day", type: "public" },
+    { date: "15/01/25", name: "Thai Pongal", type: "public" },
+  ],
+  "02": [ // February
+    { date: "04/02/25", name: "Independence Day", type: "public" },
+    { date: "26/02/25", name: "Maha Shivaratri", type: "public" },
+  ],
+  "03": [ // March
+    { date: "14/03/25", name: "Medin Poya Day", type: "public" },
+  ],
+  "04": [ // April
+    { date: "12/04/25", name: "Bak Poya Day", type: "public" },
+    { date: "13/04/25", name: "Sinhala & Tamil New Year's Eve", type: "public" },
+    { date: "14/04/25", name: "Sinhala & Tamil New Year's Day", type: "public" },
+    { date: "18/04/25", name: "Good Friday", type: "public" },
+  ],
+  "05": [ // May
+    { date: "01/05/25", name: "May Day", type: "public" },
+    { date: "12/05/25", name: "Vesak Day", type: "public" },
+    { date: "13/05/25", name: "Day following Vesak Full Moon Poya", type: "public" },
+  ],
+  "06": [ // June
+    { date: "10/06/25", name: "Poson Poya Day", type: "public" },
+  ],
+  "07": [ // July
+    { date: "09/07/25", name: "Esala Poya Day", type: "public" },
+  ],
+  "08": [ // August
+    { date: "08/08/25", name: "Nikini Poya Day", type: "public" },
+  ],
+  "09": [ // September
+    { date: "06/09/25", name: "Binara Poya Day", type: "public" },
+  ],
+  "10": [ // October
+    { date: "06/10/25", name: "Vap Poya Day", type: "public" },
+    { date: "21/10/25", name: "Deepavali", type: "public" },
+  ],
+  "11": [ // November
+    { date: "05/11/25", name: "Il Poya Day", type: "public" },
+  ],
+  "12": [ // December
+    { date: "04/12/25", name: "Unduvap Poya Day", type: "public" },
+    { date: "25/12/25", name: "Christmas Day", type: "public" },
+  ],
+};
+
 export function SalesItineraryTemplate() {
   const router = useRouter();
   const [entries, setEntries] = useState<ItineraryEntry[]>([]);
   const [filteredEntries, setFilteredEntries] = useState<ItineraryEntry[]>([]);
+
+  // Month/Year selection
+  const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth() + 1); // 1-12
+  const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
 
   // Filter states
   const [filterType, setFilterType] = useState<string>("all");
@@ -66,6 +126,61 @@ export function SalesItineraryTemplate() {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = String(date.getFullYear()).slice(-2);
     return `${day}/${month}/${year}`;
+  };
+
+  // Get holidays for selected month
+  const getHolidaysForMonth = (): Holiday[] => {
+    const monthKey = String(selectedMonth).padStart(2, '0');
+    return HOLIDAYS_2025[monthKey] || [];
+  };
+
+  // Format month name
+  const getMonthName = (month: number): string => {
+    const months = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+    return months[month - 1];
+  };
+
+  // Navigate to previous month
+  const handlePreviousMonth = () => {
+    if (selectedMonth === 1) {
+      setSelectedMonth(12);
+      setSelectedYear(selectedYear - 1);
+    } else {
+      setSelectedMonth(selectedMonth - 1);
+    }
+  };
+
+  // Navigate to next month
+  const handleNextMonth = () => {
+    if (selectedMonth === 12) {
+      setSelectedMonth(1);
+      setSelectedYear(selectedYear + 1);
+    } else {
+      setSelectedMonth(selectedMonth + 1);
+    }
+  };
+
+  // Check if a date is a holiday
+  const isHoliday = (dateStr: string): boolean => {
+    const holidays = getHolidaysForMonth();
+    return holidays.some(h => h.date === dateStr);
+  };
+
+  // Get holiday badge color
+  const getHolidayTypeColor = (type: string) => {
+    switch (type) {
+      case "public":
+        return "bg-red-100 text-red-700 border-red-200";
+      case "bank":
+        return "bg-blue-100 text-blue-700 border-blue-200";
+      case "optional":
+        return "bg-yellow-100 text-yellow-700 border-yellow-200";
+      default:
+        return "bg-gray-100 text-gray-700 border-gray-200";
+    }
   };
 
   // Function to load entries from localStorage
@@ -245,6 +360,121 @@ export function SalesItineraryTemplate() {
 
   return (
     <div className="space-y-4">
+      {/* Month/Year Selector and Holidays */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Month/Year Selector */}
+        <Card className="lg:col-span-2">
+          <CardHeader className="py-3 bg-gradient-to-r from-[#A08B5C]/10 to-transparent">
+            <CardTitle className="text-base flex items-center justify-between">
+              <span>📅 Itinerary Planning Period</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handlePreviousMonth}
+                className="h-10 px-3"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+
+              <div className="text-center">
+                <div className="text-2xl font-bold text-[#A08B5C]">
+                  {getMonthName(selectedMonth)} {selectedYear}
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  Planning period for this month's sales itinerary
+                </p>
+              </div>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleNextMonth}
+                className="h-10 px-3"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+
+            {/* Month Stats */}
+            <div className="grid grid-cols-3 gap-3 mt-4 pt-4 border-t">
+              <div className="text-center">
+                <div className="text-xs text-gray-500 mb-1">Working Days</div>
+                <div className="text-lg font-semibold text-gray-900">
+                  {new Date(selectedYear, selectedMonth, 0).getDate() - getHolidaysForMonth().length}
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-xs text-gray-500 mb-1">Holidays</div>
+                <div className="text-lg font-semibold text-red-600">
+                  {getHolidaysForMonth().length}
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-xs text-gray-500 mb-1">Total Days</div>
+                <div className="text-lg font-semibold text-gray-900">
+                  {new Date(selectedYear, selectedMonth, 0).getDate()}
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Holidays List */}
+        <Card>
+          <CardHeader className="py-3 bg-gradient-to-r from-red-50 to-transparent">
+            <CardTitle className="text-base flex items-center justify-between">
+              <span>🎉 Holidays in {getMonthName(selectedMonth)}</span>
+              <Badge variant="outline" className="text-xs">
+                {getHolidaysForMonth().length}
+              </Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-4">
+            {getHolidaysForMonth().length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                <p className="text-sm">No holidays this month</p>
+                <p className="text-xs mt-1">Full working month ahead! 🚀</p>
+              </div>
+            ) : (
+              <div className="space-y-2 max-h-64 overflow-y-auto">
+                {getHolidaysForMonth().map((holiday, index) => (
+                  <div
+                    key={index}
+                    className="flex items-start gap-2 p-2 rounded-lg border bg-white hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center bg-red-100 rounded-lg">
+                      <div className="text-center">
+                        <div className="text-lg font-bold text-red-600">
+                          {holiday.date.split('/')[0]}
+                        </div>
+                        <div className="text-[8px] text-red-600 uppercase">
+                          {getMonthName(parseInt(holiday.date.split('/')[1])).slice(0, 3)}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium text-sm text-gray-900 line-clamp-2">
+                        {holiday.name}
+                      </div>
+                      <Badge
+                        variant="outline"
+                        className={`mt-1 text-[10px] ${getHolidayTypeColor(holiday.type)}`}
+                      >
+                        {holiday.type.toUpperCase()}
+                      </Badge>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Filters Section */}
       <Card>
         <CardHeader className="py-3 bg-gray-50">
@@ -472,14 +702,25 @@ export function SalesItineraryTemplate() {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  filteredEntries.map((entry, index) => (
-                    <TableRow key={entry.id}>
-                      <TableCell className="text-xs py-2">{index + 1}</TableCell>
-                      <TableCell className="text-xs py-2">
-                        <Badge className="text-xs whitespace-normal" variant="outline">{entry.type}</Badge>
-                      </TableCell>
-                      <TableCell className="text-xs py-2 font-medium">{entry.focusArea}</TableCell>
-                      <TableCell className="text-xs py-2">{entry.date}</TableCell>
+                  filteredEntries.map((entry, index) => {
+                    const entryIsHoliday = isHoliday(entry.date);
+                    return (
+                      <TableRow key={entry.id} className={entryIsHoliday ? "bg-red-50" : ""}>
+                        <TableCell className="text-xs py-2">{index + 1}</TableCell>
+                        <TableCell className="text-xs py-2">
+                          <Badge className="text-xs whitespace-normal" variant="outline">{entry.type}</Badge>
+                        </TableCell>
+                        <TableCell className="text-xs py-2 font-medium">{entry.focusArea}</TableCell>
+                        <TableCell className="text-xs py-2">
+                          <div className="flex items-center gap-1">
+                            {entry.date}
+                            {entryIsHoliday && (
+                              <Badge variant="outline" className="text-[9px] bg-red-100 text-red-700 border-red-200 ml-1">
+                                Holiday
+                              </Badge>
+                            )}
+                          </div>
+                        </TableCell>
                       <TableCell className="text-xs py-2">{entry.day}</TableCell>
                       <TableCell className="text-xs py-2" title={entry.kraPlan}>
                         {entry.kraPlan}
@@ -519,7 +760,8 @@ export function SalesItineraryTemplate() {
                         </div>
                       </TableCell>
                     </TableRow>
-                  ))
+                    );
+                  })
                 )}
               </TableBody>
             </Table>

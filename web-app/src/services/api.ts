@@ -434,8 +434,22 @@ export const api = {
     delete: (uid: string) => apiService.delete(`/BeatHistory/DeleteBeatHistory?UID=${uid}`),
     start: (uid: string) => apiService.post(`/BeatHistory/StartBeatHistory?UID=${uid}`, {}),
     getSummary: (body: any) => apiService.post('/BeatHistory/SelectAllJobPositionDetails', body),
-    
+
     // Create journey plan using BeatHistory API
     createBeatHistory: (body: any) => apiService.post('/BeatHistory/CreateBeatHistory', body),
+  },
+  // Load Request APIs - Using WHStock controller endpoints
+  loadRequest: {
+    // Main endpoint for getting load requests with pagination and filtering
+    getAll: (body: any, stockType?: string) => apiService.post(`/WHStock/SelectLoadRequestData${stockType ? `?StockType=${stockType}` : ''}`, body),
+    getByUID: (uid: string) => apiService.get(`/WHStock/SelectLoadRequestDataByUID?UID=${uid}`),
+    // Create/Update/Delete operations
+    create: (body: any) => apiService.post('/WHStock/CUDWHStock', body),
+    update: (body: any) => apiService.post('/WHStock/CUDWHStock', body),
+    delete: (body: any) => apiService.post('/WHStock/CUDWHStock', body),
+    // Request line operations
+    updateLines: (body: any) => apiService.post('/WHStock/CUDWHStockRequestLine', body),
+    // Queue-based creation
+    createFromQueue: (body: any) => apiService.post('/WHStock/CreateWHStockFromQueue', body),
   },
 };

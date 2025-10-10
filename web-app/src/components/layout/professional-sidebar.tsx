@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { usePathname, useRouter } from "next/navigation"
+import Image from "next/image"
 import {
   Sidebar,
   SidebarContent,
@@ -247,8 +248,16 @@ export function ProfessionalSidebar({ className }: ProfessionalSidebarProps) {
       <SidebarHeader className="border-b border-gray-200/40 dark:border-gray-800/60 bg-white dark:bg-gray-900">
         {!isCollapsed ? (
           // Logo when expanded - proper height
-          <div className="h-16 flex items-center px-4">
-            <span className="text-3xl font-bold text-gray-900 dark:text-gray-100">LBCL</span>
+          <div className="h-16 flex items-center justify-center px-4">
+            <div className="relative w-32 h-12">
+              <Image
+                src="/images/lion-logo.png"
+                alt="LION Logo"
+                fill
+                className="object-contain"
+                priority
+              />
+            </div>
           </div>
         ) : (
           // Search icon when collapsed

@@ -3,38 +3,23 @@
 import React from "react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Truck, Package, ShoppingCart } from "lucide-react";
+import { Truck, UserCheck, BarChart3 } from "lucide-react";
 
-const DashboardPage = () => {
+export default function LoadManagementPage() {
   const navigationCards = [
     {
-      title: "Delivery",
-      description: "Access delivery dashboard and manage delivery operations",
+      title: "LSR (Van Sales Rep)",
+      description: "Initiate daily load requests, review system recommendations, adjust buffer, and submit",
       icon: <Truck className="h-12 w-12" />,
-      href: "/delivery-dashboard",
+      href: "/load-management/lsr",
       color: "text-blue-600"
     },
     {
-      title: "Manager",
-      description: "Access manager dashboard and stock receiving operations",
-      icon: <Package className="h-12 w-12" />,
-      href: "/manager/stock-receiving-dashboard",
+      title: "Agent Logistics Officer",
+      description: "Review requests depot-wise, adjust & approve load, assign trucks, drivers & helpers, and finalize load sheets",
+      icon: <UserCheck className="h-12 w-12" />,
+      href: "/load-management/logistics-approval",
       color: "text-green-600"
-    },
-    {
-      title: "Purchase Orders",
-      description:
-        "Manage purchase order templates, create orders, and track status",
-      icon: <ShoppingCart className="h-12 w-12" />,
-      href: "/manager/purchase-order-templates",
-      color: "text-purple-600"
-    },
-    {
-      title: "Load Management",
-      description: "Manage load requests, logistics approvals, and van sales operations",
-      icon: <Truck className="h-12 w-12" />,
-      href: "/load-management",
-      color: "text-orange-600"
     }
   ];
 
@@ -43,15 +28,15 @@ const DashboardPage = () => {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Load Management</h1>
           <p className="text-gray-500 mt-1">
-            Welcome back! Select a module to get started.
+            Manage load requests and logistics approvals
           </p>
         </div>
       </div>
 
       {/* Navigation Cards */}
-      <div className="grid gap-6 md:grid-cols-2 lg:gap-8">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
         {navigationCards.map((card, index) => (
           <Link key={index} href={card.href}>
             <Card className="transition-all hover:shadow-lg hover:scale-[1.02] cursor-pointer h-full">
@@ -70,6 +55,4 @@ const DashboardPage = () => {
       </div>
     </div>
   );
-};
-
-export default DashboardPage;
+}

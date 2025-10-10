@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { usePathname, useRouter } from "next/navigation"
+import Image from "next/image"
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar"
 import { useAutoCollapse } from "./main-layout"
 import {
@@ -41,12 +42,10 @@ import {
   Settings,
   Bug,
   LogOut,
-  Bell,
   ChevronDown,
   Home,
   Pin,
   PinOff,
-  Truck,
 } from "lucide-react"
 import { SubModule, SubSubModule } from "@/types/permission.types"
 import { getModuleIcon, getSubModuleIcon } from "@/lib/navigation-icons"
@@ -207,7 +206,15 @@ export function Header() {
           {/* Logo Section when collapsed */}
           {isCollapsed && (
             <div className="flex items-center mr-2">
-              <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">LBCL</span>
+              <div className="relative w-20 h-8">
+                <Image
+                  src="/images/lion-logo.png"
+                  alt="LION Logo"
+                  fill
+                  className="object-contain"
+                  priority
+                />
+              </div>
             </div>
           )}
           
@@ -305,41 +312,6 @@ export function Header() {
         
         {/* Right Section */}
         <div className="flex items-center gap-3">
-          {/* Delivery Management Button */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => router.push("/lbcl/login")}
-                className="h-9 px-3 gap-2 border-blue-200 hover:bg-blue-50 hover:border-blue-300 dark:border-blue-800 dark:hover:bg-blue-950 transition-all duration-200"
-              >
-                <Truck className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                <span className="hidden lg:inline text-sm font-medium text-blue-600 dark:text-blue-400">
-                  Delivery
-                </span>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom">
-              <p className="text-xs font-medium">Switch to Delivery Management</p>
-            </TooltipContent>
-          </Tooltip>
-
-          <div className="h-5 w-px bg-gray-200 dark:bg-gray-700" />
-
-          {/* Notification Button */}
-          <Button
-            variant="ghost"
-            size="sm"
-            className="relative h-9 w-9 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200"
-          >
-            <Bell className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-            <span className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-blue-600 text-[9px] font-medium text-white flex items-center justify-center">
-              3
-            </span>
-          </Button>
-
-          <div className="h-5 w-px bg-gray-200 dark:bg-gray-700" />
 
           {/* Refresh Menu Button */}
           <RefreshMenuButton

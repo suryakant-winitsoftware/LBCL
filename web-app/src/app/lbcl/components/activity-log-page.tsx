@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
   SelectContent,
@@ -11,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
-import { ChevronRight, ChevronDown, FileText, Check, RefreshCw } from "lucide-react";
+import { ChevronRight, ChevronDown, FileText, Check } from "lucide-react";
 import { ShareDialog } from "@/app/lbcl/components/share-dialog";
 import { SignatureDialog } from "@/app/lbcl/components/signature-dialog";
 import { inventoryService } from "@/services/inventory/inventory.service";
@@ -682,11 +683,54 @@ export function ActivityLogPage({ deliveryPlanId, readOnly = false }: ActivityLo
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <RefreshCw className="w-8 h-8 text-[#A08B5C] animate-spin mx-auto mb-2" />
-          <p className="text-gray-600">Loading delivery plan...</p>
+      <div className="min-h-screen bg-gray-50">
+        {/* Header Skeleton */}
+        <div className="px-4 sm:px-6 lg:px-8 py-3 sm:py-4 bg-white border-b">
+          <div className="flex items-center justify-end gap-2 mb-4">
+            <Skeleton className="h-9 w-20" />
+            <Skeleton className="h-9 w-24" />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+            <div className="text-center space-y-2">
+              <Skeleton className="h-4 w-32 mx-auto" />
+              <Skeleton className="h-6 w-40 mx-auto" />
+            </div>
+            <div className="text-center space-y-2">
+              <Skeleton className="h-4 w-36 mx-auto" />
+              <Skeleton className="h-6 w-44 mx-auto" />
+            </div>
+            <div className="text-center space-y-2">
+              <Skeleton className="h-4 w-20 mx-auto" />
+              <Skeleton className="h-6 w-28 mx-auto" />
+            </div>
+          </div>
         </div>
+
+        {/* Activity Steps Skeleton */}
+        <main className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 max-w-7xl mx-auto">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div
+                key={i}
+                className={`bg-white rounded-lg p-4 sm:p-6 shadow-sm ${i === 3 || i === 6 ? 'lg:col-span-2' : ''}`}
+              >
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <Skeleton className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex-shrink-0" />
+                  <Skeleton className="h-5 flex-1" />
+                  <Skeleton className="w-5 h-5 rounded flex-shrink-0" />
+                </div>
+                {(i === 3 || i === 6) && (
+                  <div className="mt-4 space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <Skeleton className="h-10 w-full" />
+                      <Skeleton className="h-10 w-full" />
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </main>
       </div>
     );
   }
@@ -1153,107 +1197,6 @@ export function ActivityLogPage({ deliveryPlanId, readOnly = false }: ActivityLo
                 <span className="text-sm text-gray-700">Notify Agency</span>
               </div>
             </div>
-          </div>
-        </div>
-
-        {/* Progress Tracker */}
-        <div className="mt-6 sm:mt-8 bg-white rounded-lg p-4 sm:p-6 shadow-sm max-w-7xl mx-auto overflow-x-auto">
-          <div className="flex items-center gap-2 sm:gap-4 min-w-max pb-2">
-            {/* Checkpoint 1 */}
-            <div className="flex flex-col items-center flex-shrink-0">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-green-500 flex items-center justify-center mb-2">
-                <Check className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-              </div>
-              <div className="text-center">
-                <div className="text-xs sm:text-sm font-medium">
-                  LBCL Warehouse
-                </div>
-                <div className="text-xs text-green-600">Completed</div>
-                <div className="text-xs text-gray-500">Arrived: 08:00 AM</div>
-                <div className="text-xs text-gray-500">Distance: 0 km</div>
-                <div className="text-xs text-gray-500">
-                  Travel time: 1h 25min
-                </div>
-              </div>
-            </div>
-
-            <div className="h-1 flex-1 bg-green-500 min-w-[40px]" />
-
-            {/* Checkpoint 2 */}
-            <div className="flex flex-col items-center flex-shrink-0">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-green-500 flex items-center justify-center mb-2">
-                <Check className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-              </div>
-              <div className="text-center">
-                <div className="text-xs sm:text-sm font-medium">
-                  Checkpoint Alpha
-                </div>
-                <div className="text-xs text-green-600">Completed</div>
-                <div className="text-xs text-gray-500">
-                  Arrived: 09:40 AM (+5 min)
-                </div>
-                <div className="text-xs text-gray-500">
-                  Distance: 48 km (+3 km)
-                </div>
-                <div className="text-xs text-gray-500">
-                  Travel time: 1h 35min
-                </div>
-              </div>
-            </div>
-
-            <div className="h-1 flex-1 bg-yellow-500 min-w-[40px]" />
-
-            {/* Checkpoint 3 */}
-            <div className="flex flex-col items-center flex-shrink-0">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blue-500 flex items-center justify-center mb-2">
-                <span className="text-white text-xs sm:text-sm font-bold">
-                  3
-                </span>
-              </div>
-              <div className="text-center">
-                <div className="text-xs sm:text-sm font-medium">
-                  Checkpoint Beta
-                </div>
-                <div className="text-xs text-blue-600">In Progress</div>
-                <div className="text-xs text-gray-500">
-                  Arrived: 11:40 AM (+30 min)
-                </div>
-                <div className="text-xs text-gray-500">Distance: 33 km</div>
-                <div className="text-xs text-gray-500">
-                  Travel time: 1h 15min
-                </div>
-              </div>
-            </div>
-
-            <div className="h-1 flex-1 bg-gray-300 min-w-[40px]" />
-
-            {/* Checkpoint 4 */}
-            <div className="flex flex-col items-center flex-shrink-0">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gray-300 flex items-center justify-center mb-2">
-                <span className="text-gray-600 text-xs sm:text-sm font-bold">
-                  4
-                </span>
-              </div>
-              <div className="text-center">
-                <div className="text-xs sm:text-sm font-medium">
-                  Distributor Agent Warehouse
-                </div>
-                <div className="text-xs text-gray-500">Pending</div>
-                <div className="text-xs text-gray-500">
-                  Distance: 40 km (planned)
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-4 p-3 bg-red-50 rounded-lg">
-            <p className="text-xs sm:text-sm text-red-600 flex items-center gap-2">
-              <span className="flex-shrink-0">⚠️</span>
-              <span>
-                Current pace suggests arrival at destination may be delayed by
-                ~15 minutes
-              </span>
-            </p>
           </div>
         </div>
       </main>

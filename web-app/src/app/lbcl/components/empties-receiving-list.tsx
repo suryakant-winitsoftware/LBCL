@@ -34,11 +34,11 @@ export function EmptiesReceivingList() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-4 py-4 sticky top-0 z-10">
+      {/* <header className="bg-white border-b border-gray-200 px-4 py-4 sticky top-0 z-10">
         <h1 className="text-base sm:text-lg md:text-xl font-bold text-center">
           Empties Receiving
         </h1>
-      </header>
+      </header> */}
 
       {/* Tabs */}
       <div className="bg-white border-b border-gray-200">

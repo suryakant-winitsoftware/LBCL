@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
+import { Skeleton } from "@/components/ui/skeleton"
 import { Calendar, RefreshCw, ChevronRight, RotateCcw } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { inventoryService, type PagingRequest, type IWHStockRequestItemView } from "@/services/inventory/inventory.service"
@@ -280,11 +281,22 @@ export function DeliveryPlansPage() {
       {/* Delivery Plans List */}
       <main className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
         {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="text-center">
-              <RefreshCw className="w-8 h-8 text-[#A08B5C] animate-spin mx-auto mb-2" />
-              <p className="text-gray-600">Loading load requests...</p>
-            </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 max-w-7xl mx-auto">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="bg-white rounded-lg p-4 sm:p-6 shadow-sm">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1 min-w-0 space-y-3">
+                    <Skeleton className="h-6 w-48" />
+                    <Skeleton className="h-5 w-full" />
+                    <div className="space-y-2">
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-4 w-3/4" />
+                    </div>
+                  </div>
+                  <Skeleton className="h-6 w-6 rounded-full flex-shrink-0" />
+                </div>
+              </div>
+            ))}
           </div>
         ) : error ? (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">

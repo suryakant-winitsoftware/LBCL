@@ -14,7 +14,6 @@ interface PageProps {
 export default function ActivityLog({ params }: PageProps) {
   const { id } = use(params);
   const [isReadOnly, setIsReadOnly] = useState(false);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const checkStatus = async () => {
@@ -27,24 +26,11 @@ export default function ActivityLog({ params }: PageProps) {
         }
       } catch (error) {
         console.error("Error checking delivery status:", error);
-      } finally {
-        setLoading(false);
       }
     };
 
     checkStatus();
   }, [id]);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#A08B5C] mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
-  }
 
   return <ActivityLogPage deliveryPlanId={id} readOnly={isReadOnly} />;
 }

@@ -487,7 +487,7 @@ export default function StockReceivingActivityLogView({ deliveryId }: { delivery
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center justify-between sticky top-0 z-10">
+      {/* <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center justify-between sticky top-0 z-10">
         <h1 className="text-base sm:text-lg md:text-xl font-bold text-center flex-1 px-2">
           Agent Stock Receiving Activity Log Report
         </h1>
@@ -498,7 +498,7 @@ export default function StockReceivingActivityLogView({ deliveryId }: { delivery
         >
           Back
         </Button>
-      </header>
+      </header> */}
 
       {/* Info Section */}
       <div className="bg-gray-50 p-4 border-b border-gray-200">

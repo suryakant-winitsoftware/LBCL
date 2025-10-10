@@ -819,7 +819,7 @@ export default function StockReceivingActivityLog({
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-4 py-4 sticky top-0 z-10">
+      {/* <header className="bg-white border-b border-gray-200 px-4 py-4 sticky top-0 z-10">
         <div className="flex items-center justify-between mb-2">
           <h1 className="text-base sm:text-lg md:text-xl font-bold text-center flex-1 px-2">
             Agent Stock Receiving Activity Log Report
@@ -842,7 +842,6 @@ export default function StockReceivingActivityLog({
             )}
           </div>
         </div>
-        {/* Status Badge */}
         <div className="flex justify-center">
           <span
             className={`px-4 py-1 rounded-full text-sm font-semibold ${getStatusBadgeColor(
@@ -852,7 +851,7 @@ export default function StockReceivingActivityLog({
             Status: {getStatusLabel(stockReceivingData?.Status)}
           </span>
         </div>
-      </header>
+      </header> */}
 
       {/* Info Section */}
       <div className="bg-gray-50 p-4 border-b border-gray-200">

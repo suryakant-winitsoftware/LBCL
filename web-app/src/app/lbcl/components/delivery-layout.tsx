@@ -1,10 +1,7 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { PageHeader } from "@/app/lbcl/components/page-header";
-import { Button } from "@/components/ui/button";
-import { LogOut } from "lucide-react";
-import { useAuth } from "@/providers/auth-provider";
 
 interface DeliveryLayoutProps {
   children: React.ReactNode;
@@ -12,18 +9,11 @@ interface DeliveryLayoutProps {
 
 export function DeliveryLayout({ children }: DeliveryLayoutProps) {
   const pathname = usePathname();
-  const router = useRouter();
-  const { user, logout } = useAuth();
 
   // Don't show header on login page
   if (pathname === "/lbcl/login" || pathname === "/lbcl") {
     return <>{children}</>;
   }
-
-  const handleLogout = () => {
-    logout();
-    router.push("/lbcl/login");
-  };
 
   // Get page title based on pathname
   const getPageTitle = () => {
@@ -58,18 +48,6 @@ export function DeliveryLayout({ children }: DeliveryLayoutProps) {
     <div className="min-h-screen bg-gray-50">
       <PageHeader
         title={getPageTitle()}
-        rightContent={
-          <div className="flex items-center gap-2">
-            {user && (
-              <span className="text-sm text-gray-600 hidden sm:inline">
-                {user.name || user.loginId}
-              </span>
-            )}
-            <Button variant="ghost" size="sm" onClick={handleLogout}>
-              <LogOut className="w-4 h-4" />
-            </Button>
-          </div>
-        }
       />
       <main className="p-4">{children}</main>
     </div>
